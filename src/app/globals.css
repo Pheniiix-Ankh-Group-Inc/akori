@@ -1,0 +1,39 @@
+/* src/app/globals.css */
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+:root {
+  --bg:         #0c0c0c;
+  --bg-2:       #141414;
+  --bg-card:    #1a1a1a;
+  --border:     rgba(255, 255, 255, 0.07);
+  --border-h:   rgba(255, 255, 255, 0.16);
+  --blanc:      #edeae4;
+  --texte:      #7a7570;
+  --texte-2:    #aaa59e;
+  --accent:     #c4a46e;
+  --accent-dim: rgba(196, 164, 110, 0.1);
+  --ease:       cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--texte-2);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(196, 164, 110, 0.25);
+  color: var(--blanc);
+}
