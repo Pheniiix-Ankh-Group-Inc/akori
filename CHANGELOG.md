@@ -21,6 +21,13 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [0.2.0] — 2026-03-02
+
+
+### Ajouté
+- Architecture project 
+- Toutes les sections
+
 ## [0.1.0] — 2026-02-28
 
 ### Ajouté
@@ -38,7 +45,6 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 - Fichier `.env.example` avec toutes les variables requises
 - Configuration Prettier avec plugin Tailwind
 - Configuration ESLint
-- Premier déploiement Vercel connecté à GitHub
 
 ### Dépendances ajoutées
 - `next-sanity`, `@sanity/image-url`, `@sanity/client`

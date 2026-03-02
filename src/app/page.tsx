@@ -1,13 +1,52 @@
+import { SectionAdhesion } from "@/components/sections/Sectionadhesion";
+import { SectionCommunaute } from "@/components/sections/Sectioncommunaute";
+import { SectionEquipe } from "@/components/sections/Sectionequipe";
+import { SectionEspace } from "@/components/sections/Sectionespace";
+import { SectionEvenements } from "@/components/sections/Sectionevenements";
+import { SectionHero } from "@/components/sections/Sectionhero";
+import { SectionInterstitiel } from "@/components/sections/Sectioninterstitiel";
+import { SectionMission } from "@/components/sections/Sectionmission";
+import { SectionPartenaires } from "@/components/sections/Sectionpartenaires";
+import { SectionRessources } from "@/components/sections/Sectionressources";
+import { SectionStorytelling } from "@/components/sections/Sectionstorytelling";
+
 // src/app/page.tsx
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-[#edeae4] mb-4">
-          AKORI
-        </h1>
-        <p className="text-[#7a7570]">Setup en cours — Section 3</p>
-      </div>
+    <main className="block">
+     
+      {/* Section 1 */}
+      <SectionHero />
+
+      {/* Section 2 */}
+      <SectionMission />
+
+      {/* Section 3 */}
+      <SectionStorytelling />
+
+      {/* Section 4 */}
+      <SectionPartenaires />
+
+      {/* Section 5 */}
+      <SectionInterstitiel />
+
+      {/* Section 6 */}
+      <SectionEvenements />
+
+      {/* Section 7 */}
+      <SectionAdhesion />
+
+      {/* Section 8 */}
+      <SectionRessources />
+
+      {/* Section 9 */}
+      <SectionEspace />
+
+      {/* Section 10 */}
+      <SectionEquipe />
+
+      {/* Section 11 */}
+      <SectionCommunaute />
     </main>
   )
 }
