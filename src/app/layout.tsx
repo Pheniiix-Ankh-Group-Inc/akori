@@ -1,13 +1,23 @@
-// src/app/layout.tsx
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
+import type { Metadata } from "next"
+import { Source_Serif_4, Inter } from "next/font/google"
+import { Header }  from "@/components/sections/header"
+import { Footer } from "@/components/sections/Footer"
+import { ScrollInit } from "@/components/ui/ScrollInit"
+
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["300", "400", "500", "600"],
-})
+  variable: "--font-inter",
+  display: "swap"
+});
+
+const serif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap"
+});
+
 
 export const metadata: Metadata = {
   title: {
@@ -24,8 +34,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr" className={inter.variable}>
-      <body className={inter.className}>{children}</body>
+    <html lang="fr" className={`${serif.variable} ${inter.variable}`}>
+      
+      <body>
+        <ScrollInit />
+        <Header />
+        {children}
+        <Footer />
+        </body>
     </html>
   )
 }

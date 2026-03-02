@@ -1,0 +1,191 @@
+"use client"
+
+import { useEffect, useRef } from "react"
+import { Button } from "@/components/ui/Button"
+
+/**
+ * SectionCommunaute — Section 11
+ * Photo pleine largeur + overlay.
+ * Newsletter form + liens sociaux.
+ * Identique au #communaute du HTML v3.
+ *
+ * → Remplacer le gradient par backgroundImage: "url('/event-photo.jpg')"
+ */
+
+const SOCIAL_LINKS = [
+  { label: "💬 Discord",   href: "#" },
+  { label: "𝕏 Twitter",   href: "#" },
+  { label: "in LinkedIn",  href: "#" },
+  { label: "✈️ Telegram", href: "#" },
+]
+
+export function SectionCommunaute() {
+  const bgRef   = useRef<HTMLDivElement>(null)
+  const wrapRef = useRef<HTMLElement>(null)
+
+  // Parallax lent
+  useEffect(() => {
+    const bg   = bgRef.current
+    const wrap = wrapRef.current
+    if (!bg || !wrap) return
+
+    const onScroll = () => {
+      const rect   = wrap.getBoundingClientRect()
+      const center = rect.top + rect.height / 2 - window.innerHeight / 2
+      bg.style.transform = `translateY(${center * 0.18}px)`
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  return (
+    <section
+      ref={wrapRef}
+      id="communaute"
+      style={{
+        position: "relative",
+        padding: "var(--pad) 0",
+        overflow: "hidden",
+      }}
+    >
+      {/* ── Photo background + overlay ── */}
+      <div
+        ref={bgRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          /* ↓ PRODUCTION : backgroundImage: "url('/event-photo.jpg')" */
+          background:
+            "linear-gradient(135deg, #0c0a07 0%, #12100d 50%, #0c0c0b 100%)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(12,12,12,0.88)",
+          }}
+        />
+      </div>
+
+      {/* ── Contenu centré ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          maxWidth: "680px",
+          margin: "0 auto",
+          textAlign: "center",
+          padding: "0 3rem",
+        }}
+      >
+        <span
+          data-reveal
+          style={{
+            display: "block",
+            fontSize: "0.68rem",
+            fontWeight: 500,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "var(--accent)",
+            marginBottom: "1.5rem",
+          }}
+        >
+          Rejoindre le mouvement
+        </span>
+
+        <h2
+          data-reveal
+          data-delay="1"
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontWeight: 200,
+            color: "var(--blanc)",
+            lineHeight: 1.08,
+            letterSpacing: "-0.025em",
+            fontSize: "clamp(2.8rem, 5vw, 5.5rem)",
+            marginBottom: "1.5rem",
+          }}
+        >
+          Le futur s'écrit<br />
+          <em style={{ fontStyle: "italic", fontWeight: 200 }}>maintenant.</em>
+        </h2>
+
+        <p
+          data-reveal
+          data-delay="2"
+          style={{
+            fontSize: "1.05rem",
+            color: "var(--texte-2)",
+            fontWeight: 300,
+            lineHeight: 1.8,
+            maxWidth: "500px",
+            margin: "0 auto 3rem",
+          }}
+        >
+          Recevez les analyses, actualités et invitations en avant-première.
+          Rejoignez plus de 500 professionnels qui construisent l'économie de demain.
+        </p>
+
+        {/* Newsletter form */}
+        <div
+          data-reveal
+          data-delay="3"
+          style={{
+            display: "flex",
+            gap: "0.75rem",
+            justifyContent: "center",
+            maxWidth: "420px",
+            margin: "0 auto 3rem",
+          }}
+        >
+          <input
+            type="email"
+            placeholder="votre@email.com"
+            style={{
+              flex: 1,
+              padding: "0.8rem 1.4rem",
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid var(--border)",
+              borderRadius: "100px",
+              color: "var(--blanc)",
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.88rem",
+              outline: "none",
+            }}
+            onFocus={(e) =>
+              ((e.target as HTMLInputElement).style.borderColor =
+                "rgba(255,255,255,0.22)")
+            }
+            onBlur={(e) =>
+              ((e.target as HTMLInputElement).style.borderColor = "var(--border)")
+            }
+          />
+          <Button variant="white" href="#">S'inscrire</Button>
+        </div>
+
+        {/* Réseaux sociaux */}
+        <div
+          data-reveal
+          data-delay="4"
+          style={{
+            display: "flex",
+            gap: "0.75rem",
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          {SOCIAL_LINKS.map(({ label, href }) => (
+            <Button key={label} variant="ghost" href={href}>
+              {label}
+            </Button>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
