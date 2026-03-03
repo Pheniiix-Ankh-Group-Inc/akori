@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/Button"
 
 /**
@@ -22,6 +22,9 @@ const SOCIAL_LINKS = [
 export function SectionCommunaute() {
   const bgRef   = useRef<HTMLDivElement>(null)
   const wrapRef = useRef<HTMLElement>(null)
+  const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [message, setMessage] = useState("")
 
   // Parallax lent
   useEffect(() => {
@@ -39,6 +42,37 @@ export function SectionCommunaute() {
     onScroll()
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+
+  // Newsletter form submit
+  async function handleSubmit() {
+    if(!email || status === "loading") return
+
+    setStatus("loading")
+    setMessage("")
+
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+
+
+      const data = await res.json()
+      if (data.success) {
+        setStatus("success")
+        setMessage("Inscription confirmée. Verifiez votre boîte mail !")
+      } else {
+        setStatus("error")
+        setMessage(data.message || "Une erreur est survenue.")
+      }
+    } catch (err) {
+      setStatus("error")
+      setMessage("Erreur réseau. Reessayez plus tard.")
+      console.error("[Newsletter] request error:", err)
+    }
+  }
 
   return (
     <section
@@ -132,6 +166,10 @@ export function SectionCommunaute() {
         </p>
 
         {/* Newsletter form */}
+        <div>  
+          {status === "success" ? (
+            <p style={{ color: "var(--accent)", fontWeight: 500 }}>{message}</p>
+          ) : (
         <div
           data-reveal
           data-delay="3"
@@ -145,7 +183,8 @@ export function SectionCommunaute() {
         >
           <input
             type="email"
-            placeholder="votre@email.com"
+            placeholder="Votre adresse email"
+            value={email}
             style={{
               flex: 1,
               padding: "0.8rem 1.4rem",
@@ -164,9 +203,18 @@ export function SectionCommunaute() {
             onBlur={(e) =>
               ((e.target as HTMLInputElement).style.borderColor = "var(--border)")
             }
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           />
-          <Button variant="white" href="#">S'inscrire</Button>
+          <Button variant="white" onClick={handleSubmit}>
+            {status === "loading" ? "Envoi en cours..." : "S'inscrire"}
+          </Button>
         </div>
+          )}
+          {status === "error" && (
+            <p style={{ color: "var(--error)", fontWeight: 500 }}>{message}</p>
+          )}
+         </div>
 
         {/* Réseaux sociaux */}
         <div
