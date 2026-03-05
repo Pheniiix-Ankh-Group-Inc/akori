@@ -1,73 +1,75 @@
-"use client";
+"use client"
 
-/**
- * SectionEquipe — Section 10
- * 3 cartes fondateurs en tableau avec séparateurs.
- */
+import type { MembreEquipe } from "@/types"
+import { urlFor } from "@/sanity/lib/image"
 
-const FOUNDERS = [
-  {
-    initials: "XY",
-    name:     "[Prénom Nom]",
-    role:     "Co-fondateur · CEO",
-    bio:      "Entrepreneur et expert blockchain depuis [X] ans. Sa vision : construire l'infrastructure économique et numérique de la diaspora africaine mondiale.",
-  },
-  {
-    initials: "AB",
-    name:     "[Prénom Nom]",
-    role:     "Co-fondatrice · CTO",
-    bio:      "Développeuse full-stack et architecte blockchain. Ancienne de [Entreprise/Université]. Spécialiste des systèmes distribués et de la gouvernance on-chain.",
-  },
-  {
-    initials: "CD",
-    name:     "[Prénom Nom]",
-    role:     "Co-fondateur · Stratégie",
-    bio:      "Expert en gouvernance et politiques publiques numériques. Conseil auprès de gouvernements et d'institutions sur la réglementation blockchain.",
-  },
-]
+interface Props {
+  equipe: MembreEquipe[] | null
+}
 
-export function SectionEquipe() {
+export function SectionEquipe({ equipe }: Props) {
+  const data = equipe ?? []
+
   return (
-    <section id="equipe" className="section">
-      {/* En-tête */}
-      <div style={{ padding: "0 3rem", marginBottom: "4rem" }}>
-        <span className="label" data-reveal>
-          À propos
-        </span>
+    <section
+      id="equipe"
+      style={{ padding: "var(--pad) 0", background: "var(--bg)" }}
+    >
+      {/* Top */}
+      <div style={{ padding: "0 3rem", marginBottom: "5rem" }}>
+        <span className="label" data-reveal>Les fondateurs</span>
         <h2 className="heading-md" data-reveal data-delay="1">
-          L'équipe{" "}
-          <em className="text-italic">fondatrice</em>
+          L'équipe <em className="text-italic">fondatrice</em>
         </h2>
       </div>
 
-      {/* Tableau fondateurs */}
-      <div className="team-grid">
-        {FOUNDERS.map(({ initials, name, role, bio }, i) => (
+      {/* Grille */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${Math.min(data.length, 3)}, 1fr)`,
+          borderTop: "1px solid var(--border)",
+          borderLeft: "1px solid var(--border)",
+          margin: "0 3rem",
+        }}
+        className="team-grid"
+      >
+        {data.length === 0 ? (
+          <div style={{ padding: "3rem", borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+            <p style={{ fontSize: "0.86rem", color: "var(--texte)" }}>Aucun membre.</p>
+          </div>
+        ) : data.map((membre, i) => (
           <div
-            key={initials}
-            className="team-card"
+            key={membre._id}
             data-reveal
             data-delay={String(i + 1)}
+            className="team-card"
           >
             {/* Avatar */}
-            <div className="team-avatar">{initials}</div>
+            <div className="team-avatar">
+              {membre.photo ? (
+                <img
+                  src={urlFor(membre.photo).width(64).height(64).url()}
+                  alt={membre.nom}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+                />
+              ) : (
+                membre.initiales ?? membre.nom.slice(0, 2).toUpperCase()
+              )}
+            </div>
 
-            {/* Nom */}
-            <div className="team-name">{name}</div>
-
-            {/* Rôle */}
-            <div className="team-role">{role}</div>
-
-            {/* Bio */}
-            <p className="team-bio">{bio}</p>
+            <div className="team-name">{membre.nom}</div>
+            <div className="team-role">{membre.role}</div>
+            <p className="team-bio">{membre.bio}</p>
 
             {/* Liens sociaux */}
             <div className="team-social">
-              {["in", "𝕏"].map((icon) => (
-                <a key={icon} href="#" className="team-social-link">
-                  {icon}
-                </a>
-              ))}
+              {membre.linkedin && (
+                <a href={membre.linkedin} target="_blank" rel="noopener noreferrer" className="team-social-link">in</a>
+              )}
+              {membre.twitter && (
+                <a href={membre.twitter} target="_blank" rel="noopener noreferrer" className="team-social-link">𝕏</a>
+              )}
             </div>
           </div>
         ))}
