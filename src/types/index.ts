@@ -20,6 +20,16 @@ export const SECTORS = [
   "Autre",
 ] as const
 
+export type EvenementType = "conference" | "webinar" | "hackathon" | "workshop" | "networking"
+
+export const EVENEMENT_TYPE_LABELS: Record<EvenementType, string> = {
+  conference: "Conférence",
+  webinar:    "Webinar",
+  hackathon:  "Hackathon",
+  workshop:   "Workshop",
+  networking: "Networking",
+}
+
 export type Sector = (typeof SECTORS)[number]
 
 export type PartnerType = "entreprise" | "institution" | "état" | "université" | "média"
@@ -48,4 +58,49 @@ export interface Profile {
   onboarding_done: boolean
   created_at: string
   updated_at: string
+}
+
+// Sanity types
+export interface Evenement {
+  _id:         string
+  titre:       string
+  type:        EvenementType
+  date:        string
+  lieu:        string
+  description: string
+  prix:        string
+  lumaUrl?:    string
+  featured:    boolean
+  image?:      { asset: { _ref: string } }
+}
+
+export interface Ressource {
+  _id:          string
+  titre:        string
+  categorie:    string
+  extrait:      string
+  auteur:       string
+  tempsLecture: number
+  featured:     boolean
+  publishedAt:  string
+}
+
+export interface Partenaire {
+  _id:         string
+  nom:         string
+  code:        string
+  type:        string
+  description: string
+  logo?:       { asset: { _ref: string } }
+}
+
+export interface MembreEquipe {
+  _id:       string
+  nom:       string
+  initiales: string
+  role:      string
+  bio:       string
+  linkedin?: string
+  twitter?:  string
+  photo?:    { asset: { _ref: string } }
 }

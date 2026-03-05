@@ -20,6 +20,15 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 - Section 11 — Espace membre
 
 ---
+## [0.2.0] — 2026-04-05
+
+
+### Ajouté
+- Configuration better-auth
+- Configuration de supabase
+- Configuration Brevo
+- Configuration Sanity
+
 
 ## [0.2.0] — 2026-03-02
 

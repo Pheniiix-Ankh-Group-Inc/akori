@@ -38,9 +38,7 @@ export default function RootLayout({
       
       <body>
         <ScrollInit />
-        <Header />
         {children}
-        <Footer />
         </body>
     </html>
   )
