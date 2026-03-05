@@ -113,9 +113,11 @@ export default function ConnexionPage() {
             </p>
           )}
 
-          <Button variant="white" onClick={handleEmail} style={{ width: "100%", justifyContent: "center" }}>
-            {loading ? "Connexion..." : "Se connecter"}
-          </Button>
+          <div style={{ width: "100%" }}>
+  <Button variant="white" onClick={handleEmail}>
+    {loading ? "Connexion..." : "Se connecter"}
+  </Button>
+</div>
 
           <p style={{ textAlign: "center", fontSize: "0.78rem", color: "var(--texte)", marginTop: "1.5rem" }}>
             Pas encore membre ?{" "}

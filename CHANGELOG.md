@@ -30,6 +30,25 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 - Configuration Sanity
 
 
+
+## [0.2.0] — 2026-04-05
+
+
+### Ajouté
+- Fix build error
+
+
+
+## [0.2.0] — 2026-04-05
+
+
+### Ajouté
+- Configuration better-auth
+- Configuration de supabase
+- Configuration Brevo
+- Configuration Sanity
+
+
 ## [0.2.0] — 2026-03-02
 
 
