@@ -20,6 +20,20 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 - Section 11 — Espace membre
 
 ---
+
+
+## [0.3.0] — 2026-04-07
+
+
+### Ajouté
+- Add dasbord for member.
+- Add Loging page.
+- Add Register page.
+- Fix functionality Middleware
+- Upgrade Globbal css
+
+
+
 ## [0.2.0] — 2026-04-05
 
 
