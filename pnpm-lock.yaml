@@ -50,6 +50,9 @@ importers:
       pg:
         specifier: ^8.20.0
         version: 8.20.0
+      pnpm:
+        specifier: ^10.31.0
+        version: 10.31.0
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -5105,6 +5108,11 @@ packages:
   pluralize-esm@9.0.5:
     resolution: {integrity: sha512-Kb2dcpMsIutFw2hYrN0EhsAXOUJTd6FVMIxvNAkZCMQLVt9NGZqQczvGpYDxNWCZeCWLHUPxQIBudWzt1h7VVA==}
     engines: {node: '>=14.0.0'}
+
+  pnpm@10.31.0:
+    resolution: {integrity: sha512-45JziL+qgHjOt5t0j/wegnToTXUWPme8IuBsDTrtQ90VMVHL8R1/gwH/SsuYxovcXK32mJUygB/6/js+SmPCaA==}
+    engines: {node: '>=18.12'}
+    hasBin: true
 
   polished@4.3.1:
     resolution: {integrity: sha512-OBatVyC/N7SCW/FaDHrSd+vn0o5cS855TOmYi4OkdWUMSJCET/xip//ch8xGUvtr3i44X9LVyWwQlRMTN3pwSA==}
@@ -11876,6 +11884,8 @@ snapshots:
       - react
 
   pluralize-esm@9.0.5: {}
+
+  pnpm@10.31.0: {}
 
   polished@4.3.1:
     dependencies:
