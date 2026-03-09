@@ -92,7 +92,7 @@ export function Header() {
 
         {/* ── Actions desktop ── */}
         <div className="hdr-actions" style={{ display: "flex", gap: "0.75rem" }}>
-          <Button variant="ghost" href="/connexion">Se connecter</Button>
+          <Button variant="ghost" href="/onboarding">Se connecter</Button>
           <Button variant="white" href="#adhesion">Rejoindre</Button>
         </div>
 
@@ -188,7 +188,7 @@ export function Header() {
             ))}
           </ul>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            <Button variant="ghost" href="/connexion">Se connecter</Button>
+            <Button variant="ghost" href="/onboarding">Se connecter</Button>
             <Button variant="white" href="#adhesion">Rejoindre</Button>
           </div>
         </div>

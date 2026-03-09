@@ -1,56 +1,52 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
-
-
+import { NextRequest, NextResponse } from "next/server"
+import { getSessionCookie } from "better-auth/cookies"
 
 const PROTECTED_PATHS = [
+  "/dashboard",
   "/directory",
-  "/dashbord",
   "/messaging",
-  "/profil",
+  "/profile",
   "/settings",
-  "/onbiording"
+  "/onboarding",
 ]
 
-const AUTH_ROUTE = [
+const AUTH_ROUTES = [
   "/login",
   "/register",
 ]
 
-
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const session =  getSessionCookie(request);
+  const { pathname } = request.nextUrl
+  const session = getSessionCookie(request)
 
-  const isProtected = PROTECTED_PATHS.some((path) => pathname.startsWith(path));
-  const isAuthRoute = AUTH_ROUTE.some((path) => pathname.startsWith(path));
+  const isProtected = PROTECTED_PATHS.some((path) => pathname.startsWith(path))
+  const isAuthRoute = AUTH_ROUTES.some((path) => pathname.startsWith(path))
 
-  if ( isProtected && !session){
-    const url = request.nextUrl.clone();
-    url.pathname =  "/login";
-    url.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(url);
+  if (isProtected && !session) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/login"
+    url.searchParams.set("redirect", pathname)
+    return NextResponse.redirect(url)
   }
 
-  if (isAuthRoute && session) { 
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+  if (isAuthRoute && session) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/dashboard"
+    return NextResponse.redirect(url)
   }
 
-  return NextResponse.next();
+  return NextResponse.next()
 }
 
 export const config = {
   matcher: [
+    "/dashboard/:path*",
     "/directory/:path*",
-    "/dashbord/:path*",
     "/messaging/:path*",
-    "/profil/:path*",
+    "/profile/:path*",
     "/settings/:path*",
-    "/onbiording/:path*",
+    "/onboarding/:path*",
     "/login",
     "/register",
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ]
+  ],
 }

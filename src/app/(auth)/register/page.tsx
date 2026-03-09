@@ -18,27 +18,32 @@ export default function RegisterPage() {
     await signIn.social({ provider: "google", callbackURL: "/onboarding" })
   }
 
-  async function handleRegister() {
-    if (!firstName || !email || !password) {
-      setError("Please fill in all required fields.")
-      return
-    }
-    setLoading(true)
-    setError("")
-    const { error } = await signUp.email({
-      name:        `${firstName} ${lastName}`.trim(),
-      email,
-      password,
-      callbackURL: "/onboarding",
-    })
-    if (error) {
-      setError(error.message ?? "Registration failed.")
-      setLoading(false)
-    }
+ async function handleRegister() {
+  if (!firstName || !email || !password) {
+    setError("Please fill in all required fields.")
+    return
+  }
+  setLoading(true)
+  setError("")
+
+  const { error } = await signUp.email({
+    name:     `${firstName} ${lastName}`.trim(),
+    email,
+    password,
+  })
+
+  if (error) {
+    setError(error.message ?? "Registration failed.")
+    setLoading(false)
+    return
   }
 
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  window.location.href = "/onboarding"
+}
+
   return (
-    <div className="auth-page">
+    <div className="auth-page"> 
       <div className="auth-card">
 
         <Link href="/" className="auth-logo">

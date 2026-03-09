@@ -13,10 +13,11 @@ import { Button } from "@/components/ui/Button"
  */
 
 const SOCIAL_LINKS = [
-  { label: "💬 Discord",   href: "#" },
-  { label: "𝕏 Twitter",   href: "#" },
+  // { label: "💬 Discord",   href: "#" },
+  // { label: "𝕏 Twitter",   href: "#" },
   { label: "in LinkedIn",  href: "#" },
-  { label: "✈️ Telegram", href: "#" },
+  // { label: "✈️ Telegram", href: "#" },
+  { label: "📸 Instagram", href: "#" },
 ]
 
 export function SectionCommunaute() {

@@ -256,44 +256,6 @@ nav a:hover { color: var(--blanc); }
 .mt-4 { margin-top: var(--space-lg); }
 .mt-5 { margin-top: var(--space-xl); }
 
-/* ═══════════════════════════════════════════════════════
-   COMPOSANTS RÉUTILISABLES — Grilles
-═══════════════════════════════════════════════════════ */
-
-/* .grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-
-.grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-}
-
-.grid-table {
-  display: grid;
-  border-top: 1px solid var(--border);
-  border-left: 1px solid var(--border);
-}
-
-.grid-cell {
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 3rem;
-  transition: background 0.3s;
-}
-
-.grid-cell:hover {
-  background: var(--bg-2);
-} */
 
 /* ═══════════════════════════════════════════════════════
    COMPOSANTS RÉUTILISABLES — Sections
