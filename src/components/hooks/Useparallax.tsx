@@ -11,35 +11,32 @@ import { useEffect } from "react"
  */
 export function useParallax() {
   useEffect(() => {
-    type ParallaxItem = {
-      el: HTMLElement
-      wrap: HTMLElement
-      speed: number
-    }
-
-    const items: ParallaxItem[] = []
-
-    document.querySelectorAll<HTMLElement>("[data-parallax]").forEach((wrap) => {
-      const inner = wrap.querySelector<HTMLElement>(".story-photo-inner")
-      if (inner) items.push({ el: inner, wrap, speed: 0.35 })
-    })
-
-    document.querySelectorAll<HTMLElement>("[data-parallax-slow]").forEach((el) => {
-      const wrap = el.parentElement as HTMLElement
-      items.push({ el, wrap, speed: 0.18 })
-    })
-
+    let animationId: number
+    
     const onScroll = () => {
-      items.forEach(({ el, wrap, speed }) => {
-        const rect   = wrap.getBoundingClientRect()
-        const center = rect.top + rect.height / 2 - window.innerHeight / 2
-        el.style.transform = `translateY(${center * speed}px)`
+      cancelAnimationFrame(animationId)
+      animationId = requestAnimationFrame(() => {
+        items.forEach(({ el, wrap, speed }) => {
+          const rect = wrap.getBoundingClientRect()
+          
+          
+          if (window.innerWidth < 768) {
+            el.style.transform = "translateY(0px)"
+            return
+          }
+          
+          const center = rect.top + rect.height / 2 - window.innerHeight / 2
+          el.style.transform = `translateY(${center * speed}px)`
+        })
       })
     }
 
     window.addEventListener("scroll", onScroll, { passive: true })
     onScroll()
 
-    return () => window.removeEventListener("scroll", onScroll)
+    return () => {
+      cancelAnimationFrame(animationId)
+      window.removeEventListener("scroll", onScroll)
+    }
   }, [])
 }

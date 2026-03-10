@@ -125,3 +125,23 @@ export async function sendTransactional({
     return { success: false, message: "Erreur serveur." }
   }
 }
+
+interface ApiError {
+  code: string
+  message: string
+  statusCode: number
+  timestamp: string
+}
+
+class ApiErrorHandler {
+  static handle(error: unknown): ApiError {
+    if (error instanceof Error) {
+      return {
+        code: "INTERNAL_ERROR",
+        message: error.message,
+        statusCode: 500,
+        timestamp: new Date().toISOString(),
+      }
+    }
+  }
+}

@@ -30,10 +30,12 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
         </nav>
 
         <div className="member-sidebar-footer">
-          <Link href="/api/auth/sign-out" className="member-nav-link">
-            <span className="member-nav-icon">→</span>
-            Sign out
-          </Link>
+          <button 
+            onClick={() => signOut({ redirect: "/" })}
+            className="member-nav-link"
+          >
+          Sign out
+        </button>
         </div>
       </aside>
 

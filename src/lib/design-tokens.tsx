@@ -22,10 +22,10 @@ export const FONTS = {
 } as const
 
 export const NAV_LINKS = [
-  { label: 'Mission',      href: '#mission'      },
-  { label: 'Partenaires',  href: '#partenaires'  },
-  { label: 'Événements',   href: '#evenements'   },
-  { label: 'Ressources',   href: '#ressources'   },
-  { label: 'Adhésion',     href: '#adhesion'     },
-  { label: 'À propos',     href: '#equipe'       },
+  { label: 'Mission',    href: '/#mission'    },
+  { label: 'Partners',   href: '/#partners'   },
+  { label: 'Events',     href: '/#events'     },
+  { label: 'Resources',  href: '/#resources'  },
+  { label: 'Membership', href: '/#membership' },
+  { label: 'About',      href: '/#about'      },
 ] as const

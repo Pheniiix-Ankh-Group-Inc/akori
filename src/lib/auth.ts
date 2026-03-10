@@ -2,27 +2,31 @@ import { betterAuth } from "better-auth"
 import { nextCookies } from "better-auth/next-js"
 import { Pool } from "pg"
 
+
+const requiredEnvs = [
+  "BETTER_AUTH_SECRET",
+  "SUPABASE_DATABASE_URL",
+  "NEXT_PUBLIC_APP_URL"
+]
+
+requiredEnvs.forEach(env => {
+  if (!process.env[env]) {
+    throw new Error(`MISSING ENV: ${env}`)
+  }
+})
+
 export const auth = betterAuth({
-  // Configuration de base - OBLIGATOIRE d'après la doc officielle
-  appName: "Akori",
+  appName: "AKORI",
   baseURL:
     process.env.BETTER_AUTH_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
     "http://localhost:3000",
   secret: process.env.BETTER_AUTH_SECRET!,
-  basePath: "/api/auth", // Défaut mais explicite
+  basePath: "/api/auth",
+  databaseUrl: process.env.SUPABASE_DATABASE_URL!,
 
-  // Configuration de la base de données
-  database: new Pool({
-    connectionString: process.env.SUPABASE_DATABASE_URL!,
-    ssl:
-      process.env.NODE_ENV === "production"
-        ? { rejectUnauthorized: true }
-        : { rejectUnauthorized: false },
-  }),
-
-  // Configuration de sécurité - Origins de confiance
-  trustedOrigins:
+  
+  trustedOrigins: 
     process.env.NODE_ENV === "production"
       ? [process.env.NEXT_PUBLIC_APP_URL || ""]
       : [
@@ -31,41 +35,37 @@ export const auth = betterAuth({
           "http://127.0.0.1:3000",
         ],
 
-  // Configuration des sessions
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 jours (défaut)
-    updateAge: 60 * 60 * 24, // Refresh quotidien
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24,      // Refresh daily
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60, // 5 minutes de cache
-      strategy: "compact", // Optimisé pour la performance
+      maxAge: 60 * 60,  // 1 hour
+      strategy: "compact",
     },
   },
 
-  // Rate limiting - Activé par défaut en production
+  
   rateLimit: {
-    enabled: process.env.NODE_ENV === "production",
-    window: 15 * 60, // 15 minutes
-    max: 100, // Max 100 requêtes par fenêtre de temps
+    enabled: true,
+    window: 15 * 60,
+    max: process.env.NODE_ENV === "production" ? 5 : 100,
   },
 
-  // Configuration avancée - Sécurité des cookies
+  
   advanced: {
     useSecureCookies: process.env.NODE_ENV === "production",
     disableCSRFCheck: false,
     disableOriginCheck: false,
-    crossSubDomainCookies: {
-      enabled: false, // À activer seulement si domaines multiples
-    },
   },
 
-  // Logging - Désactiver les logs sensibles en prod
+  
   logger: {
     disabled: process.env.NODE_ENV === "production",
     level: process.env.NODE_ENV === "production" ? "warn" : "debug",
   },
 
-  // Providers sociaux
+  
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -73,7 +73,7 @@ export const auth = betterAuth({
     },
   },
 
-  // Email et mot de passe
+  
   emailAndPassword: {
     enabled: true,
     disableSignUp: false,
@@ -83,7 +83,6 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
 
-  // Plugins
   plugins: [nextCookies()],
 })
 

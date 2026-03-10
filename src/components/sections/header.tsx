@@ -1,214 +1,129 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { NAV_LINKS } from "@/lib/design-tokens"
 
-/**
- * Header — Section 0
- * Fixe, transparent sur le hero.
- * Opaque + backdrop-blur au scroll > 30px.
- * Identique au #hdr / .scrolled du HTML v3.
- */
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const burgerRef = useRef<HTMLButtonElement>(null)
 
+  // ✅ Verrouiller le scroll du body via classe CSS
+  useEffect(() => {
+    if (menuOpen) {
+      document.documentElement.style.overflow = "hidden"
+    } else {
+      document.documentElement.style.overflow = ""
+    }
+    return () => {
+      document.documentElement.style.overflow = ""
+    }
+  }, [menuOpen])
+
+  
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && menuOpen) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener("keydown", handleEscape)
+    return () => document.removeEventListener("keydown", handleEscape)
+  }, [menuOpen])
+
+ 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (
+        menuOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(target) &&
+        !burgerRef.current?.contains(target)
+      ) {
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
+  }, [menuOpen])
+
+  
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 30)
     window.addEventListener("scroll", handler, { passive: true })
     return () => window.removeEventListener("scroll", handler)
   }, [])
 
-  const navLinkStyle: React.CSSProperties = {
-    fontSize: "0.83rem",
-    fontWeight: 400,
-    color: "rgba(237,234,228,0.7)",
-    transition: "color 0.2s",
-    cursor: "pointer",
+  
+  const handleNavClick = () => {
+    setMenuOpen(false)
   }
 
   return (
     <>
-      <header
-        id="hdr"
-        style={{
-          position: "fixed",
-          inset: "0 0 auto",
-          zIndex: 500,
-          height: "64px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: scrolled ? "rgba(12,12,12,0.88)" : "rgba(12,12,12,0)",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
-          borderBottom: scrolled
-            ? "1px solid rgba(255,255,255,0.07)"
-            : "1px solid transparent",
-          transition: "background 0.5s, border-bottom 0.5s",
-          padding: "0 3rem",
-        }}
-      >
-        {/* ── Logo ── */}
-        <Link
-          href="/"
-          style={{
-            fontFamily: "var(--font-serif)",
-            fontSize: "1.25rem",
-            fontWeight: 700,
-            color: "var(--blanc)",
-            letterSpacing: "-0.01em",
-          }}
-        >
-          Afro
-          <em style={{ fontStyle: "italic", fontWeight: 200, color: "var(--accent)" }}>
-            Chain
-          </em>
+      <header id="hdr" className={scrolled ? "scrolled" : ""}>
+        <Link href="/" className="logo">
+          Ako<em>ri</em>
         </Link>
 
-        {/* ── Nav desktop (masquée sur mobile via CSS) ── */}
         <nav className="hdr-nav">
-          <ul style={{ display: "flex", gap: "2.5rem", listStyle: "none" }}>
+          <ul>
             {NAV_LINKS.map(({ label, href }) => (
               <li key={href}>
-                <a
-                  href={href}
-                  style={navLinkStyle}
-                  onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLElement).style.color = "var(--blanc)")
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.currentTarget as HTMLElement).style.color = "rgba(237,234,228,0.7)")
-                  }
-                >
-                  {label}
-                </a>
+                <Link href={href}>{label}</Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        {/* ── Actions desktop ── */}
-        <div className="hdr-actions" style={{ display: "flex", gap: "0.75rem" }}>
-          <Button variant="ghost" href="/connexion">Se connecter</Button>
-          <Button variant="white" href="#adhesion">Rejoindre</Button>
+        <div className="hdr-actions">
+          <Button variant="ghost" href="/login">Sign in</Button>
+          <Button variant="white" href="/register">Join</Button>
         </div>
 
-        {/* ── Burger mobile ── */}
         <button
-          className="hdr-burger"
-          aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          ref={burgerRef}
+          className={`hdr-burger${menuOpen ? " open" : ""}`}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((v) => !v)}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 0,
-            width: "32px",
-            height: "32px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: "5px",
-          }}
+          onClick={() => setMenuOpen(!menuOpen)}
         >
-          <span
-            style={{
-              display: "block",
-              height: "1px",
-              width: "24px",
-              background: "var(--blanc)",
-              transform: menuOpen ? "rotate(45deg) translateY(6px)" : "none",
-              transition: "transform 0.3s var(--ease)",
-            }}
-          />
-          <span
-            style={{
-              display: "block",
-              height: "1px",
-              width: "16px",
-              background: "var(--blanc)",
-              opacity: menuOpen ? 0 : 1,
-              transition: "opacity 0.2s",
-            }}
-          />
-          <span
-            style={{
-              display: "block",
-              height: "1px",
-              width: "24px",
-              background: "var(--blanc)",
-              transform: menuOpen ? "rotate(-45deg) translateY(-6px)" : "none",
-              transition: "transform 0.3s var(--ease)",
-            }}
-          />
+          <span className="hdr-burger-line hdr-burger-line-1" />
+          <span className="hdr-burger-line hdr-burger-line-2" />
+          <span className="hdr-burger-line hdr-burger-line-3" />
         </button>
       </header>
 
-      {/* ── Menu mobile overlay ── */}
-      <div
-        className="hdr-mobile-menu"
-        style={{
-          position: "fixed",
-          top: "64px",
-          left: 0,
-          right: 0,
-          zIndex: 499,
-          background: "rgba(12,12,12,0.98)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderBottom: "1px solid var(--border)",
-          maxHeight: menuOpen ? "480px" : "0",
-          overflow: "hidden",
-          transition: "max-height 0.4s var(--ease), opacity 0.3s",
-          opacity: menuOpen ? 1 : 0,
-        }}
+      <div 
+        ref={menuRef}
+        className={`hdr-mobile-menu${menuOpen ? " open" : ""}`}
+        role="navigation"
+        aria-hidden={!menuOpen}
       >
-        <div style={{ padding: "1.5rem" }}>
-          <ul style={{ listStyle: "none", marginBottom: "1.5rem" }}>
+        <div className="hdr-mobile-menu-inner">
+          <ul>
             {NAV_LINKS.map(({ label, href }) => (
               <li key={href}>
-                <a
+                <Link
                   href={href}
-                  onClick={() => setMenuOpen(false)}
-                  style={{
-                    display: "block",
-                    padding: "0.85rem 0",
-                    fontSize: "0.9rem",
-                    color: "rgba(237,234,228,0.7)",
-                    borderBottom: "1px solid rgba(255,255,255,0.05)",
-                  }}
+                  className="hdr-mobile-nav-link"
+                  onClick={handleNavClick}
                 >
                   {label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            <Button variant="ghost" href="/connexion">Se connecter</Button>
-            <Button variant="white" href="#adhesion">Rejoindre</Button>
+          <div className="hdr-mobile-actions">
+            <Button variant="ghost" href="/login">Sign in</Button>
+            <Button variant="white" href="/register">Join</Button>
           </div>
         </div>
       </div>
-
-      {/* Styles responsive inline */}
-      <style>{`
-        @media (min-width: 769px) {
-          .hdr-nav     { display: block; }
-          .hdr-actions { display: flex !important; }
-          .hdr-burger  { display: none !important; }
-          .hdr-mobile-menu { display: none !important; }
-        }
-        @media (max-width: 768px) {
-          .hdr-nav     { display: none !important; }
-          .hdr-actions { display: none !important; }
-          .hdr-burger  { display: flex !important; }
-          #hdr         { padding: 0 1.5rem !important; }
-        }
-      `}</style>
     </>
   )
 }

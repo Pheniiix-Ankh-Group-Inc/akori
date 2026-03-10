@@ -13,7 +13,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="px-6 py-3 rounded-full bg-[#c4a46e] text-[#0c0c0c] font-semibold text-sm"
+        className="px-6 py-3  bg-[#c4a46e] text-[#0c0c0c] font-semibold text-sm"
       >
         Retour à l&apos;accueil
       </Link>

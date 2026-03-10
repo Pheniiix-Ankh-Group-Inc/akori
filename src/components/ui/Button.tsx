@@ -12,6 +12,9 @@ interface ButtonProps {
   className?: string
   children: React.ReactNode
   onClick?: () => void
+  disabled?: boolean
+  ariaLabel?: string
+  ariaPressed?: boolean
 }
 
 const variantStyles: Record<BtnVariant, string> = {
@@ -37,6 +40,9 @@ export function Button({
   className,
   children,
   onClick,
+  disabled,
+  ariaLabel,
+  ariaPressed,
 }: ButtonProps) {
   const cls = cn(base, variantStyles[variant], className)
 
@@ -52,7 +58,13 @@ export function Button({
   }
 
   return (
-    <button className={cls} onClick={onClick}>
+    <button 
+      className={cls} 
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      aria-pressed={ariaPressed}
+    >
       {children}
     </button>
   )

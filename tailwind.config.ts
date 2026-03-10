@@ -3,8 +3,6 @@ import type { Config } from "tailwindcss"
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
@@ -26,6 +24,16 @@ const config: Config = {
       },
       borderRadius: {
         "pill": "100px",
+      },
+      animation: {
+        "fade-in": "fadeIn 0.6s var(--ease) forwards",
+        "slide-up": "slideUp 0.6s var(--ease) forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
       },
     },
   },

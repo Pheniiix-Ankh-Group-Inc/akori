@@ -35,11 +35,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${serif.variable} ${inter.variable}`}>
-      
-      <body>
+      <body suppressHydrationWarning>
         <ScrollInit />
         {children}
-        </body>
+      </body>
     </html>
   )
 }

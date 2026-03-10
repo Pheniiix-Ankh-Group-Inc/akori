@@ -1,4 +1,9 @@
 import { sanityFetch } from "@/sanity/lib/live";
+import type { Metadata } from "next";
+import { Suspense } from "react"
+import ErrorBoundary from "@/components/ErrorBoundary"
+import { ErrorPage } from "@/components/ErrorPage"
+
 import {
   EVENEMENTS_QUERY,
   EVENEMENT_FEATURED_QUERY,
@@ -21,26 +26,65 @@ import { SectionPartenaires } from "@/components/sections/Sectionpartenaires";
 import { SectionRessources } from "@/components/sections/Sectionressources";
 import { SectionStorytelling } from "@/components/sections/Sectionstorytelling";
 
-// src/app/page.tsx
-export default async function HomePage() {
 
-const [
-  { data: evenements },
-  { data: evenementFeatured },
-  { data: ressources },
-  { data: partenaires },
-  { data: equipe },
-] = await Promise.all([
-  sanityFetch({ query: EVENEMENTS_QUERY }),
-  sanityFetch({ query: EVENEMENT_FEATURED_QUERY }),
-  sanityFetch({ query: RESSOURCES_QUERY }),
-  sanityFetch({ query: PARTENAIRES_QUERY }),
-  sanityFetch({ query: EQUIPE_QUERY }),
-])
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "AKORI — Plateforme blockchain des professionnels Caraïbéens",
+  description: "Réseau, événements et ressources exclusives pour la communauté",
+  openGraph: {
+    title: "AKORI - Réseau de professionnels noirs",
+    description: "Plateforme blockchain communautaire",
+    type: "website",
+    url: "https://akori.io",
+  },
+}
+
+export default async function HomePage() {
+  let evenements: Evenement[] = []
+  let evenementFeatured: Evenement | null = null
+  let ressources: Ressource[] = []
+  let partenaires: Partenaire[] = []
+  let equipe: MembreEquipe[] = []
+  let hasError = false
+
+  try {
+    const [
+      { data: ev },
+      { data: evFeatured },
+      { data: res },
+      { data: part },
+      { data: eq },
+    ] = await Promise.all([
+      sanityFetch({ query: EVENEMENTS_QUERY }),
+      sanityFetch({ query: EVENEMENT_FEATURED_QUERY }),
+      sanityFetch({ query: RESSOURCES_QUERY }),
+      sanityFetch({ query: PARTENAIRES_QUERY }),
+      sanityFetch({ query: EQUIPE_QUERY }),
+    ])
+
+    evenements = ev ?? []
+    evenementFeatured = evFeatured ?? null
+    ressources = res ?? []
+    partenaires = part ?? []
+    equipe = eq ?? []
+  } catch (error) {
+    console.error("Failed to fetch Sanity data:", error)
+    hasError = true
+  }
+
+  if (hasError) {
+    return (
+      <ErrorPage 
+        message="Impossible de charger les données"
+        code={500}
+        details="Nous rencontrons une erreur technique. Veuillez réessayer dans quelques instants."
+      />
+    )
+  }
 
   return (
     <main className="block">
-     
       {/* Section 1 */}
       <SectionHero />
 
@@ -51,28 +95,36 @@ const [
       <SectionStorytelling />
 
       {/* Section 4 */}
-      <SectionPartenaires partenaires={partenaires as Partenaire[]} />
+      <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des partenaires</div>}>
+        <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement partenaires...</div>}>
+          <SectionPartenaires partenaires={partenaires} />
+        </Suspense>
+      </ErrorBoundary>
 
       {/* Section 5 */}
       <SectionInterstitiel />
 
       {/* Section 6 */}
-      <SectionEvenements 
-        evenements={(evenements as Evenement[]) ?? []}
-        featured={(evenementFeatured as Evenement) ?? null}
-      />
+      <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des événements</div>}>
+        <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement événements...</div>}>
+          <SectionEvenements 
+            evenements={evenements}
+            featured={evenementFeatured}
+          />
+        </Suspense>
+      </ErrorBoundary>
 
       {/* Section 7 */}
       <SectionAdhesion />
 
       {/* Section 8 */}
-      <SectionRessources ressources={ressources as Ressource[]} />
+      <SectionRessources ressources={ressources} />
 
       {/* Section 9 */}
       <SectionEspace />
 
       {/* Section 10 */}
-      <SectionEquipe equipe={equipe as MembreEquipe[]} />
+      <SectionEquipe equipe={equipe} />
 
       {/* Section 11 */}
       <SectionCommunaute />
