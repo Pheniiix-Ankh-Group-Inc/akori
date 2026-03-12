@@ -12,6 +12,7 @@ import { useEffect } from "react"
 export function useParallax() {
   useEffect(() => {
     let animationId: number
+    let items: { el: HTMLElement; wrap: HTMLElement; speed: number }[] = [];
     
     const onScroll = () => {
       cancelAnimationFrame(animationId)

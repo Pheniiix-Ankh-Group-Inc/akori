@@ -56,9 +56,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   render(): ReactElement {
     if (this.state.hasError) {
       // Si fallback est une fonction, l'appeler avec l'erreur et la fonction retry
-      if (typeof this.props.fallback === "function") {
-        return this.props.fallback(this.state.error!, this.handleRetry)
-      }
+      // if (typeof this.props.fallback === "function") {
+      //   return this.props.fallback(this.state.error!, this.handleRetry)
+      // }
 
       // Si fallback est un ReactNode, l'afficher
       if (this.props.fallback) {
