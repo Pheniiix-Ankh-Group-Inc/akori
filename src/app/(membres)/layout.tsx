@@ -1,3 +1,6 @@
+"use client"
+
+import { signOut } from "@/lib/auth-client"
 import Link from "next/link"
 
 const NAV_ITEMS = [
@@ -16,7 +19,7 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
       <aside className="member-sidebar">
         <div className="member-sidebar-logo">
           <Link href="/" className="logo">
-            Ako<em>ri</em>
+            Anba<em>Chain</em>
           </Link>
         </div>
 
@@ -31,7 +34,7 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
 
         <div className="member-sidebar-footer">
           <button 
-            onClick={() => signOut({ redirect: "/" })}
+            onClick={() => signOut()}
             className="member-nav-link"
           >
           Sign out

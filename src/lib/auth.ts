@@ -16,7 +16,7 @@ requiredEnvs.forEach(env => {
 })
 
 export const auth = betterAuth({
-  appName: "AKORI",
+  appName: "AnbaChain",
   baseURL:
     process.env.BETTER_AUTH_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||

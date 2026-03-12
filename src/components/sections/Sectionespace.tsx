@@ -25,7 +25,7 @@ const FEATURES = [
   {
     n:     "04",
     title: "Tarifs préférentiels événements Lu.ma",
-    desc:  "Code membre appliqué automatiquement sur tous les événements AfroChain",
+    desc:  "Code membre appliqué automatiquement sur tous les événements AnbaChain",
   },
   {
     n:     "05",
@@ -110,7 +110,7 @@ export function SectionEspace() {
               }}
             >
               Un espace privé pour gérer votre profil, explorer le réseau et
-              accéder aux ressources exclusives AfroChain.
+              accéder aux ressources exclusives AnbaChain.
             </p>
 
             {/* Liste features */}
@@ -223,7 +223,7 @@ export function SectionEspace() {
                   padding: "0 0.75rem",
                 }}
               >
-                app.afrochain.io/dashboard
+                app.anbachain.io/dashboard
               </div>
             </div>
 

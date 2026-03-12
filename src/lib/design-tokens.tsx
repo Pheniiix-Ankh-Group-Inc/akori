@@ -1,5 +1,5 @@
 /**
- * AfroChain Design Tokens
+ * AnbaChain Design Tokens
  * Source of truth — correspondent exactement aux variables CSS du HTML v3
  */
 

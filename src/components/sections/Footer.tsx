@@ -72,7 +72,7 @@ export function Footer() {
               letterSpacing: "-0.01em",
             }}
           >
-            Afro<em style={{ fontStyle: "italic", fontWeight: 200, color: "var(--accent)" }}>Chain</em>
+            Anba<em style={{ fontStyle: "italic", fontWeight: 200, color: "var(--accent)" }}>Chain</em>
           </Link>
           <p style={{ fontSize: "0.83rem", color: "var(--texte)", maxWidth: "230px", lineHeight: 1.75 }}>
             Le réseau blockchain des professionnels noirs — réseautage, innovation et solutions au service de la communauté.
@@ -100,7 +100,7 @@ export function Footer() {
       </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "2rem", borderTop: "1px solid var(--border)", flexWrap: "wrap", gap: "1rem" }} className="footer-bottom">
-        <p style={{ fontSize: "0.76rem", color: "var(--texte)" }}>© 2026 AfroChain™ · Tous droits réservés</p>
+        <p style={{ fontSize: "0.76rem", color: "var(--texte)" }}>© 2026 AnbaChain™ · Tous droits réservés</p>
         <div style={{ display: "flex", gap: "1.5rem" }}>
           {["Confidentialité", "CGU", "Contact"].map((label) => (
             <a key={label} href="#" style={{ fontSize: "0.76rem", color: "var(--texte)", transition: "color 0.2s" }}

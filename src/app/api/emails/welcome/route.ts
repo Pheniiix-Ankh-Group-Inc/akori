@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     await sendTransactional({
       to: [{ email, name: firstName }],
-      subject: `Bienvenue ${firstName} — Votre espace AKORI est prêt`,
+      subject: `Bienvenue ${firstName} — Votre espace AnbaChain est prêt`,
       htmlContent: `
         <!DOCTYPE html>
         <html lang="fr">
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         <body style="background:#0c0c0c;color:#edeae4;font-family:Georgia,serif;padding:3rem;max-width:600px;margin:0 auto;">
           
           <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4a46e;margin-bottom:2rem;">
-            AKORI — Réseau blockchain
+            AnbaChain — Réseau blockchain
           </p>
 
           <h1 style="font-size:2.5rem;font-weight:200;letter-spacing:-0.03em;line-height:1.1;margin-bottom:1.5rem;">
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
             Bonjour ${firstName},
           </p>
           <p style="font-size:1rem;color:#aaa59e;line-height:1.8;margin-bottom:2rem;">
-            Votre compte AKORI a été créé avec succès. Vous avez accès au plan 
+            Votre compte AnbaChain a été créé avec succès. Vous avez accès au plan 
             <strong style="color:#edeae4;">${PLAN_LABELS[plan]}</strong>.
           </p>
 
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
           </a>
 
           <p style="font-size:0.75rem;color:#7a7570;border-top:1px solid rgba(255,255,255,0.07);padding-top:1.5rem;">
-            © 2026 AKORI™ · 
+            © 2026 AnbaChain™ · 
             <a href="${process.env.NEXT_PUBLIC_APP_URL}/confidentialite" style="color:#7a7570;">Confidentialité</a> · 
             <a href="${process.env.NEXT_PUBLIC_APP_URL}/desabonnement?email=${email}" style="color:#7a7570;">Se désabonner</a>
           </p>

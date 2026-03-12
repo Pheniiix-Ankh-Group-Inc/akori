@@ -94,8 +94,8 @@ export async function sendTransactional({
   try {
     const body: Record<string, unknown> = {
       sender: {
-        name:  process.env.BREVO_SENDER_NAME  ?? "AKORI",
-        email: process.env.BREVO_SENDER_EMAIL ?? "noreply@akori.io",
+        name:  process.env.BREVO_SENDER_NAME  ?? "AnbaChain",
+        email: process.env.BREVO_SENDER_EMAIL ?? "noreply@AnbaChain.io",
       },
       to,
       subject,
@@ -142,6 +142,12 @@ class ApiErrorHandler {
         statusCode: 500,
         timestamp: new Date().toISOString(),
       }
+    }
+    return {
+      code: "UNKNOWN_ERROR",
+      message: "Une erreur inconnue s'est produite",
+      statusCode: 500,
+      timestamp: new Date().toISOString(),
     }
   }
 }

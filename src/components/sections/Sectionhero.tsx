@@ -35,7 +35,7 @@ export function SectionHero() {
 
         {/* Sous-titre */}
         <p className="text-base max-w-[520px] mb-5" data-reveal data-delay="3">
-          AfroChain rassemble les professionnels noirs — entrepreneurs, développeurs,
+          AnbaChain rassemble les professionnels noirs — entrepreneurs, développeurs,
           analystes, professeurs, juristes, institutionnels — pour accélérer l'adoption
           de la blockchain et construire des solutions concrètes pour notre communauté.
         </p>

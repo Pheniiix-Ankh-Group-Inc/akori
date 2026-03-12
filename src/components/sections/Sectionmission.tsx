@@ -25,7 +25,7 @@ const PILLARS = [
   {
     n:     "04",
     title: "Impact",
-    desc:  "Mesurer, documenter et amplifier l'influence économique et institutionnelle du réseau AfroChain.",
+    desc:  "Mesurer, documenter et amplifier l'influence économique et institutionnelle du réseau AnbaChain.",
   },
 ]
 
@@ -46,7 +46,7 @@ export function SectionMission() {
         </h2>
 
         <p className="text-base max-w-[600px] mx-auto" data-reveal data-delay="2">
-          AfroChain crée le point de convergence qui manquait : un espace où les
+          AnbaChain crée le point de convergence qui manquait : un espace où les
           talents se rencontrent, où les problèmes concrets de la communauté trouvent
           des solutions technologiques, et où une nouvelle génération de leaders
           blockchain émerge.

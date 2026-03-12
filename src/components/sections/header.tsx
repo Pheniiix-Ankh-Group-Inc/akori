@@ -67,7 +67,7 @@ export function Header() {
     <>
       <header id="hdr" className={scrolled ? "scrolled" : ""}>
         <Link href="/" className="logo">
-          Ako<em>ri</em>
+          Anba<em>Chain</em>
         </Link>
 
         <nav className="hdr-nav">

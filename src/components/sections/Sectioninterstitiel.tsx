@@ -96,7 +96,7 @@ export function SectionInterstitiel() {
           data-delay="1"
           style={{ fontSize: "0.82rem", color: "var(--texte-2)", fontWeight: 400 }}
         >
-          — AfroChain, Manifeste fondateur, 2025
+          — AnbaChain, Manifeste fondateur, 2025
         </p>
       </div>
     </section>

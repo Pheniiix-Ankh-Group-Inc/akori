@@ -30,13 +30,13 @@ import { SectionStorytelling } from "@/components/sections/Sectionstorytelling";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "AKORI — Plateforme blockchain des professionnels Caraïbéens",
+  title: "AnbaChain — Plateforme blockchain des professionnels Caraïbéens",
   description: "Réseau, événements et ressources exclusives pour la communauté",
   openGraph: {
-    title: "AKORI - Réseau de professionnels noirs",
+    title: "AnbaChain - Réseau de professionnels noirs",
     description: "Plateforme blockchain communautaire",
     type: "website",
-    url: "https://akori.io",
+    url: "https://AnbaChain.io",
   },
 }
 

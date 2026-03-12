@@ -22,6 +22,15 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 ---
 
 
+
+## [0.4.0] — 2026-04-12
+
+
+### Ajouté
+- Bugs fix
+- Update name Akori to AnbaChain
+
+
 ## [0.3.0] — 2026-04-07
 
 
