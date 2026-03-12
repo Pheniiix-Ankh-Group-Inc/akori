@@ -2,14 +2,13 @@
 
 import { useEffect } from "react"
 
-/**
- * useScrollReveal
- * Active la classe .visible sur les éléments [data-reveal]
- * quand ils entrent dans le viewport.
- * Identique au script JS du HTML v3.
- */
 export function useScrollReveal() {
+
   useEffect(() => {
+    // Reset tous les éléments d'abord
+    const elements = document.querySelectorAll("[data-reveal]")
+    elements.forEach((el) => el.classList.remove("visible"))
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -22,9 +21,15 @@ export function useScrollReveal() {
       { threshold: 0.08, rootMargin: "0px 0px -50px 0px" }
     )
 
-    const elements = document.querySelectorAll("[data-reveal]")
-    elements.forEach((el) => observer.observe(el))
+    // Petit délai pour laisser le DOM se mettre à jour
+    const timeout = setTimeout(() => {
+      const freshElements = document.querySelectorAll("[data-reveal]")
+      freshElements.forEach((el) => observer.observe(el))
+    }, 100)
 
-    return () => observer.disconnect()
+    return () => {
+      clearTimeout(timeout)
+      observer.disconnect()
+    }
   }, [])
 }

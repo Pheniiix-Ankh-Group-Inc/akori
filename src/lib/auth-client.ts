@@ -8,10 +8,9 @@ import { createAuthClient } from "better-auth/react"
  * https://better-auth.com/docs/installation#create-client-instance
  */
 export const authClient = createAuthClient({
-  baseURL:
-    process.env.NEXT_PUBLIC_APP_URL!,
+  baseURL: process.env.NEXT_PUBLIC_APP_URL!,
   fetchOptions: {
-    credentials: "include", // Important pour envoyer les cookies
+    credentials: "include",
   },
 })
 

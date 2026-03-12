@@ -20,12 +20,16 @@ import { authClient } from "@/lib/auth-client"
 export function useAuth() {
   const { data: session, isPending, error } = authClient.useSession()
 
+  if (error) {
+    console.error("Failed to get session:", error)
+  }
+
   return {
     session,
     user: session?.user,
     isPending,
     error,
-    isAuthenticated: !!session,
+    isAuthenticated: !!session && !error,
   }
 }
 

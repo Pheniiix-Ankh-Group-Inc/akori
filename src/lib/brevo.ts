@@ -94,8 +94,8 @@ export async function sendTransactional({
   try {
     const body: Record<string, unknown> = {
       sender: {
-        name:  process.env.BREVO_SENDER_NAME  ?? "AKORI",
-        email: process.env.BREVO_SENDER_EMAIL ?? "noreply@akori.io",
+        name:  process.env.BREVO_SENDER_NAME  ?? "AnbaChain",
+        email: process.env.BREVO_SENDER_EMAIL ?? "noreply@AnbaChain.io",
       },
       to,
       subject,
@@ -123,5 +123,31 @@ export async function sendTransactional({
   } catch (err) {
     console.error("[Brevo] sendTransactional error:", err)
     return { success: false, message: "Erreur serveur." }
+  }
+}
+
+interface ApiError {
+  code: string
+  message: string
+  statusCode: number
+  timestamp: string
+}
+
+class ApiErrorHandler {
+  static handle(error: unknown): ApiError {
+    if (error instanceof Error) {
+      return {
+        code: "INTERNAL_ERROR",
+        message: error.message,
+        statusCode: 500,
+        timestamp: new Date().toISOString(),
+      }
+    }
+    return {
+      code: "UNKNOWN_ERROR",
+      message: "Une erreur inconnue s'est produite",
+      statusCode: 500,
+      timestamp: new Date().toISOString(),
+    }
   }
 }

@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   ]
 
   const EVENTS = [
-    { month: "Mar", day: "15", name: "AfroChain Summit 2026",     location: "Montréal" },
+    { month: "Mar", day: "15", name: "AnbaChain Summit 2026",     location: "Montréal" },
     { month: "Mar", day: "22", name: "DeFi & Financial Inclusion", location: "Online"   },
     { month: "Apr", day: "18", name: "Governance Roundtable",      location: "Paris"    },
   ]

@@ -42,7 +42,7 @@ const CHAPTERS = [
         </em>
       </>
     ),
-    body: "Conférences, hackathons, tables rondes, formations — chaque événement AfroChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats. La billetterie est gérée via Lu.ma pour une expérience fluide.",
+    body: "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats. La billetterie est gérée via Lu.ma pour une expérience fluide.",
     link: { label: "Voir les prochains événements →", href: "#evenements" },
   },
   {
@@ -58,7 +58,7 @@ const CHAPTERS = [
         </em>
       </>
     ),
-    body: "Rapports sectoriels, tutoriels techniques, analyses de gouvernance — tout le contenu d'AfroChain est rédigé par des membres du réseau. Une bibliothèque vivante qui grandit avec chaque expertise qui nous rejoint.",
+    body: "Rapports sectoriels, tutoriels techniques, analyses de gouvernance — tout le contenu d'AnbaChain est rédigé par des membres du réseau. Une bibliothèque vivante qui grandit avec chaque expertise qui nous rejoint.",
     link: { label: "Explorer les ressources →", href: "#ressources" },
   },
 ]
@@ -235,7 +235,7 @@ export function SectionStorytelling() {
             marginBottom: "1.5rem",
           }}
         >
-          Pourquoi AfroChain
+          Pourquoi AnbaChain
         </span>
         <h2
           data-reveal

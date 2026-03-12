@@ -41,14 +41,14 @@ export async function POST(req: NextRequest) {
     // 2. Email de bienvenue
     await sendTransactional({
       to: [{ email }],
-      subject: "Bienvenue dans la communauté AKORI 🌍",
+      subject: "Bienvenue dans la communauté AnbaChain 🌍",
       htmlContent: `
         <!DOCTYPE html>
         <html lang="fr">
         <head><meta charset="UTF-8" /></head>
         <body style="background:#0c0c0c;color:#edeae4;font-family:Georgia,serif;padding:3rem;max-width:600px;margin:0 auto;">
           <h1 style="font-size:2rem;font-weight:200;letter-spacing:-0.02em;margin-bottom:1.5rem;">
-            Bienvenue dans<br/><em style="color:#c4a46e;">AKORI.</em>
+            Bienvenue dans<br/><em style="color:#c4a46e;">AnbaChain.</em>
           </h1>
           <p style="font-size:1rem;color:#aaa59e;line-height:1.8;margin-bottom:2rem;">
             Tu fais maintenant partie du réseau blockchain des professionnels noirs.
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             Découvrir la plateforme
           </a>
           <p style="margin-top:3rem;font-size:0.75rem;color:#7a7570;">
-            © 2026 AKORI™ · Tu reçois cet email car tu t'es inscrit sur akori.io
+            © 2026 AnbaChain™ · Tu reçois cet email car tu t'es inscrit sur AnbaChain.io
           </p>
         </body>
         </html>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react"
 import Link from "next/link"
@@ -13,7 +13,13 @@ export default function LoginPage() {
 
   async function handleGoogle() {
     setLoading(true)
-    await signIn.social({ provider: "google", callbackURL: "/dashboard" })
+
+    try {
+      await signIn.social({ provider: "google", callbackURL: "/dashboard" })
+    } catch (error) {
+      console.log(error);
+    }
+       
   }
 
   async function handleEmail() {
@@ -39,7 +45,7 @@ export default function LoginPage() {
       <div className="auth-card">
 
         <Link href="/" className="auth-logo">
-          <span className="logo">Ako<em>ri</em></span>
+          <span className="logo">Anba<em>Chain</em></span>
         </Link>
 
         <div className="auth-box">

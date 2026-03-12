@@ -42,11 +42,11 @@ export default function RegisterPage() {
       <div className="auth-card">
 
         <Link href="/" className="auth-logo">
-          <span className="logo">Ako<em>ri</em></span>
+          <span className="logo">Anba<em>Chain</em></span>
         </Link>
 
         <div className="auth-box">
-          <h1 className="auth-title">Join AKORI.</h1>
+          <h1 className="auth-title">Join AnbaChain.</h1>
           <p className="auth-subtitle">Create your member account.</p>
 
           {/* Google */}
