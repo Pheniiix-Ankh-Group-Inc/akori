@@ -22,6 +22,15 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 ---
 
 
+## [0.5.0] — 2026-04-13
+
+
+### Ajouté
+- Bugs fix
+- Add luma iframe. 
+- increase nextjs configs
+
+
 
 ## [0.4.0] — 2026-04-12
 

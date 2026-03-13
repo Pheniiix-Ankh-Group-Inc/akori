@@ -19,10 +19,9 @@ const nextConfig: NextConfig = {
 
   async headers() {
     const cspPolicy = isDev
-      ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.sanity.io; img-src 'self' https: data:; font-src 'self' fonts.googleapis.com fonts.gstatic.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; connect-src 'self' ws: wss: cdn.sanity.io"
-      : "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.sanity.io; img-src 'self' https: data:; font-src 'self' fonts.googleapis.com fonts.gstatic.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com"
-
-    return [
+  ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.sanity.io; img-src 'self' https: data:; font-src 'self' fonts.googleapis.com fonts.gstatic.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; connect-src 'self' ws: wss: cdn.sanity.io; frame-src 'self' https://lu.ma https://*.lu.ma https://luma.com https://*.luma.com;"
+  : "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.sanity.io; img-src 'self' https: data:; font-src 'self' fonts.googleapis.com fonts.gstatic.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; frame-src 'self' https://lu.ma https://*.lu.ma https://luma.com https://*.luma.com;"
+      return [
       {
         source: "/(.*)",
         headers: [
