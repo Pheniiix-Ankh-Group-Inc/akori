@@ -22,7 +22,7 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 ---
 
 
-## [0.5.0] — 2026-04-12
+## [0.5.0] — 2026-04-13
 
 
 ### Ajouté
