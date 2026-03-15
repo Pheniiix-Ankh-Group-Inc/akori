@@ -12,30 +12,30 @@ const FOOTER_COLS = [
   {
     title: "Organisation",
     links: [
-      { label: "Notre mission",    href: "#mission"      },
-      { label: "Équipe fondatrice", href: "#equipe"      },
-      { label: "Partenaires",      href: "#partenaires"  },
-      { label: "Presse",           href: "#"             },
-      { label: "Contact",          href: "#"             },
+      { label: "Notre mission",    href: "/mission"      },
+      { label: "Équipe fondatrice", href: "/team"      },
+      { label: "Partenaires",      href: "/partners"  },
+      // { label: "Presse",           href: "/press"             },
+      // { label: "Contact",          href: "/contact"             },
     ],
   },
   {
     title: "Réseau",
     links: [
-      { label: "Événements (Lu.ma)", href: "#evenements" },
-      { label: "Ressources",         href: "#ressources" },
-      { label: "Adhésion",           href: "#adhesion"   },
-      { label: "Espace membre",      href: "#"           },
-      { label: "Forum",              href: "#"           },
+      { label: "Événements", href: "/events"},
+      { label: "Ressources", href: "/resources"},
+      { label: "Adhésion",   href: "/membership"},
+      // { label: "Espace membre",      href: "/member-area"},
+      // { label: "Forum",              href: "/forum"           },
     ],
   },
   {
     title: "Légal",
     links: [
-      { label: "Conditions d'utilisation",    href: "#" },
-      { label: "Politique de confidentialité", href: "#" },
-      { label: "Cookies",                      href: "#" },
-      { label: "Remboursements",               href: "#" },
+      { label: "Conditions d'utilisation",    href: "/terms" },
+      { label: "Politique de confidentialité", href: "/privacy" },
+      { label: "Cookies",                      href: "/cookies" },
+      // { label: "Remboursements",               href: "#" },
     ],
   },
 ]
@@ -102,8 +102,8 @@ export function Footer() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "2rem", borderTop: "1px solid var(--border)", flexWrap: "wrap", gap: "1rem" }} className="footer-bottom">
         <p style={{ fontSize: "0.76rem", color: "var(--texte)" }}>© 2026 AnbaChain™ · Tous droits réservés</p>
         <div style={{ display: "flex", gap: "1.5rem" }}>
-          {["Confidentialité", "CGU", "Contact"].map((label) => (
-            <a key={label} href="#" style={{ fontSize: "0.76rem", color: "var(--texte)", transition: "color 0.2s" }}
+          {["Confidentialité", "CGU", "Contact"].map((label, index) => (
+            <a key={label} href={index === 0 ? "/privacy" : index === 1 ? "/terms" : "/contact"} style={{ fontSize: "0.76rem", color: "var(--texte)", transition: "color 0.2s" }}
               onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.color = "var(--blanc)"}
               onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.color = "var(--texte)"}>
               {label}

@@ -22,13 +22,13 @@ const FEATURES = [
     title: "Messagerie directe entre membres",
     desc:  "Connectez-vous directement avec les professionnels du réseau",
   },
+  // {
+  //   n:     "04",
+  //   title: "Tarifs préférentiels événements Lu.ma",
+  //   desc:  "Code membre appliqué automatiquement sur tous les événements AnbaChain",
+  // },
   {
     n:     "04",
-    title: "Tarifs préférentiels événements Lu.ma",
-    desc:  "Code membre appliqué automatiquement sur tous les événements AnbaChain",
-  },
-  {
-    n:     "05",
     title: "Bibliothèque de ressources exclusives",
     desc:  "Rapports, analyses, guides et webinars réservés aux membres",
   },
