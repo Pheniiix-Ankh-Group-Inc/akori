@@ -22,6 +22,13 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 ---
 
 
+## [0.6.0] — 2026-04-15
+
+
+### Ajouté
+- Bugs fix
+- Update content for footer menu
+
 ## [0.5.0] — 2026-04-13
 
 

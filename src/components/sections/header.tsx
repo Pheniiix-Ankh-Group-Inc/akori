@@ -11,7 +11,6 @@ export function Header() {
   const menuRef = useRef<HTMLDivElement>(null)
   const burgerRef = useRef<HTMLButtonElement>(null)
 
-  // ✅ Verrouiller le scroll du body via classe CSS
   useEffect(() => {
     if (menuOpen) {
       document.documentElement.style.overflow = "hidden"

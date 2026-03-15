@@ -935,6 +935,44 @@ nav a:hover {
   color: var(--accent);
 }
 
+
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   LEGAL PAGES
+═══════════════════════════════════════════════════════ */
+
+.legal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.legal-section {
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.legal-section:last-child {
+  border-bottom: none;
+}
+
+.legal-heading {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--blanc);
+  margin-bottom: 1.25rem;
+}
+
+.legal-strong {
+  color: var(--texte-2);
+  font-weight: 500;
+}
+
 /* ═══════════════════════════════════════════════════════
    MEMBER SPACE — Layout
 ═══════════════════════════════════════════════════════ */

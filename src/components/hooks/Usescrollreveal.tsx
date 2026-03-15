@@ -6,8 +6,11 @@ export function useScrollReveal() {
 
   useEffect(() => {
     // Reset tous les éléments d'abord
-    const elements = document.querySelectorAll("[data-reveal]")
-    elements.forEach((el) => el.classList.remove("visible"))
+    const elements = document.querySelectorAll("[data-reveal]:not(.visible)")
+
+    if (!elements.length) return
+
+    
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -18,18 +21,27 @@ export function useScrollReveal() {
           }
         })
       },
-      { threshold: 0.08, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -50px 0px" }
     )
 
-    // Petit délai pour laisser le DOM se mettre à jour
-    const timeout = setTimeout(() => {
-      const freshElements = document.querySelectorAll("[data-reveal]")
-      freshElements.forEach((el) => observer.observe(el))
-    }, 100)
+   elements.forEach((el) => {
 
-    return () => {
-      clearTimeout(timeout)
-      observer.disconnect()
-    }
+      const rect = el.getBoundingClientRect()
+
+      const inViewport =
+        rect.top < window.innerHeight &&
+        rect.bottom > 0
+
+      if (inViewport) {
+        el.classList.add("visible")
+      } else {
+        observer.observe(el)
+      }
+
+    })
+
+    return () => observer.disconnect()
+
   }, [])
+
 }

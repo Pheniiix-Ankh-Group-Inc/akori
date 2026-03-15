@@ -61,6 +61,22 @@ const CHAPTERS = [
     body: "Rapports sectoriels, tutoriels techniques, analyses de gouvernance — tout le contenu d'AnbaChain est rédigé par des membres du réseau. Une bibliothèque vivante qui grandit avec chaque expertise qui nous rejoint.",
     link: { label: "Explorer les ressources →", href: "#ressources" },
   },
+  {
+    num:  "04",
+    reverse: true,
+    photoClass: "ph4",
+    photoBg: "linear-gradient(135deg, #0e1210 0%, #131a14 50%, #0c0e0b 100%)",
+    headline: (
+      <>
+        Des partenaires et institutions qui<br />
+        <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
+          créent de vraies opportunités.
+        </em>
+      </>
+    ),
+    body: "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats. La billetterie est gérée via Lu.ma pour une expérience fluide.",
+    link: { label: "Voir les prochains événements →", href: "#partenaires" },
+  },
 ]
 
 function StoryChapter({
