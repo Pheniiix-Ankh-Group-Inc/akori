@@ -13,10 +13,8 @@ import { Button } from "@/components/ui/Button"
  */
 
 const SOCIAL_LINKS = [
-  { label: "💬 Discord",   href: "#" },
-  { label: "𝕏 Twitter",   href: "#" },
-  { label: "in LinkedIn",  href: "#" },
-  { label: "✈️ Telegram", href: "#" },
+  { label: " Instagram",   href: "https://www.instagram.com/anbachain" },
+  { label: "in LinkedIn",  href: "https://www.linkedin.com/in/anbachain" },
 ]
 
 export function SectionCommunaute() {
@@ -162,7 +160,7 @@ export function SectionCommunaute() {
           }}
         >
           Recevez les analyses, actualités et invitations en avant-première.
-          Rejoignez plus de 500 professionnels qui construisent l'économie de demain.
+          Rejoignez plus des professionnels qui construisent l'économie de demain.
         </p>
 
         {/* Newsletter form */}

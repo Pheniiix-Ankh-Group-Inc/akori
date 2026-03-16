@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             Découvrir la plateforme
           </a>
           <p style="margin-top:3rem;font-size:0.75rem;color:#7a7570;">
-            © 2026 AnbaChain™ · Tu reçois cet email car tu t'es inscrit sur AnbaChain.io
+            © 2026 AnbaChain™ · Tu reçois cet email car tu t'es inscrit sur AnbaChain.org
           </p>
         </body>
         </html>

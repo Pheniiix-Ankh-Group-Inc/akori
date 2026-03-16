@@ -15,7 +15,7 @@ import {
 import type { Evenement, Ressource, Partenaire, MembreEquipe } from "@/types"
 
 import { SectionAdhesion } from "@/components/sections/Sectionadhesion";
-import { SectionCommunaute } from "@/components/sections/Sectioncommunaute";
+import { SectionCommunaute } from "@/components/sections/SectionCommunaute";
 import { SectionEquipe } from "@/components/sections/Sectionequipe";
 import { SectionEspace } from "@/components/sections/Sectionespace";
 import { SectionEvenements } from "@/components/sections/Sectionevenements";
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "AnbaChain - Réseau de professionnels noirs",
     description: "Plateforme blockchain communautaire",
     type: "website",
-    url: "https://AnbaChain.io",
+    url: "https://wwww.anbachain.org",
   },
 }
 
