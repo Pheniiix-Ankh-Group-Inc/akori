@@ -25,9 +25,9 @@ const variantStyles: Record<BtnVariant, string> = {
 
 const base = [
   "inline-flex items-center gap-2",
-  "px-[1.9rem] py-[0.8rem]",
+  "px-[1.9rem] py-[0.2rem]",
   // "rounded-full",
-  "font-sans text-[0.83rem] font-medium tracking-[0.01em]",
+  "font-sans text-[0.83rem] font-medium tracking-[0.04em]",
   "cursor-pointer border-none",
   "transition-all duration-[350ms]",
   "whitespace-nowrap",

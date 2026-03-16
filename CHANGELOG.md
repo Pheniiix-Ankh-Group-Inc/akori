@@ -21,6 +21,16 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 
 ---
 
+## [0.7.0] — 2026-04-16
+
+
+### Ajouté
+
+- Add link for social media
+- Update content for newsletter
+- Rename file
+
+
 
 ## [0.6.0] — 2026-04-15
 
