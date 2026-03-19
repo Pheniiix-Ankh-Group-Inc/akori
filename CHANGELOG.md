@@ -20,6 +20,13 @@ Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
 - Section 11 — Espace membre
 
 ---
+## [0.8.0] — 2026-04-17
+
+
+### Ajouté
+
+- Fix build main branch
+
 
 ## [0.7.0] — 2026-04-16
 

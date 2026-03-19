@@ -15,7 +15,6 @@ import {
 import type { Evenement, Ressource, Partenaire, MembreEquipe } from "@/types"
 
 import { SectionAdhesion } from "@/components/sections/Sectionadhesion";
-import { SectionCommunaute } from "@/components/sections/SectionCommunaute";
 import { SectionEquipe } from "@/components/sections/Sectionequipe";
 import { SectionEspace } from "@/components/sections/Sectionespace";
 import { SectionEvenements } from "@/components/sections/Sectionevenements";
@@ -127,7 +126,7 @@ export default async function HomePage() {
       <SectionEquipe equipe={equipe} />
 
       {/* Section 11 */}
-      <SectionCommunaute />
+      
     </main>
   )
 }
