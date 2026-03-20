@@ -30,10 +30,10 @@ export default function TermsPage() {
               <p className="text-base">
                 <strong className="legal-strong">Organization name:</strong> ANBACHAIN<br />
                 <strong className="legal-strong">Legal form:</strong> Non-profit organization (OBNL) registered in Canada<br />
-                <strong className="legal-strong">Registration number:</strong> [To be completed]<br />
-                <strong className="legal-strong">Registered office:</strong> [To be completed — Full address, City, Province, Postal Code, Canada]<br />
+                <strong className="legal-strong">Registration number:</strong> <br />
+                <strong className="legal-strong">Registered office:</strong> <br />
                 <strong className="legal-strong">Contact email:</strong> contact@anbachain.org<br />
-                <strong className="legal-strong">Legal representative:</strong> [To be completed]
+                <strong className="legal-strong">Legal representative:</strong>
               </p>
             </div>
 
@@ -46,7 +46,11 @@ export default function TermsPage() {
               </p>
               <p className="text-base" style={{ marginTop: "1rem" }}>
                 <strong className="legal-strong">Backend (API) and Database:</strong><br />
-                Supabase Inc. — [Address to be completed]
+                Supabase Inc. —
+              </p>
+              <p className="text-base" style={{ marginTop: "1rem" }}>
+                <strong className="legal-strong">Backend (API) and Database:</strong><br />
+                AWS. — 
               </p>
             </div>
 

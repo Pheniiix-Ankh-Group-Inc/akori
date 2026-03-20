@@ -24,6 +24,7 @@ import { SectionMission } from "@/components/sections/Sectionmission";
 import { SectionPartenaires } from "@/components/sections/Sectionpartenaires";
 import { SectionRessources } from "@/components/sections/Sectionressources";
 import { SectionStorytelling } from "@/components/sections/Sectionstorytelling";
+import { SectionCommunaute } from "@/components/sections/SectionCommunaute";
 
 
 export const revalidate = 3600;
@@ -126,6 +127,7 @@ export default async function HomePage() {
       <SectionEquipe equipe={equipe} />
 
       {/* Section 11 */}
+      <SectionCommunaute />
       
     </main>
   )
