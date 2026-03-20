@@ -69,7 +69,7 @@ const PAY_METHODS = [
 
 export function SectionAdhesion() {
   return (
-    <section id="adhesion" className="section bg-2">
+    <section id="membership" className="section bg-2">
       {/* Titre centré */}
       <div className="container-center mb-6">
         <span className="label" data-reveal>
@@ -102,14 +102,14 @@ export function SectionAdhesion() {
             <div className="pricing-name">{plan.name}</div>
 
             {/* Prix */}
-            <div className="pricing-amount">
+            {/* <div className="pricing-amount">
               <sup>$</sup>
               {plan.price}
               <sub>/mois</sub>
-            </div>
+            </div> */}
 
             {/* Période */}
-            <div className="pricing-period">{plan.period}</div>
+            {/* <div className="pricing-period">{plan.period}</div> */}
 
             {/* Séparateur */}
             <div className="pricing-divider" />
@@ -124,9 +124,9 @@ export function SectionAdhesion() {
               ))}
             </ul>
 
-            <Button variant={plan.cta.variant} href={plan.cta.href}>
+            {/* <Button variant={plan.cta.variant} href={plan.cta.href}>
               {plan.cta.label}
-            </Button>
+            </Button> */}
           </div>
         ))}
       </div>

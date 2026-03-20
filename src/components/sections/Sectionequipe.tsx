@@ -12,7 +12,7 @@ export function SectionEquipe({ equipe }: Props) {
 
   return (
     <section
-      id="equipe"
+      id="about"
       style={{ padding: "var(--pad) 0", background: "var(--bg)" }}
     >
       {/* Top */}
