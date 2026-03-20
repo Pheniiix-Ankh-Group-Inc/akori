@@ -167,11 +167,11 @@ export function SectionEspace() {
               ))}
             </ul>
 
-            <div data-reveal data-delay="3">
+            {/* <div data-reveal data-delay="3">
               <Button variant="white" href="#adhesion">
                 Accéder à l'espace membre
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* ── Mockup dashboard ── */}

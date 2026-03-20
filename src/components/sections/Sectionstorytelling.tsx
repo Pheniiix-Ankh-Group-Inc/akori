@@ -202,7 +202,7 @@ function StoryChapter({
         >
           {chapter.body}
         </p>
-
+{/* 
         <a
           href={chapter.link.href}
           data-reveal
@@ -224,7 +224,7 @@ function StoryChapter({
           }
         >
           {chapter.link.label}
-        </a>
+        </a> */}
       </div>
     </div>
   )

@@ -1,143 +1,142 @@
 # AnbaChain
 
-Plateforme communautaire premium pour les professionnels noirs de la blockchain et des technologies Web3.
+Premium community platform for Black professionals in blockchain and Web3 technologies.
 
-## Stack technique
+## Tech Stack
 
-|          Couche          |            Technologie               |
-|--------------------------|--------------------------------------|
-|        Framework         | Next.js 15 — App Router + TypeScript |
-|         Style            |             Tailwind CSS             |
-|          CMS             |              Sanity.io               |
-|          Auth            |        Better-Auth (open source)     |
-|      Base de données     |        Supabase — PostgreSQL         |
-|        Paiements         |                Stripe                |
-|       Billetterie        |                Lu.ma                 |
-|          Emails          |                Brevo                 |
-|       Hébergement        |                Vercel                |
-|       DNS + Sécurité     |               Cloudflare             |
+|        Layer        |            Technology               |
+|---------------------|------------------------------------|
+| Framework           | Next.js 15 — App Router + TypeScript |
+| Styling             | Tailwind CSS                       |
+| CMS                 | Sanity.io                          |
+| Authentication      | Better-Auth (open source)          |
+| Database            | Supabase — PostgreSQL              |
+| Payments            | Stripe                             |
+| Ticketing           | Lu.ma                              |
+| Emails              | Brevo                              |
+| Hosting             | Vercel                             |
+| DNS + Security      | IONOS                              |
 
-## Prérequis
+## Prerequisites
 
 - Node.js 20 LTS
 - pnpm 9+
 - Git
 
 ## Installation
-```bash
-# Cloner le dépôt
-git clone https://github.com/[username]/[nom-plateforme].git
-cd [nom-plateforme]
 
-# Installer les dépendances
+```bash
+# Clone the repository
+git clone https://github.com/Pheniiix-Ankh-Group-Inc/akori.git
+cd [akori]
+
+# Install dependencies
 pnpm install
 
-# Copier les variables d'environnement
+# Copy environment variables
 cp .env.example .env.local
-# Remplir les valeurs dans .env.local
-```
+# Fill in values in .env.local
 
-## Variables d'environnement
 
-Copier `.env.example` vers `.env.local` et remplir chaque valeur.
+Environment Variables
 
-| Variable                        | Service    |       Section      |
-|---------------------------------|------------|--------------------|
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Sanity     |       Section 4    |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase   |       Section 5    |
-| `BETTER_AUTH_SECRET`            | Better-Auth|       Section 6    |
-| `STRIPE_SECRET_KEY`             | Stripe     |       Section 7    |
-| `BREVO_API_KEY`                 | Brevo      |       Section 9    |
+Copy .env.example to .env.local and fill in each value.
 
-Voir `.env.example` pour la liste complète.
+| Variable                        | Service     |
+| ------------------------------- | ----------- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Sanity      |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase    |
+| `BETTER_AUTH_SECRET`            | Better-Auth |
+| `STRIPE_SECRET_KEY`             | Stripe      |
+| `BREVO_API_KEY`                 | Brevo       |
 
-## Lancer le projet
-```bash
-# Développement
+
+Run the Project
+# Development
 pnpm dev
 # http://localhost:3000
 
-# Build production
+# Production build
 pnpm build
 
-# Linter
+# Lint
 pnpm lint
-```
 
-## Structure du projet
-```
+Project Structure
 src/
 ├── app/
-│   ├── (public)/        ← Pages publiques
-│   ├── (membres)/       ← Espace membre (protégé)
-│   ├── (auth)/          ← Connexion / Inscription
+│   ├── (public)/        ← Public pages
+│   ├── (members)/       ← Member area (protected)
+│   ├── (auth)/          ← Login / Register
 │   ├── studio/          ← Sanity Studio → /studio
 │   └── api/             ← Route Handlers
-├── components/          ← Composants React
-├── lib/                 ← Clients services (Sanity, Supabase, Stripe...)
-└── types/               ← Types TypeScript globaux
+├── components/          ← React components
+├── lib/                 ← Service clients (Sanity, Supabase, Stripe...)
+└── types/               ← Global TypeScript types
 
 sanity/
-└── schemas/             ← Schémas de contenu Sanity
-```
+└── schemas/             ← Sanity content schemas
 
-## Accès Sanity Studio
 
-En développement : `http://localhost:3000/studio`  
-En production : `https://[domaine].io/studio`
 
-Accès réservé aux membres invités dans Sanity Manage.
+Sanity Studio Access
 
-## Déploiement
+In development: http://localhost:3000/studio
+Access is restricted to users invited via Sanity Manage.
 
-Le projet se déploie automatiquement sur Vercel à chaque push sur `main`.
+Deployment
 
-Les branches de PR génèrent un environnement de preview automatique.
-```bash
-# Déployer manuellement (si nécessaire)
+The project is automatically deployed on Vercel with each push to main.
+
+PR branches generate a preview environment automatically.
+
+# Manual deployment (if needed)
 vercel --prod
-```
 
-## Environnements
+Environments
 
-| Environnement | Branche  | URL                         | Stripe    |
-|---------------|----------|-----------------------------|-----------|
-| Production    | `main`   | `https://[domaine].io`      | Clés LIVE |
-| Preview       | toute PR | `https://[hash].vercel.app` | Clés TEST |
-| Local         |    —     | `http://localhost:3000`     | Clés TEST |
+| Environment | Branch    | URL                              |
+| ----------- | --------- | -------------------------------- |
+| Production  | `main`    | `https://www.anbachain.org`      |
+| Preview     | `develop` | `https://akori-kappa.vercel.app` |
+| Local       | —         | `http://localhost:3000`          |
 
-## Conventions Git
-```
-feat:     nouvelle fonctionnalité
-fix:      correction de bug
-chore:    maintenance, dépendances
+
+Git Conventions
+
+feat:     new feature
+fix:      bug fix
+chore:    maintenance, dependencies
 docs:     documentation
-style:    formatage, CSS
-refactor: refactorisation sans changement fonctionnel
-test:     ajout ou modification de tests
+style:    formatting, CSS
+refactor: refactoring without functional changes
+test:     add or update tests
+
+Examples:
+
+feat: add member directory page
+fix: fix Stripe webhook plan not updating
+chore: update dependencies
+docs: add Sanity instructions to README
+
+
+Security
+
+ .  Never commit .env.local
+ .  SUPABASE_SERVICE_ROLE_KEY must only be used in Route Handlers (never client-side)
+ .  RLS enabled on all sensitive Supabase tables
+ .  Stripe and Sanity webhooks verified using HMAC signatures
+
+
 ```
 
-Exemples :
-```
-feat: ajouter page annuaire membres
-fix: corriger webhook Stripe plan non mis à jour
-chore: mettre à jour dépendances
-docs: ajouter instructions Sanity dans README
-```
+## Team
 
-## Sécurité
+|       Rôle            |                    Contact                 |
+| --------------------- |--------------------------------------------|
+| `Co-Founder`          | [Fadjiah Collin] — [contact@anbachain.org] |
+| `Co-Founder`          | [Brice MIMIFIR]  — [contact@anbachain.org] |
+| `Developer`           | [Brice MIMIFIR]  — [contact@anbachain.org] |
 
-- Ne jamais commiter `.env.local`
-- `SUPABASE_SERVICE_ROLE_KEY` uniquement dans les Route Handlers (jamais côté client)
-- RLS activé sur toutes les tables Supabase sensibles
-- Webhooks Stripe et Sanity vérifiés par signature HMAC
 
-Pour signaler une vulnérabilité : security@[domaine].io
-
-## Équipe
-
-|          Rôle         |     Contact.    |
-|-----------------------|-----------------|
-| Fondateur / Product   | [Nom] — [email] |
-| Développeur freelance | [Nom] — [email] |
-| Éditeur Sanity        | [Nom] — [email] |
+ 

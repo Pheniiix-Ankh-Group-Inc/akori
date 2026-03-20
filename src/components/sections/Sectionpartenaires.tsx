@@ -25,7 +25,7 @@ export function SectionPartenaires({ partenaires }: Props) {
 
   return (
     <section
-      id="partenaires"
+      id="partners"
       style={{ padding: "var(--pad) 0", background: "var(--bg-2)" }}
     >
       {/* Top */}
