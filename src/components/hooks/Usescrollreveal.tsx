@@ -10,8 +10,6 @@ export function useScrollReveal() {
 
     if (!elements.length) return
 
-    
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

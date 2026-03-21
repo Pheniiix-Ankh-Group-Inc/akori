@@ -6,7 +6,7 @@ const STATS = [
   { num: "500+", lbl: "Membres professionnels" },
   { num: "12",   lbl: "Secteurs représentés"   },
   { num: "6",    lbl: "Pays"                   },
-  { num: "18",   lbl: "Événements organisés"   },
+  { num: "2",   lbl: "Événements organisés"   },
 ]
 
 /**
@@ -41,10 +41,10 @@ export function SectionHero() {
         </p>
 
         {/* CTA */}
-        <div className="flex gap-3 flex-wrap" data-reveal data-delay="4">
+        {/* <div className="flex gap-3 flex-wrap" data-reveal data-delay="4">
           <Button variant="white" href="#adhesion">Devenir membre</Button>
           <Button variant="ghost" href="#mission">Découvrir la mission</Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Stats */}

@@ -1,140 +1,152 @@
 # Changelog
 
-Toutes les modifications notables de ce projet sont documentées ici.
+All notable changes to this project are documented here.
 
-Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).  
-Ce projet suit [Semantic Versioning](https://semver.org/lang/fr/).
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).  
+This project follows [Semantic Versioning](https://semver.org/).
+
+---
+
+## [Unreleased]
+
+### In Progress
 
 ---
 
-## [Non publié]
+## [0.10.0] — 2026-04-17
 
-### En cours
-- Section 4 — Sanity.io (schémas, Studio, GROQ, revalidation)
-- Section 5 — Supabase (tables, RLS, clients)
-- Section 6 — Better-Auth (auth, middleware, OAuth)
-- Section 7 — Stripe (checkout, webhook, portail)
-- Section 8 — Lu.ma (billetterie, embed, codes promo)
-- Section 9 — Brevo (DNS, templates, helper)
-- Section 10 — Pages publiques
-- Section 11 — Espace membre
+### Added
+
+- Create CI workflows  
+- Remove animation data-reveal  
+- Update environment variables  
+- Add @vercel/analytics  
+- Update README  
 
 ---
+
 ## [0.8.0] — 2026-04-17
 
+### Added
 
-### Ajouté
+- Fix build on main branch  
 
-- Fix build main branch
-
+---
 
 ## [0.7.0] — 2026-04-16
 
+### Added
 
-### Ajouté
+- Add social media links  
+- Update newsletter content  
+- Rename file  
 
-- Add link for social media
-- Update content for newsletter
-- Rename file
-
-
+---
 
 ## [0.6.0] — 2026-04-15
 
+### Added
 
-### Ajouté
-- Bugs fix
-- Update content for footer menu
+- Bug fixes  
+- Update footer menu content  
+
+---
 
 ## [0.5.0] — 2026-04-13
 
+### Added
 
-### Ajouté
-- Bugs fix
-- Add luma iframe. 
-- increase nextjs configs
+- Bug fixes  
+- Add Luma iframe  
+- Increase Next.js config limits  
 
-
+---
 
 ## [0.4.0] — 2026-04-12
 
+### Added
 
-### Ajouté
-- Bugs fix
-- Update name Akori to AnbaChain
+- Bug fixes  
+- Rename Akori to AnbaChain  
 
+---
 
 ## [0.3.0] — 2026-04-07
 
+### Added
 
-### Ajouté
-- Add dasbord for member.
-- Add Loging page.
-- Add Register page.
-- Fix functionality Middleware
-- Upgrade Globbal css
+- Add member dashboard  
+- Add login page  
+- Add register page  
+- Fix middleware functionality  
+- Upgrade global CSS  
 
-
-
-## [0.2.0] — 2026-04-05
-
-
-### Ajouté
-- Configuration better-auth
-- Configuration de supabase
-- Configuration Brevo
-- Configuration Sanity
-
-
+---
 
 ## [0.2.0] — 2026-04-05
 
+### Added
 
-### Ajouté
-- Fix build error
+- Configure better-auth  
+- Configure Supabase  
+- Configure Brevo  
+- Configure Sanity  
 
-
+---
 
 ## [0.2.0] — 2026-04-05
 
+### Added
 
-### Ajouté
-- Configuration better-auth
-- Configuration de supabase
-- Configuration Brevo
-- Configuration Sanity
+- Fix build error  
 
+---
+
+## [0.2.0] — 2026-04-05
+
+### Added
+
+- Configure better-auth  
+- Configure Supabase  
+- Configure Brevo  
+- Configure Sanity  
+
+---
 
 ## [0.2.0] — 2026-03-02
 
+### Added
 
-### Ajouté
-- Architecture project 
-- Toutes les sections
+- Project architecture  
+- All sections  
+
+---
 
 ## [0.1.0] — 2026-02-28
 
-### Ajouté
-- Initialisation du projet Next.js 15 avec App Router et TypeScript
-- Configuration Tailwind CSS avec palette de couleurs personnalisée
-- Structure complète des dossiers et fichiers (routes publiques, membres, auth, API)
-- Configuration `next.config.ts` avec headers de sécurité et remotePatterns CDN
-- Configuration `tsconfig.json` strict avec alias `@/*`
-- Variables CSS globales dans `globals.css`
-- Layout racine `src/app/layout.tsx` avec police Inter et metadata de base
-- Page d'accueil placeholder `src/app/page.tsx`
-- Page 404 custom `src/app/not-found.tsx`
-- Utilitaires `src/lib/utils.ts` (cn, formatDate, formatCurrency, truncate)
-- Types globaux `src/types/index.ts` (Plan, Sector, Profile, PartnerType)
-- Fichier `.env.example` avec toutes les variables requises
-- Configuration Prettier avec plugin Tailwind
-- Configuration ESLint
+### Added
 
-### Dépendances ajoutées
-- `next-sanity`, `@sanity/image-url`, `@sanity/client`
-- `better-auth`
-- `@supabase/supabase-js`, `@supabase/ssr`
-- `stripe`, `@stripe/stripe-js`
-- `@getbrevo/brevo`
-- `react-hook-form`, `zod`, `@hookform/resolvers`
-- `clsx`, `tailwind-merge`, `lucide-react`, `date-fns`
+- Initialize Next.js 15 project with App Router and TypeScript  
+- Configure Tailwind CSS with custom color palette  
+- Complete folder and file structure (public routes, members, auth, API)  
+- Configure `next.config.ts` with security headers and CDN remotePatterns  
+- Configure strict `tsconfig.json` with `@/*` alias  
+- Global CSS variables in `globals.css`  
+- Root layout `src/app/layout.tsx` with Inter font and base metadata  
+- Placeholder homepage `src/app/page.tsx`  
+- Custom 404 page `src/app/not-found.tsx`  
+- Utilities in `src/lib/utils.ts` (cn, formatDate, formatCurrency, truncate)  
+- Global types in `src/types/index.ts` (Plan, Sector, Profile, PartnerType)  
+- `.env.example` file with all required variables  
+- Prettier configuration with Tailwind plugin  
+- ESLint configuration  
+
+### Dependencies Added
+
+- `next-sanity`, `@sanity/image-url`, `@sanity/client`  
+- `better-auth`  
+- `@supabase/supabase-js`, `@supabase/ssr`  
+- `stripe`, `@stripe/stripe-js`  
+- `@getbrevo/brevo`  
+- `react-hook-form`, `zod`, `@hookform/resolvers`  
+- `clsx`, `tailwind-merge`, `lucide-react`, `date-fns`  

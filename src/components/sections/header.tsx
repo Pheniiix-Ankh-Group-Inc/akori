@@ -79,10 +79,10 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="hdr-actions">
+        {/* <div className="hdr-actions">
           <Button variant="ghost" href="/login">Sign in</Button>
           <Button variant="white" href="/register">Join</Button>
-        </div>
+        </div> */}
 
         <button
           ref={burgerRef}
@@ -117,10 +117,10 @@ export function Header() {
               </li>
             ))}
           </ul>
-          <div className="hdr-mobile-actions">
+          {/* <div className="hdr-mobile-actions">
             <Button variant="ghost" href="/login">Sign in</Button>
             <Button variant="white" href="/register">Join</Button>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

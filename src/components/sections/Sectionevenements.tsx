@@ -26,7 +26,7 @@ export function SectionEvenements({ evenements, featured }: Props) {
 
   return (
     <section
-      id="evenements"
+      id="events"
       style={{ padding: "var(--pad) 0", background: "var(--bg)" }}
     >
       {/* Top */}
@@ -84,8 +84,8 @@ export function SectionEvenements({ evenements, featured }: Props) {
           <div style={{ overflow: "hidden" }}>
             {LUMA_CALENDAR_ID ? (
               <iframe
-                src={`https://lu.ma/embed/calendar/${LUMA_CALENDAR_ID}/events`}
-                style={{ width: "50%", height: "600px", border: "none", display: "flex", margin: "0 auto" }}
+                src={`https://lu.ma/embed/calendar/${LUMA_CALENDAR_ID}/events?lt=dark`}
+                style={{ width: "50%", height: "600px", border: "none", display: "flex"}}
                 aria-hidden="false"
                 tabIndex={0}
                 title="Calendrier des événements AnbaChain"

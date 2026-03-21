@@ -23,7 +23,7 @@ export function SectionRessources({ ressources }: Props) {
 
   return (
     <section
-      id="ressources"
+      id="resources"
       style={{ padding: "var(--pad) 0", background: "var(--bg)" }}
     >
       {/* Top */}

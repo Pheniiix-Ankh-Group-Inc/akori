@@ -254,7 +254,7 @@ nav a:hover {
 .wrap    { max-width: 1240px; margin: 0 auto; padding: 0 3rem; }
 .wrap-sm { max-width: 780px;  margin: 0 auto; padding: 0 3rem; }
 
-[data-reveal] {
+/* [data-reveal] {
   opacity: 0;
   transform: translateY(28px);
   transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
@@ -268,7 +268,7 @@ nav a:hover {
 [data-delay="2"] { transition-delay: 0.2s; }
 [data-delay="3"] { transition-delay: 0.3s; }
 [data-delay="4"] { transition-delay: 0.4s; }
-[data-delay="5"] { transition-delay: 0.5s; }
+[data-delay="5"] { transition-delay: 0.5s; } */
 
 /* ═══════════════════════════════════════════════════════
    TYPOGRAPHY
