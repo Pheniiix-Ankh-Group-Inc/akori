@@ -28,4 +28,5 @@ export const NAV_LINKS = [
   { label: 'Resources',  href: '/#resources'  },
   { label: 'Membership', href: '/#membership' },
   { label: 'About',      href: '/#about'      },
+  { label: 'Fondateurs', href: '/fondateur'    },
 ] as const
