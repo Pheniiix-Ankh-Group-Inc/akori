@@ -4,13 +4,13 @@ import { getTranslations } from "next-intl/server"
 
 export const metadata = {
   title: "Fadjiah Collin‑Mazile — Fondateurs — AnbaChain",
-  description: "Fadjiah Collin-Mazile — Data leader, angel investor, and blockchain strategist.",
+  description: "Fadjiah Collin-Mazile — Data leader, angel investor, & blockchain strategist.",
 }
 
 const BIO_KEYS = ["p1", "p2", "p3", "p4", "p5", "p6"] as const
 
 export default async function FadjiahPage() {
-  const t = await getTranslations("fondateurPage")
+  const t = await getTranslations("fadjiah")
 
   return (
     <section className="section">
@@ -88,7 +88,7 @@ export default async function FadjiahPage() {
               flexWrap: "wrap",
             }}
           >
-            <Link href="/fondateur" className="label">
+            <Link href="/fondateurs" className="label">
               {t("footerNav")}
             </Link>
           </div>

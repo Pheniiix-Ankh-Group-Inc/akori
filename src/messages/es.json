@@ -443,7 +443,7 @@
       }
     }
   },
-  "fondateurPage": {
+  "fadjiah": {
   "label": "Fundadores",
   "name": "Fadjiah Collin‑Mazile",
   "role": "Líder de datos, inversora ángel y estratega blockchain en la intersección de las tecnologías emergentes y la equidad económica mundial",
@@ -457,6 +457,20 @@
   },
   "footerNav": "← Todos los fundadores"
 },
+"brice": {
+    "label": "Fundadores",
+    "name": "Brice Mimifir",
+    "role": "Desarrollador Java, Consultor de Transformación Digital y Desarrollador Blockchain en la intersección de tecnología robusta e innovación descentralizada",
+    "bio": {
+      "p1": "Brice es el fundador de Theanhk, una empresa de desarrollo blockchain con sede en Montreal y un fuerte enfoque internacional.",
+      "p2": "Diseña y desarrolla soluciones backend de alto rendimiento en Java mientras contribuye activamente a iniciativas de integración blockchain.",
+      "p3": "Certificado en Desarrollo de Smart Contracts con Solidity, Conceptos Básicos de Blockchain y Seguridad Avanzada de Wallets Web3, Brice aprovecha su experiencia técnica para ofrecer soluciones confiables y seguras.",
+      "p4": "Anteriormente trabajó como desarrollador Java en el Banco Nacional de Canadá, contribuyendo a los sistemas de banca digital y proyectos clave de modernización.",
+      "p5": "Apasionado por la aplicación práctica de la blockchain más allá de la especulación, Brice se compromete a construir sistemas robustos, seguros y orientados a resultados que brinden eficiencia operativa real y soberanía tecnológica a las organizaciones.",
+      "p6": ""
+    },
+    "footerNav": "← Todos los fundadores"
+  },
   "Footer": {
     "brand": {
       "description": "La red blockchain de profesionales negros — networking, innovación y soluciones al servicio de la comunidad."
