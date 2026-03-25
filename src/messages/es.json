@@ -1,0 +1,491 @@
+{
+  "Header": {
+    "logo": "Anba<em>Chain</em>",
+    "nav": {
+      "mission": "Misión",
+      "partners": "Socios",
+      "events": "Eventos",
+      "resources": "Recursos",
+      "membership": "Membresía",
+      "about": "Acerca de",
+      "fondateurs": "Fundadores"
+    },
+    "burger": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú"
+    }
+  },
+  "sectionHero": {
+    "title": {
+      "line1": "Construir el futuro",
+      "line2": "juntos,",
+      "line3": "en la cadena."
+    },
+    "description": "AnbaChain reúne a profesionales negros — emprendedores, desarrolladores, analistas, profesores, juristas e instituciones — para acelerar la adopción de la blockchain y construir soluciones concretas para nuestra comunidad.",
+    "stats": {
+      "members": "Miembros profesionales",
+      "sectors": "Sectores representados",
+      "countries": "Países",
+      "events": "Eventos organizados"
+    }
+  },
+  "sectionMission": {
+    "label": "Nuestra misión",
+    "title": {
+      "line1": "La blockchain no es",
+      "line2": "solo una tecnología. Es",
+      "line3": "una palanca de",
+      "highlight": "soberanía."
+    },
+    "description": "AnbaChain crea el punto de convergencia que faltaba: un espacio donde los talentos se encuentran, donde los problemas reales de la comunidad encuentran soluciones tecnológicas, y donde emerge una nueva generación de líderes blockchain.",
+    "pillars": {
+      "network": {
+        "title": "Red",
+        "desc": "Conectar a profesionales negros de la blockchain a nivel mundial, por sector y especialización."
+      },
+      "solutions": {
+        "title": "Soluciones",
+        "desc": "Co-crear respuestas basadas en blockchain a los desafíos reales que enfrenta la comunidad en todos los sectores."
+      },
+      "education": {
+        "title": "Educación",
+        "desc": "Democratizar el conocimiento blockchain — desde los fundamentos hasta casos de uso avanzados — para todos los perfiles."
+      },
+      "impact": {
+        "title": "Impacto",
+        "desc": "Medir, documentar y amplificar la influencia económica e institucional de la red AnbaChain."
+      }
+    }
+  },
+  "sectionStorytelling": {
+    "intro": {
+      "label": "Por qué AnbaChain",
+      "title": {
+        "line1": "Tres razones",
+        "line2": "para",
+        "highlight": "unirse",
+        "line3": "al movimiento."
+      }
+    },
+    "chapters": {
+      "c1": {
+        "headline": {
+          "line1": "Una red construida sobre",
+          "highlight": "la confianza y la experiencia."
+        },
+        "body": "Cada miembro es verificado y presentado con su experiencia real. No es un feed algorítmico — es un directorio humano, filtrable por sector, ciudad y disponibilidad. Las conexiones que surgen aquí son duraderas porque se basan en una base común.",
+        "link": "Unirse a la red →"
+      },
+      "c2": {
+        "headline": {
+          "line1": "Eventos que",
+          "highlight": "crean oportunidades reales."
+        },
+        "body": "Conferencias, hackatones, mesas redondas, formaciones — cada evento de AnbaChain está diseñado para generar resultados concretos: colaboraciones, proyectos, contrataciones, asociaciones. La gestión de entradas se realiza a través de Lu.ma para una experiencia fluida.",
+        "link": "Ver próximos eventos →"
+      },
+      "c3": {
+        "headline": {
+          "line1": "Recursos creados",
+          "highlight": "por y para la comunidad."
+        },
+        "body": "Informes sectoriales, tutoriales técnicos, análisis de gobernanza — todo el contenido de AnbaChain está escrito por miembros de la red. Una biblioteca viva que crece con cada nueva experiencia que se une.",
+        "link": "Explorar recursos →"
+      },
+      "c4": {
+        "headline": {
+          "line1": "Socios e instituciones que",
+          "highlight": "crean oportunidades reales."
+        },
+        "body": "Conferencias, hackatones, mesas redondas, formaciones — cada evento de AnbaChain está diseñado para generar resultados concretos: colaboraciones, proyectos, contrataciones, asociaciones. La gestión de entradas se realiza a través de Lu.ma para una experiencia fluida.",
+        "link": "Ver próximos eventos →"
+      }
+    }
+  },
+  "sectionPartenaires": {
+    "label": "Ecosistema",
+    "title": {
+      "main": "Socios e",
+      "highlight": "Instituciones"
+    },
+    "tabs": {
+      "all": "Todos",
+      "entreprise": "Empresas",
+      "institution": "Instituciones",
+      "universite": "Universidades",
+      "media": "Medios"
+    },
+    "empty": "No hay socios en esta categoría."
+  },
+  "sectionEvenements": {
+    "label": "Agenda",
+    "title": {
+      "main": "Próximos",
+      "highlight": "eventos"
+    },
+    "iframe": {
+      "title": "Calendario de eventos AnbaChain"
+    },
+    "empty": "No hay eventos"
+  },
+  "sectionAdhesion": {
+    "label": "Membresía",
+    "title": {
+      "main": "Únete al",
+      "highlight": "movimiento"
+    },
+    "description": "Elige el plan que mejor se adapte a tu perfil. Las entradas para eventos se gestionan por separado a través de Lu.ma.",
+    "plans": {
+      "network": {
+        "tier": "Acceso básico",
+        "name": "Red",
+        "period": "Siempre gratis",
+        "features": [
+          "Perfil público en el directorio",
+          "Acceso a eventos gratuitos",
+          "Boletín mensual",
+          "Foro comunitario (solo lectura)"
+        ],
+        "cta": "Crear una cuenta"
+      },
+      "pioneer": {
+        "tier": "Profesional",
+        "name": "Pionero",
+        "period": "o 240 $ / año — 20 % de ahorro",
+        "features": [
+          "Todo del plan Red",
+          "Directorio completo + contactos",
+          "Mensajería entre miembros",
+          "Eventos Lu.ma con descuento",
+          "Foro (participación completa)",
+          "Recursos exclusivos y webinars",
+          "Perfil verificado + insignia"
+        ],
+        "cta": "Unirse ahora",
+        "badge": "Más popular"
+      },
+      "institution": {
+        "tier": "Organización",
+        "name": "Institución",
+        "period": "Hasta 10 cuentas de miembros",
+        "features": [
+          "Todo del plan Pionero (×10 cuentas)",
+          "Página de socio personalizada",
+          "Logo en sitio y eventos",
+          "Acceso prioritario a eventos",
+          "Informe trimestral",
+          "Facturación B2B — factura PDF"
+        ],
+        "cta": "Contáctanos"
+      }
+    },
+    "payments": {
+      "label": "Pago de membresía:",
+      "methods": [
+        "Visa / Mastercard",
+        "Apple Pay",
+        "Google Pay",
+        "Bitcoin · ETH · USDC",
+        "Factura B2B"
+      ],
+      "events": "Entradas de eventos:"
+    }
+  },
+  "sectionRessources": {
+    "label": "Conocimiento",
+    "title": {
+      "main": "Recursos y",
+      "highlight": "Análisis"
+    },
+    "cta": "Todos los recursos",
+    "empty": "No hay recursos disponibles.",
+    "categories": {
+      "rapport": "Informe",
+      "tutoriel": "Tutorial",
+      "gouvernance": "Gobernanza",
+      "analyse": "Análisis"
+    },
+    "readingTime": "{minutes} min"
+  },
+  "sectionEspace": {
+  "label": "Espacio miembro",
+  "title": { "main": "Tu hub", "highlight": "personal" },
+  "desc": "Un espacio privado para gestionar tu perfil, explorar la red y acceder a los recursos exclusivos de AnbaChain.",
+  "features": {
+    "profile":   { "title": "Perfil profesional completo",          "desc": "Habilidades, experiencias, sector, disponibilidad para colaboraciones" },
+    "directory": { "title": "Directorio completo con filtros avanzados","desc": "Busca por sector, experiencia, ciudad, disponibilidad" },
+    "messaging": { "title": "Mensajería directa entre miembros",    "desc": "Conéctate directamente con profesionales de la red" },
+    "library":   { "title": "Biblioteca de recursos exclusivos",    "desc": "Informes, análisis, guías y webinars reservados a miembros" }
+  },
+  "stats": {
+    "connections": "Conexiones",
+    "events":      "Eventos",
+    "resources":   "Recursos"
+  },
+  "suggestedMembers": "Miembros sugeridos",
+  "dashboardUrl":     "app.anbachain.io/dashboard",
+  "cta":              "Acceder al espacio miembro"
+},
+"sectionInterstitiel": {
+  "quote": {
+    "main": "La tecnología blockchain es la herramienta.",
+    "highlight": "La comunidad es la fuerza."
+  },
+  "author": "— AnbaChain, Manifiesto fundador, 2025"
+},
+"sectionCommunaute": {
+  "label": "Únete al movimiento",
+  "title": {
+    "main": "El futuro se escribe",
+    "highlight": "ahora."
+  },
+  "desc": "Recibe análisis, noticias e invitaciones en primicia. Únete a los profesionales que construyen la economía del mañana.",
+  "form": {
+    "placeholder": "Tu dirección de correo",
+    "submit": "Suscribirse",
+    "loading": "Enviando...",
+    "success": "Suscripción confirmada. ¡Revisa tu bandeja de entrada!",
+    "errorNetwork": "Error de red. Inténtalo más tarde."
+  },
+  "social": {
+    "instagram": "Instagram",
+    "linkedin": "in LinkedIn"
+  }
+},
+"terms": {
+    "metadata": {
+      "title": "Términos de uso — AnbaChain",
+      "description": "Términos de uso de la plataforma AnbaChain."
+    },
+    "header": {
+      "back": "Volver al inicio",
+      "title": "Términos de uso",
+      "lastUpdated": "Última actualización: 12 de marzo de 2026"
+    },
+    "sections": {
+      "publisher": {
+        "title": "1. Identificación del editor",
+        "content": {
+          "organization": "Nombre de la organización:",
+          "legalForm": "Forma jurídica:",
+          "registration": "Número de registro:",
+          "office": "Domicilio social:",
+          "email": "Correo electrónico:",
+          "representative": "Representante legal:"
+        }
+      },
+      "hosting": {
+        "title": "2. Alojamiento de la plataforma",
+        "frontend": "Frontend (sitio web):",
+        "backend": "Backend (API) y base de datos:"
+      },
+      "ip": {
+        "title": "3. Propiedad intelectual",
+        "p1": "El contenido de ANBACHAIN es propiedad exclusiva de ANBACHAIN o sus socios.",
+        "p2": "Cualquier uso sin autorización está prohibido."
+      },
+      "liability": {
+        "title": "4. Limitación de responsabilidad",
+        "p1": "ANBACHAIN no garantiza la exactitud total de la información.",
+        "p2": "No es responsable de sitios externos."
+      },
+      "financial": {
+        "title": "5. Sin asesoramiento financiero — Riesgos",
+        "p1": "La información es solo educativa.",
+        "p2": "Los activos digitales implican riesgos importantes."
+      },
+      "law": {
+        "title": "6. Ley aplicable",
+        "p1": "Regido por las leyes de la provincia de [Por completar] y Canadá."
+      },
+      "modifications": {
+        "title": "7. Modificaciones",
+        "p1": "ANBACHAIN puede modificar estos términos en cualquier momento."
+      },
+      "contact": {
+        "title": "8. Contacto",
+        "p1": "Para preguntas, contáctenos en:"
+      }
+    }
+  },
+  "privacy": {
+    "header": {
+      "back": "Volver al inicio",
+      "title": "Política de privacidad",
+      "lastUpdated": "Última actualización: 12 de marzo de 2026"
+    },
+    "sections": {
+      "collect": {
+        "title": "1. Información recopilada",
+        "intro": "Recopilamos diferentes tipos de información para mejorar nuestros servicios.",
+        "providedTitle": "Información proporcionada:",
+        "provided": "nombre, correo electrónico, teléfono, dirección, fecha de nacimiento y perfil.",
+        "contentTitle": "Contenido generado por el usuario:",
+        "content": "mensajes, publicaciones y comentarios.",
+        "autoTitle": "Datos recopilados automáticamente:",
+        "auto": "IP, navegador, sistema operativo y actividad.",
+        "web3Title": "Datos Web3:",
+        "web3": "dirección de wallet y transacciones."
+      },
+      "usage": {
+        "title": "2. Uso de la información",
+        "intro": "Utilizamos los datos para:",
+        "p1": "Proveer la plataforma",
+        "p2": "Gestionar cuentas",
+        "p3": "Procesar pagos",
+        "p4": "Personalizar la experiencia",
+        "p5": "Comunicarnos con usuarios",
+        "p6": "Mejorar servicios",
+        "p7": "Garantizar seguridad"
+      },
+      "sharing": {
+        "title": "3. Compartir información",
+        "p1": "No vendemos datos personales.",
+        "p2": "Compartimos con proveedores.",
+        "p3": "Ejemplo: Stripe, Supabase, Vercel.",
+        "p4": "Podemos divulgar si lo exige la ley."
+      },
+      "blockchain": {
+        "title": "4. Transparencia blockchain",
+        "p1": "Los datos blockchain son públicos.",
+        "p2": "No se pueden modificar."
+      },
+      "transfer": {
+        "title": "5. Transferencias internacionales",
+        "p1": "Los datos pueden procesarse fuera de Canadá.",
+        "p2": "Se aplican medidas de protección."
+      },
+      "security": {
+        "title": "6. Seguridad",
+        "p1": "Protegemos los datos con medidas adecuadas.",
+        "p2": "Incluye cifrado y control de acceso.",
+        "p3": "No hay seguridad absoluta."
+      },
+      "rights": {
+        "title": "7. Derechos",
+        "intro": "Los usuarios pueden tener derechos:",
+        "r1": "Acceso",
+        "r2": "Corrección",
+        "r3": "Eliminación",
+        "r4": "Restricción",
+        "r5": "Portabilidad",
+        "r6": "Retirar consentimiento"
+      },
+      "retention": {
+        "title": "8. Retención de datos",
+        "p1": "Los datos se conservan según necesidad."
+      },
+      "links": {
+        "title": "9. Enlaces externos",
+        "p1": "No somos responsables de terceros."
+      },
+      "changes": {
+        "title": "10. Cambios",
+        "p1": "Podemos actualizar esta política."
+      },
+      "contact": {
+        "title": "11. Contacto",
+        "p1": "Para preguntas, contáctenos:"
+      }
+    }
+  },
+  "cookies": {
+    "header": {
+      "back": "Volver al inicio",
+      "title": "Política de cookies",
+      "lastUpdated": "Última actualización: 12 de marzo de 2026"
+    },
+    "sections": {
+      "intro": {
+        "title": "1. ¿Qué es una cookie?",
+        "p1": "Una cookie es un archivo almacenado en tu dispositivo.",
+        "p2": "Permite recordar preferencias."
+      },
+      "usage": {
+        "title": "2. Uso de cookies",
+        "intro": "Usamos cookies para:",
+        "essentialTitle": "Funcionalidad esencial:",
+        "essential": "Operación de la plataforma.",
+        "analyticsTitle": "Analítica:",
+        "analytics": "Entender el uso.",
+        "personalizationTitle": "Personalización:",
+        "personalization": "Adaptar experiencia.",
+        "securityTitle": "Seguridad:",
+        "security": "Prevenir fraude."
+      },
+      "types": {
+        "title": "3. Tipos de cookies",
+        "necessaryTitle": "Cookies necesarias:",
+        "necessary": "Funcionalidad básica.",
+        "analyticsTitle": "Cookies analíticas:",
+        "analytics": "Estadísticas.",
+        "functionalTitle": "Cookies funcionales:",
+        "functional": "Preferencias.",
+        "thirdpartyTitle": "Cookies de terceros:",
+        "thirdparty": "Servicios externos."
+      },
+      "choices": {
+        "title": "5. Tus opciones",
+        "p1": "Puedes aceptar o rechazar cookies.",
+        "browserTitle": "Navegador:",
+        "browser": "Configurar cookies.",
+        "bannerTitle": "Banner:",
+        "banner": "Gestionar preferencias.",
+        "p2": "Algunas funciones pueden fallar."
+      },
+      "changes": {
+        "title": "6. Cambios",
+        "p1": "Podemos actualizar esta política."
+      },
+      "contact": {
+        "title": "7. Contacto",
+        "p1": "Para preguntas:"
+      }
+    }
+  },
+  "fondateurPage": {
+  "label": "Fundadores",
+  "name": "Fadjiah Collin‑Mazile",
+  "role": "Líder de datos, inversora ángel y estratega blockchain en la intersección de las tecnologías emergentes y la equidad económica mundial",
+  "bio": {
+    "p1": "Como Head of Data en CoinList, ha construido y dirige las funciones de data science, data engineering y analytics en una de las plataformas de venta de tokens cripto más reconocidas del mundo.",
+    "p2": "Directora corporativa certificada, forma parte de varios consejos de administración y comités asesores sobre tecnología, datos e inclusión, incluido RepMatters, que apoya la innovación liderada por personas negras.",
+    "p3": "Miembro del Transatlantic Angel Investing Group y jueza recurrente en subvenciones y fondos de innovación para startups, Fadjiah aporta una profunda experiencia en la evaluación de proyectos en etapa inicial.",
+    "p4": "También le apasiona tender puentes entre los ecosistemas tecnológicos canadiense y africano a través de misiones comerciales en Ghana, Sudáfrica, Kenia y Etiopía, e invirtiendo en fundadores de estos mercados.",
+    "p5": "Su Substack, \"The Allegory of the Block\", explora blockchain desde un ángulo geopolítico, siguiendo a los constructores en lugar de los precios, y examinando cómo las economías emergentes pueden convertirse en productoras en lugar de consumidoras de infraestructura descentralizada.",
+    "p6": "Oradora reconocida, hace legibles los sistemas complejos e impulsa a las audiencias a ver blockchain no como especulación, sino como soberanía."
+  },
+  "footerNav": "← Todos los fundadores"
+},
+  "Footer": {
+    "brand": {
+      "description": "La red blockchain de profesionales negros — networking, innovación y soluciones al servicio de la comunidad."
+    },
+    "cols": {
+      "organisation": {
+        "title": "Organización",
+        "mission": "Nuestra misión",
+        "team": "Equipo fundador",
+        "partners": "Socios"
+      },
+      "reseau": {
+        "title": "Red",
+        "events": "Eventos",
+        "resources": "Recursos",
+        "membership": "Membresía"
+      },
+      "legal": {
+        "title": "Legal",
+        "terms": "Condiciones de uso",
+        "privacy": "Política de privacidad",
+        "cookies": "Cookies"
+      }
+    },
+    "bottom": {
+      "copyright": "© 2026 AnbaChain™ · Todos los derechos reservados",
+      "privacy": "Privacidad",
+      "cgu": "Términos",
+      "contact": "Contacto"
+    }
+  }
+}

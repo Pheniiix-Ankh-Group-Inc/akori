@@ -1,26 +1,20 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/Button"
+import { SocialLink, type SocialKey } from "@/components/ui/SocialLinks"
 
-/**
- * SectionCommunaute — Section 11
- * Photo pleine largeur + overlay.
- * Newsletter form + liens sociaux.
- * Identique au #communaute du HTML v3.
- *
- * → Remplacer le gradient par backgroundImage: "url('/event-photo.jpg')"
- */
-
-const SOCIAL_LINKS = [
-  { label: " Instagram",   href: "https://www.instagram.com/anbachain" },
-  { label: "in LinkedIn",  href: "https://www.linkedin.com/in/anbachain" },
+const SOCIAL_LINKS: { key: SocialKey; href: string }[] = [
+  { key: "instagram", href: "https://www.instagram.com/anbachain"   },
+  { key: "linkedin",  href: "https://www.linkedin.com/in/anbachain" },
 ]
 
 export function SectionCommunaute() {
+  const t = useTranslations("sectionCommunaute")
   const bgRef   = useRef<HTMLDivElement>(null)
   const wrapRef = useRef<HTMLElement>(null)
-  const [email, setEmail] = useState("")
+  const [email, setEmail]   = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [message, setMessage] = useState("")
 
@@ -41,33 +35,32 @@ export function SectionCommunaute() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-
   // Newsletter form submit
   async function handleSubmit() {
-    if(!email || status === "loading") return
+    if (!email || status === "loading") return
 
     setStatus("loading")
     setMessage("")
 
     try {
-      const res = await fetch("/api/newsletter", {
+      const res  = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       })
-
-
       const data = await res.json()
+
       if (data.success) {
         setStatus("success")
-        setMessage("Inscription confirmée. Verifiez votre boîte mail !")
+        setMessage(t("form.success"))
       } else {
         setStatus("error")
-        setMessage(data.message || "Une erreur est survenue.")
+        // Message d'erreur serveur ou fallback traduit
+        setMessage(data.message || t("form.errorNetwork"))
       }
     } catch (err) {
       setStatus("error")
-      setMessage("Erreur réseau. Reessayez plus tard.")
+      setMessage(t("form.errorNetwork"))
       console.error("[Newsletter] request error:", err)
     }
   }
@@ -88,7 +81,6 @@ export function SectionCommunaute() {
         style={{
           position: "absolute",
           inset: 0,
-          /* ↓ PRODUCTION : backgroundImage: "url('/event-photo.jpg')" */
           background:
             "linear-gradient(135deg, #0c0a07 0%, #12100d 50%, #0c0c0b 100%)",
           backgroundSize: "cover",
@@ -119,7 +111,6 @@ export function SectionCommunaute() {
           data-reveal
           style={{
             display: "block",
-            fontSize: "0.68rem",
             fontWeight: 500,
             letterSpacing: "0.18em",
             textTransform: "uppercase",
@@ -127,7 +118,7 @@ export function SectionCommunaute() {
             marginBottom: "1.5rem",
           }}
         >
-          Rejoindre le mouvement
+          {t("label")}
         </span>
 
         <h2
@@ -143,8 +134,11 @@ export function SectionCommunaute() {
             marginBottom: "1.5rem",
           }}
         >
-          Le futur s'écrit<br />
-          <em style={{ fontStyle: "italic", fontWeight: 200 }}>maintenant.</em>
+          {t("title.main")}
+          <br />
+          <em style={{ fontStyle: "italic", fontWeight: 200 }}>
+            {t("title.highlight")}
+          </em>
         </h2>
 
         <p
@@ -159,60 +153,64 @@ export function SectionCommunaute() {
             margin: "0 auto 3rem",
           }}
         >
-          Recevez les analyses, actualités et invitations en avant-première.
-          Rejoignez plus des professionnels qui construisent l'économie de demain.
+          {t("desc")}
         </p>
 
         {/* Newsletter form */}
-        <div>  
+        <div>
           {status === "success" ? (
-            <p style={{ color: "var(--accent)", fontWeight: 500 }}>{message}</p>
+            <p style={{ color: "var(--accent)", fontWeight: 500 }}>
+              {message}
+            </p>
           ) : (
-        <div
-          data-reveal
-          data-delay="3"
-          style={{
-            display: "flex",
-            gap: "0.75rem",
-            justifyContent: "center",
-            maxWidth: "420px",
-            margin: "0 auto 3rem",
-          }}
-        >
-          <input
-            type="email"
-            placeholder="Votre adresse email"
-            value={email}
-            style={{
-              flex: 1,
-              padding: "0.8rem 1.4rem",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid var(--border)",
-              borderRadius: "100px",
-              color: "var(--blanc)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.88rem",
-              outline: "none",
-            }}
-            onFocus={(e) =>
-              ((e.target as HTMLInputElement).style.borderColor =
-                "rgba(255,255,255,0.22)")
-            }
-            onBlur={(e) =>
-              ((e.target as HTMLInputElement).style.borderColor = "var(--border)")
-            }
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          />
-          <Button variant="white" onClick={handleSubmit}>
-            {status === "loading" ? "Envoi en cours..." : "S'inscrire"}
-          </Button>
-        </div>
+            <div
+              data-reveal
+              data-delay="3"
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                justifyContent: "center",
+                maxWidth: "420px",
+                margin: "0 auto 3rem",
+              }}
+            >
+              <input
+                type="email"
+                placeholder={t("form.placeholder")}
+                value={email}
+                style={{
+                  flex: 1,
+                  padding: "0.4rem 1.4rem",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid var(--border)",
+                  color: "var(--blanc)",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "0.88rem",
+                  outline: "none",
+                }}
+                onFocus={(e) =>
+                  ((e.target as HTMLInputElement).style.borderColor =
+                    "rgba(255,255,255,0.22)")
+                }
+                onBlur={(e) =>
+                  ((e.target as HTMLInputElement).style.borderColor =
+                    "var(--border)")
+                }
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              />
+              <Button variant="white" onClick={handleSubmit}>
+                {status === "loading" ? t("form.loading") : t("form.submit")}
+              </Button>
+            </div>
           )}
+
           {status === "error" && (
-            <p style={{ color: "var(--error)", fontWeight: 500 }}>{message}</p>
+            <p style={{ color: "var(--error)", fontWeight: 500 }}>
+              {message}
+            </p>
           )}
-         </div>
+        </div>
 
         {/* Réseaux sociaux */}
         <div
@@ -220,15 +218,20 @@ export function SectionCommunaute() {
           data-delay="4"
           style={{
             display: "flex",
-            gap: "0.75rem",
+            gap: "1.5rem",
             justifyContent: "center",
             flexWrap: "wrap",
+            marginTop: "1rem",
           }}
         >
-          {SOCIAL_LINKS.map(({ label, href }) => (
-            <Button key={label} variant="ghost" href={href}>
-              {label}
-            </Button>
+          {SOCIAL_LINKS.map(({ key, href }) => (
+            <SocialLink
+              key={key}
+              platform={key}
+              href={href}
+              label={t(`social.${key}`)}
+              size={22}
+            />
           ))}
         </div>
       </div>
