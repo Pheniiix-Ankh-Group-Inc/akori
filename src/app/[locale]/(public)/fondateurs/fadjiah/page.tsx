@@ -38,7 +38,7 @@ export default async function FadjiahPage() {
             }}
           >
             <Image
-              src="/fondateur.jpg"
+              src="/images/fadjiah_collin_mazile.jpg"
               alt={t("name")}
               fill
               priority
