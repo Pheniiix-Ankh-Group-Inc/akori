@@ -40,7 +40,7 @@ export default async function BricePage() {
               }}
             >
               <Image
-                src="/brice_mimifir.jpg"
+                src="/images/brice_mimifir.jpg"
                 alt={t("name")}
                 fill
                 priority
