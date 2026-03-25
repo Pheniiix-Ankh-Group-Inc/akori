@@ -1,101 +1,86 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { useTranslations } from "next-intl"
 
-/**
- * SectionStorytelling — Section 3
- * 3 chapitres alternés photo / texte.
- * Effet parallax JS sur chaque photo.
- * Pattern inspiré reMarkable.
- *
- * → Remplacer chaque gradient placeholder par une vraie photo :
- *   style={{ backgroundImage: "url('/photo.jpg')" }}
- */
-
-const CHAPTERS = [
+const CHAPTERS = (t: any) => [
   {
-    num:  "01",
+    num: "01",
     reverse: false,
     photoClass: "ph1",
     photoBg: "linear-gradient(135deg, #141210 0%, #1c1914 50%, #0e0d0b 100%)",
     headline: (
       <>
-        Un réseau bâti sur<br />
+        {t("chapters.c1.headline.line1")}<br />
         <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-          la confiance et la compétence.
+          {t("chapters.c1.headline.highlight")}
         </em>
       </>
     ),
-    body: "Chaque membre est vérifié et présenté avec son expertise réelle. Pas un feed algorithmique — un annuaire humain, filtrable par secteur, ville et disponibilité. Les connexions qui émergent ici sont durables parce qu'elles reposent sur un socle commun.",
-    link: { label: "Rejoindre le réseau →", href: "#adhesion" },
+    body: t("chapters.c1.body"),
+    link: { label: t("chapters.c1.link"), href: "#adhesion" },
   },
   {
-    num:  "02",
+    num: "02",
     reverse: true,
     photoClass: "ph2",
     photoBg: "linear-gradient(135deg, #0e1210 0%, #131a14 50%, #0c0e0b 100%)",
     headline: (
       <>
-        Des événements qui<br />
+        {t("chapters.c2.headline.line1")}<br />
         <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-          créent de vraies opportunités.
+          {t("chapters.c2.headline.highlight")}
         </em>
       </>
     ),
-    body: "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats. La billetterie est gérée via Lu.ma pour une expérience fluide.",
-    link: { label: "Voir les prochains événements →", href: "#evenements" },
+    body: t("chapters.c2.body"),
+    link: { label: t("chapters.c2.link"), href: "#evenements" },
   },
   {
-    num:  "03",
+    num: "03",
     reverse: false,
     photoClass: "ph3",
     photoBg: "linear-gradient(135deg, #100e14 0%, #17131e 50%, #0c0a10 100%)",
     headline: (
       <>
-        Des ressources produites<br />
+        {t("chapters.c3.headline.line1")}<br />
         <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-          par et pour la communauté.
+          {t("chapters.c3.headline.highlight")}
         </em>
       </>
     ),
-    body: "Rapports sectoriels, tutoriels techniques, analyses de gouvernance — tout le contenu d'AnbaChain est rédigé par des membres du réseau. Une bibliothèque vivante qui grandit avec chaque expertise qui nous rejoint.",
-    link: { label: "Explorer les ressources →", href: "#ressources" },
+    body: t("chapters.c3.body"),
+    link: { label: t("chapters.c3.link"), href: "#ressources" },
   },
   {
-    num:  "04",
+    num: "04",
     reverse: true,
     photoClass: "ph4",
     photoBg: "linear-gradient(135deg, #0e1210 0%, #131a14 50%, #0c0e0b 100%)",
     headline: (
       <>
-        Des partenaires et institutions qui<br />
+        {t("chapters.c4.headline.line1")}<br />
         <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-          créent de vraies opportunités.
+          {t("chapters.c4.headline.highlight")}
         </em>
       </>
     ),
-    body: "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats. La billetterie est gérée via Lu.ma pour une expérience fluide.",
-    link: { label: "Voir les prochains événements →", href: "#partenaires" },
+    body: t("chapters.c4.body"),
+    link: { label: t("chapters.c4.link"), href: "#partenaires" },
   },
 ]
 
-function StoryChapter({
-  chapter,
-  index,
-}: {
-  chapter: (typeof CHAPTERS)[0]
-  index: number
-}) {
-  const wrapRef  = useRef<HTMLDivElement>(null)
+function StoryChapter({ chapter, index }: any) {
+  const wrapRef = useRef<HTMLDivElement>(null)
   const innerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const wrap  = wrapRef.current
+    const wrap = wrapRef.current
     const inner = innerRef.current
     if (!wrap || !inner) return
 
     const onScroll = () => {
-      const rect   = wrap.getBoundingClientRect()
+      const rect = wrap.getBoundingClientRect()
       const center = rect.top + rect.height / 2 - window.innerHeight / 2
       inner.style.transform = `translateY(${center * 0.35}px)`
     }
@@ -106,10 +91,11 @@ function StoryChapter({
   }, [])
 
   const isReverse = chapter.reverse
-  const bgText    = isReverse ? "var(--bg-2)" : "var(--bg)"
+  const bgText = isReverse ? "var(--bg-2)" : "var(--bg)"
 
   return (
-    <div
+    <div className="story-chapter">
+      <div
       style={{
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
@@ -202,8 +188,8 @@ function StoryChapter({
         >
           {chapter.body}
         </p>
-{/* 
-        <a
+
+        {/* <a
           href={chapter.link.href}
           data-reveal
           data-delay="3"
@@ -226,35 +212,32 @@ function StoryChapter({
           {chapter.link.label}
         </a> */}
       </div>
+     </div>
     </div>
   )
 }
 
 export function SectionStorytelling() {
+  const t = useTranslations("sectionStorytelling")
+
   return (
     <section id="storytelling" style={{ paddingTop: "var(--pad)" }}>
-      {/* Intro */}
-      <div
-        className="wrap"
-        style={{ paddingBottom: "7rem", maxWidth: "700px" }}
-      >
-        <span
-          data-reveal
-          style={{
+      <div className="wrap" style={{ paddingBottom: "7rem", maxWidth: "700px" }}>
+        <span data-reveal
+        style={{
             display: "block",
             fontFamily: "var(--font-sans)",
-            fontSize: "0.68rem",
             fontWeight: 500,
             letterSpacing: "0.18em",
             textTransform: "uppercase",
             color: "var(--accent)",
             marginBottom: "1.5rem",
-          }}
-        >
-          Pourquoi AnbaChain
+          }}>
+          {t("intro.label")}
         </span>
-        <h2
-          data-reveal
+
+        <h2 
+          data-reveal 
           data-delay="1"
           style={{
             fontFamily: "var(--font-serif)",
@@ -263,18 +246,18 @@ export function SectionStorytelling() {
             lineHeight: 1.08,
             letterSpacing: "-0.025em",
             fontSize: "clamp(2.5rem, 4vw, 4rem)",
-          }}
-        >
-          Trois raisons<br />
-          de{" "}
-          <em style={{ fontStyle: "italic", fontWeight: 200 }}>rejoindre</em>
+          }}>
+          {t("intro.title.line1")}<br />
+          {t("intro.title.line2")}{" "}
+          <em style={{ fontStyle: "italic", fontWeight: 200 }}>{t("intro.title.highlight")}</em>
+          
           <br />
-          le mouvement.
+          {t("intro.title.line3")}
         </h2>
       </div>
 
-      {/* 3 chapitres */}
-      {CHAPTERS.map((chapter, i) => (
+
+      {CHAPTERS(t).map((chapter, i) => (
         <StoryChapter key={chapter.num} chapter={chapter} index={i} />
       ))}
 

@@ -1,61 +1,56 @@
 "use client"
 
-/**
- * SectionMission — Section 2
- * Citation géante centrée.
- * 4 piliers en tableau horizontal avec séparateurs.
- */
+import { useTranslations } from "next-intl"
 
-const PILLARS = [
+const PILLARS = (t: any) => [
   {
-    n:     "01",
-    title: "Réseau",
-    desc:  "Connecter les professionnels noirs de la blockchain à l'échelle mondiale, par secteur et par expertise.",
+    n: "01",
+    title: t("pillars.network.title"),
+    desc: t("pillars.network.desc"),
   },
   {
-    n:     "02",
-    title: "Solutions",
-    desc:  "Co-créer des réponses blockchain aux défis concrets rencontrés par la communauté dans tous les secteurs.",
+    n: "02",
+    title: t("pillars.solutions.title"),
+    desc: t("pillars.solutions.desc"),
   },
   {
-    n:     "03",
-    title: "Éducation",
-    desc:  "Démocratiser les savoirs blockchain — des fondamentaux aux cas d'usage avancés — pour tous les profils.",
+    n: "03",
+    title: t("pillars.education.title"),
+    desc: t("pillars.education.desc"),
   },
   {
-    n:     "04",
-    title: "Impact",
-    desc:  "Mesurer, documenter et amplifier l'influence économique et institutionnelle du réseau AnbaChain.",
+    n: "04",
+    title: t("pillars.impact.title"),
+    desc: t("pillars.impact.desc"),
   },
 ]
 
 export function SectionMission() {
+  const t = useTranslations("sectionMission")
+
   return (
     <section id="mission" className="">
       {/* Citation centrée */}
       <div className="section-pillars">
         <span className="label" data-reveal>
-          Notre mission
+          {t("label")}
         </span>
 
         <h2 className="heading-md mb-4" data-reveal data-delay="1">
-          La blockchain n'est pas<br />
-          qu'une technologie. C'est<br />
-          un levier de{" "}
-          <em className="text-italic">souveraineté.</em>
+          {t("title.line1")}<br />
+          {t("title.line2")}<br />
+          {t("title.line3")}{" "}
+          <em className="text-italic">{t("title.highlight")}</em>
         </h2>
 
         <p className="text-base max-w-[600px] mx-auto" data-reveal data-delay="2">
-          AnbaChain crée le point de convergence qui manquait : un espace où les
-          talents se rencontrent, où les problèmes concrets de la communauté trouvent
-          des solutions technologiques, et où une nouvelle génération de leaders
-          blockchain émerge.
+          {t("description")}
         </p>
       </div>
 
       {/* Tableau 4 piliers */}
       <div className="pillars-grid">
-        {PILLARS.map(({ n, title, desc }, i) => (
+        {PILLARS(t).map(({ n, title, desc }, i) => (
           <div
             key={n}
             className="pillar-item"

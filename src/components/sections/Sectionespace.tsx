@@ -1,44 +1,15 @@
-import { Button } from "@/components/ui/Button"
+"use client"
 
-/**
- * SectionEspace — Section 9
- * Layout 2 colonnes : features + mockup dashboard OS.
- * Identique au #espace du HTML v3.
- */
+import { useTranslations } from "next-intl"
 
-const FEATURES = [
-  {
-    n:     "01",
-    title: "Profil professionnel complet",
-    desc:  "Compétences, expériences, secteur, disponibilité pour des collaborations",
-  },
-  {
-    n:     "02",
-    title: "Annuaire complet avec filtres avancés",
-    desc:  "Recherchez par secteur, expertise, ville, disponibilité",
-  },
-  {
-    n:     "03",
-    title: "Messagerie directe entre membres",
-    desc:  "Connectez-vous directement avec les professionnels du réseau",
-  },
-  // {
-  //   n:     "04",
-  //   title: "Tarifs préférentiels événements Lu.ma",
-  //   desc:  "Code membre appliqué automatiquement sur tous les événements AnbaChain",
-  // },
-  {
-    n:     "04",
-    title: "Bibliothèque de ressources exclusives",
-    desc:  "Rapports, analyses, guides et webinars réservés aux membres",
-  },
-]
+// Clés statiques connues au build — pas de returnObjects
+const FEATURE_KEYS = ["profile", "directory", "messaging", "library"] as const
 
 const MOCK_STATS = [
-  { val: "24", lbl: "Connexions" },
-  { val: "3",  lbl: "Événements" },
-  { val: "12", lbl: "Ressources" },
-]
+  { val: "24", statKey: "connections" },
+  { val: "3",  statKey: "events"      },
+  { val: "12", statKey: "resources"   },
+] as const
 
 const MOCK_AVATARS = [
   "linear-gradient(135deg,#c4a46e,#7a5c2e)",
@@ -48,15 +19,14 @@ const MOCK_AVATARS = [
 ]
 
 export function SectionEspace() {
+  const t = useTranslations("sectionEspace")
+
   return (
     <section
       id="espace"
       style={{ padding: "var(--pad) 0", background: "var(--bg-2)" }}
     >
-      <div
-        style={{ padding: "0 3rem" }}
-        className="esp-wrap"
-      >
+      <div style={{ padding: "0 3rem" }} className="esp-wrap">
         <div
           style={{
             display: "grid",
@@ -80,8 +50,9 @@ export function SectionEspace() {
                 marginBottom: "1.5rem",
               }}
             >
-              Espace membre
+              {t("label")}
             </span>
+
             <h2
               data-reveal
               data-delay="1"
@@ -95,9 +66,12 @@ export function SectionEspace() {
                 marginBottom: "1.75rem",
               }}
             >
-              Votre hub{" "}
-              <em style={{ fontStyle: "italic", fontWeight: 200 }}>personnel</em>
+              {t("title.main")}{" "}
+              <em style={{ fontStyle: "italic", fontWeight: 200 }}>
+                {t("title.highlight")}
+              </em>
             </h2>
+
             <p
               data-reveal
               data-delay="2"
@@ -109,8 +83,7 @@ export function SectionEspace() {
                 marginBottom: "1rem",
               }}
             >
-              Un espace privé pour gérer votre profil, explorer le réseau et
-              accéder aux ressources exclusives AnbaChain.
+              {t("desc")}
             </p>
 
             {/* Liste features */}
@@ -123,9 +96,9 @@ export function SectionEspace() {
                 margin: "2.5rem 0",
               }}
             >
-              {FEATURES.map(({ n, title, desc }) => (
+              {FEATURE_KEYS.map((key, i) => (
                 <li
-                  key={n}
+                  key={key}
                   style={{
                     display: "flex",
                     gap: "1.5rem",
@@ -145,7 +118,7 @@ export function SectionEspace() {
                       marginTop: "0.1rem",
                     }}
                   >
-                    {n}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
                     <span
@@ -157,21 +130,15 @@ export function SectionEspace() {
                         marginBottom: "0.2rem",
                       }}
                     >
-                      {title}
+                      {t(`features.${key}.title`)}
                     </span>
                     <span style={{ fontSize: "0.82rem", color: "var(--texte)" }}>
-                      {desc}
+                      {t(`features.${key}.desc`)}
                     </span>
                   </div>
                 </li>
               ))}
             </ul>
-
-            {/* <div data-reveal data-delay="3">
-              <Button variant="white" href="#adhesion">
-                Accéder à l'espace membre
-              </Button>
-            </div> */}
           </div>
 
           {/* ── Mockup dashboard ── */}
@@ -223,13 +190,12 @@ export function SectionEspace() {
                   padding: "0 0.75rem",
                 }}
               >
-                app.anbachain.io/dashboard
+                {t("dashboardUrl")}
               </div>
             </div>
 
-            {/* Contenu */}
+            {/* Stats */}
             <div style={{ padding: "1.5rem" }}>
-              {/* Stats */}
               <div
                 style={{
                   display: "grid",
@@ -238,9 +204,9 @@ export function SectionEspace() {
                   marginBottom: "1.5rem",
                 }}
               >
-                {MOCK_STATS.map(({ val, lbl }) => (
+                {MOCK_STATS.map(({ val, statKey }) => (
                   <div
-                    key={lbl}
+                    key={statKey}
                     style={{
                       background: "rgba(255,255,255,0.025)",
                       border: "1px solid var(--border)",
@@ -268,13 +234,13 @@ export function SectionEspace() {
                         letterSpacing: "0.08em",
                       }}
                     >
-                      {lbl}
+                      {t(`stats.${statKey}`)}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Section membres suggérés */}
+              {/* Membres suggérés */}
               <div
                 style={{
                   fontSize: "0.68rem",
@@ -285,7 +251,7 @@ export function SectionEspace() {
                   marginBottom: "0.75rem",
                 }}
               >
-                Membres suggérés
+                {t("suggestedMembers")}
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
@@ -310,23 +276,8 @@ export function SectionEspace() {
                         flexShrink: 0,
                       }}
                     />
-                    {/* Lignes placeholder */}
-                    <div
-                      style={{
-                        height: "6px",
-                        borderRadius: "3px",
-                        background: "rgba(255,255,255,0.06)",
-                        flex: i % 2 === 0 ? 1 : 0.6,
-                      }}
-                    />
-                    <div
-                      style={{
-                        height: "6px",
-                        borderRadius: "3px",
-                        background: "rgba(255,255,255,0.06)",
-                        flex: 0.3,
-                      }}
-                    />
+                    <div style={{ height: "6px", borderRadius: "3px", background: "rgba(255,255,255,0.06)", flex: i % 2 === 0 ? 1 : 0.6 }} />
+                    <div style={{ height: "6px", borderRadius: "3px", background: "rgba(255,255,255,0.06)", flex: 0.3 }} />
                   </div>
                 ))}
               </div>
@@ -337,10 +288,7 @@ export function SectionEspace() {
 
       <style>{`
         @media (max-width: 1024px) {
-          .esp-layout {
-            grid-template-columns: 1fr !important;
-            gap: 4rem !important;
-          }
+          .esp-layout { grid-template-columns: 1fr !important; gap: 4rem !important; }
           .esp-wrap { padding: 0 1.5rem !important; }
         }
       `}</style>

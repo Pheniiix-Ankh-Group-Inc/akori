@@ -1,14 +1,15 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import type { Partenaire } from "@/types"
 
-const TABS = [
-  { label: "Tous",         value: "tous"        },
-  { label: "Entreprises",  value: "entreprise"  },
-  { label: "Institutions", value: "institution" },
-  { label: "Universités",  value: "universite"  },
-  { label: "Médias",       value: "media"       },
+const TABS = (t: any) => [
+  { label: t("tabs.all"), value: "tous" },
+  { label: t("tabs.entreprise"), value: "entreprise" },
+  { label: t("tabs.institution"), value: "institution" },
+  { label: t("tabs.universite"), value: "universite" },
+  { label: t("tabs.media"), value: "media" },
 ]
 
 interface Props {
@@ -16,6 +17,8 @@ interface Props {
 }
 
 export function SectionPartenaires({ partenaires }: Props) {
+  const t = useTranslations("sectionPartenaires")
+
   const [activeTab, setActiveTab] = useState("tous")
   const data = partenaires ?? []
 
@@ -31,9 +34,9 @@ export function SectionPartenaires({ partenaires }: Props) {
       {/* Top */}
       <div style={{ padding: "0 3rem", marginBottom: "4rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <span className="label" data-reveal>Écosystème</span>
+          <span className="label" data-reveal>{t("label")}</span>
           <h2 className="heading-md" data-reveal data-delay="1">
-            Partenaires & <em className="text-italic">Institutions</em>
+            {t("title.main")} <em className="text-italic">{t("title.highlight")}</em>
           </h2>
         </div>
 
@@ -42,7 +45,7 @@ export function SectionPartenaires({ partenaires }: Props) {
           data-reveal
           style={{ display: "flex", gap: 0, border: "1px solid var(--border)", borderRadius: "100px", padding: "0.2rem" }}
         >
-          {TABS.map((tab) => (
+          {TABS(t).map((tab) => (
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
@@ -56,7 +59,7 @@ export function SectionPartenaires({ partenaires }: Props) {
                 fontFamily: "var(--font-sans)",
                 transition: "all 0.2s",
                 background: activeTab === tab.value ? "var(--blanc)" : "transparent",
-                color:      activeTab === tab.value ? "var(--bg)"   : "var(--texte)",
+                color: activeTab === tab.value ? "var(--bg)" : "var(--texte)",
               }}
             >
               {tab.label}
@@ -68,7 +71,9 @@ export function SectionPartenaires({ partenaires }: Props) {
       {/* Grille */}
       {filtered.length === 0 ? (
         <div style={{ padding: "4rem 3rem", textAlign: "center" }}>
-          <p style={{ fontSize: "0.86rem", color: "var(--texte)" }}>Aucun partenaire dans cette catégorie.</p>
+          <p style={{ fontSize: "0.86rem", color: "var(--texte)" }}>
+            {t("empty")}
+          </p>
         </div>
       ) : (
         <div
@@ -98,7 +103,6 @@ export function SectionPartenaires({ partenaires }: Props) {
               onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "")}
             >
-              {/* Logo placeholder */}
               <div style={{ width: "52px", height: "52px", flexShrink: 0, border: "1px solid var(--border)", borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: 600, color: "var(--texte)", background: "rgba(255,255,255,0.02)" }}>
                 {p.code ?? p.nom.slice(0, 3).toUpperCase()}
               </div>
