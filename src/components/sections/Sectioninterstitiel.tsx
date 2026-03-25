@@ -1,16 +1,10 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { useTranslations } from "next-intl"
 
-/**
- * SectionInterstitiel — Section 5
- * Photo pleine largeur (70vh) + citation superposée.
- * Effet parallax lent (speed 0.18).
- * Pattern reMarkable : "couper" entre sections avec une photo.
- *
- * → Remplacer le gradient par backgroundImage: "url('/photo-communaute.jpg')"
- */
 export function SectionInterstitiel() {
+  const t = useTranslations("sectionInterstitiel")
   const bgRef   = useRef<HTMLDivElement>(null)
   const wrapRef = useRef<HTMLElement>(null)
 
@@ -36,7 +30,7 @@ export function SectionInterstitiel() {
       id="interstitiel"
       style={{
         position: "relative",
-        height: "70vh",
+        height: "10vh",
         minHeight: "480px",
         display: "flex",
         alignItems: "flex-end",
@@ -49,14 +43,12 @@ export function SectionInterstitiel() {
         style={{
           position: "absolute",
           inset: 0,
-          /* ↓ PRODUCTION : backgroundImage: "url('/communaute-photo.jpg')" */
           background:
             "linear-gradient(135deg, #0e0c09 0%, #17140f 40%, #0e0d0b 100%)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        {/* Overlay dégradé */}
         <div
           style={{
             position: "absolute",
@@ -85,18 +77,20 @@ export function SectionInterstitiel() {
             maxWidth: "780px",
           }}
         >
-          "La technologie blockchain est l'outil.<br />
+          "{t("quote.main")}
+          <br />
           <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-            La communauté est la force.
+            {t("quote.highlight")}
           </em>
           "
         </blockquote>
+
         <p
           data-reveal
           data-delay="1"
           style={{ fontSize: "0.82rem", color: "var(--texte-2)", fontWeight: 400 }}
         >
-          — AnbaChain, Manifeste fondateur, 2025
+          {t("author")}
         </p>
       </div>
     </section>

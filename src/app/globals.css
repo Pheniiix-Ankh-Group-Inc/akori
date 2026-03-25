@@ -321,7 +321,6 @@ nav a:hover {
 .label {
   display: block;
   font-family: var(--font-sans);
-  font-size: 0.68rem;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -617,12 +616,16 @@ nav a:hover {
 }
 
 .hero-stat-label {
-  font-size: 0.78rem;
+  font-size: 1.0rem;
   color: var(--texte);
   margin-top: 0.4rem;
-  font-weight: 400;
-  font-family: var(--font-sans);
+  font-weight: 300;
+  font-family: var(--font-serif);
+  line-height: 1;
+  letter-spacing: -0.04em;
 }
+
+
 
 /* ═══════════════════════════════════════════════════════
    MISSION / PILLARS

@@ -11,6 +11,12 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ### In Progress
 
+## [0.11.0] — 2026-04-25
+
+### Added
+
+- Add Internationalisation
+
 ---
 
 ## [0.10.0] — 2026-04-17

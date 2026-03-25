@@ -8,11 +8,10 @@ import {
   EVENEMENTS_QUERY,
   EVENEMENT_FEATURED_QUERY,
   RESSOURCES_QUERY,
-  PARTENAIRES_QUERY,
-  EQUIPE_QUERY,
+  PARTENAIRES_QUERY
 } from "@/lib/queries"
 
-import type { Evenement, Ressource, Partenaire, MembreEquipe } from "@/types"
+import type { Evenement, Ressource, Partenaire } from "@/types"
 
 import { SectionAdhesion } from "@/components/sections/Sectionadhesion";
 import { SectionEquipe } from "@/components/sections/Sectionequipe";
@@ -45,7 +44,6 @@ export default async function HomePage() {
   let evenementFeatured: Evenement | null = null
   let ressources: Ressource[] = []
   let partenaires: Partenaire[] = []
-  let equipe: MembreEquipe[] = []
   let hasError = false
 
   try {
@@ -53,21 +51,18 @@ export default async function HomePage() {
       { data: ev },
       { data: evFeatured },
       { data: res },
-      { data: part },
-      { data: eq },
+      { data: part }
     ] = await Promise.all([
       sanityFetch({ query: EVENEMENTS_QUERY }),
       sanityFetch({ query: EVENEMENT_FEATURED_QUERY }),
       sanityFetch({ query: RESSOURCES_QUERY }),
       sanityFetch({ query: PARTENAIRES_QUERY }),
-      sanityFetch({ query: EQUIPE_QUERY }),
     ])
 
     evenements = ev ?? []
     evenementFeatured = evFeatured ?? null
     ressources = res ?? []
     partenaires = part ?? []
-    equipe = eq ?? []
   } catch (error) {
     console.error("Failed to fetch Sanity data:", error)
     hasError = true
@@ -124,7 +119,7 @@ export default async function HomePage() {
       <SectionEspace />
 
       {/* Section 10 */}
-      <SectionEquipe equipe={equipe} />
+      <SectionEquipe />
 
       {/* Section 11 */}
       <SectionCommunaute />

@@ -93,14 +93,3 @@ export interface Partenaire {
   description: string
   logo?:       { asset: { _ref: string } }
 }
-
-export interface MembreEquipe {
-  _id:       string
-  nom:       string
-  initiales: string
-  role:      string
-  bio:       string
-  linkedin?: string
-  twitter?:  string
-  photo?:    { asset: { _ref: string } }
-}

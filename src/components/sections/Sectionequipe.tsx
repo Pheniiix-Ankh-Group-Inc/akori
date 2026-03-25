@@ -1,79 +1,111 @@
 "use client"
 
-import type { MembreEquipe } from "@/types"
-import { urlFor } from "@/sanity/lib/image"
+import Image from "next/image"
+import Link from "next/link"
 
-interface Props {
-  equipe: MembreEquipe[] | null
+export const metadata = {
+  title: "Fondateurs — AnbaChain",
+  description: "Découvrez les fondateurs d'AnbaChain.",
 }
 
-export function SectionEquipe({ equipe }: Props) {
-  const data = equipe ?? []
+const founders = [
+  {
+    name: "Fadjiah Collin‑Mazile",
+    slug: "fadjiah",
+    role: "Data leader, angel investor & blockchain strategist",
+    image: "/fadjiah_collin_mazile.jpg",
+  },
+  {
+    name: "Brice Mimifir",
+    slug: "brice",
+    role: "Java Developer, Digital Transformation Consultant & Blockchain Developer",
+    image:"/brice_mimifir.jpg",
+  },
+]
 
+export  function SectionEquipe() {
   return (
-    <section
-      id="about"
-      style={{ padding: "var(--pad) 0", background: "var(--bg)" }}
-    >
-      {/* Top */}
-      <div style={{ padding: "0 3rem", marginBottom: "5rem" }}>
-        <span className="label" data-reveal>Les fondateurs</span>
-        <h2 className="heading-md" data-reveal data-delay="1">
-          L'équipe <em className="text-italic">fondatrice</em>
-        </h2>
-      </div>
+      <section className="section" id="fondateurs" style={{  padding: "var(--pad) 0" }}>
+        <div className="wrap" >
+          <h1 className="heading-md" style={{ marginBottom: "1rem" }}>
+            Fondateurs
+          </h1>
+          <p className="text-base" style={{ color: "var(--texte-2)", marginBottom: "4rem"   }}>
+            Les visionnaires derrière AnbaChain.
+          </p>
 
-      {/* Grille */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${Math.min(data.length, 3)}, 1fr)`,
-          borderTop: "1px solid var(--border)",
-          borderLeft: "1px solid var(--border)",
-          margin: "0 3rem",
-        }}
-        className="team-grid"
-      >
-        {data.length === 0 ? (
-          <div style={{ padding: "3rem", borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-            <p style={{ fontSize: "0.86rem", color: "var(--texte)" }}>Aucun membre.</p>
-          </div>
-        ) : data.map((membre, i) => (
+          {/* Founders grid */}
           <div
-            key={membre._id}
-            data-reveal
-            data-delay={String(i + 1)}
-            className="team-card"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "2.5rem",
+            }}
           >
-            {/* Avatar */}
-            <div className="team-avatar">
-              {membre.photo ? (
-                <img
-                  src={urlFor(membre.photo).width(64).height(64).url()}
-                  alt={membre.nom}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
-                />
-              ) : (
-                membre.initiales ?? membre.nom.slice(0, 2).toUpperCase()
-              )}
-            </div>
+            {founders.map((founder) => (
+              <Link
+                key={founder.slug}
+                href={`/fondateur/${founder.slug}`}
+                style={{
+                  display: "block",
+                  background: "var(--bg-card)",
+                  overflow: "hidden",
+                  transition: "border-color 0.3s",
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+                className="founder-card"
+              >
+                {/* Photo */}
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "3 / 4",
+                    background: "var(--bg-2)",
+                  }}
+                >
+                  {founder.image ? (
+                    <Image
+                      src={founder.image}
+                      alt={founder.name}
+                      fill
+                      style={{ objectFit: "cover" }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "var(--texte)",
+                        fontSize: "0.8rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                      }}
+                    >
+                      Photo à venir
+                    </div>
+                  )}
+                </div>
 
-            <div className="team-name">{membre.nom}</div>
-            <div className="team-role">{membre.role}</div>
-            <p className="team-bio">{membre.bio}</p>
-
-            {/* Liens sociaux */}
-            <div className="team-social">
-              {membre.linkedin && (
-                <a href={membre.linkedin} target="_blank" rel="noopener noreferrer" className="team-social-link">in</a>
-              )}
-              {membre.twitter && (
-                <a href={membre.twitter} target="_blank" rel="noopener noreferrer" className="team-social-link">𝕏</a>
-              )}
-            </div>
+                {/* Info */}
+                <div style={{ padding: "1.5rem" }}>
+                  <h2 className="heading-xs" style={{ marginBottom: "0.5rem" }}>
+                    {founder.name}
+                  </h2>
+                  <p className="text-sm" style={{ color: "var(--texte-2)" }}>
+                    {founder.role}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
-        ))}
-      </div>
-    </section>
+        </div>
+      </section>
+
+     
   )
 }
