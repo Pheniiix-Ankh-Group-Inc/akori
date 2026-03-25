@@ -11,13 +11,14 @@ const founders = [
     name: "Fadjiah Collin‑Mazile",
     slug: "fadjiah",
     role: "Data leader, angel investor & blockchain strategist",
-    image: "/Fadjiah_Collin_Mazile.jpg",
+    image: "/images/fadjiah_collin_mazile.jpg",
   },
   {
     name: "Brice Mimifir",
     slug: "brice",
     role: "Java Developer, Digital Transformation Consultant & Blockchain Developer",
-    image: "/brice_mimifir.jpg",
+    image: "/images/brice_mimifir.jpg",
+    
   },
 ]
 

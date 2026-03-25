@@ -13,13 +13,13 @@ const founders = [
     name: "Fadjiah Collin‑Mazile",
     slug: "fadjiah",
     role: "Data leader, angel investor & blockchain strategist",
-    image: "/fadjiah_collin_mazile.jpg",
+    image: "/images/fadjiah_collin_mazile.jpg",
   },
   {
     name: "Brice Mimifir",
     slug: "brice",
     role: "Java Developer, Digital Transformation Consultant & Blockchain Developer",
-    image:"/brice_mimifir.jpg",
+    image:"/images/brice_mimifir.jpg",
   },
 ]
 
@@ -45,7 +45,7 @@ export  function SectionEquipe() {
             {founders.map((founder) => (
               <Link
                 key={founder.slug}
-                href={`/fondateur/${founder.slug}`}
+                href={`/fondateurs/${founder.slug}`}
                 style={{
                   display: "block",
                   background: "var(--bg-card)",
