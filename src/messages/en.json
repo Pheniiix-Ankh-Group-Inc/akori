@@ -1,0 +1,506 @@
+{
+  "Header": {
+    "logo": "Anba<em>Chain</em>",
+    "nav": {
+      "mission": "Mission",
+      "partners": "Partners",
+      "events": "Events",
+      "resources": "Resources",
+      "membership": "Membership",
+      "about": "About",
+      "fondateurs": "Founders"
+    },
+    "burger": {
+      "open": "Open menu",
+      "close": "Close menu"
+    }
+  },
+  "sectionHero": {
+    "title": {
+      "line1": "Building the future",
+      "line2": "together,",
+      "line3": "on the chain."
+    },
+    "description": "AnbaChain brings together Black professionals — entrepreneurs, developers, analysts, professors, legal experts, and institutional actors — to accelerate blockchain adoption and build concrete solutions for our community.",
+    "stats": {
+      "members": "Professional members",
+      "sectors": "Sectors represented",
+      "countries": "Countries",
+      "events": "Events organized"
+    }
+  },
+  "sectionMission": {
+    "label": "Our mission",
+    "title": {
+      "line1": "Blockchain is not",
+      "line2": "just a technology. It is",
+      "line3": "a lever of",
+      "highlight": "sovereignty."
+    },
+    "description": "AnbaChain creates the missing point of convergence: a space where talents meet, where real community challenges find technological solutions, and where a new generation of blockchain leaders emerges.",
+    "pillars": {
+      "network": {
+        "title": "Network",
+        "desc": "Connecting Black blockchain professionals worldwide, by sector and expertise."
+      },
+      "solutions": {
+        "title": "Solutions",
+        "desc": "Co-creating blockchain-based responses to real challenges faced by the community across all sectors."
+      },
+      "education": {
+        "title": "Education",
+        "desc": "Democratizing blockchain knowledge — from fundamentals to advanced use cases — for all profiles."
+      },
+      "impact": {
+        "title": "Impact",
+        "desc": "Measuring, documenting, and amplifying the economic and institutional influence of the AnbaChain network."
+      }
+    }
+  },
+  "sectionStorytelling": {
+    "intro": {
+      "label": "Why AnbaChain",
+      "title": {
+        "line1": "Three reasons",
+        "line2": "to",
+        "highlight": "join",
+        "line3": "the movement."
+      }
+    },
+    "chapters": {
+      "c1": {
+        "headline": {
+          "line1": "A network built on",
+          "highlight": "trust and expertise."
+        },
+        "body": "Each member is verified and presented with their real expertise. Not an algorithmic feed — a human directory, filterable by sector, city, and availability. The connections formed here are lasting because they are built on a shared foundation.",
+        "link": "Join the network →"
+      },
+      "c2": {
+        "headline": {
+          "line1": "Events that",
+          "highlight": "create real opportunities."
+        },
+        "body": "Conferences, hackathons, roundtables, training — every AnbaChain event is designed to produce tangible outcomes: collaborations, projects, hires, partnerships. Ticketing is managed via Lu.ma for a seamless experience.",
+        "link": "See upcoming events →"
+      },
+      "c3": {
+        "headline": {
+          "line1": "Resources created",
+          "highlight": "by and for the community."
+        },
+        "body": "Sector reports, technical tutorials, governance analyses — all AnbaChain content is written by network members. A living library that grows with every new expertise that joins us.",
+        "link": "Explore resources →"
+      },
+      "c4": {
+        "headline": {
+          "line1": "Partners and institutions that",
+          "highlight": "create real opportunities."
+        },
+        "body": "Conferences, hackathons, roundtables, training — every AnbaChain event is designed to produce tangible outcomes: collaborations, projects, hires, partnerships. Ticketing is managed via Lu.ma for a seamless experience.",
+        "link": "See upcoming events →"
+      }
+    }
+  },
+  "sectionPartenaires": {
+    "label": "Ecosystem",
+    "title": {
+      "main": "Partners &",
+      "highlight": "Institutions"
+    },
+    "tabs": {
+      "all": "All",
+      "entreprise": "Companies",
+      "institution": "Institutions",
+      "universite": "Universities",
+      "media": "Media"
+    },
+    "empty": "No partners in this category."
+  },
+  "sectionEvenements": {
+    "label": "Schedule",
+    "title": {
+      "main": "Upcoming",
+      "highlight": "events"
+    },
+    "iframe": {
+      "title": "AnbaChain events calendar"
+    },
+    "empty": "No events"
+  },
+  "sectionAdhesion": {
+    "label": "Membership",
+    "title": {
+      "main": "Join the",
+      "highlight": "movement"
+    },
+    "description": "Choose the plan that fits your profile. Event tickets are managed separately via Lu.ma.",
+    "plans": {
+      "network": {
+        "tier": "Basic access",
+        "name": "Network",
+        "period": "Always free",
+        "features": [
+          "Public profile in directory",
+          "Access to free events",
+          "Monthly newsletter",
+          "Community forum (read-only)"
+        ],
+        "cta": "Create an account"
+      },
+      "pioneer": {
+        "tier": "Professional",
+        "name": "Pioneer",
+        "period": "or $240 / year — 20% savings",
+        "features": [
+          "Everything in Network plan",
+          "Full directory + member contacts",
+          "Member messaging",
+          "Discounted Lu.ma events",
+          "Forum (full participation)",
+          "Exclusive resources & webinars",
+          "Verified profile + member badge"
+        ],
+        "cta": "Join now",
+        "badge": "Most popular"
+      },
+      "institution": {
+        "tier": "Organization",
+        "name": "Institution",
+        "period": "Up to 10 member accounts",
+        "features": [
+          "Everything in Pioneer plan (×10 accounts)",
+          "Branded partner page on website",
+          "Logo on website and events",
+          "Priority event access",
+          "Quarterly impact report",
+          "B2B invoicing — PDF invoice"
+        ],
+        "cta": "Contact us"
+      }
+    },
+    "payments": {
+      "label": "Membership payment:",
+      "methods": [
+        "Visa / Mastercard",
+        "Apple Pay",
+        "Google Pay",
+        "Bitcoin · ETH · USDC",
+        "B2B invoice"
+      ],
+      "events": "Event ticketing:"
+    }
+  },
+  "sectionRessources": {
+    "label": "Knowledge",
+    "title": {
+      "main": "Resources &",
+      "highlight": "Insights"
+    },
+    "cta": "All resources",
+    "empty": "No resources available.",
+    "categories": {
+      "rapport": "Report",
+      "tutoriel": "Tutorial",
+      "gouvernance": "Governance",
+      "analyse": "Analysis"
+    },
+    "readingTime": "{minutes} min"
+  },
+  "sectionEspace": {
+    "label": "Member space",
+    "title": {
+      "main": "Your personal",
+      "highlight": "hub"
+    },
+    "desc": "A private space to manage your profile, explore the network and access exclusive AnbaChain resources.",
+    "features": {
+      "profile": {
+        "title": "Complete professional profile",
+        "desc": "Skills, experience, sector, availability for collaborations"
+      },
+      "directory": {
+        "title": "Full directory with advanced filters",
+        "desc": "Search by sector, expertise, city, availability"
+      },
+      "messaging": {
+        "title": "Direct messaging between members",
+        "desc": "Connect directly with professionals in the network"
+      },
+      "library": {
+        "title": "Exclusive resource library",
+        "desc": "Reports, analyses, guides and webinars for members only"
+      }
+    },
+    "stats": {
+      "connections": "Connections",
+      "events": "Events",
+      "resources": "Resources"
+    },
+    "suggestedMembers": "Suggested members",
+    "dashboardUrl": "app.anbachain.io/dashboard",
+    "cta": "Access member space"
+  },
+  "sectionInterstitiel": {
+    "quote": {
+      "main": "Blockchain technology is the tool.",
+      "highlight": "Community is the strength."
+    },
+    "author": "— AnbaChain, Founding Manifesto, 2025"
+  },
+  "sectionCommunaute": {
+    "label": "Join the movement",
+    "title": {
+      "main": "The future is written",
+      "highlight": "now."
+    },
+    "desc": "Receive analyses, news and invitations in preview. Join professionals building tomorrow's economy.",
+    "form": {
+      "placeholder": "Your email address",
+      "submit": "Subscribe",
+      "loading": "Sending...",
+      "success": "Subscription confirmed. Check your inbox!",
+      "errorNetwork": "Network error. Please try again later."
+    },
+    "social": {
+      "instagram": "Instagram",
+      "linkedin": "in LinkedIn"
+    }
+  },
+  "terms": {
+    "metadata": {
+      "title": "Terms of Use — AnbaChain",
+      "description": "Terms of use for the AnbaChain platform."
+    },
+    "header": {
+      "back": "Back to home",
+      "title": "Terms of Use",
+      "lastUpdated": "Last updated: March 12, 2026"
+    },
+    "sections": {
+      "publisher": {
+        "title": "1. Publisher Identification",
+        "content": {
+          "organization": "Organization name:",
+          "legalForm": "Legal form:",
+          "registration": "Registration number:",
+          "office": "Registered office:",
+          "email": "Contact email:",
+          "representative": "Legal representative:"
+        }
+      },
+      "hosting": {
+        "title": "2. Platform Hosting",
+        "frontend": "Frontend (Website):",
+        "backend": "Backend (API) and Database:"
+      },
+      "ip": {
+        "title": "3. Intellectual Property",
+        "p1": "The content of the ANBACHAIN platform, including but not limited to texts, graphics, images, logos, videos, sounds, software, smart contracts, and all other elements composing the platform, is the exclusive property of ANBACHAIN or its partners, and is protected by Canadian and international intellectual property laws.",
+        "p2": "Any reproduction, representation, modification, publication, or adaptation of any part of the platform's elements, by any means or process, is prohibited without prior written authorization from ANBACHAIN."
+      },
+      "liability": {
+        "title": "4. Limitation of Liability",
+        "p1": "ANBACHAIN strives to ensure the accuracy and currency of information published on the platform. However, ANBACHAIN cannot guarantee the accuracy, precision, or completeness of information made available on this platform.",
+        "p2": "The platform may contain hyperlinks to other websites. ANBACHAIN exercises no control over these sites and disclaims any responsibility for their content."
+      },
+      "financial": {
+        "title": "5. No Financial Advice — Digital Asset Risks",
+        "p1": "The information and content available on the platform is provided for informational and educational purposes only. It does not constitute investment, financial, legal, or tax advice.",
+        "p2": "Investing in digital assets carries significant risks, including the risk of total loss of invested capital."
+      },
+      "law": {
+        "title": "6. Applicable Law and Jurisdiction",
+        "p1": "These Terms are governed by the laws of the Province of [To be completed] and the applicable federal laws of Canada."
+      },
+      "modifications": {
+        "title": "7. Modifications",
+        "p1": "ANBACHAIN reserves the right to modify these Terms at any time. Continued use constitutes acceptance."
+      },
+      "contact": {
+        "title": "8. Contact",
+        "p1": "For any questions or complaints, contact us at:"
+      }
+    }
+  },
+  "privacy": {
+    "header": {
+      "back": "Back to home",
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: March 12, 2026"
+    },
+    "sections": {
+      "collect": {
+        "title": "1. Information We Collect",
+        "intro": "We collect various types of information to provide and improve our services.",
+        "providedTitle": "Information you provide:",
+        "provided": "name, email, phone number, address, date of birth, profile and professional info.",
+        "contentTitle": "User-generated content:",
+        "content": "messages, posts, comments and shared materials.",
+        "autoTitle": "Automatically collected data:",
+        "auto": "IP address, browser, OS, pages visited and interactions.",
+        "web3Title": "Web3 wallet data:",
+        "web3": "wallet address and blockchain transactions."
+      },
+      "usage": {
+        "title": "2. How We Use Your Information",
+        "intro": "We use data to:",
+        "p1": "Provide the platform",
+        "p2": "Manage accounts",
+        "p3": "Process payments",
+        "p4": "Personalize experience",
+        "p5": "Communicate with users",
+        "p6": "Improve services",
+        "p7": "Ensure security"
+      },
+      "sharing": {
+        "title": "3. Sharing of Information",
+        "p1": "We do not sell personal data.",
+        "p2": "We share with service providers.",
+        "p3": "Examples include Stripe, Supabase, Vercel.",
+        "p4": "We may disclose if required by law."
+      },
+      "blockchain": {
+        "title": "4. Blockchain Data Transparency",
+        "p1": "Blockchain data is public and immutable.",
+        "p2": "We cannot modify blockchain data."
+      },
+      "transfer": {
+        "title": "5. International Transfers",
+        "p1": "Data may be processed outside Canada.",
+        "p2": "Safeguards are implemented."
+      },
+      "security": {
+        "title": "6. Data Security",
+        "p1": "We protect data with security measures.",
+        "p2": "Includes encryption and access control.",
+        "p3": "No system is fully secure."
+      },
+      "rights": {
+        "title": "7. Your Rights",
+        "intro": "Users may have rights:",
+        "r1": "Access",
+        "r2": "Correction",
+        "r3": "Deletion",
+        "r4": "Restriction",
+        "r5": "Portability",
+        "r6": "Withdraw consent"
+      },
+      "retention": {
+        "title": "8. Data Retention",
+        "p1": "Data is kept as long as necessary."
+      },
+      "links": {
+        "title": "9. Third-Party Links",
+        "p1": "We are not responsible for external sites."
+      },
+      "changes": {
+        "title": "10. Changes",
+        "p1": "We may update this policy."
+      },
+      "contact": {
+        "title": "11. Contact",
+        "p1": "For questions contact:"
+      }
+    }
+  },
+  "cookies": {
+    "header": {
+      "back": "Back to home",
+      "title": "Cookie Policy",
+      "lastUpdated": "Last updated: March 12, 2026"
+    },
+    "sections": {
+      "intro": {
+        "title": "1. What is a Cookie?",
+        "p1": "A cookie is a small text file stored on your device.",
+        "p2": "Cookies remember preferences such as language and login."
+      },
+      "usage": {
+        "title": "2. How We Use Cookies",
+        "intro": "We use cookies for:",
+        "essentialTitle": "Essential functionality:",
+        "essential": "Platform operation and sessions.",
+        "analyticsTitle": "Performance and analytics:",
+        "analytics": "Understanding user behavior.",
+        "personalizationTitle": "Personalization:",
+        "personalization": "Customizing user experience.",
+        "securityTitle": "Security:",
+        "security": "Fraud prevention."
+      },
+      "types": {
+        "title": "3. Types of Cookies",
+        "necessaryTitle": "Strictly Necessary Cookies:",
+        "necessary": "Required for core functionality.",
+        "analyticsTitle": "Analytics Cookies:",
+        "analytics": "Usage statistics.",
+        "functionalTitle": "Functional Cookies:",
+        "functional": "Remember preferences.",
+        "thirdpartyTitle": "Third-Party Cookies:",
+        "thirdparty": "External services."
+      },
+      "choices": {
+        "title": "5. Your Choices",
+        "p1": "You can accept or refuse cookies.",
+        "browserTitle": "Browser settings:",
+        "browser": "Configure cookies in your browser.",
+        "bannerTitle": "Consent banner:",
+        "banner": "Manage preferences via banner.",
+        "p2": "Some features may not work without cookies."
+      },
+      "changes": {
+        "title": "6. Changes",
+        "p1": "We may update this policy."
+      },
+      "contact": {
+        "title": "7. Contact",
+        "p1": "For questions contact:"
+      }
+    }
+  },
+  "fondateurPage": {
+  "label": "Founders",
+  "name": "Fadjiah Collin‑Mazile",
+  "role": "Data leader, angel investor & blockchain strategist at the intersection of emerging technologies and global economic equity",
+  "bio": {
+    "p1": "As Head of Data at CoinList, she has built and leads the data science, data engineering and analytics functions at one of the most recognized crypto token sale platforms in the world.",
+    "p2": "A certified corporate director, she sits on several boards and advisory committees covering technology, data and inclusion, including RepMatters, which supports innovation led by Black people.",
+    "p3": "A member of the Transatlantic Angel Investing Group and a recurring judge for startup innovation grants and funds, Fadjiah brings deep expertise in evaluating early-stage projects.",
+    "p4": "She is also passionate about bridging the Canadian and African technology ecosystems through trade missions to Ghana, South Africa, Kenya and Ethiopia, and by investing in founders in these markets.",
+    "p5": "Her Substack, \"The Allegory of the Block\", explores blockchain from a geopolitical angle, following builders rather than prices, and examining how emerging economies can become producers rather than consumers of decentralized infrastructure.",
+    "p6": "A recognized speaker, she makes complex systems readable and encourages audiences to see blockchain not as speculation, but as sovereignty."
+  },
+  "footerNav": "← All founders"
+},
+  "Footer": {
+    "brand": {
+      "description": "The blockchain network for Black professionals — networking, innovation and solutions for the community."
+    },
+    "cols": {
+      "organisation": {
+        "title": "Organisation",
+        "mission": "Our mission",
+        "team": "Founding team",
+        "partners": "Partners"
+      },
+      "reseau": {
+        "title": "Network",
+        "events": "Events",
+        "resources": "Resources",
+        "membership": "Membership"
+      },
+      "legal": {
+        "title": "Legal",
+        "terms": "Terms of use",
+        "privacy": "Privacy policy",
+        "cookies": "Cookies"
+      }
+    },
+    "bottom": {
+      "copyright": "© 2026 AnbaChain™ · All rights reserved",
+      "privacy": "Privacy",
+      "cgu": "Terms",
+      "contact": "Contact"
+    }
+  }
+}

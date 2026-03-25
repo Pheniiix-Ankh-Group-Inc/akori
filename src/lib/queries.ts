@@ -55,17 +55,3 @@ export const PARTENAIRES_QUERY = groq`
     logo
   }
 `
-
-// Équipe
-export const EQUIPE_QUERY = groq`
-  *[_type == "membreEquipe"] | order(ordre asc) {
-    _id,
-    nom,
-    initiales,
-    role,
-    bio,
-    linkedin,
-    twitter,
-    photo
-  }
-`

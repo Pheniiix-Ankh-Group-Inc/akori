@@ -21,12 +21,13 @@ export const FONTS = {
   sans:  "'Inter', system-ui, sans-serif",
 } as const
 
+
 export const NAV_LINKS = [
-  { label: 'Mission',    href: '/#mission'    },
-  { label: 'Partners',   href: '/#partners'   },
-  { label: 'Events',     href: '/#events'     },
-  { label: 'Resources',  href: '/#resources'  },
-  { label: 'Membership', href: '/#membership' },
-  { label: 'About',      href: '/#about'      },
-  { label: 'Fondateurs', href: '/fondateur'    },
+  { label: "mission",    href: "/#mission"    },
+  { label: "partners",   href: "/#partners"   },
+  { label: "events",     href: "/#events"     },
+  { label: "resources",  href: "/#resources"  },
+  { label: "membership", href: "/#membership" },
+  { label: "about",      href: "/#about"      },
+  { label: "fondateurs", href: "/#fondateurs" },
 ] as const

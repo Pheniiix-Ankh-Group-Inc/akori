@@ -1,97 +1,73 @@
-"use client";
+"use client"
 
 import Link from "next/link"
-
-/**
- * Footer
- * Grille 4 colonnes : brand + 3 colonnes liens.
- * Identique au #footer du HTML v3.
- */
+import { useTranslations } from "next-intl"
+import { LocaleSwitcher } from "@/components/ui/LocaleSwitcher"
 
 const FOOTER_COLS = [
   {
-    title: "Organisation",
+    key: "organisation",
     links: [
-      { label: "Notre mission",    href: "/mission"      },
-      { label: "Équipe fondatrice", href: "/team"      },
-      { label: "Partenaires",      href: "/partners"  },
-      // { label: "Presse",           href: "/press"             },
-      // { label: "Contact",          href: "/contact"             },
+      { key: "mission",  href: "/mission"  },
+      { key: "team",     href: "/team"     },
+      { key: "partners", href: "/partners" },
     ],
   },
   {
-    title: "Réseau",
+    key: "reseau",
     links: [
-      { label: "Événements", href: "/events"},
-      { label: "Ressources", href: "/resources"},
-      { label: "Adhésion",   href: "/membership"},
-      // { label: "Espace membre",      href: "/member-area"},
-      // { label: "Forum",              href: "/forum"           },
+      { key: "events",     href: "/events"     },
+      { key: "resources",  href: "/resources"  },
+      { key: "membership", href: "/membership" },
     ],
   },
   {
-    title: "Légal",
+    key: "legal",
     links: [
-      { label: "Conditions d'utilisation",    href: "/terms" },
-      { label: "Politique de confidentialité", href: "/privacy" },
-      { label: "Cookies",                      href: "/cookies" },
-      // { label: "Remboursements",               href: "#" },
+      { key: "terms",   href: "/terms"   },
+      { key: "privacy", href: "/privacy" },
+      { key: "cookies", href: "/cookies" },
     ],
   },
-]
+] as const
+
+const LEGAL_LINKS = [
+  { key: "privacy", href: "/privacy" },
+  { key: "cgu",     href: "/terms"   },
+  { key: "contact", href: "/contact" },
+] as const
 
 export function Footer() {
+  const t = useTranslations("Footer")
+
   return (
-    <footer
-      id="footer"
-      style={{
-        background: "var(--bg-2)",
-        borderTop: "1px solid var(--border)",
-        padding: "5rem 3rem 2.5rem",
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 1fr 1fr",
-          gap: "3rem",
-          marginBottom: "4rem",
-        }}
-        className="footer-grid"
-      >
+    <footer id="footer" className="footer-root">
+
+      {/* ── Grille principale ── */}
+      <div className="footer-grid">
+
+        {/* Brand */}
         <div>
-          <Link
-            href="/"
-            style={{
-              fontFamily: "var(--font-serif)",
-              fontSize: "1.2rem",
-              fontWeight: 700,
-              color: "var(--blanc)",
-              display: "block",
-              marginBottom: "1rem",
-              letterSpacing: "-0.01em",
-            }}
-          >
-            Anba<em style={{ fontStyle: "italic", fontWeight: 200, color: "var(--accent)" }}>Chain</em>
+          <Link href="/" className="footer-brand">
+            Anba<em className="footer-brand-em">Chain</em>
           </Link>
-          <p style={{ fontSize: "0.83rem", color: "var(--texte)", maxWidth: "230px", lineHeight: 1.75 }}>
-            Le réseau blockchain des professionnels noirs — réseautage, innovation et solutions au service de la communauté.
+          <p className="footer-brand-desc">
+            {t("brand.description")}
           </p>
         </div>
 
-        {FOOTER_COLS.map(({ title, links }) => (
-          <div key={title}>
-            <div style={{ fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--texte)", marginBottom: "1.25rem" }}>
-              {title}
+        {/* Colonnes liens */}
+        {FOOTER_COLS.map(({ key: colKey, links }) => (
+          <div key={colKey}>
+            <div className="footer-col-title">
+              {t(`cols.${colKey}.title`)}
             </div>
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.65rem" }}>
-              {links.map(({ label, href }) => (
-                <li key={label}>
-                  <a href={href} style={{ fontSize: "0.84rem", color: "var(--texte)", transition: "color 0.2s" }}
-                    onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.color = "var(--blanc)"}
-                    onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.color = "var(--texte)"}>
-                    {label}
-                  </a>
+            <ul className="footer-col-links">
+              {links.map(({ key: linkKey, href }) => (
+                <li key={linkKey}>
+                  <Link href={href} className="footer-link">
+                    {t(`cols.${colKey}.${linkKey}`)}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -99,27 +75,130 @@ export function Footer() {
         ))}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "2rem", borderTop: "1px solid var(--border)", flexWrap: "wrap", gap: "1rem" }} className="footer-bottom">
-        <p style={{ fontSize: "0.76rem", color: "var(--texte)" }}>© 2026 AnbaChain™ · Tous droits réservés</p>
-        <div style={{ display: "flex", gap: "1.5rem" }}>
-          {["Confidentialité", "CGU", "Contact"].map((label, index) => (
-            <a key={label} href={index === 0 ? "/privacy" : index === 1 ? "/terms" : "/contact"} style={{ fontSize: "0.76rem", color: "var(--texte)", transition: "color 0.2s" }}
-              onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.color = "var(--blanc)"}
-              onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.color = "var(--texte)"}>
-              {label}
-            </a>
+      {/* ── Bottom bar ── */}
+      <div className="footer-bottom">
+
+        {/* Copyright */}
+        <p className="footer-copyright">
+          {t("bottom.copyright")}
+        </p>
+
+        {/* Liens légaux + sélecteur de langue */}
+        <div className="footer-bottom-right">
+          {LEGAL_LINKS.map(({ key, href }) => (
+            <Link key={key} href={href} className="footer-link footer-legal-link">
+              {t(`bottom.${key}`)}
+            </Link>
           ))}
+          <LocaleSwitcher />
         </div>
+
       </div>
 
       <style>{`
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr !important; } }
+        .footer-root {
+          background: var(--bg-2);
+          border-top: 1px solid var(--border);
+          padding: 5rem 3rem 2.5rem;
+        }
+
+        /* Grille */
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 3rem;
+          margin-bottom: 4rem;
+        }
+
+        /* Brand */
+        .footer-brand {
+          font-family: var(--font-serif);
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: var(--blanc);
+          display: block;
+          margin-bottom: 1rem;
+          letter-spacing: -0.01em;
+          text-decoration: none;
+        }
+        .footer-brand-em {
+          font-style: italic;
+          font-weight: 200;
+          color: var(--accent);
+        }
+        .footer-brand-desc {
+          font-size: 0.83rem;
+          color: var(--texte);
+          max-width: 230px;
+          line-height: 1.75;
+        }
+
+        /* Colonnes */
+        .footer-col-title {
+          font-size: 0.68rem;
+          font-weight: 600;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--texte);
+          margin-bottom: 1.25rem;
+        }
+        .footer-col-links {
+          list-style: none;
+          display: flex;
+          flex-direction: column;
+          gap: 0.65rem;
+        }
+
+        /* Liens partagés */
+        .footer-link {
+          font-size: 0.84rem;
+          color: var(--texte);
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .footer-link:hover { color: var(--blanc); }
+
+        /* Bottom bar */
+        .footer-bottom {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 2rem;
+          border-top: 1px solid var(--border);
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+        .footer-copyright {
+          font-size: 0.76rem;
+          color: var(--texte);
+        }
+        .footer-bottom-right {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+        }
+        .footer-legal-link {
+          font-size: 0.76rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+          .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
         @media (max-width: 768px) {
-          .footer-grid { grid-template-columns: 1fr !important; }
-          .footer-bottom { flex-direction: column !important; text-align: center !important; }
-          #footer { padding: 4rem 1.5rem 2rem !important; }
+          .footer-root  { padding: 4rem 1.5rem 2rem; }
+          .footer-grid  { grid-template-columns: 1fr; }
+          .footer-bottom {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+          }
+          .footer-bottom-right {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
         }
       `}</style>
     </footer>
   )
-}
+} 

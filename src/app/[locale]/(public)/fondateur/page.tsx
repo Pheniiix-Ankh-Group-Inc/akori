@@ -52,7 +52,6 @@ export default function FondateursPage() {
                 style={{
                   display: "block",
                   background: "var(--bg-card)",
-                  borderRadius: "1rem",
                   overflow: "hidden",
                   border: "1px solid var(--border)",
                   transition: "border-color 0.3s",

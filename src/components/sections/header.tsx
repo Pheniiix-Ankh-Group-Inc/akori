@@ -1,39 +1,30 @@
 "use client"
-
 import { useEffect, useState, useRef } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/Button"
+import { useTranslations } from "next-intl"
 import { NAV_LINKS } from "@/lib/design-tokens"
 
 export function Header() {
+  const t = useTranslations('Header')
+
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const burgerRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    if (menuOpen) {
-      document.documentElement.style.overflow = "hidden"
-    } else {
-      document.documentElement.style.overflow = ""
-    }
-    return () => {
-      document.documentElement.style.overflow = ""
-    }
+    document.documentElement.style.overflow = menuOpen ? "hidden" : ""
+    return () => { document.documentElement.style.overflow = "" }
   }, [menuOpen])
 
-  
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && menuOpen) {
-        setMenuOpen(false)
-      }
+      if (e.key === "Escape" && menuOpen) setMenuOpen(false)
     }
     document.addEventListener("keydown", handleEscape)
     return () => document.removeEventListener("keydown", handleEscape)
   }, [menuOpen])
 
- 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement
@@ -50,21 +41,19 @@ export function Header() {
     return () => document.removeEventListener("click", handleClickOutside)
   }, [menuOpen])
 
-  
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 30)
     window.addEventListener("scroll", handler, { passive: true })
     return () => window.removeEventListener("scroll", handler)
   }, [])
 
-  
-  const handleNavClick = () => {
-    setMenuOpen(false)
-  }
+  const handleNavClick = () => setMenuOpen(false)
 
   return (
     <>
       <header id="hdr" className={scrolled ? "scrolled" : ""}>
+
+        {/* Logo — <em> géré dans le composant, pas dans les traductions */}
         <Link href="/" className="logo">
           Anba<em>Chain</em>
         </Link>
@@ -73,21 +62,17 @@ export function Header() {
           <ul>
             {NAV_LINKS.map(({ label, href }) => (
               <li key={href}>
-                <Link href={href}>{label}</Link>
+                {/* label est déjà en minuscule → correspond à nav.mission etc. */}
+                <Link href={href}>{t(`nav.${label}`)}</Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        {/* <div className="hdr-actions">
-          <Button variant="ghost" href="/login">Sign in</Button>
-          <Button variant="white" href="/register">Join</Button>
-        </div> */}
-
         <button
           ref={burgerRef}
           className={`hdr-burger${menuOpen ? " open" : ""}`}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-label={menuOpen ? t("burger.close") : t("burger.open")}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(!menuOpen)}
         >
@@ -95,9 +80,10 @@ export function Header() {
           <span className="hdr-burger-line hdr-burger-line-2" />
           <span className="hdr-burger-line hdr-burger-line-3" />
         </button>
+
       </header>
 
-      <div 
+      <div
         ref={menuRef}
         className={`hdr-mobile-menu${menuOpen ? " open" : ""}`}
         role="navigation"
@@ -112,15 +98,11 @@ export function Header() {
                   className="hdr-mobile-nav-link"
                   onClick={handleNavClick}
                 >
-                  {label}
+                  {t(`nav.${label}`)}
                 </Link>
               </li>
             ))}
           </ul>
-          {/* <div className="hdr-mobile-actions">
-            <Button variant="ghost" href="/login">Sign in</Button>
-            <Button variant="white" href="/register">Join</Button>
-          </div> */}
         </div>
       </div>
     </>
