@@ -134,7 +134,7 @@ nav a {
 }
 
 nav a:hover {
-  color: var(--blanc);
+  color: var(--accent);
 }
 
 .hdr-actions {
@@ -323,6 +323,7 @@ nav a:hover {
   font-family: var(--font-sans);
   font-weight: 500;
   letter-spacing: 0.18em;
+  font-size: 0.68rem;
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 1.5rem;
@@ -549,6 +550,34 @@ nav a:hover {
   background: var(--border);
   margin: 2rem 0;
 }
+
+/* ═══════════════════════════════════════════════════════
+   SOCIAL MEDIA
+═══════════════════════════════════════════════════════ */
+.f-links { display: flex; gap: 0.5rem; }
+.f-link {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: var(--texte);
+  transition: all 0.2s;
+}
+.f-linnk {
+  /* width: 30px; height: 30px; */
+  /* border: 1px solid var(--border); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: var(--texte);
+  transition: all 0.2s;
+}
+.f-link:hover { border-color: var(--accent); color: var(--accent); }
+.f-linnk:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ═══════════════════════════════════════════════════════
    HERO

@@ -31,12 +31,6 @@ export default function FondateursPage() {
           <Link href="/" className="label" style={{ marginBottom: "2rem", display: "inline-block" }}>
             ← Back to home
           </Link>
-          <h1 className="heading-md" style={{ marginBottom: "1rem" }}>
-            Fondateurs
-          </h1>
-          <p className="text-base" style={{ color: "var(--texte-2)", marginBottom: "4rem" }}>
-            Les visionnaires derrière AnbaChain.
-          </p>
 
           {/* Founders grid */}
           <div
@@ -98,7 +92,7 @@ export default function FondateursPage() {
 
                 {/* Info */}
                 <div style={{ padding: "1.5rem" }}>
-                  <h2 className="heading-xs" style={{ marginBottom: "0.5rem" }}>
+                  <h2 className="heading-xs" style={{ marginBottom: "0.5rem", color:"var(--accent)" }}>
                     {founder.name}
                   </h2>
                   <p className="text-sm" style={{ color: "var(--texte-2)" }}>

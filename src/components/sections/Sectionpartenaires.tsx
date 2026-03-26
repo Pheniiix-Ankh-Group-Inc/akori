@@ -32,7 +32,7 @@ export function SectionPartenaires({ partenaires }: Props) {
       style={{ padding: "var(--pad) 0", background: "var(--bg-2)" }}
     >
       {/* Top */}
-      <div style={{ padding: "0 3rem", marginBottom: "4rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
+      <div className="pt-header">
         <div>
           <span className="label" data-reveal>{t("label")}</span>
           <h2 className="heading-md" data-reveal data-delay="1">
@@ -43,7 +43,7 @@ export function SectionPartenaires({ partenaires }: Props) {
         {/* Tabs */}
         <div
           data-reveal
-          style={{ display: "flex", gap: 0, border: "1px solid var(--border)", borderRadius: "100px", padding: "0.2rem" }}
+          className="pt-tabs"
         >
           {TABS(t).map((tab) => (
             <button
@@ -70,20 +70,18 @@ export function SectionPartenaires({ partenaires }: Props) {
 
       {/* Grille */}
       {filtered.length === 0 ? (
-        <div style={{ padding: "4rem 3rem", textAlign: "center" }}>
+        <div className="pt-empty">
           <p style={{ fontSize: "0.86rem", color: "var(--texte)" }}>
             {t("empty")}
           </p>
         </div>
       ) : (
         <div
+          className="pt-grid"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
             borderTop: "1px solid var(--border)",
             borderLeft: "1px solid var(--border)",
           }}
-          className="partners-grid"
         >
           {filtered.map((p, i) => (
             <div
@@ -93,13 +91,13 @@ export function SectionPartenaires({ partenaires }: Props) {
               style={{
                 borderRight: "1px solid var(--border)",
                 borderBottom: "1px solid var(--border)",
-                padding: "2.5rem 3rem",
                 display: "flex",
                 gap: "1.5rem",
                 alignItems: "flex-start",
                 transition: "background 0.3s",
                 cursor: "default",
               }}
+              className="pt-card"
               onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "")}
             >
@@ -126,8 +124,68 @@ export function SectionPartenaires({ partenaires }: Props) {
       )}
 
       <style>{`
-        @media (max-width: 1024px) {
-          .partners-grid { grid-template-columns: 1fr !important; }
+        /* --- Mobile first (base) --- */
+        .pt-header {
+          padding: 0 1.5rem;
+          margin-bottom: 3rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-start;
+          flex-wrap: wrap;
+          gap: 1.5rem;
+        }
+
+        .pt-tabs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0;
+          border: 1px solid var(--border);
+          border-radius: 100px;
+          padding: 0.2rem;
+        }
+
+        .pt-empty {
+          padding: 4rem 1.5rem;
+          text-align: center;
+        }
+
+        .pt-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .pt-card {
+          padding: 2rem 1.5rem;
+        }
+
+        /* --- Tablet (≥ 768px) --- */
+        @media (min-width: 768px) {
+          .pt-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .pt-card {
+            padding: 2.5rem 2rem;
+          }
+        }
+
+        /* --- Desktop (≥ 1024px) --- */
+        @media (min-width: 1024px) {
+          .pt-header {
+            padding: 0 3rem;
+            margin-bottom: 4rem;
+            flex-direction: row;
+            align-items: flex-end;
+          }
+
+          .pt-empty {
+            padding: 4rem 3rem;
+          }
+
+          .pt-card {
+            padding: 2.5rem 3rem;
+          }
         }
       `}</style>
     </section>

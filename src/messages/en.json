@@ -61,7 +61,7 @@
     "intro": {
       "label": "Why AnbaChain",
       "title": {
-        "line1": "Three reasons",
+        "line1": "Four reasons",
         "line2": "to",
         "highlight": "join",
         "line3": "the movement."
@@ -81,7 +81,7 @@
           "line1": "Events that",
           "highlight": "create real opportunities."
         },
-        "body": "Conferences, hackathons, roundtables, training — every AnbaChain event is designed to produce tangible outcomes: collaborations, projects, hires, partnerships. Ticketing is managed via Lu.ma for a seamless experience.",
+        "body": "Conferences, hackathons, roundtables, training — every AnbaChain event is designed to produce tangible outcomes: collaborations, projects, hires, partnerships.",
         "link": "See upcoming events →"
       },
       "c3": {
@@ -97,7 +97,7 @@
           "line1": "Partners and institutions that",
           "highlight": "create real opportunities."
         },
-        "body": "Conferences, hackathons, roundtables, training — every AnbaChain event is designed to produce tangible outcomes: collaborations, projects, hires, partnerships. Ticketing is managed via Lu.ma for a seamless experience.",
+        "body": "Through the commitment of partners and institutions, each initiative becomes a concrete lever: strategic connections, access to key resources, and opportunities for collaboration, funding, and growth.",
         "link": "See upcoming events →"
       }
     }
@@ -134,7 +134,7 @@
       "main": "Join the",
       "highlight": "movement"
     },
-    "description": "Choose the plan that fits your profile. Event tickets are managed separately via Lu.ma.",
+    "description": "Choose the plan that fits your profile.",
     "plans": {
       "network": {
         "tier": "Basic access",
@@ -142,7 +142,7 @@
         "period": "Always free",
         "features": [
           "Public profile in directory",
-          "Access to free events",
+          "Access to events",
           "Monthly newsletter",
           "Community forum (read-only)"
         ],
@@ -156,7 +156,7 @@
           "Everything in Network plan",
           "Full directory + member contacts",
           "Member messaging",
-          "Discounted Lu.ma events",
+          "Discounted events",
           "Forum (full participation)",
           "Exclusive resources & webinars",
           "Verified profile + member badge"
@@ -173,8 +173,7 @@
           "Branded partner page on website",
           "Logo on website and events",
           "Priority event access",
-          "Quarterly impact report",
-          "B2B invoicing — PDF invoice"
+          "Quarterly impact report"
         ],
         "cta": "Contact us"
       }
@@ -185,8 +184,7 @@
         "Visa / Mastercard",
         "Apple Pay",
         "Google Pay",
-        "Bitcoin · ETH · USDC",
-        "B2B invoice"
+        "Bitcoin · ETH · USDC"
       ],
       "events": "Event ticketing:"
     }
@@ -459,20 +457,20 @@
     }
   },
   "fadjiah": {
-  "label": "Founders",
-  "name": "Fadjiah Collin‑Mazile",
-  "role": "Data leader, angel investor & blockchain strategist at the intersection of emerging technologies and global economic equity",
-  "bio": {
-    "p1": "As Head of Data at CoinList, she has built and leads the data science, data engineering and analytics functions at one of the most recognized crypto token sale platforms in the world.",
-    "p2": "A certified corporate director, she sits on several boards and advisory committees covering technology, data and inclusion, including RepMatters, which supports innovation led by Black people.",
-    "p3": "A member of the Transatlantic Angel Investing Group and a recurring judge for startup innovation grants and funds, Fadjiah brings deep expertise in evaluating early-stage projects.",
-    "p4": "She is also passionate about bridging the Canadian and African technology ecosystems through trade missions to Ghana, South Africa, Kenya and Ethiopia, and by investing in founders in these markets.",
-    "p5": "Her Substack, \"The Allegory of the Block\", explores blockchain from a geopolitical angle, following builders rather than prices, and examining how emerging economies can become producers rather than consumers of decentralized infrastructure.",
-    "p6": "A recognized speaker, she makes complex systems readable and encourages audiences to see blockchain not as speculation, but as sovereignty."
+    "label": "Founders",
+    "name": "Fadjiah Collin‑Mazile",
+    "role": "Data leader, angel investor & blockchain strategist at the intersection of emerging technologies and global economic equity",
+    "bio": {
+      "p1": "As Head of Data at CoinList, she has built and leads the data science, data engineering and analytics functions at one of the most recognized crypto token sale platforms in the world.",
+      "p2": "A certified corporate director, she sits on several boards and advisory committees covering technology, data and inclusion, including RepMatters, which supports innovation led by Black people.",
+      "p3": "A member of the Transatlantic Angel Investing Group and a recurring judge for startup innovation grants and funds, Fadjiah brings deep expertise in evaluating early-stage projects.",
+      "p4": "She is also passionate about bridging the Canadian and African technology ecosystems through trade missions to Ghana, South Africa, Kenya and Ethiopia, and by investing in founders in these markets.",
+      "p5": "Her Substack, \"The Allegory of the Block\", explores blockchain from a geopolitical angle, following builders rather than prices, and examining how emerging economies can become producers rather than consumers of decentralized infrastructure.",
+      "p6": "A recognized speaker, she makes complex systems readable and encourages audiences to see blockchain not as speculation, but as sovereignty."
+    },
+    "footerNav": "← All founders"
   },
-  "footerNav": "← All founders"
-},
-"brice": {
+  "brice": {
     "label": "Founders",
     "name": "Brice Mimifir",
     "role": "Java Developer, Digital Transformation Consultant & Blockchain Developer at the intersection of robust technology and decentralized innovation",

@@ -6,26 +6,26 @@ import { Button } from "@/components/ui/Button"
 import { SocialLink, type SocialKey } from "@/components/ui/SocialLinks"
 
 const SOCIAL_LINKS: { key: SocialKey; href: string }[] = [
-  { key: "instagram", href: "https://www.instagram.com/anbachain"   },
-  { key: "linkedin",  href: "https://www.linkedin.com/in/anbachain" },
+  { key: "Instagram", href: "https://www.instagram.com/anbachain" },
+  { key: "LinkedIn", href: "https://www.linkedin.com/in/anbachain" },
 ]
 
 export function SectionCommunaute() {
   const t = useTranslations("sectionCommunaute")
-  const bgRef   = useRef<HTMLDivElement>(null)
+  const bgRef = useRef<HTMLDivElement>(null)
   const wrapRef = useRef<HTMLElement>(null)
-  const [email, setEmail]   = useState("")
+  const [email, setEmail] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [message, setMessage] = useState("")
 
   // Parallax lent
   useEffect(() => {
-    const bg   = bgRef.current
+    const bg = bgRef.current
     const wrap = wrapRef.current
     if (!bg || !wrap) return
 
     const onScroll = () => {
-      const rect   = wrap.getBoundingClientRect()
+      const rect = wrap.getBoundingClientRect()
       const center = rect.top + rect.height / 2 - window.innerHeight / 2
       bg.style.transform = `translateY(${center * 0.18}px)`
     }
@@ -43,7 +43,7 @@ export function SectionCommunaute() {
     setMessage("")
 
     try {
-      const res  = await fetch("/api/newsletter", {
+      const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -189,12 +189,12 @@ export function SectionCommunaute() {
                   outline: "none",
                 }}
                 onFocus={(e) =>
-                  ((e.target as HTMLInputElement).style.borderColor =
-                    "rgba(255,255,255,0.22)")
+                ((e.target as HTMLInputElement).style.borderColor =
+                  "rgba(255,255,255,0.22)")
                 }
                 onBlur={(e) =>
-                  ((e.target as HTMLInputElement).style.borderColor =
-                    "var(--border)")
+                ((e.target as HTMLInputElement).style.borderColor =
+                  "var(--border)")
                 }
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -225,13 +225,8 @@ export function SectionCommunaute() {
           }}
         >
           {SOCIAL_LINKS.map(({ key, href }) => (
-            <SocialLink
-              key={key}
-              platform={key}
-              href={href}
-              label={t(`social.${key}`)}
-              size={22}
-            />
+            <a href={href} className="f-linnk" target="_blank" rel="noopener noreferrer">{key}</a>
+
           ))}
         </div>
       </div>

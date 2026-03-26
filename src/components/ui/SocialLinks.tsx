@@ -55,8 +55,8 @@ function IconLinkedIn({ size = 16 }: { size?: number }) {
 }
 
 const ICONS = {
-  instagram: IconInstagram,
-  linkedin:  IconLinkedIn,
+  Instagram: IconInstagram,
+  LinkedIn:  IconLinkedIn,
 } as const
 
 export type SocialKey = keyof typeof ICONS
