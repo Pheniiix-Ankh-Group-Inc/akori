@@ -492,7 +492,7 @@
       "organisation": {
         "title": "Organisation",
         "mission": "Notre mission",
-        "team": "Équipe fondatrice",
+        "teams": "Équipe fondatrice",
         "partners": "Partenaires"
       },
       "reseau": {

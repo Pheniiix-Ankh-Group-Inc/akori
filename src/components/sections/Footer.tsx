@@ -9,14 +9,14 @@ const FOOTER_COLS = [
     key: "organisation",
     links: [
       { key: "mission",  href: "/mission"  },
-      { key: "team",     href: "/team"     },
-      { key: "partners", href: "/partners" },
+      { key: "teams",     href: "/fondateurs"     },
+      // { key: "partners", href: "/partners" },
     ],
   },
   {
     key: "reseau",
     links: [
-      { key: "events",     href: "/events"     },
+      { key: "events",     href: "/evenements" },
       { key: "resources",  href: "/resources"  },
       { key: "membership", href: "/membership" },
     ],

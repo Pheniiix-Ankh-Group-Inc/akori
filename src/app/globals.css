@@ -567,8 +567,6 @@ nav a:hover {
   transition: all 0.2s;
 }
 .f-linnk {
-  /* width: 30px; height: 30px; */
-  /* border: 1px solid var(--border); */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -617,7 +615,7 @@ nav a:hover {
 .hero-body {
   position: relative;
   z-index: 1;
-  padding: 0 3rem 5rem;
+  padding: 0 3rem 10rem;
 }
 
 .hero-stats {
@@ -1395,7 +1393,7 @@ nav a:hover {
 
 @media (max-width: 768px) {
   :root {
-    --pad: 4rem;
+    --pad: 2rem;
   }
 
   .wrap,
