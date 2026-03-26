@@ -9,6 +9,15 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-04-25
+
+### Added
+
+- Add images.
+- fix translation
+- update content
+- fix ui/ux mobile
+
 ### In Progress
 
 ## [0.12.0] — 2026-04-25

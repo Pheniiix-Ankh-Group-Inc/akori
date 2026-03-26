@@ -61,7 +61,7 @@
     "intro": {
       "label": "Pourquoi AnbaChain",
       "title": {
-        "line1": "Trois raisons",
+        "line1": "Quatre raisons",
         "line2": "de",
         "highlight": "rejoindre",
         "line3": "le mouvement."
@@ -81,7 +81,7 @@
           "line1": "Des événements qui",
           "highlight": "créent de vraies opportunités."
         },
-        "body": "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats. La billetterie est gérée via Lu.ma pour une expérience fluide.",
+        "body": "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats.",
         "link": "Voir les prochains événements →"
       },
       "c3": {
@@ -97,12 +97,11 @@
           "line1": "Des partenaires et institutions qui",
           "highlight": "créent de vraies opportunités."
         },
-        "body": "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats. La billetterie est gérée via Lu.ma pour une expérience fluide.",
+        "body": "Grâce à l’engagement de partenaires et d’institutions, chaque initiative devient un levier concret : mise en relation stratégique, accès à des ressources clés, opportunités de collaboration, de financement et de développement.",
         "link": "Voir les prochains événements →"
       }
     }
   },
-
   "sectionPartenaires": {
     "label": "Écosystème",
     "title": {
@@ -135,7 +134,7 @@
       "main": "Rejoignez le",
       "highlight": "mouvement"
     },
-    "description": "Choisissez le plan qui correspond à votre profil. Les billets d'événements sont gérés séparément via Lu.ma.",
+    "description": "Choisissez le plan qui correspond à votre profil.",
     "plans": {
       "network": {
         "tier": "Accès de base",
@@ -143,7 +142,7 @@
         "period": "Toujours gratuit",
         "features": [
           "Profil public dans l'annuaire",
-          "Accès aux événements gratuits",
+          "Accès aux événements",
           "Newsletter mensuelle",
           "Forum communautaire (lecture)"
         ],
@@ -157,7 +156,7 @@
           "Tout du plan Réseau",
           "Annuaire complet + contacts membres",
           "Messagerie inter-membres",
-          "Tarif préférentiel événements Lu.ma",
+          "Tarif préférentiel événements",
           "Forum (participation complète)",
           "Ressources exclusives & webinars",
           "Profil vérifié + badge membre"
@@ -174,8 +173,7 @@
           "Page partenaire branded sur le site",
           "Logo sur le site et les événements",
           "Places prioritaires aux événements",
-          "Rapport d'impact trimestriel",
-          "Facturation B2B — invoice PDF"
+          "Rapport d'impact trimestriel"
         ],
         "cta": "Nous contacter"
       }
@@ -186,8 +184,7 @@
         "Carte Visa / Mastercard",
         "Apple Pay",
         "Google Pay",
-        "Bitcoin · ETH · USDC",
-        "Facture B2B"
+        "Bitcoin · ETH · USDC"
       ],
       "events": "Billetterie événements :"
     }
@@ -209,51 +206,66 @@
     "readingTime": "{minutes} min"
   },
   "sectionEspace": {
-  "label": "Espace membre",
-  "title": { "main": "Votre hub", "highlight": "personnel" },
-  "desc": "Un espace privé pour gérer votre profil, explorer le réseau et accéder aux ressources exclusives AnbaChain.",
-  "features": {
-    "profile":   { "title": "Profil professionnel complet",        "desc": "Compétences, expériences, secteur, disponibilité pour des collaborations" },
-    "directory": { "title": "Annuaire complet avec filtres avancés","desc": "Recherchez par secteur, expertise, ville, disponibilité" },
-    "messaging": { "title": "Messagerie directe entre membres",     "desc": "Connectez-vous directement avec les professionnels du réseau" },
-    "library":   { "title": "Bibliothèque de ressources exclusives","desc": "Rapports, analyses, guides et webinars réservés aux membres" }
+    "label": "Espace membre",
+    "title": {
+      "main": "Votre hub",
+      "highlight": "personnel"
+    },
+    "desc": "Un espace privé pour gérer votre profil, explorer le réseau et accéder aux ressources exclusives AnbaChain.",
+    "features": {
+      "profile": {
+        "title": "Profil professionnel complet",
+        "desc": "Compétences, expériences, secteur, disponibilité pour des collaborations"
+      },
+      "directory": {
+        "title": "Annuaire complet avec filtres avancés",
+        "desc": "Recherchez par secteur, expertise, ville, disponibilité"
+      },
+      "messaging": {
+        "title": "Messagerie directe entre membres",
+        "desc": "Connectez-vous directement avec les professionnels du réseau"
+      },
+      "library": {
+        "title": "Bibliothèque de ressources exclusives",
+        "desc": "Rapports, analyses, guides et webinars réservés aux membres"
+      }
+    },
+    "stats": {
+      "connections": "Connexions",
+      "events": "Événements",
+      "resources": "Ressources"
+    },
+    "suggestedMembers": "Membres suggérés",
+    "dashboardUrl": "app.anbachain.io/dashboard",
+    "cta": "Accéder à l'espace membre"
   },
-  "stats": {
-    "connections": "Connexions",
-    "events":      "Événements",
-    "resources":   "Ressources"
+  "sectionInterstitiel": {
+    "quote": {
+      "main": "La technologie blockchain est l'outil.",
+      "highlight": "La communauté est la force."
+    },
+    "author": "— AnbaChain, Manifeste fondateur, 2025"
   },
-  "suggestedMembers": "Membres suggérés",
-  "dashboardUrl":     "app.anbachain.io/dashboard",
-  "cta":              "Accéder à l'espace membre"
-},
-"sectionInterstitiel": {
-  "quote": {
-    "main": "La technologie blockchain est l'outil.",
-    "highlight": "La communauté est la force."
+  "sectionCommunaute": {
+    "label": "Rejoindre le mouvement",
+    "title": {
+      "main": "Le futur s'écrit",
+      "highlight": "maintenant."
+    },
+    "desc": "Recevez les analyses, actualités et invitations en avant-première. Rejoignez plus des professionnels qui construisent l'économie de demain.",
+    "form": {
+      "placeholder": "Votre adresse email",
+      "submit": "S'inscrire",
+      "loading": "Envoi en cours...",
+      "success": "Inscription confirmée. Vérifiez votre boîte mail !",
+      "errorNetwork": "Erreur réseau. Réessayez plus tard."
+    },
+    "social": {
+      "instagram": "Instagram",
+      "linkedin": "LinkedIn"
+    }
   },
-  "author": "— AnbaChain, Manifeste fondateur, 2025"
-},
-"sectionCommunaute": {
-  "label": "Rejoindre le mouvement",
-  "title": {
-    "main": "Le futur s'écrit",
-    "highlight": "maintenant."
-  },
-  "desc": "Recevez les analyses, actualités et invitations en avant-première. Rejoignez plus des professionnels qui construisent l'économie de demain.",
-  "form": {
-    "placeholder": "Votre adresse email",
-    "submit": "S'inscrire",
-    "loading": "Envoi en cours...",
-    "success": "Inscription confirmée. Vérifiez votre boîte mail !",
-    "errorNetwork": "Erreur réseau. Réessayez plus tard."
-  },
-  "social": {
-    "instagram": "Instagram",
-    "linkedin": "LinkedIn"
-  }
-},
-"terms": {
+  "terms": {
     "metadata": {
       "title": "Conditions d'utilisation — AnbaChain",
       "description": "Conditions d'utilisation de la plateforme AnbaChain."
@@ -445,20 +457,20 @@
     }
   },
   "fadjiah": {
-  "label": "Fondateurs",
-  "name": "Fadjiah Collin‑Mazile",
-  "role": "Data leader, angel investor & blockchain strategist à l'intersection des technologies émergentes et de l'équité économique mondiale",
-  "bio": {
-    "p1": "En tant que Head of Data chez CoinList, elle a construit et dirige les fonctions data science, data engineering et analytics d'une des plateformes de vente de tokens crypto les plus reconnues au monde.",
-    "p2": "Directrice d'entreprise certifiée, elle siège à plusieurs conseils d'administration et comités consultatifs couvrant la technologie, la data et l'inclusion, notamment RepMatters, qui soutient l'innovation dirigée par des personnes noires.",
-    "p3": "Membre du Transatlantic Angel Investing Group et jurée récurrente pour des subventions et fonds d'innovation pour startups, Fadjiah apporte une expertise approfondie dans l'évaluation de projets en early-stage.",
-    "p4": "Elle est également passionnée par le rapprochement des écosystèmes technologiques canadien et africain à travers des missions commerciales au Ghana, en Afrique du Sud, au Kenya et en Éthiopie, et en investissant dans des fondateurs sur ces marchés.",
-    "p5": "Son Substack, \"The Allegory of the Block\", explore la blockchain sous un angle géopolitique, suivant les bâtisseurs plutôt que les prix, et examinant comment les économies émergentes peuvent devenir productrices plutôt que consommatrices d'infrastructures décentralisées.",
-    "p6": "Conférencière reconnue, elle rend les systèmes complexes lisibles et incite les audiences à envisager la blockchain non pas comme une spéculation, mais comme une souveraineté."
+    "label": "Fondateurs",
+    "name": "Fadjiah Collin‑Mazile",
+    "role": "Data leader, angel investor & blockchain strategist à l'intersection des technologies émergentes et de l'équité économique mondiale",
+    "bio": {
+      "p1": "En tant que Head of Data chez CoinList, elle a construit et dirige les fonctions data science, data engineering et analytics d'une des plateformes de vente de tokens crypto les plus reconnues au monde.",
+      "p2": "Directrice d'entreprise certifiée, elle siège à plusieurs conseils d'administration et comités consultatifs couvrant la technologie, la data et l'inclusion, notamment RepMatters, qui soutient l'innovation dirigée par des personnes noires.",
+      "p3": "Membre du Transatlantic Angel Investing Group et jurée récurrente pour des subventions et fonds d'innovation pour startups, Fadjiah apporte une expertise approfondie dans l'évaluation de projets en early-stage.",
+      "p4": "Elle est également passionnée par le rapprochement des écosystèmes technologiques canadien et africain à travers des missions commerciales au Ghana, en Afrique du Sud, au Kenya et en Éthiopie, et en investissant dans des fondateurs sur ces marchés.",
+      "p5": "Son Substack, \"The Allegory of the Block\", explore la blockchain sous un angle géopolitique, suivant les bâtisseurs plutôt que les prix, et examinant comment les économies émergentes peuvent devenir productrices plutôt que consommatrices d'infrastructures décentralisées.",
+      "p6": "Conférencière reconnue, elle rend les systèmes complexes lisibles et incite les audiences à envisager la blockchain non pas comme une spéculation, mais comme une souveraineté."
+    },
+    "footerNav": "← Tous les fondateurs"
   },
-  "footerNav": "← Tous les fondateurs"
-},
-"brice": {
+  "brice": {
     "label": "Fondateurs",
     "name": "Brice Mimifir",
     "role": "Java Developer, Digital Transformation Consultant & Blockchain Developer à l'intersection de la technologie robuste et de l'innovation décentralisée",

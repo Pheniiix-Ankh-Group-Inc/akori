@@ -8,6 +8,7 @@ const CHAPTERS = (t: any) => [
     num: "01",
     reverse: false,
     photoClass: "ph1",
+    photoSrc: "/images/ch01.jpg",
     photoBg: "linear-gradient(135deg, #141210 0%, #1c1914 50%, #0e0d0b 100%)",
     headline: (
       <>
@@ -24,6 +25,7 @@ const CHAPTERS = (t: any) => [
     num: "02",
     reverse: true,
     photoClass: "ph2",
+    photoSrc: "/images/ch02.jpg",
     photoBg: "linear-gradient(135deg, #0e1210 0%, #131a14 50%, #0c0e0b 100%)",
     headline: (
       <>
@@ -40,6 +42,7 @@ const CHAPTERS = (t: any) => [
     num: "03",
     reverse: false,
     photoClass: "ph3",
+    photoSrc: "/images/ch03.jpg",
     photoBg: "linear-gradient(135deg, #100e14 0%, #17131e 50%, #0c0a10 100%)",
     headline: (
       <>
@@ -56,6 +59,7 @@ const CHAPTERS = (t: any) => [
     num: "04",
     reverse: true,
     photoClass: "ph4",
+    photoSrc: "/images/ch04.jpg",
     photoBg: "linear-gradient(135deg, #0e1210 0%, #131a14 50%, #0c0e0b 100%)",
     headline: (
       <>
@@ -96,100 +100,110 @@ function StoryChapter({ chapter, index }: any) {
   return (
     <div className="story-chapter">
       <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        minHeight: "90vh",
-        borderTop: "1px solid var(--border)",
-        direction: isReverse ? "rtl" : "ltr",
-      }}
-      className="story-chapter"
-    >
-      {/* Photo parallax */}
-      <div
-        ref={wrapRef}
-        data-parallax
         style={{
-          position: "relative",
-          overflow: "hidden",
-          minHeight: "600px",
-          direction: "ltr",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          minHeight: "90vh",
+          borderTop: "1px solid var(--border)",
+          direction: isReverse ? "rtl" : "ltr",
         }}
+        className="story-chapter"
       >
-        <div
-          ref={innerRef}
-          className="story-photo-inner"
-          style={{
-            position: "absolute",
-            inset: "-20% 0",
-            width: "100%",
-            height: "140%",
-            background: chapter.photoBg,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            willChange: "transform",
-            /* ↓ PRODUCTION : backgroundImage: "url('/photos/chap-N.jpg')" */
-          }}
-        />
-      </div>
 
-      {/* Texte */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "6rem 5rem",
-          background: bgText,
-          direction: "ltr",
-        }}
-      >
+        {/* Photo parallax */}
         <div
-          data-reveal
+          ref={wrapRef}
+          data-parallax
           style={{
-            fontFamily: "var(--font-serif)",
-            fontSize: "5rem",
-            fontWeight: 200,
-            color: "var(--accent)",
-            opacity: 0.15,
-            lineHeight: 1,
-            marginBottom: "1.5rem",
+            position: "relative",
+            overflow: "hidden",
+            minHeight: "600px",
+            direction: "ltr",
           }}
         >
-          {chapter.num}
+          <div
+            ref={innerRef}
+            className="story-photo-inner"
+            style={{
+              position: "absolute",
+              inset: "-20% 0",
+              width: "100%",
+              height: "140%",
+              willChange: "transform",
+            }}
+          >
+            <img
+              src={chapter.photoSrc}
+              alt=""
+              aria-hidden="true"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+                display: "block",
+              }}
+            />
+          </div>
         </div>
 
-        <h3
-          data-reveal
-          data-delay="1"
+        {/* Texte */}
+        <div
           style={{
-            fontFamily: "var(--font-serif)",
-            fontSize: "clamp(1.8rem, 2.5vw, 2.5rem)",
-            fontWeight: 300,
-            color: "var(--blanc)",
-            lineHeight: 1.2,
-            letterSpacing: "-0.02em",
-            marginBottom: "1.5rem",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "6rem 5rem",
+            background: bgText,
+            direction: "ltr",
           }}
         >
-          {chapter.headline}
-        </h3>
+          <div
+            data-reveal
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: "5rem",
+              fontWeight: 200,
+              color: "var(--accent)",
+              opacity: 0.15,
+              lineHeight: 1,
+              marginBottom: "1.5rem",
+            }}
+          >
+            {chapter.num}
+          </div>
 
-        <p
-          data-reveal
-          data-delay="2"
-          style={{
-            fontSize: "1rem",
-            color: "var(--texte-2)",
-            lineHeight: 1.85,
-            fontWeight: 300,
-            marginBottom: "2rem",
-          }}
-        >
-          {chapter.body}
-        </p>
+          <h3
+            data-reveal
+            data-delay="1"
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: "clamp(1.8rem, 2.5vw, 2.5rem)",
+              fontWeight: 300,
+              color: "var(--blanc)",
+              lineHeight: 1.2,
+              letterSpacing: "-0.02em",
+              marginBottom: "1.5rem",
+            }}
+          >
+            {chapter.headline}
+          </h3>
 
-        {/* <a
+          <p
+            data-reveal
+            data-delay="2"
+            style={{
+              fontSize: "1rem",
+              color: "var(--texte-2)",
+              lineHeight: 1.85,
+              fontWeight: 300,
+              marginBottom: "2rem",
+            }}
+          >
+            {chapter.body}
+          </p>
+
+          {/* <a
           href={chapter.link.href}
           data-reveal
           data-delay="3"
@@ -211,8 +225,8 @@ function StoryChapter({ chapter, index }: any) {
         >
           {chapter.link.label}
         </a> */}
+        </div>
       </div>
-     </div>
     </div>
   )
 }
@@ -224,7 +238,7 @@ export function SectionStorytelling() {
     <section id="storytelling" style={{ paddingTop: "var(--pad)" }}>
       <div className="wrap" style={{ paddingBottom: "7rem", maxWidth: "700px" }}>
         <span data-reveal
-        style={{
+          style={{
             display: "block",
             fontFamily: "var(--font-sans)",
             fontWeight: 500,
@@ -236,8 +250,8 @@ export function SectionStorytelling() {
           {t("intro.label")}
         </span>
 
-        <h2 
-          data-reveal 
+        <h2
+          data-reveal
           data-delay="1"
           style={{
             fontFamily: "var(--font-serif)",
@@ -250,7 +264,7 @@ export function SectionStorytelling() {
           {t("intro.title.line1")}<br />
           {t("intro.title.line2")}{" "}
           <em style={{ fontStyle: "italic", fontWeight: 200 }}>{t("intro.title.highlight")}</em>
-          
+
           <br />
           {t("intro.title.line3")}
         </h2>

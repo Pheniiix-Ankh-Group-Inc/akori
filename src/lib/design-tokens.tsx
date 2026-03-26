@@ -23,11 +23,11 @@ export const FONTS = {
 
 
 export const NAV_LINKS = [
-  { label: "mission",    href: "/#mission"    },
-  { label: "partners",   href: "/#partners"   },
-  { label: "events",     href: "/#events"     },
-  { label: "resources",  href: "/#resources"  },
-  { label: "membership", href: "/#membership" },
-  { label: "about",      href: "/#about"      },
-  { label: "fondateurs", href: "/#fondateurs" },
+  { label: "mission",    hash: "mission"    },
+  { label: "partners",   hash: "partners"   },
+  { label: "events",     hash: "events"     },
+  { label: "resources",  hash: "resources"  },
+  { label: "membership", hash: "membership" },
+  { label: "about",      hash: "about"      },
+  { label: "fondateurs", hash: "fondateurs" },
 ] as const
