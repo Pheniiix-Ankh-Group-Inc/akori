@@ -156,7 +156,7 @@ export function Footer() {
           text-decoration: none;
           transition: color 0.2s;
         }
-        .footer-link:hover { color: var(--blanc); }
+        .footer-link:hover { color: var(--accent); }
 
         /* Bottom bar */
         .footer-bottom {

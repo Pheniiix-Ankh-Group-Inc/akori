@@ -61,7 +61,7 @@
     "intro": {
       "label": "Por qué AnbaChain",
       "title": {
-        "line1": "Tres razones",
+        "line1": "Cuatro razones",
         "line2": "para",
         "highlight": "unirse",
         "line3": "al movimiento."
@@ -81,7 +81,7 @@
           "line1": "Eventos que",
           "highlight": "crean oportunidades reales."
         },
-        "body": "Conferencias, hackatones, mesas redondas, formaciones — cada evento de AnbaChain está diseñado para generar resultados concretos: colaboraciones, proyectos, contrataciones, asociaciones. La gestión de entradas se realiza a través de Lu.ma para una experiencia fluida.",
+        "body": "Conferencias, hackatones, mesas redondas, formaciones — cada evento de AnbaChain está diseñado para generar resultados concretos: colaboraciones, proyectos, contrataciones, asociaciones.",
         "link": "Ver próximos eventos →"
       },
       "c3": {
@@ -97,7 +97,7 @@
           "line1": "Socios e instituciones que",
           "highlight": "crean oportunidades reales."
         },
-        "body": "Conferencias, hackatones, mesas redondas, formaciones — cada evento de AnbaChain está diseñado para generar resultados concretos: colaboraciones, proyectos, contrataciones, asociaciones. La gestión de entradas se realiza a través de Lu.ma para una experiencia fluida.",
+        "body": "Gracias al compromiso de socios e instituciones, cada iniciativa se convierte en un motor concreto: conexiones estratégicas, acceso a recursos clave y oportunidades de colaboración, financiación y desarrollo.",
         "link": "Ver próximos eventos →"
       }
     }
@@ -134,7 +134,7 @@
       "main": "Únete al",
       "highlight": "movimiento"
     },
-    "description": "Elige el plan que mejor se adapte a tu perfil. Las entradas para eventos se gestionan por separado a través de Lu.ma.",
+    "description": "Elige el plan que mejor se adapte a tu perfil.",
     "plans": {
       "network": {
         "tier": "Acceso básico",
@@ -142,7 +142,7 @@
         "period": "Siempre gratis",
         "features": [
           "Perfil público en el directorio",
-          "Acceso a eventos gratuitos",
+          "Acceso a eventos",
           "Boletín mensual",
           "Foro comunitario (solo lectura)"
         ],
@@ -156,7 +156,7 @@
           "Todo del plan Red",
           "Directorio completo + contactos",
           "Mensajería entre miembros",
-          "Eventos Lu.ma con descuento",
+          "Eventos con descuento",
           "Foro (participación completa)",
           "Recursos exclusivos y webinars",
           "Perfil verificado + insignia"
@@ -173,8 +173,7 @@
           "Página de socio personalizada",
           "Logo en sitio y eventos",
           "Acceso prioritario a eventos",
-          "Informe trimestral",
-          "Facturación B2B — factura PDF"
+          "Informe trimestral"
         ],
         "cta": "Contáctanos"
       }
@@ -185,8 +184,7 @@
         "Visa / Mastercard",
         "Apple Pay",
         "Google Pay",
-        "Bitcoin · ETH · USDC",
-        "Factura B2B"
+        "Bitcoin · ETH · USDC"
       ],
       "events": "Entradas de eventos:"
     }
@@ -208,51 +206,66 @@
     "readingTime": "{minutes} min"
   },
   "sectionEspace": {
-  "label": "Espacio miembro",
-  "title": { "main": "Tu hub", "highlight": "personal" },
-  "desc": "Un espacio privado para gestionar tu perfil, explorar la red y acceder a los recursos exclusivos de AnbaChain.",
-  "features": {
-    "profile":   { "title": "Perfil profesional completo",          "desc": "Habilidades, experiencias, sector, disponibilidad para colaboraciones" },
-    "directory": { "title": "Directorio completo con filtros avanzados","desc": "Busca por sector, experiencia, ciudad, disponibilidad" },
-    "messaging": { "title": "Mensajería directa entre miembros",    "desc": "Conéctate directamente con profesionales de la red" },
-    "library":   { "title": "Biblioteca de recursos exclusivos",    "desc": "Informes, análisis, guías y webinars reservados a miembros" }
+    "label": "Espacio miembro",
+    "title": {
+      "main": "Tu hub",
+      "highlight": "personal"
+    },
+    "desc": "Un espacio privado para gestionar tu perfil, explorar la red y acceder a los recursos exclusivos de AnbaChain.",
+    "features": {
+      "profile": {
+        "title": "Perfil profesional completo",
+        "desc": "Habilidades, experiencias, sector, disponibilidad para colaboraciones"
+      },
+      "directory": {
+        "title": "Directorio completo con filtros avanzados",
+        "desc": "Busca por sector, experiencia, ciudad, disponibilidad"
+      },
+      "messaging": {
+        "title": "Mensajería directa entre miembros",
+        "desc": "Conéctate directamente con profesionales de la red"
+      },
+      "library": {
+        "title": "Biblioteca de recursos exclusivos",
+        "desc": "Informes, análisis, guías y webinars reservados a miembros"
+      }
+    },
+    "stats": {
+      "connections": "Conexiones",
+      "events": "Eventos",
+      "resources": "Recursos"
+    },
+    "suggestedMembers": "Miembros sugeridos",
+    "dashboardUrl": "app.anbachain.io/dashboard",
+    "cta": "Acceder al espacio miembro"
   },
-  "stats": {
-    "connections": "Conexiones",
-    "events":      "Eventos",
-    "resources":   "Recursos"
+  "sectionInterstitiel": {
+    "quote": {
+      "main": "La tecnología blockchain es la herramienta.",
+      "highlight": "La comunidad es la fuerza."
+    },
+    "author": "— AnbaChain, Manifiesto fundador, 2025"
   },
-  "suggestedMembers": "Miembros sugeridos",
-  "dashboardUrl":     "app.anbachain.io/dashboard",
-  "cta":              "Acceder al espacio miembro"
-},
-"sectionInterstitiel": {
-  "quote": {
-    "main": "La tecnología blockchain es la herramienta.",
-    "highlight": "La comunidad es la fuerza."
+  "sectionCommunaute": {
+    "label": "Únete al movimiento",
+    "title": {
+      "main": "El futuro se escribe",
+      "highlight": "ahora."
+    },
+    "desc": "Recibe análisis, noticias e invitaciones en primicia. Únete a los profesionales que construyen la economía del mañana.",
+    "form": {
+      "placeholder": "Tu dirección de correo",
+      "submit": "Suscribirse",
+      "loading": "Enviando...",
+      "success": "Suscripción confirmada. ¡Revisa tu bandeja de entrada!",
+      "errorNetwork": "Error de red. Inténtalo más tarde."
+    },
+    "social": {
+      "instagram": "Instagram",
+      "linkedin": "in LinkedIn"
+    }
   },
-  "author": "— AnbaChain, Manifiesto fundador, 2025"
-},
-"sectionCommunaute": {
-  "label": "Únete al movimiento",
-  "title": {
-    "main": "El futuro se escribe",
-    "highlight": "ahora."
-  },
-  "desc": "Recibe análisis, noticias e invitaciones en primicia. Únete a los profesionales que construyen la economía del mañana.",
-  "form": {
-    "placeholder": "Tu dirección de correo",
-    "submit": "Suscribirse",
-    "loading": "Enviando...",
-    "success": "Suscripción confirmada. ¡Revisa tu bandeja de entrada!",
-    "errorNetwork": "Error de red. Inténtalo más tarde."
-  },
-  "social": {
-    "instagram": "Instagram",
-    "linkedin": "in LinkedIn"
-  }
-},
-"terms": {
+  "terms": {
     "metadata": {
       "title": "Términos de uso — AnbaChain",
       "description": "Términos de uso de la plataforma AnbaChain."
@@ -444,20 +457,20 @@
     }
   },
   "fadjiah": {
-  "label": "Fundadores",
-  "name": "Fadjiah Collin‑Mazile",
-  "role": "Líder de datos, inversora ángel y estratega blockchain en la intersección de las tecnologías emergentes y la equidad económica mundial",
-  "bio": {
-    "p1": "Como Head of Data en CoinList, ha construido y dirige las funciones de data science, data engineering y analytics en una de las plataformas de venta de tokens cripto más reconocidas del mundo.",
-    "p2": "Directora corporativa certificada, forma parte de varios consejos de administración y comités asesores sobre tecnología, datos e inclusión, incluido RepMatters, que apoya la innovación liderada por personas negras.",
-    "p3": "Miembro del Transatlantic Angel Investing Group y jueza recurrente en subvenciones y fondos de innovación para startups, Fadjiah aporta una profunda experiencia en la evaluación de proyectos en etapa inicial.",
-    "p4": "También le apasiona tender puentes entre los ecosistemas tecnológicos canadiense y africano a través de misiones comerciales en Ghana, Sudáfrica, Kenia y Etiopía, e invirtiendo en fundadores de estos mercados.",
-    "p5": "Su Substack, \"The Allegory of the Block\", explora blockchain desde un ángulo geopolítico, siguiendo a los constructores en lugar de los precios, y examinando cómo las economías emergentes pueden convertirse en productoras en lugar de consumidoras de infraestructura descentralizada.",
-    "p6": "Oradora reconocida, hace legibles los sistemas complejos e impulsa a las audiencias a ver blockchain no como especulación, sino como soberanía."
+    "label": "Fundadores",
+    "name": "Fadjiah Collin‑Mazile",
+    "role": "Líder de datos, inversora ángel y estratega blockchain en la intersección de las tecnologías emergentes y la equidad económica mundial",
+    "bio": {
+      "p1": "Como Head of Data en CoinList, ha construido y dirige las funciones de data science, data engineering y analytics en una de las plataformas de venta de tokens cripto más reconocidas del mundo.",
+      "p2": "Directora corporativa certificada, forma parte de varios consejos de administración y comités asesores sobre tecnología, datos e inclusión, incluido RepMatters, que apoya la innovación liderada por personas negras.",
+      "p3": "Miembro del Transatlantic Angel Investing Group y jueza recurrente en subvenciones y fondos de innovación para startups, Fadjiah aporta una profunda experiencia en la evaluación de proyectos en etapa inicial.",
+      "p4": "También le apasiona tender puentes entre los ecosistemas tecnológicos canadiense y africano a través de misiones comerciales en Ghana, Sudáfrica, Kenia y Etiopía, e invirtiendo en fundadores de estos mercados.",
+      "p5": "Su Substack, \"The Allegory of the Block\", explora blockchain desde un ángulo geopolítico, siguiendo a los constructores en lugar de los precios, y examinando cómo las economías emergentes pueden convertirse en productoras en lugar de consumidoras de infraestructura descentralizada.",
+      "p6": "Oradora reconocida, hace legibles los sistemas complejos e impulsa a las audiencias a ver blockchain no como especulación, sino como soberanía."
+    },
+    "footerNav": "← Todos los fundadores"
   },
-  "footerNav": "← Todos los fundadores"
-},
-"brice": {
+  "brice": {
     "label": "Fundadores",
     "name": "Brice Mimifir",
     "role": "Desarrollador Java, Consultor de Transformación Digital y Desarrollador Blockchain en la intersección de tecnología robusta e innovación descentralizada",
