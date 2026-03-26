@@ -225,8 +225,7 @@ export function SectionCommunaute() {
           }}
         >
           {SOCIAL_LINKS.map(({ key, href }) => (
-            <a href={href} className="f-linnk" target="_blank" rel="noopener noreferrer">{key}</a>
-
+            <a key={key} href={href} className="f-linnk" target="_blank" rel="noopener noreferrer">{key}</a>
           ))}
         </div>
       </div>

@@ -70,7 +70,7 @@ export default async function HomePage() {
 
   if (hasError) {
     return (
-      <ErrorPage 
+      <ErrorPage
         message="Impossible de charger les données"
         code={500}
         details="Nous rencontrons une erreur technique. Veuillez réessayer dans quelques instants."
@@ -90,40 +90,40 @@ export default async function HomePage() {
       <SectionStorytelling />
 
       {/* Section 4 */}
+      <SectionInterstitiel />
+
+      {/* Section 5 */}
+       <SectionEquipe />
+
+      {/* Section 6 */}
       <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des partenaires</div>}>
         <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement partenaires...</div>}>
           <SectionPartenaires partenaires={partenaires} />
         </Suspense>
       </ErrorBoundary>
-
-      {/* Section 5 */}
-      <SectionInterstitiel />
-
-      {/* Section 6 */}
+      
+      {/* Section 7 */}
       <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des événements</div>}>
         <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement événements...</div>}>
-          <SectionEvenements 
+          <SectionEvenements
             evenements={evenements}
             featured={evenementFeatured}
           />
         </Suspense>
       </ErrorBoundary>
 
-      {/* Section 7 */}
-      <SectionAdhesion />
-
       {/* Section 8 */}
-      <SectionRessources ressources={ressources} />
-
+      <SectionAdhesion />
+      
       {/* Section 9 */}
-      <SectionEspace />
-
+      <SectionRessources ressources={ressources} />
+      
       {/* Section 10 */}
-      <SectionEquipe />
-
+      <SectionEspace />
+     
       {/* Section 11 */}
       <SectionCommunaute />
-      
+
     </main>
   )
 }

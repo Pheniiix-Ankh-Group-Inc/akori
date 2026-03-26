@@ -5,7 +5,7 @@ export const metadata = {
   description: "Terms of use for the AnbaChain platform.",
 }
 
-export default function EvenementsPage() {
+export default function RessourcesPage() {
   return (
     <main style={{ paddingTop: "" }}>
       <section className="section">
@@ -16,7 +16,7 @@ export default function EvenementsPage() {
             <Link href="/" className="label" >
               ← Back to home
             </Link>
-            <h1 className="heading-md">Events</h1>
+            <h1 className="heading-md">Ressources</h1>
             
           </div>
 
