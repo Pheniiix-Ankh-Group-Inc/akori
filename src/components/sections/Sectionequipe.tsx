@@ -29,12 +29,9 @@ export function SectionEquipe() {
   return (
     <section className="section" id="fondateurs" style={{ padding: "var(--pad) 0" }}>
       <div className="wrap">
-        <h1 className="heading-md" style={{ marginBottom: "1rem", color:"var(--accent)" }}>
+        <h1 className="heading-md" style={{ marginBottom: "4rem", color:"var(--accent)"}}>
           Fondateurs
         </h1>
-        <p className="text-base" style={{ color: "var(--texte-2)", marginBottom: "4rem" }}>
-          Les visionnaires derrière AnbaChain.
-        </p>
 
         {/* Founders grid */}
         <div

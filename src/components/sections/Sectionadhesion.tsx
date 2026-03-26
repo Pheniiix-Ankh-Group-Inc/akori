@@ -43,9 +43,9 @@ export function SectionAdhesion() {
           <em className="text-italic">{t("title.highlight")}</em>
         </h2>
 
-        <p className="text-base" data-reveal data-delay="2">
+        {/* <p className="text-base" data-reveal data-delay="2">
           {t("description")}
-        </p>
+        </p> */}
       </div>
 
       <div className="pricing-grid" data-reveal>

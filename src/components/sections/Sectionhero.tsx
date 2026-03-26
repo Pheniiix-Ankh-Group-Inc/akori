@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button"
 import { useTranslations } from "next-intl"
 
 const STATS = (t: any) => [
-  { num: "500+", lbl: t("stats.members") },
+  { num: "50+", lbl: t("stats.members") },
   { num: "12",   lbl: t("stats.sectors") },
   { num: "6",    lbl: t("stats.countries") },
   { num: "2",    lbl: t("stats.events") },
