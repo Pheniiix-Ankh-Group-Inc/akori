@@ -23,6 +23,7 @@ interface BrevoContact {
   firstName?: string
   lastName?: string
   listId?: number
+  topics: string[]
 }
 
 /* ─────────────────────────────────────────────
@@ -43,29 +44,26 @@ interface TransactionalEmail {
 export async function addContactToList({
   email,
   firstName,
-  lastName,
   listId,
+  topics
 }: BrevoContact): Promise<{ success: boolean; message: string }> {
   const LIST_ID = listId ?? Number(process.env.BREVO_LIST_ID)
 
-  console.log("BREVO_API_KEY:", process.env.BREVO_API_KEY?.slice(0, 12))
-
   try {
     const res = await fetch(`${process.env.BREVO_API_URL}/contacts`, {
-      method: "POST",
+     method: "POST",
       headers,
       body: JSON.stringify({
         email,
         attributes: {
-          PRENOM: firstName ?? "",
-          NOM:    lastName  ?? "",
+          FIRSTNAME: firstName ?? "",
+          TOPIC_INTERET: topics?.join(", ") ?? ""
         },
-        listIds:        [LIST_ID],
-        updateEnabled:  true, // Met à jour si le contact existe déjà
+        listIds: [LIST_ID],
+        updateEnabled: true,
       }),
     })
 
-    // 204 = contact existant mis à jour, 201 = nouveau contact
     if (res.status === 201 || res.status === 204) {
       return { success: true, message: "Contact ajouté avec succès." }
     }

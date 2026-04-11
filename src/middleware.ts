@@ -53,7 +53,7 @@ function buildLocalizedUrl(
   return new URL(`${prefix}${path}`, base)
 }
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const session = getSessionCookie(request)
   const isAuthenticated = !!session
@@ -80,7 +80,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Toutes les routes sauf _next, api, fichiers statiques
     "/((?!_next|api|_vercel|.*\\..*).*)",
   ],
 }

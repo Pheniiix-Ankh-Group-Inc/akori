@@ -1,6 +1,5 @@
 import { setRequestLocale } from 'next-intl/server';
-import { Header } from "@/components/sections/header"
-import { Footer } from "@/components/sections/Footer"
+import { Footer }from "@/components/sections/Footer";
 
 type Props = {
   children: React.ReactNode;
@@ -13,7 +12,6 @@ export default async function PublicLayout({ children, params }: Props) {
 
   return (
     <>
-      <Header />
       {children}
       <Footer />
     </>

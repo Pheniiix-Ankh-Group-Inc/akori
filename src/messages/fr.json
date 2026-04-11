@@ -254,15 +254,12 @@
     },
     "desc": "Recevez les analyses, actualités et invitations en avant-première. Rejoignez plus des professionnels qui construisent l'économie de demain.",
     "form": {
-      "placeholder": "Votre adresse email",
+      "prenom": "Prénom",
+      "email": "Adresse email",
       "submit": "S'inscrire",
       "loading": "Envoi en cours...",
       "success": "Inscription confirmée. Vérifiez votre boîte mail !",
       "errorNetwork": "Erreur réseau. Réessayez plus tard."
-    },
-    "social": {
-      "instagram": "Instagram",
-      "linkedin": "LinkedIn"
     }
   },
   "terms": {
@@ -488,25 +485,31 @@
     "brand": {
       "description": "Le réseau blockchain des professionnels noirs — réseautage, innovation et solutions au service de la communauté."
     },
-    "cols": {
-      "organisation": {
-        "title": "Organisation",
-        "mission": "Notre mission",
-        "teams": "Équipe fondatrice",
-        "partners": "Partenaires"
-      },
-      "reseau": {
-        "title": "Réseau",
-        "events": "Événements",
-        "resources": "Ressources",
-        "membership": "Adhésion"
-      },
-      "legal": {
-        "title": "Légal",
-        "terms": "Conditions d'utilisation",
-        "privacy": "Politique de confidentialité",
-        "cookies": "Cookies"
-      }
+    "legal": {
+      "confidentialite": "Confidentialité",
+      "cgu": "CGU",
+      "contact": "Contact"
+    },
+    "Communauté": {
+      "title": "Communauté",
+      "Abonnements": "Abonnements",
+      "Forum": "Forum membre",
+      "Newsletter": "Newsletter",
+      "Espace": "Espace physique"
+    },
+    "Programme": {
+      "title": "Programme",
+      "events": "Événements",
+      "resources": "Ressources",
+      "data": "Données",
+      "incubation": "Incubation"
+    },
+    "Organisation": {
+      "title": "Organisation",
+      "mission": "Mission",
+      "founders": "Fondateurs",
+      "partners": "Partenaires",
+      "cookies": "Cookies"
     },
     "bottom": {
       "copyright": "© 2026 AnbaChain™ · Tous droits réservés",

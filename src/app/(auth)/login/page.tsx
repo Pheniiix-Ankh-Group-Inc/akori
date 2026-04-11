@@ -102,7 +102,7 @@ export default function LoginPage() {
 
           {error && <p className="auth-error">{error}</p>}
 
-          <Button variant="white" onClick={handleEmail}>
+          <Button variant="prim" onClick={handleEmail}>
             {loading ? "Signing in..." : "Sign in"}
           </Button>
 

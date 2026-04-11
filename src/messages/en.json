@@ -1,33 +1,65 @@
 {
-  "Header": {
-    "logo": "Anba<em>Chain</em>",
-    "nav": {
-      "mission": "Mission",
-      "partners": "Partners",
-      "events": "Events",
-      "resources": "Resources",
-      "membership": "Membership",
-      "about": "About",
-      "fondateurs": "Founders"
-    },
-    "burger": {
-      "open": "Open menu",
-      "close": "Close menu"
-    }
-  },
   "sectionHero": {
+    "tag": "Blockchain Incubator · Legal Organization",
     "title": {
-      "line1": "Building the future",
-      "line2": "together,",
-      "line3": "on the chain."
+      "main": "Building the future",
+      "highlight": "decentralized finance",
+      "suffix": "."
     },
-    "description": "AnbaChain brings together Black professionals — entrepreneurs, developers, analysts, professors, legal experts, and institutional actors — to accelerate blockchain adoption and build concrete solutions for our community.",
-    "stats": {
-      "members": "Professional members",
-      "sectors": "Sectors represented",
-      "countries": "Countries",
-      "events": "Events organized"
+    "description": "AnbaChain is an independent community and incubator dedicated to the builders of the blockchain ecosystem — providing physical space and collective intelligence.",
+    "buttons": {
+      "join": "Join the community",
+      "mission": "Our mission"
+    },
+    "socialProof": {
+      "members": "280+ active members",
+      "projects": "12 projects incubated in 2024"
+    },
+    "badgeLive": "Active community",
+    "kpi": {
+      "value": "23,613",
+      "label": "Monthly Active Devs",
+      "trend": "+39% since 2015"
     }
+  
+},
+  "communauteSection": {
+    "label": "Community",
+    "title": {
+      "main": "Building",
+      "highlight": "together",
+      "suffix": ", not in parallel."
+    },
+    "description": "A private and lively space where members exchange, collaborate, and help each other. Serious builders, a real human network.",
+    "cta": "Access the community",
+    "lockedMessage": "Content reserved for members",
+    "viewPlans": "View plans",
+    "share": "Share",
+    "stats": [
+      { "n": "280+", "label": "active members" },
+      { "n": "12", "label": "incubated projects" },
+      { "n": "3", "label": "successful raises 2024" }
+    ],
+    "posts": [
+      {
+        "name": "Nadia R.",
+        "meta": "1h ago · Announcements",
+        "chips": ["Incubation", "Demo Day"],
+        "body": "The Spring 2025 cohort is launched — 4 teams, 6 weeks of intensive support. Demo Day is open to member investors. Register on Luma by Friday."
+      },
+      {
+        "name": "Karim B.",
+        "meta": "yesterday · Technical",
+        "chips": ["Solidity", "Audit"],
+        "body": "Feedback on our latest audit: 3 critical vulnerabilities found before deployment. Full thread in member resources."
+      },
+      {
+        "name": "Sophie C.",
+        "meta": "2d ago · Deal Flow",
+        "chips": ["Funding"],
+        "body": "New grant available — €50K for DeFi projects on Arbitrum. Deadline June 30th. Details in the deal flow channel..."
+      }
+    ]
   },
   "sectionMission": {
     "label": "Our mission",
@@ -102,11 +134,62 @@
       }
     }
   },
+  "mission": {
+    "tag": "Mission",
+    "title": {
+      "main": "Accelerating",
+      "highlight": "adoption",
+      "suffix": "through builders."
+    },
+    "description": "We are an independent organization bringing together developers, founders, and investors around a shared infrastructure — physical, intellectual, and social.",
+    "cta": "Explore membership plans",
+    "pillars": [
+      {
+        "id": "01",
+        "title": "Project Incubation",
+        "body": "Technical, legal, and strategic support for founding teams — from initial concept to mainnet launch."
+      },
+      {
+        "id": "02",
+        "title": "Collective Intelligence",
+        "body": "Access to adoption data, ecosystem watch, and exclusive publications powered by the industry's best blockchain datasets."
+      },
+      {
+        "id": "03",
+        "title": "Physical & Digital Space",
+        "body": "A dedicated Paris hub and an online member platform: forums, exclusive resources, deal flow channels, and collaborative tools."
+      },
+      {
+        "id": "04",
+        "title": "Funding & Partnerships",
+        "body": "A network of investors, funds, and institutional partners — connections that transform projects into scalable companies."
+      }
+    ]
+  },
+   "sectionTeam": {
+    "funder": "Funders",
+    "description": "Not institutional leaders, but builders. The AnbaChain founders are hands-on professionals who have built and contributed to blockchain projects at every stage — from code to strategy, from startups to global platforms. They are committed to building a network that serves the community with the same rigor and vision they apply to their work.",
+    "empty": "No partners in this category.",
+    "bio": {
+      "fadjiah": {
+        "role": "Data leader, angel investor & blockchain strategist at the intersection of emerging technologies and global economic equity",
+        "bio": "Head of Data at CoinList, Fadjiah leads Web3 innovation, invests in startups, and promotes global technological sovereignty.",
+        "strory": "As Head of Data at CoinList, she has built and leads the data science, data engineering and analytics functions at one of the most recognized crypto token sale platforms in the world. A certified corporate director, she sits on several boards and advisory committees covering technology, data and inclusion, including RepMatters, which supports innovation led by Black people. A member of the Transatlantic Angel Investing Group and a recurring judge for startup innovation grants and funds, Fadjiah brings deep expertise in evaluating early-stage projects. She is also passionate about bridging the Canadian and African technology ecosystems through trade missions to Ghana, South Africa, Kenya and Ethiopia, and by investing in founders in these markets. Her Substack, \"The Allegory of the Block\", explores blockchain from a geopolitical angle, following builders rather than prices, and examining how emerging economies can become producers rather than consumers of decentralized infrastructure. A recognized speaker, she makes complex systems readable and encourages audiences to see blockchain not as speculation, but as sovereignty."
+      },
+      "brice": {
+        "role": "Java Developer, Digital Transformation Consultant & Blockchain Developer at the intersection of robust technology and decentralized innovation",
+        "bio": "Founder of Theanhk and Montreal-based blockchain expert, Brice builds high-performance Java backend and secure Web3 solutions.",
+        "strory": "Brice is the founder of Theanhk, a blockchain development company based in Montreal with a strong international focus. He designs and develops high-performance backend solutions in Java while actively contributing to blockchain integration initiatives. Certified in Solidity Smart Contract Development,Blockchain Basicsand Advanced Web3 Wallet Security, Brice leverages his technical expertise to deliver reliable and secure solutions. Previously, he worked as a Java developer at the National Bank of Canada, contributing to digital banking systems and key modernization projects. Passionate about the practical application of blockchain beyond speculation, Brice is committed to building robust, secure, and results-driven systems that deliver real operational efficiency and technological sovereignty to organizations."
+      }}
+
+  },
   "sectionPartenaires": {
     "label": "Ecosystem",
     "title": {
-      "main": "Partners &",
-      "highlight": "Institutions"
+      "main": "PARTNERS & PROTOCOLS",
+      "highlight": "Institutions",
+      "sub": "The ecosystem that supports us.",
+      "description": "Protocols, companies, universities, media — the institutions that share the vision of blockchain open and professional for our community."
     },
     "tabs": {
       "all": "All",
@@ -119,9 +202,24 @@
   },
   "sectionEvenements": {
     "label": "Schedule",
+    "allevents": "See all events",
+    "nextevents": "Next big events",
+    "pastevents": "Past highlights",
+    "subcrib": "Subscribe on Luma.",
+    "events": "Events",
     "title": {
-      "main": "Upcoming",
-      "highlight": "events"
+      "meetings": "Meetings that move",
+      "meetings2": "the ecosystem forward.",
+      "day": "{day} {month}",
+      "location": "{duration} · {formatDate}",
+      "access": "{access}"
+    },
+    "tags": {
+      "conference": "Conference",
+      "roundtable": "Roundtable",
+      "networking": "Networking",
+      "hackathon": "Hackathon",
+      "training": "Training"
     },
     "iframe": {
       "title": "AnbaChain events calendar"
@@ -249,20 +347,19 @@
   "sectionCommunaute": {
     "label": "Join the movement",
     "title": {
-      "main": "The future is written",
-      "highlight": "now."
+      "main": "The insight that makes",
+      "highlight": "the difference."
     },
     "desc": "Receive analyses, news and invitations in preview. Join professionals building tomorrow's economy.",
     "form": {
-      "placeholder": "Your email address",
+      "prenom": "First Name",
+      "email": "Email Address",
+      "interest": "Areas of Interest",
       "submit": "Subscribe",
+      "subscribed": "✓ Subscribed!",
       "loading": "Sending...",
       "success": "Subscription confirmed. Check your inbox!",
       "errorNetwork": "Network error. Please try again later."
-    },
-    "social": {
-      "instagram": "Instagram",
-      "linkedin": "in LinkedIn"
     }
   },
   "terms": {
@@ -488,28 +585,34 @@
     "brand": {
       "description": "The blockchain network for Black professionals — networking, innovation and solutions for the community."
     },
-    "cols": {
-      "organisation": {
-        "title": "Organisation",
-        "mission": "Our mission",
-        "teams": "Founding team",
-        "partners": "Partners"
-      },
-      "reseau": {
-        "title": "Network",
-        "events": "Events",
-        "resources": "Resources",
-        "membership": "Membership"
-      },
-      "legal": {
-        "title": "Legal",
-        "terms": "Terms of use",
-        "privacy": "Privacy policy",
-        "cookies": "Cookies"
-      }
+    "legal": {
+      "privacy": "Privacy Policy",
+      "cgu": "Terms of Use",
+      "contact": "Contact"
+    },
+    "Community": {
+      "title": "Community",
+      "subscriptions": "Subscriptions",
+      "forum": "Forum",
+      "newsletter": "Newsletter",
+      "space": "Physical space"
+    },
+    "Program": {
+      "title": "Program",
+      "events": "Events",
+      "resources": "Resources",
+      "data": "Data and insights",
+      "incubation": "Incubation"
+    },
+    "Organisation": {
+      "title": "Organisation",
+      "mission": "Mission",
+      "founders": "Founders",
+      "partners": "Partners",
+      "cookies": "Cookies"
     },
     "bottom": {
-      "copyright": "© 2026 AnbaChain™ · All rights reserved",
+      "copyright": "© 2025 AnbaChain™ · All rights reserved",
       "privacy": "Privacy",
       "cgu": "Terms",
       "contact": "Contact"

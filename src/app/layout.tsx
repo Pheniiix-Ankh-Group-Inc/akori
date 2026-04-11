@@ -1,22 +1,11 @@
-import "./globals.css"
-import type { Metadata } from "next"
+import type { ReactNode } from "react";
+export { viewport } from "@/lib/metadata";
+import "./globals.css";
 
-
-export const metadata: Metadata = {
-  title: {
-    template: "%s | AnbaChain",
-    default: "AnbaChain — Réseau blockchain des professionnels noirs",
-  },
-  description:
-    "Plateforme communautaire blockchain pour les professionnels noirs — réseau, événements et ressources exclusives.",
+type RootLayoutProps = {
+  children: ReactNode
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    children
-  )
+export default function RootLayout({ children }: RootLayoutProps) {
+  return children
 }

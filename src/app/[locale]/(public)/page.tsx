@@ -1,129 +1,91 @@
-import { sanityFetch } from "@/sanity/lib/live";
-import type { Metadata } from "next";
-import { Suspense } from "react"
-import ErrorBoundary from "@/components/ErrorBoundary"
-import { ErrorPage } from "@/components/ErrorPage"
-
-import {
-  EVENEMENTS_QUERY,
-  EVENEMENT_FEATURED_QUERY,
-  RESSOURCES_QUERY,
-  PARTENAIRES_QUERY
-} from "@/lib/queries"
-
-import type { Evenement, Ressource, Partenaire } from "@/types"
-
 import { SectionAdhesion } from "@/components/sections/Sectionadhesion";
-import { SectionEquipe } from "@/components/sections/Sectionequipe";
+import { TeamSection } from "@/components/sections/Teamsection";
 import { SectionEspace } from "@/components/sections/Sectionespace";
-import { SectionEvenements } from "@/components/sections/Sectionevenements";
-import { SectionHero } from "@/components/sections/Sectionhero";
+import { EventsSection } from "@/components/sections/Eventssection";
+import { HeroSection  } from "@/components/sections/Herosection";
 import { SectionInterstitiel } from "@/components/sections/Sectioninterstitiel";
-import { SectionMission } from "@/components/sections/Sectionmission";
-import { SectionPartenaires } from "@/components/sections/Sectionpartenaires";
+import { MissionSection } from "@/components/sections/Missionsection";
+import { PartnersSection } from "@/components/sections/Partnerssection";
 import { SectionRessources } from "@/components/sections/Sectionressources";
 import { SectionStorytelling } from "@/components/sections/Sectionstorytelling";
-import { SectionCommunaute } from "@/components/sections/SectionCommunaute";
+import { CommunitySection } from "@/components/sections/Communitysection";
+import { Ticker } from "@/components/layout/Ticker";
+import { Navbar } from "@/components/layout/Navbar";
+import { NewsBand } from "@/components/layout/NewsBand";
+import { Divider } from "@/lib/Divider";
+import { AdoptionSection } from "@/components/sections/Adoptionsection";
+import { PricingSection } from "@/components/sections/Pricingsection";
+import { NewsletterSection } from "@/components/sections/Newslettersection";
 
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "AnbaChain — Plateforme blockchain des professionnels Caraïbéens",
-  description: "Réseau, événements et ressources exclusives pour la communauté",
-  openGraph: {
-    title: "AnbaChain - Réseau de professionnels noirs",
-    description: "Plateforme blockchain communautaire",
-    type: "website",
-    url: "https://wwww.anbachain.org",
-  },
-}
-
 export default async function HomePage() {
-  let evenements: Evenement[] = []
-  let evenementFeatured: Evenement | null = null
-  let ressources: Ressource[] = []
-  let partenaires: Partenaire[] = []
-  let hasError = false
-
-  try {
-    const [
-      { data: ev },
-      { data: evFeatured },
-      { data: res },
-      { data: part }
-    ] = await Promise.all([
-      sanityFetch({ query: EVENEMENTS_QUERY }),
-      sanityFetch({ query: EVENEMENT_FEATURED_QUERY }),
-      sanityFetch({ query: RESSOURCES_QUERY }),
-      sanityFetch({ query: PARTENAIRES_QUERY }),
-    ])
-
-    evenements = ev ?? []
-    evenementFeatured = evFeatured ?? null
-    ressources = res ?? []
-    partenaires = part ?? []
-  } catch (error) {
-    console.error("Failed to fetch Sanity data:", error)
-    hasError = true
-  }
-
-  if (hasError) {
-    return (
-      <ErrorPage
-        message="Impossible de charger les données"
-        code={500}
-        details="Nous rencontrons une erreur technique. Veuillez réessayer dans quelques instants."
-      />
-    )
-  }
 
   return (
-    <main className="block">
+    <>
+    <Ticker />
+    <Navbar />
+      <main>
       {/* Section 1 */}
-      <SectionHero />
+      <HeroSection />
+      <NewsBand />
+
+      <MissionSection />
+      <Divider light />
+
+      <AdoptionSection />
+      <Divider />
+
+      <CommunitySection />
+      <Divider light />
+
+      <TeamSection />
+      <Divider />
+
+      <PricingSection />
+      <Divider light />
+
+      <EventsSection />
+      <Divider />
+
+      <PartnersSection />
+      <Divider light />
+
+      <NewsletterSection />
 
       {/* Section 2 */}
-      <SectionMission />
+      {/* <MissionSection /> */}
 
       {/* Section 3 */}
-      <SectionStorytelling />
+      {/* <SectionStorytelling /> */}
 
       {/* Section 4 */}
-      <SectionInterstitiel />
+      {/* <SectionInterstitiel /> */}
 
       {/* Section 5 */}
-       <SectionEquipe />
+       {/* <TeamSection /> */}
 
       {/* Section 6 */}
-      <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des partenaires</div>}>
-        <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement partenaires...</div>}>
-          <SectionPartenaires partenaires={partenaires} />
-        </Suspense>
-      </ErrorBoundary>
+      
+      {/* <PartnersSection /> */}
       
       {/* Section 7 */}
-      <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des événements</div>}>
-        <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement événements...</div>}>
-          <SectionEvenements
-            evenements={evenements}
-            featured={evenementFeatured}
-          />
-        </Suspense>
-      </ErrorBoundary>
+      {/* <EventsSection /> */}
 
       {/* Section 8 */}
-      <SectionAdhesion />
+      {/* <SectionAdhesion /> */}
       
       {/* Section 9 */}
-      <SectionRessources ressources={ressources} />
+      {/* <SectionRessources  /> */}
       
       {/* Section 10 */}
-      <SectionEspace />
+      {/* <SectionEspace /> */}
      
       {/* Section 11 */}
-      <SectionCommunaute />
+      {/* <CommunitySection /> */}
 
     </main>
+    </>
   )
 }

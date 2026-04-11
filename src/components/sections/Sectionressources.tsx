@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/Button"
+import  { Button }  from "@/components/ui/Button"
 import type { Ressource } from "@/types"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
@@ -30,7 +30,7 @@ export function SectionRessources({ ressources }: Props) {
             {t("title.main")} <em className="text-italic">{t("title.highlight")}</em>
           </h2>
         </div>
-        <Button variant="ghost" href="/ressources">
+        <Button variant="ghost-lt" href="/ressources">
           {t("cta")}
         </Button>
       </div>

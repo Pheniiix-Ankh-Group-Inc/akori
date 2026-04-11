@@ -1,9 +1,6 @@
 /**
  * app/api/newsletter/route.ts
  * POST /api/newsletter
- *
- * Reçoit { email } depuis le formulaire SectionCommunaute.
- * Ajoute le contact à la liste Brevo + envoie l'email de bienvenue.
  */
 
 import { NextRequest, NextResponse } from "next/server"
@@ -12,6 +9,8 @@ import { z } from "zod"
 
 const schema = z.object({
   email: z.email("Email invalide."),
+  firstName: z.string(),
+  topics: z.array(z.string()).default([])
 })
 
 export async function POST(req: NextRequest) {
@@ -27,10 +26,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { email } = parsed.data
+    const { email, firstName, topics } = parsed.data
 
-    // 1. Ajouter à la liste newsletter Brevo
-    const contact = await addContactToList({ email })
+    const contact = await addContactToList({ email, firstName , topics: parsed.data.topics })
     if (!contact.success) {
       return NextResponse.json(
         { success: false, message: contact.message },
@@ -38,7 +36,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 2. Email de bienvenue
     await sendTransactional({
       to: [{ email }],
       subject: "Bienvenue dans la communauté AnbaChain 🌍",
@@ -59,7 +56,7 @@ export async function POST(req: NextRequest) {
             Découvrir la plateforme
           </a>
           <p style="margin-top:3rem;font-size:0.75rem;color:#7a7570;">
-            © 2026 AnbaChain™ · Tu reçois cet email car tu t'es inscrit sur AnbaChain.org
+            © 2025 AnbaChain™ · Tu reçois cet email car tu t'es inscrit sur AnbaChain.org
           </p>
         </body>
         </html>

@@ -125,7 +125,7 @@ export default function RegisterPage() {
 
           {error && <p className="auth-error">{error}</p>}
 
-          <Button variant="white" onClick={handleRegister}>
+          <Button variant="prim" onClick={handleRegister}>
             {loading ? "Creating account..." : "Create account"}
           </Button>
 
