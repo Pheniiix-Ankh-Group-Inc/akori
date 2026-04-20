@@ -1,269 +1,632 @@
 {
-  "Header": {
-    "logo": "Anba<em>Chain</em>",
-    "nav": {
-      "mission": "Mission",
-      "partners": "Partenaires",
-      "events": "Événements",
-      "resources": "Ressources",
-      "membership": "Adhésion",
-      "about": "À propos",
-      "fondateurs": "Fondateurs"
-    },
-    "burger": {
-      "open": "Ouvrir le menu",
-      "close": "Fermer le menu"
-    }
+  "Meta": {
+    "title": "Black in Blockchain — Un collectif mondial",
+    "description": "Un rassemblement transcontinental de bâtisseurs, fondateurs, chercheurs et artistes réécrivant les protocoles de la propriété — de Lagos à Port-au-Prince, de Montréal à Brixton."
   },
-  "sectionHero": {
-    "title": {
-      "line1": "Bâtir l'avenir",
-      "line2": "ensemble,",
-      "line3": "sur la chaîne."
-    },
-    "description": "AnbaChain rassemble les professionnels noirs — entrepreneurs, développeurs, analystes, professeurs, juristes, institutionnels — pour accélérer l'adoption de la blockchain et construire des solutions concrètes pour notre communauté.",
-    "stats": {
-      "members": "Membres professionnels",
-      "sectors": "Secteurs représentés",
-      "countries": "Pays",
-      "events": "Événements organisés"
-    }
+  "Nav": {
+    "manifesto": "Manifeste",
+    "chapters": "Chapitres",
+    "work": "Travail",
+    "chains": "Chaînes",
+    "gathering": "Rassemblement",
+    "stateOfBib": "État de BIB",
+    "cta": "Rejoindre le collectif",
+    "open": "Ouvrir le menu",
+    "close": "Fermer le menu"
   },
-  "sectionMission": {
-    "label": "Notre mission",
-    "title": {
-      "line1": "La blockchain n'est pas",
-      "line2": "qu'une technologie. C'est",
-      "line3": "un levier de",
-      "highlight": "souveraineté."
-    },
-    "description": "AnbaChain crée le point de convergence qui manquait : un espace où les talents se rencontrent, où les problèmes concrets de la communauté trouvent des solutions technologiques, et où une nouvelle génération de leaders blockchain émerge.",
-    "pillars": {
-      "network": {
-        "title": "Réseau",
-        "desc": "Connecter les professionnels noirs de la blockchain à l'échelle mondiale, par secteur et par expertise."
+  "Radio": {
+    "label": "Radio BIB · En écoute",
+    "close": "Fermer"
+  },
+  "Hero": {
+    "sideMarker": "Genèse  ·  Black in Blockchain",
+    "eyebrow": "Fondé en 2024  /  Un collectif mondial",
+    "titleLine1": "Black",
+    "titleLine2": "in",
+    "titleLine3": "Blockchain.",
+    "lede": "Un rassemblement transcontinental de bâtisseurs, fondateurs, chercheurs et artistes réécrivant les protocoles de la propriété — de Lagos à Port-au-Prince, de Montréal à Brixton.",
+    "meta1": "4 continents",
+    "meta2": "37 chapitres",
+    "meta3": "Un collectif",
+    "scroll": "↓  faites défiler pour entrer"
+  },
+  "Marquee": {
+    "item1": "Souveraineté on-chain",
+    "item2": "Ọwọ́ · Propriété",
+    "item3": "Kwaito · Konpa · Code",
+    "item4": "La diaspora est distribuée"
+  },
+  "Manifesto": {
+    "eyebrow": "La prémisse",
+    "quote": "Nous avons toujours été <em>en avance</em> — cette fois, le registre s'en souvient.",
+    "body1": "<strong>Black in Blockchain</strong> est un collectif, une correspondance et un commun. Nous rassemblons les professionnels noirs travaillant à la frontière des systèmes décentralisés — ingénieurs protocoles à Nairobi, gouverneurs de DAO à Dakar, auditeurs de smart contracts à Atlanta, artistes NFT à Kingston, chercheurs DeFi à Paris.",
+    "body2": "Durant cinq siècles, la diaspora a été un réseau sans nœuds. La blockchain est la première infrastructure que nous pouvons <strong>posséder collectivement</strong>, à travers les océans, sans demander. Ce n'est pas une conférence. C'est le début d'une mémoire partagée.",
+    "signature": "— L'Assemblée fondatrice",
+    "signatureBlock": "Signé 04.2024 · Bloc 19 733 204"
+  },
+  "Constellation": {
+    "eyebrow": "Quatre régions · Une constellation",
+    "title": "Chapitres à travers la <em>diaspora.</em>",
+    "label1": "01 · Amérique du N.",
+    "hub1": "Hub Montréal",
+    "label2": "02 · Afrique",
+    "hub2": "Hub Lagos",
+    "label3": "03 · Caraïbes",
+    "hub3": "Hub Kingston",
+    "label4": "04 · Europe",
+    "hub4": "Hub Londres",
+    "legend1": "01 · Amérique du N. — 14 nœuds",
+    "legend2": "02 · Afrique — 11 nœuds",
+    "legend3": "03 · Caraïbes — 6 nœuds",
+    "legend4": "04 · Europe — 6 nœuds",
+    "regions": {
+      "na": {
+        "num": "01 / Amérique du Nord",
+        "name": "América <em>del Norte</em>",
+        "sub": "Le fil fondateur.",
+        "desc": "Des premiers collectifs crypto de Harlem aux cercles de fondateurs Web3 de Toronto — la plus longue lignée continue de bâtisseurs noirs on-chain. Foyer de notre assemblée fondatrice et du hub Montréal.",
+        "cities": "Montréal · Atlanta · Oakland<br>Toronto · Houston · D.C.",
+        "chapters": "14",
+        "chaptersLabel": "chapitres",
+        "members": "1,2K",
+        "membersLabel": "membres",
+        "capital": "19 M$",
+        "capitalLabel": "déployés"
       },
-      "solutions": {
-        "title": "Solutions",
-        "desc": "Co-créer des réponses blockchain aux défis concrets rencontrés par la communauté dans tous les secteurs."
+      "africa": {
+        "num": "02 / Afrique",
+        "name": "Afrique <em>— la source</em>",
+        "sub": "L'adoption la plus élevée au monde.",
+        "desc": "Corridors de stablecoins, protocoles mobile-first et infrastructure bâtie par des gens qui savaient déjà qu'une monnaie pouvait être n'importe quoi. Le hub est Lagos. La portée est le continent.",
+        "cities": "Lagos · Nairobi · Accra<br>Johannesburg · Dakar · Kigali",
+        "chapters": "11",
+        "chaptersLabel": "chapitres",
+        "members": "890",
+        "membersLabel": "membres",
+        "capital": "14 M$",
+        "capitalLabel": "déployés"
       },
-      "education": {
-        "title": "Éducation",
-        "desc": "Démocratiser les savoirs blockchain — des fondamentaux aux cas d'usage avancés — pour tous les profils."
+      "caribbean": {
+        "num": "03 / Caraïbes",
+        "name": "Caraïbes <em>& îles</em>",
+        "sub": "Là où l'envoi rencontre la réinvention.",
+        "desc": "Artistes et ingénieurs de Port-au-Prince à Port-of-Spain bâtissant des rails de paiement, des DAO culturelles et des protocoles du retour. La plus petite région, le signal le plus net.",
+        "cities": "Kingston · Port-au-Prince · La Havane<br>Bridgetown · San Juan · Fort-de-France",
+        "chapters": "6",
+        "chaptersLabel": "chapitres",
+        "members": "340",
+        "membersLabel": "membres",
+        "capital": "3 M$",
+        "capitalLabel": "déployés"
       },
-      "impact": {
-        "title": "Impact",
-        "desc": "Mesurer, documenter et amplifier l'influence économique et institutionnelle du réseau AnbaChain."
+      "europe": {
+        "num": "04 / Europe",
+        "name": "Europe <em>& le Royaume-Uni</em>",
+        "sub": "Le moteur silencieux.",
+        "desc": "Laboratoires de recherche, fondateurs d'exchanges et voix réglementaires façonnant les mouvements du capital — et qui peut le déplacer — à travers le continent. La politique est une langue que nous parlons désormais couramment.",
+        "cities": "Londres · Paris · Amsterdam<br>Berlin · Lisbonne · Bruxelles",
+        "chapters": "6",
+        "chaptersLabel": "chapitres",
+        "members": "420",
+        "membersLabel": "membres",
+        "capital": "5 M$",
+        "capitalLabel": "déployés"
       }
     }
   },
-  "sectionStorytelling": {
-    "intro": {
-      "label": "Pourquoi AnbaChain",
-      "title": {
-        "line1": "Quatre raisons",
-        "line2": "de",
-        "highlight": "rejoindre",
-        "line3": "le mouvement."
-      }
-    },
-    "chapters": {
-      "c1": {
-        "headline": {
-          "line1": "Un réseau bâti sur",
-          "highlight": "la confiance et la compétence."
-        },
-        "body": "Chaque membre est vérifié et présenté avec son expertise réelle. Pas un feed algorithmique — un annuaire humain, filtrable par secteur, ville et disponibilité. Les connexions qui émergent ici sont durables parce qu'elles reposent sur un socle commun.",
-        "link": "Rejoindre le réseau →"
+  "Cosmic": {
+    "rotating": "Black · in · Blockchain · Collectif · Fondé 2024 · Transmission de la Diaspora · Un Registre · Quatre Continents ·  ",
+    "metaLeft": "Lat 04°N · Lon 012°O",
+    "metaRight": "Bloc 20 441 822",
+    "caption": "Pas un <em>marché.</em>   Une <em>constellation.</em>"
+  },
+  "Ledger": {
+    "eyebrow": "Sur le registre · Une histoire partielle",
+    "title": "Les blocs <em>dont nous nous souvenons.</em>",
+    "intro": "Toute entrée sur le registre n'est pas une transaction. Certaines sont des arrivées. Une chronologie partielle de la présence noire dans l'informatique décentralisée — racontée en blocs.",
+    "blocks": {
+      "b1": {
+        "year": "2009",
+        "block": "Bloc <b>#0</b> · Genèse",
+        "title": "Le bloc <em>de la genèse.</em>",
+        "text": "Satoshi mine le bloc zéro. Le registre commence. Quelque part à Montréal, un jeune de seize ans lit le livre blanc à un terminal de bibliothèque et ne dort pas pendant deux nuits."
       },
-      "c2": {
-        "headline": {
-          "line1": "Des événements qui",
-          "highlight": "créent de vraies opportunités."
-        },
-        "body": "Conférences, hackathons, tables rondes, formations — chaque événement AnbaChain est conçu pour produire des résultats concrets : collaborations, projets, embauches, partenariats.",
-        "link": "Voir les prochains événements →"
+      "b2": {
+        "year": "2014",
+        "block": "Bloc <b>#330 000</b>",
+        "title": "Premiers <em>meetups Bitcoin noirs.</em>",
+        "text": "De petits cercles se forment à Atlanta, Harlem et Oakland — principalement des hommes, en grande partie autodidactes, tous précurseurs. Le nombre de portefeuilles noirs est mesurable. Ce n'est pas encore un mouvement."
       },
-      "c3": {
-        "headline": {
-          "line1": "Des ressources produites",
-          "highlight": "par et pour la communauté."
-        },
-        "body": "Rapports sectoriels, tutoriels techniques, analyses de gouvernance — tout le contenu d'AnbaChain est rédigé par des membres du réseau. Une bibliothèque vivante qui grandit avec chaque expertise qui nous rejoint.",
-        "link": "Explorer les ressources →"
+      "b3": {
+        "year": "2017",
+        "block": "Bloc <b>#4,7M</b> · ETH",
+        "title": "Lagos <em>démarre.</em>",
+        "text": "Le Nigéria devient le deuxième plus grand marché P2P Bitcoin par habitant au monde. Les stablecoins deviennent discrètement la technologie d'épargne de facto pour toute une génération."
       },
-      "c4": {
-        "headline": {
-          "line1": "Des partenaires et institutions qui",
-          "highlight": "créent de vraies opportunités."
-        },
-        "body": "Grâce à l’engagement de partenaires et d’institutions, chaque initiative devient un levier concret : mise en relation stratégique, accès à des ressources clés, opportunités de collaboration, de financement et de développement.",
-        "link": "Voir les prochains événements →"
+      "b4": {
+        "year": "2020",
+        "block": "Bloc <b>#10,8M</b>",
+        "title": "L'inflexion <em>NFT.</em>",
+        "text": "Les artistes noirs de Port-au-Prince à Johannesburg vendent directement aux collectionneurs pour la première fois de leur carrière. La galerie n'allait jamais venir. Le portefeuille, si."
+      },
+      "b5": {
+        "year": "2022",
+        "block": "Bloc <b>#15,5M</b>",
+        "title": "Protocoles <em>par nous.</em>",
+        "text": "La première cohorte de L1, L2 et DAO fondés par des Noirs lève des tours institutionnels. Nous cessons d'être les utilisateurs de l'infrastructure pour en devenir les auteurs."
+      },
+      "b6": {
+        "year": "2024",
+        "block": "Bloc <b>#19 733 204</b>",
+        "title": "B.I.B. <em>est signé.</em>",
+        "text": "37 fondateurs, ingénieurs et chercheurs signent l'assemblée fondatrice sur quatre continents. Le collectif ouvre l'adhésion. Cette page, cet écran, font partie de ce bloc."
+      },
+      "b7": {
+        "year": "2026",
+        "block": "Bloc <b>#20,4M</b> · Maintenant",
+        "title": "Vous arrivez <em>ici.</em>",
+        "text": "2 800 membres. 37 chapitres. Un collectif. Un sommet à Lagos en décembre. Le registre continue. Votre signature est la prochaine ligne."
       }
     }
   },
-  "sectionPartenaires": {
-    "label": "Écosystème",
-    "title": {
-      "main": "Partenaires &",
-      "highlight": "Institutions"
-    },
-    "tabs": {
-      "all": "Tous",
-      "entreprise": "Entreprises",
-      "institution": "Institutions",
-      "universite": "Universités",
-      "media": "Médias"
-    },
-    "empty": "Aucun partenaire dans cette catégorie."
-  },
-  "sectionEvenements": {
-    "label": "Agenda",
-    "title": {
-      "main": "Prochains",
-      "highlight": "événements"
-    },
-    "iframe": {
-      "title": "Calendrier des événements AnbaChain"
-    },
-    "empty": "Pas d'événements"
-  },
-  "sectionAdhesion": {
-    "label": "Membership",
-    "title": {
-      "main": "Rejoignez le",
-      "highlight": "mouvement"
-    },
-    "description": "Choisissez le plan qui correspond à votre profil.",
-    "plans": {
-      "network": {
-        "tier": "Accès de base",
-        "name": "Réseau",
-        "period": "Toujours gratuit",
-        "features": [
-          "Profil public dans l'annuaire",
-          "Accès aux événements",
-          "Newsletter mensuelle",
-          "Forum communautaire (lecture)"
-        ],
-        "cta": "Créer un compte"
+  "Pillars": {
+    "eyebrow": "Le Travail · Livre blanc",
+    "title": "Ce que nous <em>bâtissons</em> ensemble.",
+    "intro": "Six piliers, un but : concentrer le capital, la connaissance et le signal noirs au sein de l'infrastructure du prochain siècle.",
+    "items": {
+      "p1": {
+        "title": "Cercles de <em>fondateurs</em>",
+        "text": "Espaces privés pour fondateurs noirs levant pour le protocole, l'infrastructure et le Web3 grand public. Rassemblements trimestriels, intros chaleureuses, discipline de deal-flow.",
+        "meta1": "Actif",
+        "meta2": "T · Mensuel"
       },
-      "pioneer": {
-        "tier": "Professionnel",
-        "name": "Pionnier",
-        "period": "ou 240 $ / an — 20 % d'économie",
-        "features": [
-          "Tout du plan Réseau",
-          "Annuaire complet + contacts membres",
-          "Messagerie inter-membres",
-          "Tarif préférentiel événements",
-          "Forum (participation complète)",
-          "Ressources exclusives & webinars",
-          "Profil vérifié + badge membre"
-        ],
-        "cta": "Rejoindre maintenant",
-        "badge": "Le plus populaire"
+      "p2": {
+        "title": "Bourses <em>& fonds diaspora</em>",
+        "text": "Résidences rémunérées pour ingénieurs, auditeurs et chercheurs dans les laboratoires de premier plan — couplées à un fonds gouverné par les membres qui écrit les premiers chèques pour les entreprises Web3 fondées par des Noirs à l'échelle mondiale. Six mois dans la machine ; petits chèques, longue mémoire.",
+        "meta1": "Cohorte 04 · 41 M$ AUM",
+        "meta2": "Déployés"
       },
-      "institution": {
-        "tier": "Organisation",
-        "name": "Institution",
-        "period": "Jusqu'à 10 comptes membres",
-        "features": [
-          "Tout du plan Pionnier (×10 comptes)",
-          "Page partenaire branded sur le site",
-          "Logo sur le site et les événements",
-          "Places prioritaires aux événements",
-          "Rapport d'impact trimestriel"
-        ],
-        "cta": "Nous contacter"
+      "p3": {
+        "title": "Fonds <em>diaspora</em>",
+        "text": "Un fonds gouverné par les membres écrivant les premiers chèques pour les entreprises Web3 fondées par des Noirs à l'échelle mondiale. Petits chèques, longue mémoire, capital transcontinental.",
+        "meta1": "41 M$ AUM",
+        "meta2": "Déployés"
+      },
+      "p4": {
+        "title": "Archive <em>culturelle</em>",
+        "text": "Un registre on-chain de la contribution noire à l'informatique décentralisée — papiers, repos, victoires en hackathon. Pour que l'histoire ne soit jamais réécrite.",
+        "meta1": "2 108 entrées",
+        "meta2": "IPFS"
+      },
+      "p5": {
+        "title": "Politique <em>& plaidoyer</em>",
+        "text": "Représentation aux tables où les règles sont écrites — de Lagos à Bruxelles à Washington. Notes de politique, témoignages, bruit de principe.",
+        "meta1": "4 juridictions",
+        "meta2": "2026"
+      },
+      "p6": {
+        "title": "Le <em>rassemblement</em>",
+        "text": "Notre sommet annuel. Une ville par continent, en rotation. Trois jours de protocole, trois jours de plaisir. Bar payant, sol ouvert.",
+        "meta1": "Année 03",
+        "meta2": "Lagos 2026"
+      },
+      "p7": {
+        "title": "Données <em>& recherche</em>",
+        "text": "Un rapport annuel sur l'état de la diaspora on-chain. Indices d'adoption, pipelines de développeurs, flux de transferts et trajectoires de capital — mesurés, publiés, ouverts.",
+        "meta1": "Vol. 02",
+        "meta2": "Publié T1"
+      },
+      "p8": {
+        "title": "Orbites <em>alignées</em>",
+        "text": "Un annuaire vivant de collectifs, DAO, fonds et institutions dirigés par et centrés sur les Noirs travaillant adjacents au nôtre. La diaspora est un réseau ; nous en nommons les nœuds.",
+        "meta1": "42 organisations",
+        "meta2": "Mis à jour T1 '26"
+      },
+      "p9": {
+        "title": "La <em>dépêche</em>",
+        "text": "Une newsletter hebdomadaire qui distille la semaine en blockchain, leadership noir et économies de la diaspora. Éditoriale, spécifique, sans précipitation. Envoyée les vendredis.",
+        "meta1": "Hebdomadaire",
+        "meta2": "14,2K lecteurs"
       }
-    },
-    "payments": {
-      "label": "Paiement membership :",
-      "methods": [
-        "Carte Visa / Mastercard",
-        "Apple Pay",
-        "Google Pay",
-        "Bitcoin · ETH · USDC"
-      ],
-      "events": "Billetterie événements :"
     }
   },
-  "sectionRessources": {
-    "label": "Savoir",
-    "title": {
-      "main": "Ressources &",
-      "highlight": "Analyses"
+  "Data": {
+    "eyebrow": "Annexe I · Les données",
+    "title": "Les <em>chiffres</em> derrière le registre.",
+    "intro": "Sélection de conclusions du rapport annuel sur l'état de la diaspora on-chain. Édition T1 2026, partielle. Les chiffres sont des estimations de recherche B.I.B.",
+    "viz1": {
+      "num": "01",
+      "title": "<em>Adoption</em> crypto — % de la population adulte détenant ou utilisant du crypto, 2026",
+      "source": "Source · B.I.B. Research",
+      "footN": "N = 12 400 sondés · 18–54 ans",
+      "footRank": "Nigéria <b>· #1 mondial</b>"
     },
-    "cta": "Toutes les ressources",
-    "empty": "Aucune ressource disponible.",
-    "categories": {
-      "rapport": "Rapport",
-      "tutoriel": "Tutoriel",
-      "gouvernance": "Gouvernance",
-      "analyse": "Analyse"
+    "viz2": {
+      "num": "02",
+      "title": "<em>Devs</em> noirs on-chain",
+      "caption": "Développeurs noirs actifs contribuant aux protocoles et dépôts suivis à l'échelle mondiale.",
+      "delta": "▲ +38% en glissement annuel"
     },
-    "readingTime": "{minutes} min"
-  },
-  "sectionEspace": {
-    "label": "Espace membre",
-    "title": {
-      "main": "Votre hub",
-      "highlight": "personnel"
+    "viz3": {
+      "num": "03",
+      "title": "Trajectoire <em>de croissance</em>",
+      "caption": "Membres · croissance 68× depuis la fondation."
     },
-    "desc": "Un espace privé pour gérer votre profil, explorer le réseau et accéder aux ressources exclusives AnbaChain.",
-    "features": {
-      "profile": {
-        "title": "Profil professionnel complet",
-        "desc": "Compétences, expériences, secteur, disponibilité pour des collaborations"
-      },
-      "directory": {
-        "title": "Annuaire complet avec filtres avancés",
-        "desc": "Recherchez par secteur, expertise, ville, disponibilité"
-      },
-      "messaging": {
-        "title": "Messagerie directe entre membres",
-        "desc": "Connectez-vous directement avec les professionnels du réseau"
-      },
-      "library": {
-        "title": "Bibliothèque de ressources exclusives",
-        "desc": "Rapports, analyses, guides et webinars réservés aux membres"
-      }
-    },
-    "stats": {
-      "connections": "Connexions",
-      "events": "Événements",
-      "resources": "Ressources"
-    },
-    "suggestedMembers": "Membres suggérés",
-    "dashboardUrl": "app.anbachain.io/dashboard",
-    "cta": "Accéder à l'espace membre"
-  },
-  "sectionInterstitiel": {
-    "quote": {
-      "main": "La technologie blockchain est l'outil.",
-      "highlight": "La communauté est la force."
-    },
-    "author": "— AnbaChain, Manifeste fondateur, 2025"
-  },
-  "sectionCommunaute": {
-    "label": "Rejoindre le mouvement",
-    "title": {
-      "main": "Le futur s'écrit",
-      "highlight": "maintenant."
-    },
-    "desc": "Recevez les analyses, actualités et invitations en avant-première. Rejoignez plus des professionnels qui construisent l'économie de demain.",
-    "form": {
-      "placeholder": "Votre adresse email",
-      "submit": "S'inscrire",
-      "loading": "Envoi en cours...",
-      "success": "Inscription confirmée. Vérifiez votre boîte mail !",
-      "errorNetwork": "Erreur réseau. Réessayez plus tard."
-    },
-    "social": {
-      "instagram": "Instagram",
-      "linkedin": "LinkedIn"
+    "viz4": {
+      "num": "04",
+      "title": "Capital <em>déployé</em>",
+      "caption": "Vers des protocoles, infrastructures et Web3 grand public fondés par des Noirs en 2025.",
+      "delta": "▲ +7 M$ vs '24"
     }
+  },
+  "Orgs": {
+    "eyebrow": "Annexe II · Orbites alignées",
+    "title": "Organisations <em>à connaître.</em>",
+    "intro": "Un annuaire vivant et soigné de collectifs, DAO, fonds et institutions dirigés par et centrés sur les Noirs opérant dans les systèmes décentralisés. La diaspora est un réseau — voici ses nœuds nommés.",
+    "items": {
+      "o1": {
+        "tag": "Conseil",
+        "name": "Black Women <em>Blockchain Council</em>",
+        "location": "Atlanta · Fondé 2019",
+        "desc": "Formation, certification et plaidoyer pour les femmes noires entrant dans les carrières Web3. L'original et la référence.",
+        "link": "Visiter · bwbc.io"
+      },
+      "o2": {
+        "tag": "DAO",
+        "name": "Decentralized <em>Africa</em>",
+        "location": "Lagos · Fondé 2021",
+        "desc": "DAO panafricaine coordonnant la recherche protocolaire, les subventions aux développeurs et la politique à travers quatorze nations.",
+        "link": "Visiter · decentralized.africa"
+      },
+      "o3": {
+        "tag": "Société",
+        "name": "Afropolitan",
+        "location": "Distribué · Fondé 2022",
+        "desc": "Une nation numérique bâtissant une infrastructure on-chain pour la diaspora africaine. Adhésion, gouvernance et capital culturel.",
+        "link": "Visiter · afropolitan.io"
+      },
+      "o4": {
+        "tag": "Sommet",
+        "name": "Black Blockchain <em>Summit</em>",
+        "location": "Washington, D.C. · Fondé 2018",
+        "desc": "Le rassemblement annuel où politique, protocole et communauté convergent. Fondé par Sinclair Skinner. Toujours la référence.",
+        "link": "Visiter · blackblockchainsummit.com"
+      },
+      "o5": {
+        "tag": "Fonds",
+        "name": "Culture <em>DAO</em>",
+        "location": "New York · Fondé 2022",
+        "desc": "Un collectif de capital investissant dans les artistes et fondateurs noirs bâtissant l'infrastructure culturelle on-chain.",
+        "link": "Visiter · culturedao.xyz"
+      },
+      "o6": {
+        "tag": "Cadre",
+        "name": "African <em>Digital Asset</em> Framework",
+        "location": "Panafricain · Fondé 2020",
+        "desc": "Organe de coordination politique entre 12 banques centrales africaines développant des normes réglementaires partagées sur les actifs numériques.",
+        "link": "Visiter · adaf.africa"
+      },
+      "o7": {
+        "tag": "Commons",
+        "name": "Black in <em>DeFi</em>",
+        "location": "Distribué · Fondé 2021",
+        "desc": "Commons de chercheurs pour les professionnels noirs travaillant dans la finance décentralisée. Appels hebdomadaires, articles en accès ouvert.",
+        "link": "Visiter · blackindefi.xyz"
+      },
+      "o8": {
+        "tag": "Guilde",
+        "name": "Caribbean <em>Coin Guild</em>",
+        "location": "Kingston · Fondé 2023",
+        "desc": "Guilde d'artistes et d'ingénieurs couvrant les Caraïbes anglophones et francophones. Envois, culture, souveraineté.",
+        "link": "Visiter · cccg.network"
+      },
+      "o9": {
+        "tag": "Archive",
+        "name": "The <em>Genesis Archive</em>",
+        "location": "Montréal · Fondé 2024",
+        "desc": "Archive hébergée sur IPFS des contributions noires à l'informatique décentralisée. Papiers, repos, interviews, histoires orales.",
+        "link": "Visiter · genesis.archive"
+      }
+    }
+  },
+  "News": {
+    "eyebrow": "Annexe III · La dépêche",
+    "title": "Le <em>flux.</em>",
+    "filterAll": "Tout",
+    "filterChain": "Blockchain",
+    "filterLeader": "Leaders",
+    "filterCountry": "Pays",
+    "items": {
+      "n1": {
+        "date": "18 avr · 2026",
+        "tag": "Blockchain",
+        "cat": "chain",
+        "headline": "La Fondation Ethereum annonce un pool de subventions de <em>40 M$</em> pour l'infrastructure L2 africaine.",
+        "source": "ETH Research"
+      },
+      "n2": {
+        "date": "17 avr · 2026",
+        "tag": "Pays",
+        "cat": "country",
+        "headline": "La banque centrale du Nigéria autorise le stablecoin <em>cNGN</em> — premier lancement adossé à un État en Afrique.",
+        "source": "Bloomberg Africa"
+      },
+      "n3": {
+        "date": "16 avr · 2026",
+        "tag": "Leaders",
+        "cat": "leader",
+        "headline": "Adaeze N. rejoint le conseil d'administration de Coinbase — première femme noire nommée dans l'histoire de l'exchange.",
+        "source": "The Block"
+      },
+      "n4": {
+        "date": "15 avr · 2026",
+        "tag": "Blockchain",
+        "cat": "chain",
+        "headline": "Solana dépasse les <em>10 M</em> de portefeuilles actifs quotidiens — 40 % depuis les nœuds africains et caribéens.",
+        "source": "Dune Analytics"
+      },
+      "n5": {
+        "date": "14 avr · 2026",
+        "tag": "Pays",
+        "cat": "country",
+        "headline": "Le Rwanda lance un bac à sable blockchain <em>panafricain</em> avec le Ghana, le Sénégal et le Kenya.",
+        "source": "Africa Report"
+      },
+      "n6": {
+        "date": "12 avr · 2026",
+        "tag": "Leaders",
+        "cat": "leader",
+        "headline": "La boursière B.I.B. Amara O. lève une série A de <em>22 M$</em> pour le DEX basé à Lagos Protocol Kofi.",
+        "source": "TechCrunch"
+      },
+      "n7": {
+        "date": "10 avr · 2026",
+        "tag": "Pays",
+        "cat": "country",
+        "headline": "Haïti adopte la loi sur les envois numériques — le corridor USDC est désormais légalement reconnu pour les transferts.",
+        "source": "AyiboPost"
+      },
+      "n8": {
+        "date": "08 avr · 2026",
+        "tag": "Blockchain",
+        "cat": "chain",
+        "headline": "Base annonce sa <em>\"Africa Track\"</em> — équipe d'infrastructure dédiée à Accra et Lagos.",
+        "source": "Base Blog"
+      },
+      "n9": {
+        "date": "05 avr · 2026",
+        "tag": "Leaders",
+        "cat": "leader",
+        "headline": "Jean-Claude M. nommé économiste en chef de la Stellar Development Foundation.",
+        "source": "Stellar Newsroom"
+      },
+      "n10": {
+        "date": "02 avr · 2026",
+        "tag": "Pays",
+        "cat": "country",
+        "headline": "Le SARS sud-africain commence à accepter les <em>plus-values</em> en crypto — première nation du G20.",
+        "source": "Daily Maverick"
+      },
+      "n11": {
+        "date": "30 mar · 2026",
+        "tag": "Blockchain",
+        "cat": "chain",
+        "headline": "Celo achève sa fusion vers Ethereum L2 — la chaîne mobile-first est désormais équivalente EVM.",
+        "source": "Celo Blog"
+      },
+      "n12": {
+        "date": "28 mar · 2026",
+        "tag": "Leaders",
+        "cat": "leader",
+        "headline": "Tonantzin Carmona publie <em>Black on the Block</em> — l'histoire définitive du crypto noir depuis 2009.",
+        "source": "Brookings Press"
+      }
+    }
+  },
+  "Portraits": {
+    "eyebrow": "Portraits · Vol. I",
+    "title": "Les <em>visages</em> derrière le registre.",
+    "meta1": "2 800+ membres",
+    "meta2": "Vérifiés on-chain",
+    "meta3": "Présentés : 03 sur 37",
+    "items": {
+      "p1": {
+        "num": "— Portrait 01 / Le Bâtisseur",
+        "quote": "Nous construisions autrefois pour des plateformes qui allaient nous exclure. Désormais nous construisons les plateformes. C'est la seule différence — et la seule qui compte.",
+        "name": "Amara <em>O.</em>",
+        "role": "Ing. protocole · Lagos → Montréal"
+      },
+      "p2": {
+        "num": "— Portrait 02 / Le Chercheur",
+        "quote": "Ma grand-mère a envoyé de l'argent au pays via Western Union pendant quarante ans. J'ai écrit les smart contracts qui l'ont retiré. Je pense à elle à chaque confirmation de bloc.",
+        "name": "Jean-Claude <em>M.</em>",
+        "role": "Chercheur DeFi · Port-au-Prince"
+      },
+      "p3": {
+        "num": "— Portrait 03 / La Fondatrice",
+        "quote": "La diaspora a toujours été un réseau. Nous n'avons simplement jamais eu de registre partagé. Maintenant nous l'avons. Tout ce qui précédait était un brouillon.",
+        "name": "Adaeze <em>N.</em>",
+        "role": "Fondatrice, gouvernance DAO · Londres"
+      }
+    }
+  },
+  "Chains": {
+    "eyebrow": "Convergence · Par chaîne",
+    "title": "Trouvez votre <em>chaîne.</em>",
+    "intro": "Le collectif se rassemble par géographie et par protocole. Rejoignez le groupe de travail de la chaîne sur laquelle vous bâtissez — appels hebdomadaires, canaux privés, AMA réservés aux membres.",
+    "members": "Membres",
+    "channels": "Canaux",
+    "nextCall": "Prochain appel",
+    "cta": "Rejoindre le groupe",
+    "items": {
+      "eth": {
+        "tag": "EVM · L1",
+        "name": "Ether<em>eum</em>",
+        "members": "1 240",
+        "channels": "18",
+        "next": "Mer 19:00 UTC"
+      },
+      "sol": {
+        "tag": "Haut débit · L1",
+        "name": "Sol<em>ana</em>",
+        "members": "840",
+        "channels": "12",
+        "next": "Jeu 18:00 UTC"
+      },
+      "base": {
+        "tag": "L2 · Optimiste",
+        "name": "Base",
+        "members": "620",
+        "channels": "9",
+        "next": "Ven 17:00 UTC"
+      },
+      "btc": {
+        "tag": "L'original · L1",
+        "name": "Bit<em>coin</em>",
+        "members": "980",
+        "channels": "14",
+        "next": "Lun 20:00 UTC"
+      },
+      "poly": {
+        "tag": "EVM · zkEVM · L2",
+        "name": "Polygon",
+        "members": "410",
+        "channels": "7",
+        "next": "Mar 18:00 UTC"
+      },
+      "celo": {
+        "tag": "Mobile-first · EVM",
+        "name": "Celo <em>— la chaîne d'Afrique</em>",
+        "members": "520",
+        "channels": "11",
+        "next": "Mer 14:00 UTC"
+      },
+      "stellar": {
+        "tag": "Paiements · Envois",
+        "name": "Stellar",
+        "members": "380",
+        "channels": "8",
+        "next": "Jeu 15:00 UTC"
+      },
+      "arb": {
+        "tag": "L2 · Rollup optimiste",
+        "name": "Arbi<em>trum</em>",
+        "members": "340",
+        "channels": "6",
+        "next": "Ven 15:00 UTC"
+      }
+    }
+  },
+  "Gathering": {
+    "eyebrow": "Le sommet · Ville hôte tournante",
+    "title": "Le <em>rassemblement.</em>",
+    "prev": "← Préc",
+    "next": "Suiv →",
+    "items": {
+      "lagos": {
+        "date": "12–15 déc · 2026",
+        "city": "Lagos <em>— la source</em>",
+        "text": "Année 03 · Retour en Afrique. Trois jours sur protocole, politique et plaisir au bord de l'Atlantique.",
+        "meta1": "Année 03",
+        "meta2": "Phare"
+      },
+      "montreal": {
+        "date": "04–06 juin · 2026",
+        "city": "Montréal <em>— le hub</em>",
+        "text": "Rassemblement de mi-année. Dîners privés de fondateurs, karaoké on-chain, set de clôture par une légende à annoncer.",
+        "meta1": "Membres",
+        "meta2": "Sur invitation"
+      },
+      "kingston": {
+        "date": "22–24 oct · 2026",
+        "city": "Kingston <em>— l'île</em>",
+        "text": "Régional Caraïbes · dancehall, DeFi et une journée sur l'eau. Ouvert aux membres et un invité.",
+        "meta1": "Régional",
+        "meta2": "+1"
+      },
+      "london": {
+        "date": "10–12 sept · 2026",
+        "city": "Londres <em>— le registre</em>",
+        "text": "Régional européen · salon politique au Barbican, vitrine afro-futuriste au 180 Strand, dîner de clôture à Brixton.",
+        "meta1": "Régional",
+        "meta2": "Membres"
+      },
+      "nairobi": {
+        "date": "Mai 2027 · TBA",
+        "city": "Nairobi <em>— en ascension</em>",
+        "text": "Sommet technique. Ingénieurs, auditeurs, chercheurs protocole. La tête d'affiche officieuse de l'Africa Blockchain Week.",
+        "meta1": "Tech",
+        "meta2": "2027"
+      }
+    }
+  },
+  "Corridors": {
+    "eyebrow": "Rails d'envoi · Flux en direct",
+    "title": "Les <em>corridors.</em>",
+    "sub": "Flux de stablecoins entre villes de la diaspora, réglés en secondes. Le tableau des départs d'une nouvelle économie.",
+    "origin": "Origine",
+    "destination": "Destination",
+    "rate": "Taux",
+    "volume": "Volume 24H",
+    "status": "Statut",
+    "live": "Live",
+    "footUpdate": "— Mis à jour",
+    "footUpdateVal": "toutes les 2,3s",
+    "footSettle": "Règlement",
+    "footSettleVal": "~12 secondes · Frais moy. 0,04 $",
+    "footTotal": "Total 24H",
+    "footTotalVal": "10,6 M$ · +14%"
+  },
+  "Stats": {
+    "stat1": "Membres vérifiés",
+    "stat2": "Chapitres de villes actifs",
+    "stat3": "Capital déployé '25",
+    "stat4": "Continents, un registre"
+  },
+  "Cta": {
+    "eyebrow": "— Adhésion · Sur candidature —",
+    "titleLine1": "Nous <em>vous attendons</em>",
+    "titleLine2": "",
+    "sub": "La vérification prend environ 72 heures. Le travail commence à l'instant où vous signez.",
+    "button": "Postuler au collectif"
+  },
+  "Ticker": {
+    "items": [
+      "▸ Bloc <b>#20 441 822</b> confirmé",
+      "Nouveau membre · <b>Lagos</b> · Adaeze O.",
+      "Subvention déployée · <b>42K $</b> · Cohorte Nairobi",
+      "Chapitre ouvert · <b>Dakar</b> · 14 fondateurs",
+      "Proposition adoptée · <b>BIB-024</b> · 94%",
+      "Audit complet · <b>Protocol Kofi</b>",
+      "Trésorerie <b>+1,2 M$</b> · 30J",
+      "Bourse <b>Cohorte 04</b> · Ouverte",
+      "Billets sommet <b>Lagos 2026</b> · Liste d'attente",
+      "▸ Bloc <b>#20 441 823</b> confirmé",
+      "Nouveau membre · <b>Londres</b> · J. Okonkwo",
+      "Rail d'envoi · <b>Haïti ↔ NYC</b> · Live",
+      "Archive culturelle <b>+47 entrées</b>"
+    ]
+  },
+  "Footer": {
+    "tagline": "Un collectif transcontinental de professionnels noirs dans les systèmes décentralisés. Fondé en 2024. Gouverné par ses membres.",
+    "collective": "Collectif",
+    "collectiveManifesto": "Manifeste",
+    "collectiveChapters": "Chapitres",
+    "collectiveGovernance": "Gouvernance",
+    "collectivePress": "Presse",
+    "programs": "Programmes",
+    "programsFounder": "Cercles de fondateurs",
+    "programsFellowships": "Bourses",
+    "programsFund": "Fonds diaspora",
+    "programsGathering": "Le rassemblement",
+    "elsewhere": "Ailleurs",
+    "elsewhereX": "X / Twitter",
+    "elsewhereFarcaster": "Farcaster",
+    "elsewhereLens": "Lens",
+    "elsewhereNewsletter": "Newsletter",
+    "copyright": "© 2026 Black in Blockchain Collective",
+    "built": "Bâti par la <b>diaspora</b>, pour la diaspora",
+    "version": "v2.0.0 · Bloc 20 441 822"
   },
   "terms": {
     "metadata": {
@@ -484,35 +847,116 @@
     },
     "footerNav": "← Tous les fondateurs"
   },
-  "Footer": {
-    "brand": {
-      "description": "Le réseau blockchain des professionnels noirs — réseautage, innovation et solutions au service de la communauté."
+  "StateOfBib": {
+    "meta": {
+      "title": "État de Black in Blockchain — Vol. 01",
+      "description": "Un audit transcontinental de l’activité des développeurs à travers 54 pays africains et 22 pays et territoires caribéens — rendu depuis le registre lui-même."
     },
-    "cols": {
-      "organisation": {
-        "title": "Organisation",
-        "mission": "Notre mission",
-        "teams": "Équipe fondatrice",
-        "partners": "Partenaires"
-      },
-      "reseau": {
-        "title": "Réseau",
-        "events": "Événements",
-        "resources": "Ressources",
-        "membership": "Adhésion"
-      },
-      "legal": {
-        "title": "Légal",
-        "terms": "Conditions d'utilisation",
-        "privacy": "Politique de confidentialité",
-        "cookies": "Cookies"
-      }
+    "nav": "État de BIB",
+    "masthead": {
+      "editorial": "Black in Blockchain · Éditorial",
+      "vol": "Vol.",
+      "volNum": "01",
+      "volDate": "État de · Avr 2026",
+      "block": "Bloc",
+      "sectionNum": "§ 00",
+      "sectionLabel": "Le rapport",
+      "titleLine1": "L’état de",
+      "titleLine2": "Black",
+      "titleLine2In": "in",
+      "titleLine2Last": "Blockchain.",
+      "lede": "Un audit transcontinental de l’activité des développeurs à travers 54 pays africains et 22 pays et territoires caribéens — rendu depuis le registre lui-même.",
+      "metaDataset": "Dataset",
+      "metaSnapshot": "Instantané",
+      "metaSource": "Source",
+      "metaSourceVal": "Electric Capital · CC BY 4.0",
+      "metaLicence": "Licence",
+      "metaLicenceVal": "CC BY-SA 4.0"
     },
-    "bottom": {
-      "copyright": "© 2026 AnbaChain™ · Tous droits réservés",
-      "privacy": "Confidentialité",
-      "cgu": "CGU",
-      "contact": "Contact"
+    "hero": {
+      "eyebrow": "— Chapitre Un · Le Titre",
+      "captionStart": "développeurs actifs à travers le continent et ses îles — travaillant sur",
+      "captionMid": "écosystèmes, dans",
+      "captionMid2": "villes nommées, sur les",
+      "captionEmEnd": "vingt-huit derniers jours.",
+      "stat1Label": "— 01 · Commits à vie",
+      "stat1Sub": "Suivis · Tous écosystèmes",
+      "stat2Label": "— 02 · Pays couverts",
+      "stat2Sub": "Afrique & Caraïbes",
+      "stat3Label": "— 03 · Écosystèmes",
+      "stat3Sub": "Sur lesquels les devs contribuent",
+      "stat4Label": "— 04 · Dataset",
+      "stat4Num": "v1"
+    },
+    "m1": {
+      "num": "§ 01  Mouvement Un",
+      "title": "Une géographie <em>du code.</em>",
+      "lede1": "Commits par pays sur la vie de l’index Electric Capital — strictement limité à l’Afrique et aux Caraïbes.",
+      "lede2": "La saturation suit le volume en échelle log. Chaque pays que nous voyons, nous le nommons.",
+      "top10": "— Top 10 · Commits à vie",
+      "legendLabel": "— Commits · Échelle log",
+      "legendLow": "Bas",
+      "legendHigh": "Haut",
+      "tipCommits": "Commits",
+      "tipActive": "Devs actifs"
+    },
+    "m2": {
+      "num": "§ 02  Mouvement Deux",
+      "title": "Douze <em>villes.</em>",
+      "lede1": "Principe 04, rendu littéral. Pas « l’Afrique. » Pas « les Caraïbes. » <em>Lagos. Nairobi. Port-au-Prince.</em>",
+      "lede2": "Classées par développeurs actifs sur les 28 derniers jours de l’instantané.",
+      "devs": "Devs"
+    },
+    "m3": {
+      "num": "§ 03  Mouvement Trois",
+      "title": "Huit <em>écosystèmes.</em>",
+      "lede1": "Là où le travail atterrit. Top huit des protocoles par nombre de développeurs couverts, avec leur trajectoire sur 48 mois indexée à 100 au début de la série.",
+      "lede2": "La forme, pas le volume. Voici la grammaire de la croissance.",
+      "devsLabel": "Devs couverts · 28J",
+      "indexLabel": "Index"
+    },
+    "m4": {
+      "num": "§ 04  Mouvement Quatre",
+      "title": "Une vague <em>qui arrive.</em>",
+      "lede1": "Développeurs mensuels actifs, répartis par ancienneté depuis le premier commit suivi : nouveaux venus (0–1a), apprentis (1–2a), anciens (2a+).",
+      "lede2": "Lisez-le comme une question : embarquons-nous, ou restons-nous ?",
+      "newcomersShort": "0–1a",
+      "newcomersName": "nouveaux venus",
+      "apprenticedShort": "1–2a",
+      "apprenticedName": "apprentis",
+      "eldersShort": "2a+",
+      "eldersName": "anciens"
+    },
+    "m5": {
+      "num": "§ 05  Mouvement Cinq",
+      "title": "Ce que les données <em>voient.</em>",
+      "lede1": "Un tableau de bord n’est aussi honnête que sa méthodologie. Le registre est précis ; ses angles morts aussi.",
+      "lede2": "Nous préférons les nommer en tête, plutôt que les enterrer dans une note.",
+      "seesHeading": "✓ Ce que nous comptons",
+      "sees1": "Les développeurs dont la localisation <em>déduite</em> — à partir du profil GitHub, du domaine d’email de commit et des métadonnées de fuseau horaire — appartient à l’un des 76 pays couverts.",
+      "sees2": "Tout commit attribué à un écosystème dans la taxonomie d’Electric Capital. « Actif » = au moins un commit sur les 28 derniers jours de l’instantané.",
+      "sees3": "Le premier commit sur n’importe quel écosystème, qui ancre la tranche d’ancienneté de chaque développeur.",
+      "sees4": "Tous les dépôts publics indexés par Electric Capital au moment de l’instantané hebdomadaire.",
+      "doesntHeading": "✕ Ce que nous ne comptons pas",
+      "doesnt1": "Les développeurs de la diaspora travaillant depuis Londres, Montréal, Paris, Toronto, São Paulo. Le dataset est géographique, pas racial — nous refusons d’inférer le second depuis le premier.",
+      "doesnt2": "Les dépôts privés, le travail non public, et tout ce qui est hors-chaîne et n’apparaît pas comme un commit.",
+      "doesnt3": "L’identité auto-déclarée de quelque nature que ce soit. Electric Capital déduit la localisation ; nous ne remplaçons pas cette inférence.",
+      "doesnt4": "L’activité antérieure à l’intégration d’un écosystème dans la taxonomie EC — certains jeunes protocoles sont sous-comptés initialement."
+    },
+    "colophon": {
+      "num": "§ 06  — Colophon · Signature",
+      "titleLine1": "Signé on-chain,",
+      "titleLine2": "ce registre, cette heure.",
+      "text": "Ce rapport se rafraîchit chaque lundi à 06:00 UTC sur l’instantané hebdomadaire d’Electric Capital. Corrections, ajouts, et résolutions de noms de pays bienvenus auprès de l’assemblée de pilotage.",
+      "setInLabel": "Composé en",
+      "setInFonts": "Fraunces, Archivo, et JetBrains Mono",
+      "builtFromLabel": "Construit depuis",
+      "builtFromVal": "les données de développeurs Electric Capital · CC BY 4.0",
+      "volLabel": "Vol.",
+      "datasetLabel": "Dataset",
+      "blockLabel": "Bloc",
+      "copyright": "© 2026 Black in Blockchain Collective",
+      "url": "anbachain.org · Un registre · Quatre continents"
     }
   }
 }

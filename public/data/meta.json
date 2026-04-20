@@ -1,0 +1,13 @@
+{
+  "dataset_version": "20260419T130333",
+  "generated_at": "2026-04-19T06:00:00Z",
+  "block_number": 20441822,
+  "source": {
+    "name": "Electric Capital Open Source Developer Data",
+    "license": "CC BY 4.0"
+  },
+  "scope": {
+    "regions": ["Africa", "Caribbean"],
+    "countries_in_scope": 76
+  }
+}
