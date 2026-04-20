@@ -146,7 +146,7 @@ export function AdoptionSection() {
               <span className="text-[.73rem] text-lt-muted tracking-[.07em] uppercase">Seniors vs Nouveaux devs</span>
               <span className="text-[.62rem] px-[.56rem] py-[.16rem] rounded-[3px] bg-[rgba(196,151,92,.1)] text-gold-lt">Évolution</span>
             </div>
-            <SparkLine color="gold" />
+            <SparkLine />
           </div>
         </div>
       </div>
