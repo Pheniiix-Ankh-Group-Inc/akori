@@ -1,129 +1,67 @@
-import { sanityFetch } from "@/sanity/lib/live";
-import type { Metadata } from "next";
-import { Suspense } from "react"
-import ErrorBoundary from "@/components/ErrorBoundary"
-import { ErrorPage } from "@/components/ErrorPage"
+import type { Metadata } from "next"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 
-import {
-  EVENEMENTS_QUERY,
-  EVENEMENT_FEATURED_QUERY,
-  RESSOURCES_QUERY,
-  PARTENAIRES_QUERY
-} from "@/lib/queries"
+import { BibOverlays } from "@/components/bib/BibOverlays"
+import { SectionHero } from "@/components/bib/SectionHero"
+import { SectionMarquee } from "@/components/bib/SectionMarquee"
+import { SectionManifesto } from "@/components/bib/SectionManifesto"
+import { SectionConstellation } from "@/components/bib/SectionConstellation"
+import { SectionCosmic } from "@/components/bib/SectionCosmic"
+import { SectionLedger } from "@/components/bib/SectionLedger"
+import { SectionPillars } from "@/components/bib/SectionPillars"
+import { SectionData } from "@/components/bib/SectionData"
+import { SectionOrgs } from "@/components/bib/SectionOrgs"
+import { SectionNews } from "@/components/bib/SectionNews"
+import { SectionPortraits } from "@/components/bib/SectionPortraits"
+import { SectionChains } from "@/components/bib/SectionChains"
+import { SectionGathering } from "@/components/bib/SectionGathering"
+import { SectionStats } from "@/components/bib/SectionStats"
+import { SectionCta } from "@/components/bib/SectionCta"
+import { SectionTicker } from "@/components/bib/SectionTicker"
 
-import type { Evenement, Ressource, Partenaire } from "@/types"
+export const revalidate = 3600
 
-import { SectionAdhesion } from "@/components/sections/Sectionadhesion";
-import { SectionEquipe } from "@/components/sections/Sectionequipe";
-import { SectionEspace } from "@/components/sections/Sectionespace";
-import { SectionEvenements } from "@/components/sections/Sectionevenements";
-import { SectionHero } from "@/components/sections/Sectionhero";
-import { SectionInterstitiel } from "@/components/sections/Sectioninterstitiel";
-import { SectionMission } from "@/components/sections/Sectionmission";
-import { SectionPartenaires } from "@/components/sections/Sectionpartenaires";
-import { SectionRessources } from "@/components/sections/Sectionressources";
-import { SectionStorytelling } from "@/components/sections/Sectionstorytelling";
-import { SectionCommunaute } from "@/components/sections/SectionCommunaute";
-
-
-export const revalidate = 3600;
-
-export const metadata: Metadata = {
-  title: "AnbaChain — Plateforme blockchain des professionnels Caraïbéens",
-  description: "Réseau, événements et ressources exclusives pour la communauté",
-  openGraph: {
-    title: "AnbaChain - Réseau de professionnels noirs",
-    description: "Plateforme blockchain communautaire",
-    type: "website",
-    url: "https://wwww.anbachain.org",
-  },
+type Props = {
+  params: Promise<{ locale: string }>
 }
 
-export default async function HomePage() {
-  let evenements: Evenement[] = []
-  let evenementFeatured: Evenement | null = null
-  let ressources: Ressource[] = []
-  let partenaires: Partenaire[] = []
-  let hasError = false
-
-  try {
-    const [
-      { data: ev },
-      { data: evFeatured },
-      { data: res },
-      { data: part }
-    ] = await Promise.all([
-      sanityFetch({ query: EVENEMENTS_QUERY }),
-      sanityFetch({ query: EVENEMENT_FEATURED_QUERY }),
-      sanityFetch({ query: RESSOURCES_QUERY }),
-      sanityFetch({ query: PARTENAIRES_QUERY }),
-    ])
-
-    evenements = ev ?? []
-    evenementFeatured = evFeatured ?? null
-    ressources = res ?? []
-    partenaires = part ?? []
-  } catch (error) {
-    console.error("Failed to fetch Sanity data:", error)
-    hasError = true
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "Meta" })
+  return {
+    title: t("title"),
+    description: t("description"),
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      type: "website",
+    },
   }
+}
 
-  if (hasError) {
-    return (
-      <ErrorPage
-        message="Impossible de charger les données"
-        code={500}
-        details="Nous rencontrons une erreur technique. Veuillez réessayer dans quelques instants."
-      />
-    )
-  }
+export default async function HomePage({ params }: Props) {
+  const { locale } = await params
+  setRequestLocale(locale)
 
   return (
-    <main className="block">
-      {/* Section 1 */}
+    <main className="bib-root">
+      <BibOverlays />
       <SectionHero />
-
-      {/* Section 2 */}
-      <SectionMission />
-
-      {/* Section 3 */}
-      <SectionStorytelling />
-
-      {/* Section 4 */}
-      <SectionInterstitiel />
-
-      {/* Section 5 */}
-       <SectionEquipe />
-
-      {/* Section 6 */}
-      <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des partenaires</div>}>
-        <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement partenaires...</div>}>
-          <SectionPartenaires partenaires={partenaires} />
-        </Suspense>
-      </ErrorBoundary>
-      
-      {/* Section 7 */}
-      <ErrorBoundary fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Erreur lors du chargement des événements</div>}>
-        <Suspense fallback={<div style={{ padding: "2rem", textAlign: "center", color: "var(--texte-2)" }}>Chargement événements...</div>}>
-          <SectionEvenements
-            evenements={evenements}
-            featured={evenementFeatured}
-          />
-        </Suspense>
-      </ErrorBoundary>
-
-      {/* Section 8 */}
-      <SectionAdhesion />
-      
-      {/* Section 9 */}
-      <SectionRessources ressources={ressources} />
-      
-      {/* Section 10 */}
-      <SectionEspace />
-     
-      {/* Section 11 */}
-      <SectionCommunaute />
-
+      <SectionMarquee />
+      <SectionManifesto />
+      <SectionConstellation />
+      <SectionCosmic />
+      <SectionLedger />
+      <SectionPillars />
+      <SectionData />
+      <SectionOrgs />
+      <SectionNews />
+      <SectionPortraits />
+      <SectionChains />
+      <SectionGathering />
+      <SectionStats />
+      <SectionCta />
+      <SectionTicker />
     </main>
   )
 }

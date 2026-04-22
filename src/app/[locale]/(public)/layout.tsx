@@ -1,5 +1,5 @@
 import { setRequestLocale } from 'next-intl/server';
-import { Header } from "@/components/sections/header"
+import { Header } from "@/components/sections/Header"
 import { Footer } from "@/components/sections/Footer"
 
 type Props = {

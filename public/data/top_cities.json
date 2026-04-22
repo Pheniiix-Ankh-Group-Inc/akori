@@ -1,0 +1,14 @@
+[
+  { "rank": 1, "city": "Lagos", "country": "Nigeria", "iso_a3": "NGA", "devs_active_28d": 524 },
+  { "rank": 2, "city": "Nairobi", "country": "Kenya", "iso_a3": "KEN", "devs_active_28d": 342 },
+  { "rank": 3, "city": "Cape Town", "country": "South Africa", "iso_a3": "ZAF", "devs_active_28d": 298 },
+  { "rank": 4, "city": "Cairo", "country": "Egypt", "iso_a3": "EGY", "devs_active_28d": 276 },
+  { "rank": 5, "city": "Johannesburg", "country": "South Africa", "iso_a3": "ZAF", "devs_active_28d": 241 },
+  { "rank": 6, "city": "Accra", "country": "Ghana", "iso_a3": "GHA", "devs_active_28d": 218 },
+  { "rank": 7, "city": "San Juan", "country": "Puerto Rico", "iso_a3": "PRI", "devs_active_28d": 142 },
+  { "rank": 8, "city": "Abuja", "country": "Nigeria", "iso_a3": "NGA", "devs_active_28d": 128 },
+  { "rank": 9, "city": "Kigali", "country": "Rwanda", "iso_a3": "RWA", "devs_active_28d": 104 },
+  { "rank": 10, "city": "Addis Ababa", "country": "Ethiopia", "iso_a3": "ETH", "devs_active_28d": 92 },
+  { "rank": 11, "city": "Dakar", "country": "Senegal", "iso_a3": "SEN", "devs_active_28d": 78 },
+  { "rank": 12, "city": "Port-au-Prince", "country": "Haiti", "iso_a3": "HTI", "devs_active_28d": 38 }
+]
