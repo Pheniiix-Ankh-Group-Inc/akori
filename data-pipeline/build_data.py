@@ -130,7 +130,7 @@ def register_scope(con: duckdb.DuckDBPyConnection) -> dict:
     # Devs in scope — one row per (developer_id, iso_a3)
     con.execute("""
         CREATE OR REPLACE VIEW scoped_devs AS
-        SELECT cdl.developer_id, m.iso_a3
+        SELECT cdl.canonical_developer_id AS developer_id, m.iso_a3
         FROM canonical_developer_locations cdl
         JOIN country_iso_map m USING (country)
     """)
