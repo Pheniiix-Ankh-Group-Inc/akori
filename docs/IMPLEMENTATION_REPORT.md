@@ -3,6 +3,7 @@
 - **Date** : 12–13 novembre 2026
 - **Base** : `origin/main` = `b1c2a522bb7dc1bea63f97db8d2826ad98c902e2` (18 mai 2026)
 - **Branche** : `feature/bib-architecture-cible-complete`
+- **Validation de cette publication** : contrôles partiels uniquement (voir § 5) ; la compilation et l'audit des dépendances restent à effectuer.
 - **Périmètre** : architecture cible complète (socle, site public, événements
   en base, BIB en action, administration, State of BIB historisé, veille, moteur
   IA, newsletter autonome FR/EN, documentation).
@@ -16,7 +17,7 @@
 | `POST /api/emails/welcome` envoyait un e-mail HTML à n'importe quelle adresse, prénom non échappé | Confirmé | Route supprimée |
 | `console.log` du préfixe de `BREVO_API_KEY` à chaque inscription | Confirmé | Supprimé ; client Brevo réécrit, aucun secret journalisé |
 | `/api/newsletter` sans consentement, sans anti-abus, e-mail de bienvenue direct | Confirmé | Réécrite (§ 3.7) |
-| Next.js 16.1.6, better-auth 1.5.6 : failles critiques publiées ; 234 vulnérabilités en production | Confirmé | Next.js 16.4.6, better-auth retiré, mises à jour et `overrides` → **0 vulnérabilité connue** |
+| Next.js 16.1.6, better-auth 1.5.6 : failles critiques publiées ; 234 vulnérabilités en production | Confirmé | Next.js 16.4.6, better-auth retiré, mises à jour et `overrides` → **audit de sécurité à confirmer dans cette branche** |
 | better-auth sans base de données (option `databaseUrl` inexistante) | Confirmé | Remplacé par Supabase Auth (opérateurs uniquement) |
 | `/login`, `/register`, `/dashboard`, `/studio` en 404 (réécriture next-intl) | Confirmé | Routes opérateurs exclues du routage de langue ; `/studio` retiré |
 | Sanity installé, jamais interrogé par une page | Confirmé | Retiré ; schémas archivés |
@@ -118,35 +119,35 @@ sur `main`), `data-pipeline/supabase_rest.py` (en-tête `apikey` seul).
 Aucune base Supabase n'a été lue ni modifiée (les seuls projets accessibles
 appartiennent à un autre produit et ont été exclus).
 
-## 5. Contrôles statiques
+## 5. Contrôles statiques — exécution GitHub du 13 novembre 2026
 
-> **À revérifier par l'agent qui applique ces changements.** Le tableau
-> ci-dessous reflète les résultats observés dans l'environnement d'origine.
-> L'agent d'exécution doit relancer chaque commande et REMPLACER ces valeurs
-> par ses propres résultats observés (ou signaler tout écart) avant d'ouvrir
-> la pull request.
+Les résultats de l'archive d'implémentation initiale **ne sont pas des résultats de cette exécution**.
+Les états suivants décrivent uniquement les vérifications effectivement réalisées lors de
+la publication de la branche depuis ChatGPT. Aucune validation « verte » n'est inférée.
 
-| Commande | Résultat |
+| Commande ou contrôle | Résultat réellement observé |
 | --- | --- |
-| `pnpm install` | OK |
-| `pnpm lint` (ESLint, config Next.js) | 0 erreur, 0 avertissement |
-| `pnpm typecheck` (`tsc --noEmit`, strict) | 0 erreur |
-| `next build --webpack` | OK — 56 pages ; toutes les routes compilées |
-| `pnpm audit --prod` | **No known vulnerabilities found** (234 au départ) |
-| `python -m py_compile data-pipeline/*.py` | OK |
-| `python data-pipeline/validate.py public/data` | Données actuelles valides |
-| Analyse SQL `pglast` | 5 migrations + bootstrap OK |
-| Exécution locale des migrations (PostgreSQL 16) | OK |
-| Recherche de secrets serveur dans `.next/static` | Aucune occurrence |
+| Publication du code sur GitHub | **OK** — 121 fichiers créés ou remplacés, 29 fichiers obsolètes supprimés, 10 schémas archivés, 3 traductions fusionnées ; 5 commits devant `main` avant le présent correctif documentaire |
+| Vérification des traductions `fr/en/es` sur GitHub | **OK** — JSON valide et sections Events, InAction, Newsletter et HomeBlocks présentes |
+| Contrôles statiques de sûreté sans installation | **OK** — drapeaux FEATURE_* à false ; `refresh-data.yml` pousse uniquement sur `"$BRANCH"` ; aucun en-tête Authorization dans `supabase_rest.py` ; pas de repli « bib » dans le rate limiter ; `validatePair` présent deux fois dans l'orchestrateur |
+| `python3 -m py_compile data-pipeline/*.py` | **OK** — exécuté sur l'archive `overlay/` des 121 fichiers, sans erreurs |
+| `pnpm install --no-frozen-lockfile` | **NON EXÉCUTÉ** — pnpm non disponible localement ; Corepack ne peut pas contacter le registre npm |
+| `pnpm-lock.yaml` | **NON ACTUALISÉ** — contient encore les dépendances Sanity, Stripe et Better Auth ; l'installation CI avec `--frozen-lockfile` est susceptible d'échouer |
+| `pnpm lint` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
+| `pnpm typecheck` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
+| `pnpm build` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
+| `pnpm audit --prod` | **NON EXÉCUTÉ** — registre npm inaccessible, ne pas reprendre le « 0 vulnérabilité » d'une exécution antérieure |
+| `python3 data-pipeline/validate.py public/data` | **INCONCLUSIF** — tenté depuis l'archive partielle `overlay/`, où les fichiers `public/data/*.json` préexistants ne sont pas inclus ; ces fichiers existent dans le dépôt GitHub |
+| Analyse SQL `pglast` | **NON EXÉCUTÉE** — module absent localement, installation réseau indisponible |
+| Migration PostgreSQL locale | **NON EXÉCUTÉE** — aucune migration SQL appliquée |
+| Recherche de secrets dans `.next/static` | **NON EXÉCUTÉE** — aucun build `.next` réalisé |
 
-Note sur le build : le bac à sable d'exécution n'a pas accès à
-fonts.googleapis.com. Le build a donc été vérifié avec `next build --webpack`
-et les réponses Google Fonts simulées prévues par Next.js
-(`NEXT_FONT_GOOGLE_MOCKED_RESPONSES`, fichier hors dépôt). Sur Vercel et dans la
-CI, le build standard (Turbopack) récupère les polices normalement.
-
-**Aucun test automatisé ou fonctionnel n'a été ajouté ni exécuté, conformément
-à la demande.**
+**Action obligatoire avant fusion :** exécuter `pnpm install --no-frozen-lockfile`
+dans un clone disposant du réseau, committer `pnpm-lock.yaml` actualisé sur la
+branche, puis exécuter `pnpm lint`, `pnpm typecheck`, `pnpm build`,
+`pnpm audit --prod`, la validation des JSON et l'analyse SQL en CI.
+La PR ne doit pas être considérée prête à fusionner tant que ces contrôles
+n'ont pas réussi. Aucun test automatisé ou E2E n'a été ajouté ou exécuté.
 
 ## Limitations et risques
 
