@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react"
 import * as d3 from "d3"
 import { fmtK } from "./format"
 import type { SobCohort as SobCohortData } from "./types"
+import { renderSafe, type SafeNode } from "@/lib/dom/safe"
 
 type Props = {
   cohort: SobCohortData
@@ -83,11 +84,14 @@ export function SobCohort({ cohort, labels }: Props) {
     svg.append("g").attr("class", "axis").attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y).ticks(5).tickFormat((v) => fmtK(v as number)))
 
-    legendEl.innerHTML = keys.map(k => `
-      <div class="sob-cohort-legend-item">
-        <span class="sob-cohort-legend-swatch" style="background:${palette[k].color}"></span>
-        <span>${palette[k].short} · <b>${palette[k].name}</b></span>
-      </div>`).join("")
+    renderSafe(legendEl, keys.map((k): SafeNode => ({
+      tag: "div",
+      className: "sob-cohort-legend-item",
+      children: [
+        { tag: "span", className: "sob-cohort-legend-swatch", style: { background: palette[k].color } },
+        { tag: "span", children: [`${palette[k].short} · `, { tag: "b", children: [palette[k].name] }] },
+      ],
+    })))
   }, [cohort, labels])
 
   return (

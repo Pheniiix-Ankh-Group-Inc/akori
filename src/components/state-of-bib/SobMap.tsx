@@ -4,6 +4,7 @@ import * as d3 from "d3"
 import { feature } from "topojson-client"
 import { fmt, fmtK } from "./format"
 import type { SobCountry } from "./types"
+import { renderSafe } from "@/lib/dom/safe"
 
 const ISO_NUM_TO_A3: Record<string, string> = {
   "012": "DZA", "024": "AGO", "204": "BEN", "072": "BWA", "854": "BFA", "108": "BDI", "132": "CPV", "120": "CMR",
@@ -105,7 +106,13 @@ export function SobMap({ map, labels }: Props) {
             tooltipEl.style.left = (ev.clientX + 16) + "px"
             tooltipEl.style.top = (ev.clientY + 16) + "px"
             tooltipEl.style.opacity = "1"
-            tooltipEl.innerHTML = `<b>${m.name}</b>${fmt(m.commits_lifetime)} ${labels.tipCommits.toUpperCase()}<br>${fmt(m.devs_active_28d)} ${labels.tipActive.toUpperCase()}`
+            // Valeurs de données insérées comme texte, jamais comme HTML.
+            renderSafe(tooltipEl, [
+              { tag: "b", children: [String(m.name ?? "")] },
+              `${fmt(m.commits_lifetime)} ${labels.tipCommits.toUpperCase()}`,
+              { tag: "br" },
+              `${fmt(m.devs_active_28d)} ${labels.tipActive.toUpperCase()}`,
+            ])
           })
           .on("mouseleave", () => { tooltipEl.style.opacity = "0" })
 

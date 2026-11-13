@@ -1,7 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server"
 import type { EmailOtpType } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/server"
-import { isSupabaseConfigured } from "@/lib/env"
+import { env, isSupabaseConfigured } from "@/lib/env"
+
+/** Origine canonique (NEXT_PUBLIC_SITE_URL) ; repli sur la requête en local. */
+function siteOrigin(fallback: string): string {
+  if (!process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_APP_URL) return fallback
+  try {
+    return new URL(env.siteUrl).origin
+  } catch {
+    return fallback
+  }
+}
 
 const OTP_TYPES: EmailOtpType[] = ["magiclink", "email", "invite", "recovery"]
 
@@ -11,7 +21,7 @@ const OTP_TYPES: EmailOtpType[] = ["magiclink", "email", "invite", "recovery"]
  */
 export async function GET(request: NextRequest) {
   const url = request.nextUrl
-  const fail = NextResponse.redirect(new URL("/login?error=link", url.origin))
+  const fail = NextResponse.redirect(new URL("/login?error=link", siteOrigin(url.origin)))
   if (!isSupabaseConfigured()) return fail
 
   const supabase = await createClient()
@@ -29,5 +39,6 @@ export async function GET(request: NextRequest) {
     return fail
   }
 
-  return NextResponse.redirect(new URL("/admin", url.origin))
+  // Destination fixe et interne, sur l'origine canonique (pas l'en-tête Host).
+  return NextResponse.redirect(new URL("/admin", siteOrigin(url.origin)))
 }
