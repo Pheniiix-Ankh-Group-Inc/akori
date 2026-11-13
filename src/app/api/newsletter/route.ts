@@ -1,78 +1,79 @@
+import { NextResponse, type NextRequest } from "next/server"
+import { z } from "zod"
+import { env, isBrevoConfigured, isSupabaseAdminConfigured } from "@/lib/env"
+import { BrevoError, requestDoubleOptIn } from "@/lib/brevo"
+import { clientIp, consumeRateLimit, fingerprint, isPepperConfigured, isSameOrigin } from "@/lib/security/rate-limit"
+import { getAdminClient } from "@/lib/supabase/admin"
+
 /**
- * app/api/newsletter/route.ts
- * POST /api/newsletter
- *
- * Reçoit { email } depuis le formulaire SectionCommunaute.
- * Ajoute le contact à la liste Brevo + envoie l'email de bienvenue.
+ * POST /api/newsletter — inscription à la newsletter BIB.
+ * - désactivée tant que FEATURE_NEWSLETTER_SUBSCRIBE≠true, Brevo incomplet ou
+ *   NEWSLETTER_EMAIL_HASH_PEPPER absent (32 caractères minimum) ;
+ * - même origine exigée (CSRF), champ piège anti-robot, limitation de débit
+ *   par IP et par adresse ;
+ * - consentement explicite obligatoire, langue FR ou EN ;
+ * - double opt-in Brevo : aucun e-mail de bienvenue, aucune inscription sans
+ *   clic de confirmation ;
+ * - réponse identique que l'adresse soit connue ou non.
  */
 
-import { NextRequest, NextResponse } from "next/server"
-import { addContactToList, sendTransactional } from "@/lib/brevo"
-import { z } from "zod"
-
 const schema = z.object({
-  email: z.email("Email invalide."),
+  email: z.email().max(254),
+  locale: z.enum(["fr", "en"]),
+  consent: z.literal(true),
+  website: z.string().max(0).optional(), // champ piège, doit rester vide
 })
 
+const json = (body: Record<string, unknown>, status = 200) =>
+  NextResponse.json(body, { status, headers: { "cache-control": "no-store" } })
+
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json()
-
-    // Validation
-    const parsed = schema.safeParse(body)
-    if (!parsed.success) {
-      return NextResponse.json(
-        { success: false, message: parsed.error.issues[0].message },
-        { status: 400 }
-      )
-    }
-
-    const { email } = parsed.data
-
-    // 1. Ajouter à la liste newsletter Brevo
-    const contact = await addContactToList({ email })
-    if (!contact.success) {
-      return NextResponse.json(
-        { success: false, message: contact.message },
-        { status: 500 }
-      )
-    }
-
-    // 2. Email de bienvenue
-    await sendTransactional({
-      to: [{ email }],
-      subject: "Bienvenue dans la communauté AnbaChain 🌍",
-      htmlContent: `
-        <!DOCTYPE html>
-        <html lang="fr">
-        <head><meta charset="UTF-8" /></head>
-        <body style="background:#0c0c0c;color:#edeae4;font-family:Georgia,serif;padding:3rem;max-width:600px;margin:0 auto;">
-          <h1 style="font-size:2rem;font-weight:200;letter-spacing:-0.02em;margin-bottom:1.5rem;">
-            Bienvenue dans<br/><em style="color:#c4a46e;">AnbaChain.</em>
-          </h1>
-          <p style="font-size:1rem;color:#aaa59e;line-height:1.8;margin-bottom:2rem;">
-            Tu fais maintenant partie du réseau blockchain des professionnels noirs.
-            Tu recevras nos analyses, actualités et invitations en avant-première.
-          </p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}" 
-             style="display:inline-block;background:#c4a46e;color:#0c0c0c;padding:0.8rem 2rem;border-radius:100px;font-size:0.85rem;font-weight:600;text-decoration:none;">
-            Découvrir la plateforme
-          </a>
-          <p style="margin-top:3rem;font-size:0.75rem;color:#7a7570;">
-            © 2026 AnbaChain™ · Tu reçois cet email car tu t'es inscrit sur AnbaChain.org
-          </p>
-        </body>
-        </html>
-      `,
-    })
-
-    return NextResponse.json({ success: true, message: "Inscription confirmée." })
-
-  } catch (err) {
-    console.error("[/api/newsletter] error:", err)
-    return NextResponse.json(
-      { success: false, message: "Erreur serveur." },
-      { status: 500 }
-    )
+  // Fail closed : drapeau, Brevo et poivre secret sont tous exigés.
+  if (!env.flags.newsletterSubscribe || !isBrevoConfigured() || !isPepperConfigured()) {
+    return json({ ok: false, code: "disabled" }, 503)
   }
+  if (!isSameOrigin(req.headers, req.url)) return json({ ok: false, code: "forbidden" }, 403)
+  if (!(req.headers.get("content-type") ?? "").includes("application/json")) return json({ ok: false, code: "invalid" }, 415)
+
+  let payload: unknown
+  try {
+    payload = await req.json()
+  } catch {
+    return json({ ok: false, code: "invalid" }, 400)
+  }
+  const parsed = schema.safeParse(payload)
+  if (!parsed.success) {
+    const consentMissing = parsed.error.issues.some((i) => i.path[0] === "consent")
+    return json({ ok: false, code: consentMissing ? "consent" : "invalid" }, 400)
+  }
+  const { email, locale } = parsed.data
+  const emailKey = fingerprint(email)
+
+  const [ipOk, emailOk] = await Promise.all([
+    consumeRateLimit(`nl:ip:${fingerprint(clientIp(req.headers))}`, 5, 600),
+    consumeRateLimit(`nl:email:${emailKey}`, 3, 86400),
+  ])
+  if (!ipOk || !emailOk) return json({ ok: false, code: "rate" }, 429)
+
+  try {
+    await requestDoubleOptIn(email, locale)
+  } catch (e) {
+    // Contact déjà confirmé : même réponse que pour une nouvelle inscription.
+    if (!(e instanceof BrevoError && e.code === "duplicate_parameter")) {
+      console.error("[newsletter] échec Brevo", e instanceof BrevoError ? e.status : "réseau")
+      return json({ ok: false, code: "server" }, 502)
+    }
+  }
+
+  // Preuve minimale de la demande de consentement (pas d'adresse en clair).
+  if (isSupabaseAdminConfigured()) {
+    const { error } = await getAdminClient().from("newsletter_consents").insert({
+      email_sha256: emailKey,
+      locale,
+      consent_text_version: env.newsletter.consentTextVersion,
+    })
+    if (error) console.error("[newsletter] preuve de consentement non enregistrée", error.code)
+  }
+
+  return json({ ok: true, code: "doi_sent" })
 }

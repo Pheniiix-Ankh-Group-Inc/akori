@@ -1,25 +1,12 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { fmt, fmtK } from "@/components/state-of-bib/format"
-import type {
-  SobMeta,
-  SobHeadline,
-  SobCountry,
-  SobCity,
-  SobEcosystemMix,
-  SobCohort as SobCohortData,
-} from "@/components/state-of-bib/types"
 import { SobMap } from "@/components/state-of-bib/SobMap"
 import { SobEcosystems } from "@/components/state-of-bib/SobEcosystems"
 import { SobCohort } from "@/components/state-of-bib/SobCohort"
 import { SobMarquee } from "@/components/state-of-bib/SobMarquee"
-
-import metaData from "../../../../../public/data/meta.json"
-import headlineData from "../../../../../public/data/headline.json"
-import countryMapData from "../../../../../public/data/country_map.json"
-import topCitiesData from "../../../../../public/data/top_cities.json"
-import ecoMixData from "../../../../../public/data/ecosystem_mix.json"
-import cohortData from "../../../../../public/data/tenure_cohort.json"
+import { loadSobSnapshot } from "@/lib/sob/load"
+import { getPublishedInsight } from "@/lib/sob/insights"
 
 export const revalidate = 3600
 
@@ -35,12 +22,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const meta = metaData as SobMeta
-const headline = headlineData as SobHeadline
-const countryMap = countryMapData as SobCountry[]
-const topCities = topCitiesData as SobCity[]
-const ecoMix = ecoMixData as SobEcosystemMix
-const cohort = cohortData as SobCohortData
 
 function formatMovementNum(raw: string): string {
   const parts = raw.split(/\s{2,}/)
@@ -53,6 +34,9 @@ export default async function StateOfBibPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "StateOfBib" })
+  const { meta, headline, countryMap, topCities, ecoMix, cohort } = await loadSobSnapshot()
+  // Insight IA : affiché uniquement s'il a été publié par un administrateur.
+  const insight = await getPublishedInsight(locale)
 
   return (
     <main className="sob">
@@ -85,6 +69,17 @@ export default async function StateOfBibPage({ params }: Props) {
           </div>
         </div>
       </header>
+
+      {insight && (
+        <section className="sob-wrap" aria-label={insight.content.title} style={{ padding: "3rem 0" }}>
+          <h2 className="sob-section-num">{insight.content.title}</h2>
+          <p style={{ whiteSpace: "pre-line", maxWidth: "60ch" }}>{insight.content.rendered_body}</p>
+          <p style={{ fontSize: "0.8rem", opacity: 0.8, maxWidth: "60ch" }}>{insight.content.limitations}</p>
+          <p style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+            {meta.source.name} · {meta.source.license} · {insight.sources[0]?.as_of_date}
+          </p>
+        </section>
+      )}
 
       <section className="sob-hero">
         <div className="sob-halo">

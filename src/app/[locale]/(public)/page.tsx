@@ -18,8 +18,10 @@ import { SectionGathering } from "@/components/bib/SectionGathering"
 import { SectionStats } from "@/components/bib/SectionStats"
 import { SectionCta } from "@/components/bib/SectionCta"
 import { SectionTicker } from "@/components/bib/SectionTicker"
+import { HomeModules } from "@/components/home/HomeModules"
+import { env } from "@/lib/env"
 
-export const revalidate = 3600
+export const revalidate = 300
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -43,25 +45,31 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
 
+  // Sections dont les chiffres, noms ou citations ne sont pas sourcés dans le
+  // dépôt : affichées par défaut (design inchangé) ; HOME_SHOW_UNVERIFIED_SECTIONS=false
+  // les masque en attendant leur validation éditoriale (voir README).
+  const showUnverified = env.flags.homeShowUnverifiedSections
+
   return (
     <main className="bib-root">
       <BibOverlays />
       <SectionHero />
       <SectionMarquee />
       <SectionManifesto />
-      <SectionConstellation />
+      {showUnverified && <SectionConstellation />}
       <SectionCosmic />
       <SectionLedger />
-      <SectionPillars />
-      <SectionData />
+      {showUnverified && <SectionPillars />}
+      {showUnverified && <SectionData />}
       <SectionOrgs />
-      <SectionNews />
-      <SectionPortraits />
-      <SectionChains />
-      <SectionGathering />
-      <SectionStats />
+      {showUnverified && <SectionNews />}
+      {showUnverified && <SectionPortraits />}
+      {showUnverified && <SectionChains />}
+      {showUnverified && <SectionGathering />}
+      {showUnverified && <SectionStats />}
+      <HomeModules locale={locale} />
       <SectionCta />
-      <SectionTicker />
+      {showUnverified && <SectionTicker />}
     </main>
   )
 }
