@@ -1,0 +1,40 @@
+/* Administration BIB — compléments minimes aux styles existants
+   (member-*, dash-*, auth-*) ; mêmes variables, aucune nouvelle charte. */
+
+.adm-main { margin-left: 240px; padding: 2.5rem 3rem; min-height: 100svh; color: var(--blanc); max-width: 1100px; }
+.adm-head { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
+.adm-head h1 { font-family: var(--font-serif), serif; font-weight: 300; font-size: 2rem; margin: 0; }
+.adm-crumb { font-size: 0.75rem; color: var(--texte); }
+.adm-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.adm-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 1.1rem; border-radius: var(--r); border: 1px solid var(--border-h); background: transparent; color: var(--blanc); font: 500 0.83rem var(--font-sans), sans-serif; cursor: pointer; text-decoration: none; }
+.adm-btn:hover { border-color: var(--accent); }
+.adm-btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
+.adm-btn-danger { border-color: #8a3b3b; color: #f0b4b4; }
+.adm-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+.adm-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.adm-table th { text-align: left; font-weight: 500; color: var(--texte); padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-h); }
+.adm-table td { padding: 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.adm-table a { color: var(--blanc); }
+.adm-status { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.6rem; border-radius: 100px; border: 1px solid var(--border-h); }
+.adm-status-published { border-color: var(--accent); color: var(--accent); }
+.adm-status-archived { color: var(--texte); }
+.adm-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.adm-fieldset { border: 1px solid var(--border); border-radius: var(--r); padding: 1.25rem 1.5rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.25rem; }
+.adm-fieldset legend { padding: 0 0.5rem; font-size: 0.9rem; font-weight: 600; }
+.adm-full { grid-column: 1 / -1; }
+.adm-field { display: flex; flex-direction: column; gap: 0.35rem; }
+.adm-field label { font-size: 0.78rem; color: var(--blanc); }
+.adm-field small { font-size: 0.72rem; color: var(--texte); }
+.adm-input, .adm-field select, .adm-field textarea { width: 100%; box-sizing: border-box; min-height: 40px; padding: 0.5rem 0.75rem; border: 1px solid var(--border-h); border-radius: var(--r); background: var(--bg); color: var(--blanc); font: 400 0.9rem var(--font-sans), sans-serif; }
+.adm-field textarea { min-height: 120px; resize: vertical; }
+.adm-notice { padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border-h); font-size: 0.86rem; margin-bottom: 1.5rem; }
+.adm-notice-ok { border-color: var(--accent); }
+.adm-notice-error { border-color: #8a3b3b; color: #f0b4b4; }
+.adm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+.adm-media { border: 1px solid var(--border); border-radius: var(--r); padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.78rem; }
+.adm-media img { width: 100%; height: 120px; object-fit: cover; border-radius: 4px; background: var(--bg-card); }
+.adm-muted { color: var(--texte); font-size: 0.8rem; }
+@media (max-width: 860px) {
+  .adm-main { margin-left: 0; padding: 1.5rem; }
+  .adm-fieldset { grid-template-columns: minmax(0, 1fr); }
+}

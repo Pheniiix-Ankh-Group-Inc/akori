@@ -1,0 +1,28 @@
+name: Veille actualités BIB — quotidienne
+
+# Collecte légère des flux RSS/Atom des sources AUTORISÉES (sans IA).
+# Désactivé par défaut : nécessite BIB_SCHEDULES_ENABLED=true (variable de
+# dépôt) et FEATURE_NEWS_INGEST=true côté application.
+
+on:
+  schedule:
+    - cron: "41 10 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    if: vars.BIB_SCHEDULES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call the site
+        env:
+          SITE_URL: ${{ vars.BIB_SITE_URL }}
+          CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+        run: |
+          test -n "$SITE_URL" || { echo "BIB_SITE_URL manquant"; exit 1; }
+          test -n "$CRON_SECRET" || { echo "BIB_CRON_SECRET manquant"; exit 1; }
+          curl --fail-with-body -sS -X POST -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/news"

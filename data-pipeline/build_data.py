@@ -24,13 +24,19 @@ Run:
 
 from __future__ import annotations
 
+import argparse
 import json
+import os
+import shutil
+import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
 import requests
 
+from validate import validate_output_dir
 from country_scope import (
     SCOPE_ISO_A3,
     REGION_BY_ISO,
@@ -427,11 +433,29 @@ def write_json(path: Path, obj) -> None:
     print(f"  → wrote {path} ({path.stat().st_size:,} bytes)")
 
 
+PIPELINE_VERSION = "2026.11.1"
+OUTPUT_FILES = (
+    "meta.json",
+    "headline.json",
+    "country_map.json",
+    "top_cities.json",
+    "ecosystem_mix.json",
+    "tenure_cohort.json",
+)
+
+
 def main() -> None:
-    OUTPUT_DIR.mkdir(exist_ok=True)
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR,
+                        help="Destination of the validated JSON files.")
+    parser.add_argument("--version", default=None,
+                        help="Provider version to build (default: manifest).")
+    args = parser.parse_args()
+    output_dir: Path = args.output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     print("→ resolving dataset version…")
-    version = get_dataset_version()
+    version = args.version or get_dataset_version()
     print(f"  version: {version}")
 
     print("→ opening DuckDB + httpfs views…")
@@ -469,6 +493,7 @@ def main() -> None:
 
     meta = {
         "dataset_version": version,
+        "pipeline_version": PIPELINE_VERSION,
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "block_number": block,
         "source": {
@@ -489,13 +514,37 @@ def main() -> None:
         },
     }
 
-    print("→ writing JSON…")
-    write_json(OUTPUT_DIR / "meta.json", meta)
-    write_json(OUTPUT_DIR / "headline.json", headline)
-    write_json(OUTPUT_DIR / "country_map.json", country_map)
-    write_json(OUTPUT_DIR / "top_cities.json", top_cities)
-    write_json(OUTPUT_DIR / "ecosystem_mix.json", ecosystem_mix)
-    write_json(OUTPUT_DIR / "tenure_cohort.json", tenure_cohort)
+    # Écriture dans un dossier temporaire puis validation du LOT complet : un
+    # calcul invalide ne remplace jamais les fichiers en place.
+    # Le remplacement des six fichiers n'est pas atomique au niveau du système
+    # de fichiers ; la cohérence publiée est garantie en aval (un seul commit
+    # Git proposé par PR, ou version Supabase courante déplacée en une
+    # transaction par publish_dataset_version).
+    print("→ writing JSON to a staging directory…")
+    with tempfile.TemporaryDirectory() as tmp:
+        staging = Path(tmp)
+        write_json(staging / "meta.json", meta)
+        write_json(staging / "headline.json", headline)
+        write_json(staging / "country_map.json", country_map)
+        write_json(staging / "top_cities.json", top_cities)
+        write_json(staging / "ecosystem_mix.json", ecosystem_mix)
+        write_json(staging / "tenure_cohort.json", tenure_cohort)
+
+        print("→ validating…")
+        errors = validate_output_dir(staging)
+        if errors:
+            print("✗ validation failed — previous files left untouched:")
+            for err in errors:
+                print(f"  · {err}")
+            sys.exit(2)
+
+        # Deux phases pour réduire la fenêtre d'incohérence : copie de tous les
+        # fichiers sous un nom temporaire, puis renommages (os.replace).
+        for name in OUTPUT_FILES:
+            shutil.copyfile(staging / name, output_dir / f".{name}.incoming")
+        for name in OUTPUT_FILES:
+            os.replace(output_dir / f".{name}.incoming", output_dir / name)
+            print(f"  → published {output_dir / name}")
 
     print("\n✓ done.")
 

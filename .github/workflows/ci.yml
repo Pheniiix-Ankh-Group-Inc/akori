@@ -1,0 +1,57 @@
+name: CI — contrôles statiques
+
+# Contrôles statiques uniquement (aucun test automatisé à ce stade, sur
+# instruction). Aucun secret requis, aucun effet externe.
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+      - name: Dependency audit (production, high and critical)
+        run: pnpm audit --prod --audit-level=high
+      - name: No server secret in the client bundle
+        run: |
+          if grep -rIl -E "SUPABASE_SECRET_KEY|BREVO_API_KEY|AI_API_KEY|CRON_SECRET|NEWSLETTER_EMAIL_HASH_PEPPER" .next/static 2>/dev/null; then
+            echo "Variable serveur référencée dans le bundle client"; exit 1
+          fi
+
+  data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m py_compile data-pipeline/*.py
+      - run: python data-pipeline/validate.py public/data
+      - name: SQL migrations parse
+        run: |
+          pip install pglast==7.*
+          python - <<'PY'
+          import glob, pglast
+          for f in sorted(glob.glob("supabase/**/*.sql", recursive=True)):
+              pglast.parse_sql(open(f).read())
+              print("OK", f)
+          PY

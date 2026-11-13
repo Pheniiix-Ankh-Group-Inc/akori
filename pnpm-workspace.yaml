@@ -1,3 +1,11 @@
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+
+# Correctifs de sécurité de dépendances transitives (voir docs/IMPLEMENTATION_REPORT.md).
+overrides:
+  ws: ">=8.21.0 <9"
+  browserslist: "^4.28.7"
+  source-map-js: "^1.2.2"
+  "@babel/core": "^7.29.6"
+  baseline-browser-mapping: "^2.11.0"
