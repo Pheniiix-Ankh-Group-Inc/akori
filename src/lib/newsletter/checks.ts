@@ -37,6 +37,14 @@ function allText(d: LocaleDraft): string {
 
 const digitsIn = (s: string) => s.match(/\d[\d.,\s]*\d|\d/g)?.map((x) => x.replace(/[\s.,]/g, "")) ?? []
 
+/** Formulations de conseil financier (FR/EN). */
+export const FINANCIAL_ADVICE_PATTERNS: RegExp[] = [
+  /\b(achetez|vendez|investissez|placez votre argent)\b/,
+  /\b(buy now|you should buy|you should sell|sell now|invest now|price target|guaranteed (return|profit)s?)\b/,
+  /\b(rendement garanti|profit garanti|objectif de cours|meilleur moment pour acheter)\b/,
+  /\b(not financial advice|ceci n'est pas un conseil financier)\b/,
+]
+
 const ok = (key: string, details: Record<string, unknown> = {}): CheckResult => ({ key, blocking: true, passed: true, details })
 const fail = (key: string, details: Record<string, unknown>): CheckResult => ({ key, blocking: true, passed: false, details })
 
@@ -112,7 +120,18 @@ function checkLocale(locale: NewsletterLocale, d: LocaleDraft, inputs: EditionIn
   const banned = EXCLUDED_TERMS.filter((w) => text.includes(w))
   results.push(banned.length ? fail(k("editorial_policy"), { banned }) : ok(k("editorial_policy")))
 
-  // Langue attendue (heuristique simple, sans IA).
+  // Conseil financier : formulations prescriptives (acheter, vendre, rendement
+  // garanti…) refusées, en plus des termes exclus.
+  const advice = FINANCIAL_ADVICE_PATTERNS.filter((re) => re.test(text)).map((re) => re.source)
+  results.push(advice.length ? fail(k("no_financial_advice"), { advice }) : ok(k("no_financial_advice")))
+
+  // Liens : aucun lien rédigé par le modèle ; les URL sont insérées par le
+  // code à partir des identifiants (sources autorisées uniquement).
+  const urls = allText(d).match(/\b(https?:\/\/|www\.)\S+/gi) ?? []
+  results.push(urls.length ? fail(k("no_model_links"), { urls: urls.slice(0, 5) }) : ok(k("no_model_links")))
+
+  // Langue attendue (heuristique simple, sans IA ; jamais une preuve
+  // linguistique : un texte court peut être rejeté à tort).
   const markersOk = (locale === "fr" ? FR_MARKERS : EN_MARKERS).filter((m) => text.includes(m)).length >= 2
   const otherHits = (locale === "fr" ? EN_MARKERS : FR_MARKERS).filter((m) => text.includes(m)).length
   results.push(markersOk && otherHits <= 3 ? ok(k("language")) : fail(k("language"), { markersOk, otherHits }))

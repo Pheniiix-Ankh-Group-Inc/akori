@@ -29,6 +29,7 @@ interface Cycle {
   send_slot: string
   status: string
   regen_attempts: number
+  updated_at?: string
 }
 
 export interface StepResult {
@@ -36,6 +37,13 @@ export interface StepResult {
   weekStart: string
   status: string
   detail?: string
+}
+
+/** Un cycle resté « sending » plus de 30 minutes est considéré interrompu. */
+export const SENDING_STALE_MS = 30 * 60 * 1000
+function isStaleSending(cycle: Cycle, now: Date): boolean {
+  const updated = Date.parse(cycle.updated_at ?? "")
+  return Number.isFinite(updated) && now.getTime() - updated > SENDING_STALE_MS
 }
 
 async function getOrCreateCycle(now: Date): Promise<Cycle> {
@@ -120,9 +128,10 @@ async function produceAndStore(cycle: Cycle, inputs: EditionInputs, draft: Editi
  * est toujours la même.
  */
 async function validatePair(cycleId: string, editionIds: string[]) {
-  const admin = getAdminClient()
-  await admin.from("newsletter_editions").update({ status: "cancelled" }).eq("cycle_id", cycleId).not("id", "in", `(${editionIds.join(",")})`).neq("status", "sent")
-  await admin.from("newsletter_editions").update({ status: "validated" }).in("id", editionIds)
+  // Transaction unique côté base (migration 0008) : aucune fenêtre où toutes
+  // les éditions seraient annulées ou deux paires validées.
+  const { error } = await getAdminClient().rpc("newsletter_validate_pair", { p_cycle_id: cycleId, p_edition_ids: editionIds })
+  if (error) throw new Error(`Validation de la paire impossible (${error.code ?? "?"}).`)
 }
 
 async function block(cycle: Cycle, reason: string, details: Record<string, unknown> = {}) {
@@ -228,6 +237,14 @@ async function cancel(cycle: Cycle, reason: string) {
 export async function runSend(now = new Date()): Promise<StepResult> {
   const cycle = await getOrCreateCycle(now)
   const window = sendWindowState(now, cycle.send_slot)
+  if (cycle.status === "sending" && isStaleSending(cycle, now)) {
+    // Exécution interrompue pendant l'envoi : résultat incertain. Aucun
+    // renvoi automatique ; on fige l'état et on alerte.
+    if (await setCycle(cycle.id, { status: "failed", cancelled_reason: "envoi interrompu : résultat incertain, vérification manuelle requise" }, ["sending"])) {
+      await recordIncident({ kind: "newsletter.stuck_sending", severity: "critical", cycleId: cycle.id, message: "Envoi interrompu : vérifier l'état des campagnes dans Brevo. Aucun renvoi automatique." })
+    }
+    return { step: "send", weekStart: cycle.week_start, status: "failed", detail: "envoi interrompu" }
+  }
   if (["sent", "partially_sent", "cancelled", "sending", "failed"].includes(cycle.status)) {
     return { step: "send", weekStart: cycle.week_start, status: cycle.status, detail: "déjà traité" }
   }
@@ -269,6 +286,13 @@ export async function runSend(now = new Date()): Promise<StepResult> {
     return { step: "send", weekStart: cycle.week_start, status: "cancelled" }
   }
 
+  // La fenêtre est revérifiée juste avant le verrou : les contrôles qui
+  // précèdent peuvent avoir pris du temps (aucun envoi après 09:59).
+  if (sendWindowState(new Date(), cycle.send_slot) !== "open") {
+    await cancel(cycle, "créneau du mercredi 09:00 dépassé pendant les contrôles finaux")
+    return { step: "send", weekStart: cycle.week_start, status: "cancelled", detail: "créneau dépassé" }
+  }
+
   // Verrou : un seul envoi possible.
   if (!(await setCycle(cycle.id, { status: "sending" }, ["eligible"]))) {
     return { step: "send", weekStart: cycle.week_start, status: "sending", detail: "verrou détenu par une autre exécution" }
@@ -284,6 +308,9 @@ export async function runSend(now = new Date()): Promise<StepResult> {
       sent.push(l)
       continue
     }
+    // Aucune NOUVELLE campagne hors créneau (la seconde langue ne part pas
+    // après 09:59 : envoi partiel signalé plutôt qu'envoi tardif).
+    if (sendWindowState(new Date(), cycle.send_slot) !== "open") break
     if (!existing) await admin.from("send_runs").insert({ cycle_id: cycle.id, edition_id: ed.id, locale: l, idempotency_key: key, status: "pending" })
     try {
       // Réconciliation : une campagne de ce nom existe-t-elle déjà ?

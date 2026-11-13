@@ -7,8 +7,11 @@ import { getAdminClient } from "@/lib/supabase/admin"
 
 /**
  * POST /api/newsletter — inscription à la newsletter BIB.
- * - désactivée tant que FEATURE_NEWSLETTER_SUBSCRIBE≠true, Brevo incomplet ou
- *   NEWSLETTER_EMAIL_HASH_PEPPER absent (32 caractères minimum) ;
+ * - désactivée tant que FEATURE_NEWSLETTER_SUBSCRIBE≠true, Brevo incomplet,
+ *   NEWSLETTER_EMAIL_HASH_PEPPER absent (32 caractères minimum) ou Supabase
+ *   serveur non configuré (preuve de consentement et limiteur partagé requis) ;
+ * - preuve de la demande enregistrée AVANT l'appel Brevo (états pending →
+ *   requested | request_failed) ; une demande acceptée < 24 h n'est pas répétée ;
  * - même origine exigée (CSRF), champ piège anti-robot, limitation de débit
  *   par IP et par adresse ;
  * - consentement explicite obligatoire, langue FR ou EN ;
@@ -29,7 +32,7 @@ const json = (body: Record<string, unknown>, status = 200) =>
 
 export async function POST(req: NextRequest) {
   // Fail closed : drapeau, Brevo et poivre secret sont tous exigés.
-  if (!env.flags.newsletterSubscribe || !isBrevoConfigured() || !isPepperConfigured()) {
+  if (!env.flags.newsletterSubscribe || !isBrevoConfigured() || !isPepperConfigured() || !isSupabaseAdminConfigured()) {
     return json({ ok: false, code: "disabled" }, 503)
   }
   if (!isSameOrigin(req.headers, req.url)) return json({ ok: false, code: "forbidden" }, 403)
@@ -49,31 +52,61 @@ export async function POST(req: NextRequest) {
   const { email, locale } = parsed.data
   const emailKey = fingerprint(email)
 
-  const [ipOk, emailOk] = await Promise.all([
+  const [ipDecision, emailDecision] = await Promise.all([
     consumeRateLimit(`nl:ip:${fingerprint(clientIp(req.headers))}`, 5, 600),
     consumeRateLimit(`nl:email:${emailKey}`, 3, 86400),
   ])
-  if (!ipOk || !emailOk) return json({ ok: false, code: "rate" }, 429)
+  // Limiteur partagé indisponible : refus maîtrisé (fail closed).
+  if (ipDecision === "unavailable" || emailDecision === "unavailable") return json({ ok: false, code: "unavailable" }, 503)
+  if (ipDecision === "limited" || emailDecision === "limited") return json({ ok: false, code: "rate" }, 429)
 
+  const admin = getAdminClient()
+
+  // Demande déjà acceptée par Brevo dans les dernières 24 h : aucune nouvelle
+  // sollicitation, même réponse (pas d'énumération des abonnés).
+  const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
+  const { data: recent, error: recentError } = await admin
+    .from("newsletter_consents")
+    .select("id")
+    .eq("email_sha256", emailKey)
+    .eq("status", "requested")
+    .gte("created_at", since)
+    .limit(1)
+  if (recentError) return json({ ok: false, code: "unavailable" }, 503)
+  if (recent && recent.length > 0) return json({ ok: true, code: "doi_sent" })
+
+  // 1. Trace AVANT l'appel Brevo : aucune demande sans preuve enregistrée.
+  const { data: consent, error: consentError } = await admin
+    .from("newsletter_consents")
+    .insert({ email_sha256: emailKey, locale, consent_text_version: env.newsletter.consentTextVersion, status: "pending" })
+    .select("id")
+    .single()
+  if (consentError || !consent) {
+    console.error("[newsletter] preuve de consentement non enregistrée", consentError?.code)
+    return json({ ok: false, code: "unavailable" }, 503)
+  }
+  const consentId = (consent as { id: string }).id
+
+  // 2. Demande de double opt-in (la CONFIRMATION se fait chez Brevo).
   try {
     await requestDoubleOptIn(email, locale)
   } catch (e) {
     // Contact déjà confirmé : même réponse que pour une nouvelle inscription.
     if (!(e instanceof BrevoError && e.code === "duplicate_parameter")) {
       console.error("[newsletter] échec Brevo", e instanceof BrevoError ? e.status : "réseau")
+      await admin.from("newsletter_consents").update({ status: "request_failed" }).eq("id", consentId)
       return json({ ok: false, code: "server" }, 502)
     }
   }
 
-  // Preuve minimale de la demande de consentement (pas d'adresse en clair).
-  if (isSupabaseAdminConfigured()) {
-    const { error } = await getAdminClient().from("newsletter_consents").insert({
-      email_sha256: emailKey,
-      locale,
-      consent_text_version: env.newsletter.consentTextVersion,
-    })
-    if (error) console.error("[newsletter] preuve de consentement non enregistrée", error.code)
-  }
+  // 3. État final. Un échec ici laisse la ligne « pending » : la demande a bien
+  //    été envoyée (réponse exacte pour l'utilisateur), l'écart est tracé et
+  //    réconciliable (docs/OPERATIONS_RUNBOOK.md).
+  const { error: finalError } = await admin
+    .from("newsletter_consents")
+    .update({ status: "requested", brevo_requested_at: new Date().toISOString() })
+    .eq("id", consentId)
+  if (finalError) console.error("[newsletter] état de consentement à réconcilier", consentId, finalError.code)
 
   return json({ ok: true, code: "doi_sent" })
 }
