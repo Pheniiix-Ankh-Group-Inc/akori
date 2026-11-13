@@ -131,23 +131,18 @@ la publication de la branche depuis ChatGPT. Aucune validation « verte » n'est
 | Vérification des traductions `fr/en/es` sur GitHub | **OK** — JSON valide et sections Events, InAction, Newsletter et HomeBlocks présentes |
 | Contrôles statiques de sûreté sans installation | **OK** — drapeaux FEATURE_* à false ; `refresh-data.yml` pousse uniquement sur `"$BRANCH"` ; aucun en-tête Authorization dans `supabase_rest.py` ; pas de repli « bib » dans le rate limiter ; `validatePair` présent deux fois dans l'orchestrateur |
 | `python3 -m py_compile data-pipeline/*.py` | **OK** — exécuté sur l'archive `overlay/` des 121 fichiers, sans erreurs |
-| `pnpm install --no-frozen-lockfile` | **NON EXÉCUTÉ** — pnpm non disponible localement ; Corepack ne peut pas contacter le registre npm |
-| `pnpm-lock.yaml` | **NON ACTUALISÉ** — contient encore les dépendances Sanity, Stripe et Better Auth ; l'installation CI avec `--frozen-lockfile` est susceptible d'échouer |
+| `pnpm install --lockfile-only --no-frozen-lockfile --ignore-scripts` | **OK** — GitHub Actions ponctuel a résolu et commité le lockfile (`2ab9b379`) sans exécuter les scripts d'installation |
+| `pnpm-lock.yaml` | **OK** — régénéré sur GitHub et commité ; les nouveaux importers utilisent Next.js 16.4.6 et Supabase JS 2.119.0 |
 | `pnpm lint` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
 | `pnpm typecheck` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
 | `pnpm build` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
 | `pnpm audit --prod` | **NON EXÉCUTÉ** — registre npm inaccessible, ne pas reprendre le « 0 vulnérabilité » d'une exécution antérieure |
-| `python3 data-pipeline/validate.py public/data` | **INCONCLUSIF** — tenté depuis l'archive partielle `overlay/`, où les fichiers `public/data/*.json` préexistants ne sont pas inclus ; ces fichiers existent dans le dépôt GitHub |
-| Analyse SQL `pglast` | **NON EXÉCUTÉE** — module absent localement, installation réseau indisponible |
+| `python3 data-pipeline/validate.py public/data` | **OK en CI GitHub** — job `data` du workflow 43492424443 ; l'essai local sur la seule archive partielle restait inconclusif |
+| Analyse SQL `pglast` | **OK en CI GitHub** — job `data` du workflow 43492424443 a compilé et analysé les migrations SQL |
 | Migration PostgreSQL locale | **NON EXÉCUTÉE** — aucune migration SQL appliquée |
 | Recherche de secrets dans `.next/static` | **NON EXÉCUTÉE** — aucun build `.next` réalisé |
 
-**Action obligatoire avant fusion :** exécuter `pnpm install --no-frozen-lockfile`
-dans un clone disposant du réseau, committer `pnpm-lock.yaml` actualisé sur la
-branche, puis exécuter `pnpm lint`, `pnpm typecheck`, `pnpm build`,
-`pnpm audit --prod`, la validation des JSON et l'analyse SQL en CI.
-La PR ne doit pas être considérée prête à fusionner tant que ces contrôles
-n'ont pas réussi. Aucun test automatisé ou E2E n'a été ajouté ou exécuté.
+**Action obligatoire avant fusion :** le lockfile a été régénéré par un workflow ponctuel et ce workflow s'est lui-même supprimé. Relancer la CI normale pour vérifier `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm audit --prod` et le scan de sécurité du bundle. La PR ne doit pas être considérée prête à fusionner tant que ces contrôles n'ont pas réussi. Aucun test automatisé ou E2E n'a été ajouté ou exécuté.
 
 ## Limitations et risques
 
