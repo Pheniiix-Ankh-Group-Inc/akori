@@ -3,7 +3,7 @@
 - **Date** : 12–13 novembre 2026
 - **Base** : `origin/main` = `b1c2a522bb7dc1bea63f97db8d2826ad98c902e2` (18 mai 2026)
 - **Branche** : `feature/bib-architecture-cible-complete`
-- **Validation de cette publication** : contrôles partiels uniquement (voir § 5) ; la compilation et l'audit des dépendances restent à effectuer.
+- **Validation de cette publication** : contrôles statiques GitHub Actions réussis sur la PR #32 (voir § 5), sans test ni activation de service externe.
 - **Périmètre** : architecture cible complète (socle, site public, événements
   en base, BIB en action, administration, State of BIB historisé, veille, moteur
   IA, newsletter autonome FR/EN, documentation).
@@ -17,7 +17,7 @@
 | `POST /api/emails/welcome` envoyait un e-mail HTML à n'importe quelle adresse, prénom non échappé | Confirmé | Route supprimée |
 | `console.log` du préfixe de `BREVO_API_KEY` à chaque inscription | Confirmé | Supprimé ; client Brevo réécrit, aucun secret journalisé |
 | `/api/newsletter` sans consentement, sans anti-abus, e-mail de bienvenue direct | Confirmé | Réécrite (§ 3.7) |
-| Next.js 16.1.6, better-auth 1.5.6 : failles critiques publiées ; 234 vulnérabilités en production | Confirmé | Next.js 16.4.6, better-auth retiré, mises à jour et `overrides` → **audit de sécurité à confirmer dans cette branche** |
+| Next.js 16.1.6, better-auth 1.5.6 : failles critiques publiées ; 234 vulnérabilités en production | Confirmé | Next.js 16.4.6, better-auth retiré, mises à jour et `overrides` → **audit de production confirmé en CI (aucune vulnérabilité connue au contrôle effectué)** |
 | better-auth sans base de données (option `databaseUrl` inexistante) | Confirmé | Remplacé par Supabase Auth (opérateurs uniquement) |
 | `/login`, `/register`, `/dashboard`, `/studio` en 404 (réécriture next-intl) | Confirmé | Routes opérateurs exclues du routage de langue ; `/studio` retiré |
 | Sanity installé, jamais interrogé par une page | Confirmé | Retiré ; schémas archivés |
@@ -119,30 +119,37 @@ sur `main`), `data-pipeline/supabase_rest.py` (en-tête `apikey` seul).
 Aucune base Supabase n'a été lue ni modifiée (les seuls projets accessibles
 appartiennent à un autre produit et ont été exclus).
 
-## 5. Contrôles statiques — exécution GitHub du 13 novembre 2026
+## 5. Contrôles statiques — résultats réellement observés en CI
 
-Les résultats de l'archive d'implémentation initiale **ne sont pas des résultats de cette exécution**.
-Les états suivants décrivent uniquement les vérifications effectivement réalisées lors de
-la publication de la branche depuis ChatGPT. Aucune validation « verte » n'est inférée.
+Les résultats ci-dessous proviennent du workflow GitHub Actions
+[`CI — contrôles statiques`](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/43492954457),
+déclenché sur la PR #32 le **13 novembre 2026** au commit
+`33716c4d7e8aa27a5c1702c8af25fd77f59913e7`.
+Les deux jobs `web` et `data` sont terminés avec le statut **success**.
 
-| Commande ou contrôle | Résultat réellement observé |
+| Commande ou contrôle | Résultat constaté |
 | --- | --- |
-| Publication du code sur GitHub | **OK** — 121 fichiers créés ou remplacés, 29 fichiers obsolètes supprimés, 10 schémas archivés, 3 traductions fusionnées ; 5 commits devant `main` avant le présent correctif documentaire |
-| Vérification des traductions `fr/en/es` sur GitHub | **OK** — JSON valide et sections Events, InAction, Newsletter et HomeBlocks présentes |
-| Contrôles statiques de sûreté sans installation | **OK** — drapeaux FEATURE_* à false ; `refresh-data.yml` pousse uniquement sur `"$BRANCH"` ; aucun en-tête Authorization dans `supabase_rest.py` ; pas de repli « bib » dans le rate limiter ; `validatePair` présent deux fois dans l'orchestrateur |
-| `python3 -m py_compile data-pipeline/*.py` | **OK** — exécuté sur l'archive `overlay/` des 121 fichiers, sans erreurs |
-| `pnpm install --lockfile-only --no-frozen-lockfile --ignore-scripts` | **OK** — GitHub Actions ponctuel a résolu et commité le lockfile (`2ab9b379`) sans exécuter les scripts d'installation |
-| `pnpm-lock.yaml` | **OK** — régénéré sur GitHub et commité ; les nouveaux importers utilisent Next.js 16.4.6 et Supabase JS 2.119.0 |
-| `pnpm lint` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
-| `pnpm typecheck` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
-| `pnpm build` | **NON EXÉCUTÉ** — dépendances non installables dans cet environnement |
-| `pnpm audit --prod` | **NON EXÉCUTÉ** — registre npm inaccessible, ne pas reprendre le « 0 vulnérabilité » d'une exécution antérieure |
-| `python3 data-pipeline/validate.py public/data` | **OK en CI GitHub** — job `data` du workflow 43492424443 ; l'essai local sur la seule archive partielle restait inconclusif |
-| Analyse SQL `pglast` | **OK en CI GitHub** — job `data` du workflow 43492424443 a compilé et analysé les migrations SQL |
-| Migration PostgreSQL locale | **NON EXÉCUTÉE** — aucune migration SQL appliquée |
-| Recherche de secrets dans `.next/static` | **NON EXÉCUTÉE** — aucun build `.next` réalisé |
+| `pnpm install --lockfile-only --no-frozen-lockfile --ignore-scripts` | **OK** — workflow ponctuel GitHub Actions ; lockfile généré au commit `2ab9b379`, workflow temporaire supprimé |
+| `pnpm install --frozen-lockfile` | **OK en CI** — cohérence du lockfile confirmée |
+| `pnpm lint` (ESLint) | **OK en CI** — aucune erreur bloquante |
+| `pnpm typecheck` (TypeScript strict) | **OK en CI** |
+| `pnpm build` | **OK en CI** — Next.js 16.4.6 **Turbopack**, compilation réussie et **56/56 pages statiques** générées |
+| `pnpm audit --prod --audit-level=high` | **OK en CI** — sortie explicite : `No known vulnerabilities found` |
+| `python -m py_compile data-pipeline/*.py` | **OK en CI** et également sur l'archive d'implémentation locale |
+| `python data-pipeline/validate.py public/data` | **OK en CI** — validation exécutée sur le dépôt complet |
+| `pglast` | **OK en CI** — les 5 migrations et `supabase/bootstrap/first_editor.sql` analysés syntaxiquement |
+| Recherche de références aux secrets serveur dans `.next/static` | **OK en CI** — aucune occurrence détectée |
+| Fusion JSON `fr/en/es` et contrôles de cohérence des workflows | **OK** — vérifiés sur la branche GitHub |
+| Exécution locale ou distante de migrations SQL PostgreSQL | **NON EXÉCUTÉE**, conformément au périmètre : les migrations sont uniquement versionnées |
+| Validation réelle des intégrations Supabase, Brevo et IA | **NON EXÉCUTÉE** — aucune ressource externe activée |
 
-**Action obligatoire avant fusion :** le lockfile a été régénéré par un workflow ponctuel et ce workflow s'est lui-même supprimé. Relancer la CI normale pour vérifier `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm audit --prod` et le scan de sécurité du bundle. La PR ne doit pas être considérée prête à fusionner tant que ces contrôles n'ont pas réussi. Aucun test automatisé ou E2E n'a été ajouté ou exécuté.
+L'analyse SQL réussie en CI vérifie la **syntaxe**, pas l'application réelle
+des politiques RLS ni le comportement fonctionnel des migrations sur une
+base PostgreSQL. Ces vérifications restent nécessaires en staging dédié BIB.
+
+**Aucun test automatisé ou E2E n'a été ajouté ni exécuté**, conformément
+à la demande. Le runner a signalé des avertissements de dépréciation Node
+des versions d'actions GitHub utilisées, sans échec de contrôle.
 
 ## Limitations et risques
 
