@@ -718,7 +718,7 @@
         "title": "3. Partage des informations",
         "p1": "Nous ne vendons pas les données personnelles.",
         "p2": "Nous partageons avec des prestataires de services.",
-        "p3": "Exemples : Stripe, Supabase, Vercel.",
+        "p3": "Prestataires techniques : Vercel (hébergement du site), Supabase (base de données et fichiers BIB), Brevo (newsletter, avec double confirmation d'inscription) et Luma (inscription aux événements, sur le site de Luma).",
         "p4": "Divulgation possible si exigée par la loi."
       },
       "blockchain": {
@@ -958,5 +958,95 @@
       "copyright": "© 2026 Black in Blockchain Collective",
       "url": "anbachain.org · Un registre · Quatre continents"
     }
+  },
+  "Events": {
+    "metaTitle": "Événements — Black in Blockchain",
+    "metaDescription": "Les événements Black in Blockchain à venir et passés. L'inscription se fait sur Luma.",
+    "eyebrow": "Événements",
+    "title": "Événements",
+    "intro": "Chaque fiche présente un événement BIB. L'inscription, les billets et la liste des participants sont gérés sur Luma ; aucun compte BIB n'est nécessaire.",
+    "upcoming": "À venir",
+    "ongoing": "En cours",
+    "past": "Événements passés",
+    "ended": "Terminé",
+    "registerLuma": "S'inscrire sur Luma",
+    "registerNote": "Ouvre la page officielle de l'événement sur Luma.",
+    "noUpcoming": "Aucun événement à venir n'est encore publié.",
+    "noPast": "Aucun événement passé n'est encore publié.",
+    "notConfigured": "Les événements apparaîtront ici dès que la base BIB sera configurée.",
+    "inPerson": "Présentiel",
+    "online": "En ligne",
+    "hybrid": "Hybride",
+    "joinOnline": "Lien d'accès en ligne",
+    "when": "Quand",
+    "where": "Où",
+    "format": "Format",
+    "back": "Tous les événements",
+    "translationFallback": "Ce contenu n'est pas encore disponible dans votre langue ; il est affiché en {language}.",
+    "viewDetails": "Voir la fiche",
+    "viewRetrospective": "Voir la rétrospective"
+  },
+  "InAction": {
+    "metaTitle": "BIB en action — Black in Blockchain",
+    "metaDescription": "Rétrospectives, photos, vidéos et témoignages des rencontres Black in Blockchain.",
+    "eyebrow": "BIB en action",
+    "title": "BIB en action",
+    "intro": "Rétrospectives, photos et témoignages de nos rencontres. Seuls des médias dont la diffusion est autorisée sont publiés.",
+    "retrospectives": "Rétrospectives",
+    "gallery": "Galerie",
+    "testimonials": "Témoignages",
+    "empty": "Aucune rétrospective n'est encore publiée.",
+    "notConfigured": "Les rétrospectives apparaîtront ici dès que la base BIB sera configurée.",
+    "back": "Toutes les rétrospectives",
+    "relatedEvent": "Événement lié",
+    "credit": "Crédit",
+    "translationFallback": "Ce contenu n'est pas encore disponible dans votre langue ; il est affiché en {language}.",
+    "viewStory": "Lire la rétrospective",
+    "videoLabel": "Vidéo phare"
+  },
+  "Newsletter": {
+    "title": "La newsletter BIB",
+    "intro": "Chaque semaine, quatre rubriques, en français ou en anglais, avec une priorité à l'Afrique, aux Caraïbes et aux diasporas.",
+    "rubrics": {
+      "blockchain_insights": {
+        "title": "Blockchain Insights",
+        "desc": "Analyses fondées sur les données publiées de State of BIB"
+      },
+      "blockchain_news": {
+        "title": "Blockchain News",
+        "desc": "L'actualité issue de sources autorisées"
+      },
+      "bib_events": {
+        "title": "BIB Events",
+        "desc": "Les prochains événements BIB"
+      },
+      "bib_highlights": {
+        "title": "BIB Highlights",
+        "desc": "Les temps forts de la communauté"
+      }
+    },
+    "emailLabel": "Adresse e-mail (obligatoire)",
+    "languageLabel": "Langue de la newsletter",
+    "langFr": "Français",
+    "langEn": "Anglais",
+    "consentLabel": "J'accepte de recevoir la newsletter BIB. Je peux me désabonner à tout moment.",
+    "submit": "S'abonner",
+    "submitting": "Envoi…",
+    "successDoi": "Vérifiez votre boîte : confirmez votre inscription avec le lien que nous venons d'envoyer.",
+    "successDisabled": "Les inscriptions ne sont pas encore ouvertes. Revenez bientôt.",
+    "errorInvalid": "Saisissez une adresse e-mail valide, comme nom@exemple.com.",
+    "errorConsent": "Cochez la case pour confirmer votre consentement.",
+    "errorRate": "Trop de tentatives. Réessayez dans quelques minutes.",
+    "errorServer": "Votre inscription n'a pas pu être enregistrée. Réessayez plus tard.",
+    "privacyNote": "Votre adresse sert uniquement à cette newsletter et est traitée par Brevo. Voir la politique de confidentialité."
+  },
+  "HomeBlocks": {
+    "eventsTitle": "Prochains événements",
+    "eventsAll": "Tous les événements",
+    "inActionTitle": "BIB en action",
+    "inActionAll": "Toutes les rétrospectives",
+    "sobTitle": "State of BIB",
+    "sobLink": "Voir le rapport",
+    "sobNote": "Données au {date} · Afrique et Caraïbes · {source} ({license})"
   }
 }

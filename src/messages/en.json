@@ -718,7 +718,7 @@
         "title": "3. Sharing of Information",
         "p1": "We do not sell personal data.",
         "p2": "We share with service providers.",
-        "p3": "Examples include Stripe, Supabase, Vercel.",
+        "p3": "Technical providers: Vercel (website hosting), Supabase (BIB database and files), Brevo (newsletter, with double opt-in confirmation) and Luma (event registration, on Luma's own website).",
         "p4": "We may disclose if required by law."
       },
       "blockchain": {
@@ -958,5 +958,95 @@
       "copyright": "© 2026 Black in Blockchain Collective",
       "url": "anbachain.org · One ledger · Four continents"
     }
+  },
+  "Events": {
+    "metaTitle": "Events — Black in Blockchain",
+    "metaDescription": "Upcoming and past Black in Blockchain events. Registration takes place on Luma.",
+    "eyebrow": "Events",
+    "title": "Events",
+    "intro": "Each page presents a BIB event. Registration, tickets and attendee lists are handled on Luma; no BIB account is needed.",
+    "upcoming": "Upcoming",
+    "ongoing": "Happening now",
+    "past": "Past events",
+    "ended": "Ended",
+    "registerLuma": "Register on Luma",
+    "registerNote": "Opens the official event page on Luma.",
+    "noUpcoming": "No upcoming event has been published yet.",
+    "noPast": "No past event has been published yet.",
+    "notConfigured": "Events will appear here once the BIB database is configured.",
+    "inPerson": "In person",
+    "online": "Online",
+    "hybrid": "Hybrid",
+    "joinOnline": "Online access link",
+    "when": "When",
+    "where": "Where",
+    "format": "Format",
+    "back": "All events",
+    "translationFallback": "This content is not yet available in your language; it is shown in {language}.",
+    "viewDetails": "View event",
+    "viewRetrospective": "See the retrospective"
+  },
+  "InAction": {
+    "metaTitle": "BIB in action — Black in Blockchain",
+    "metaDescription": "Retrospectives, photos, videos and testimonials from Black in Blockchain gatherings.",
+    "eyebrow": "BIB in action",
+    "title": "BIB in action",
+    "intro": "Retrospectives, photos and testimonials from our gatherings. Only media cleared for publication are shown.",
+    "retrospectives": "Retrospectives",
+    "gallery": "Gallery",
+    "testimonials": "Testimonials",
+    "empty": "No retrospective has been published yet.",
+    "notConfigured": "Retrospectives will appear here once the BIB database is configured.",
+    "back": "All retrospectives",
+    "relatedEvent": "Related event",
+    "credit": "Credit",
+    "translationFallback": "This content is not yet available in your language; it is shown in {language}.",
+    "viewStory": "Read the retrospective",
+    "videoLabel": "Featured video"
+  },
+  "Newsletter": {
+    "title": "The BIB newsletter",
+    "intro": "Four sections every week, in French or English, with a focus on Africa, the Caribbean and the diasporas.",
+    "rubrics": {
+      "blockchain_insights": {
+        "title": "Blockchain Insights",
+        "desc": "Analysis based on published State of BIB data"
+      },
+      "blockchain_news": {
+        "title": "Blockchain News",
+        "desc": "News from authorized sources"
+      },
+      "bib_events": {
+        "title": "BIB Events",
+        "desc": "Upcoming BIB events"
+      },
+      "bib_highlights": {
+        "title": "BIB Highlights",
+        "desc": "Highlights from the community"
+      }
+    },
+    "emailLabel": "Email address (required)",
+    "languageLabel": "Newsletter language",
+    "langFr": "French",
+    "langEn": "English",
+    "consentLabel": "I agree to receive the BIB newsletter. I can unsubscribe at any time.",
+    "submit": "Subscribe",
+    "submitting": "Sending…",
+    "successDoi": "Check your inbox: confirm your subscription using the link we just sent.",
+    "successDisabled": "Subscriptions are not open yet. Please come back soon.",
+    "errorInvalid": "Enter a valid email address, like name@example.com.",
+    "errorConsent": "Tick the box to confirm your consent.",
+    "errorRate": "Too many attempts. Please try again in a few minutes.",
+    "errorServer": "Your subscription could not be recorded. Please try again later.",
+    "privacyNote": "Your address is only used for this newsletter and is processed by Brevo. See the privacy policy."
+  },
+  "HomeBlocks": {
+    "eventsTitle": "Upcoming events",
+    "eventsAll": "All events",
+    "inActionTitle": "BIB in action",
+    "inActionAll": "All retrospectives",
+    "sobTitle": "State of BIB",
+    "sobLink": "Open the report",
+    "sobNote": "Data as of {date} · Africa and the Caribbean · {source} ({license})"
   }
 }
