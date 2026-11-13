@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl"
+import { isKeyVisible } from "@/lib/content/claims"
 
-export function SectionCta() {
+export function SectionCta({ showUnverified = false }: { showUnverified?: boolean }) {
   const t = useTranslations("Cta")
 
   return (
@@ -16,7 +17,7 @@ export function SectionCta() {
             </>
           )}
         </h2>
-        <p className="bib-cta-sub">{t("sub")}</p>
+        {isKeyVisible("Cta.sub", showUnverified) && <p className="bib-cta-sub">{t("sub")}</p>}
         <a href="#" className="bib-cta-button" data-hover>
           {t("button")}
         </a>

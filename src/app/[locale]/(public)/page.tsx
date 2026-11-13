@@ -20,6 +20,7 @@ import { SectionCta } from "@/components/bib/SectionCta"
 import { SectionTicker } from "@/components/bib/SectionTicker"
 import { HomeModules } from "@/components/home/HomeModules"
 import { env } from "@/lib/env"
+import { isSectionVisible } from "@/lib/content/claims"
 
 export const revalidate = 300
 
@@ -45,31 +46,32 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
 
-  // Sections dont les chiffres, noms ou citations ne sont pas sourcés dans le
-  // dépôt : affichées par défaut (design inchangé) ; HOME_SHOW_UNVERIFIED_SECTIONS=false
-  // les masque en attendant leur validation éditoriale (voir README).
+  // Contenus factuels non sourcés : MASQUÉS par défaut. Registre central :
+  // src/lib/content/claims.ts. HOME_SHOW_UNVERIFIED_SECTIONS=true les réaffiche
+  // (décision éditoriale explicite). Aucun style n'est modifié.
   const showUnverified = env.flags.homeShowUnverifiedSections
+  const show = (section: string) => isSectionVisible(section, showUnverified)
 
   return (
     <main className="bib-root">
       <BibOverlays />
-      <SectionHero />
+      <SectionHero showUnverified={showUnverified} />
       <SectionMarquee />
       <SectionManifesto />
-      {showUnverified && <SectionConstellation />}
+      {show("Constellation") && <SectionConstellation />}
       <SectionCosmic />
-      <SectionLedger />
-      {showUnverified && <SectionPillars />}
-      {showUnverified && <SectionData />}
-      <SectionOrgs />
-      {showUnverified && <SectionNews />}
-      {showUnverified && <SectionPortraits />}
-      {showUnverified && <SectionChains />}
-      {showUnverified && <SectionGathering />}
-      {showUnverified && <SectionStats />}
+      {show("Ledger") && <SectionLedger />}
+      {show("Pillars") && <SectionPillars />}
+      {show("Data") && <SectionData />}
+      {show("Orgs") && <SectionOrgs />}
+      {show("News") && <SectionNews />}
+      {show("Portraits") && <SectionPortraits />}
+      {show("Chains") && <SectionChains />}
+      {show("Gathering") && <SectionGathering />}
+      {show("Stats") && <SectionStats />}
       <HomeModules locale={locale} />
-      <SectionCta />
-      {showUnverified && <SectionTicker />}
+      <SectionCta showUnverified={showUnverified} />
+      {show("Ticker") && <SectionTicker />}
     </main>
   )
 }

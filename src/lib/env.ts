@@ -69,7 +69,8 @@ export const env = {
     ai: flag("FEATURE_AI"),
     opsAlerts: flag("FEATURE_OPS_ALERTS"),
     sobReadFromSupabase: flag("FEATURE_SOB_READ_FROM_SUPABASE"),
-    homeShowUnverifiedSections: process.env.HOME_SHOW_UNVERIFIED_SECTIONS?.trim() !== "false",
+    // Contenus non sourcés masqués par défaut ; "true" pour les réafficher.
+    homeShowUnverifiedSections: process.env.HOME_SHOW_UNVERIFIED_SECTIONS?.trim() === "true",
   },
 } as const
 

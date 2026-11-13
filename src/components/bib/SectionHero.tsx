@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
+import { isKeyVisible } from "@/lib/content/claims"
 
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%&*0123456789"
 
@@ -31,7 +32,7 @@ function scramble(el: HTMLElement, finalText: string, speed = 45) {
   })
 }
 
-export function SectionHero() {
+export function SectionHero({ showUnverified = false }: { showUnverified?: boolean }) {
   const t = useTranslations("Hero")
   const scrambleRefs = useRef<(HTMLSpanElement | null)[]>([])
 
@@ -93,7 +94,7 @@ export function SectionHero() {
         <p className="bib-hero-lede">{t("lede")}</p>
         <div className="bib-hero-meta">
           <div><span>→</span> {t("meta1")}</div>
-          <div><span>→</span> {t("meta2")}</div>
+          {isKeyVisible("Hero.meta2", showUnverified) && <div><span>→</span> {t("meta2")}</div>}
           <div><span>→</span> {t("meta3")}</div>
         </div>
       </div>
