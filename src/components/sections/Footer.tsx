@@ -38,7 +38,7 @@ export function Footer() {
             <li><a href="#">{t("elsewhereX")}</a></li>
             <li><a href="#">{t("elsewhereFarcaster")}</a></li>
             <li><a href="#">{t("elsewhereLens")}</a></li>
-            <li><a href="#">{t("elsewhereNewsletter")}</a></li>
+            <li><a href="#newsletter">{t("elsewhereNewsletter")}</a></li>
           </ul>
         </div>
       </div>

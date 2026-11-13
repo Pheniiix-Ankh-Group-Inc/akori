@@ -3,7 +3,6 @@
 
 import { useLocale } from "next-intl"
 import { usePathname, useRouter } from "@/i18n/navigation"
-import { routing } from "@/i18n/routing"
 
 const LOCALES: { code: string; label: string; flag: string }[] = [
   { code: "fr", label: "Français", flag: "🇫🇷" },

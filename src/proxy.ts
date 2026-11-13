@@ -1,78 +1,33 @@
-import { NextRequest, NextResponse } from "next/server"
-import { getSessionCookie } from "better-auth/cookies"
+import { NextResponse, type NextRequest } from "next/server"
 import createMiddleware from "next-intl/middleware"
 import { routing } from "./i18n/routing"
-
-const PROTECTED_PATHS = [
-  "/directory",
-  "/dashboard",
-  "/messaging",
-  "/profile",
-  "/settings",
-  "/onboarding",
-]
-
-const AUTH_ROUTES = ["/login", "/register"]
+import { updateOperatorSession } from "./lib/supabase/proxy-session"
 
 const intlProxy = createMiddleware(routing)
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
 /**
- * Extrait la locale depuis le pathname si présente.
- * Avec localePrefix: 'as-needed', la locale par défaut n'a pas de préfixe.
- * Ex: /fr/dashboard → "fr" | /dashboard → null (locale par défaut, pas de préfixe)
+ * Routes opérateurs, servies hors du segment [locale] (interface unique) :
+ * elles ne passent pas par le routage de langue next-intl.
  */
-function extractLocalePrefix(pathname: string): string | null {
-  const segment = pathname.split("/")[1]
-  const isLocale = (routing.locales as readonly string[]).includes(segment)
-  return isLocale ? segment : null
-}
+const OPERATOR_PREFIXES = ["/admin", "/login", "/register", "/dashboard", "/auth"]
 
-/**
- * Retourne le pathname sans préfixe de locale s'il est présent.
- * Ex: /fr/dashboard → /dashboard | /dashboard → /dashboard
- */
-function stripLocale(pathname: string, localePrefix: string | null): string {
-  if (localePrefix && pathname.startsWith(`/${localePrefix}`)) {
-    return pathname.slice(`/${localePrefix}`.length) || "/"
-  }
-  return pathname
-}
-
-/**
- * Construit une URL de redirection en préservant le préfixe de locale si présent.
- * Avec as-needed, la locale par défaut n'a pas de préfixe → /login (pas /en/login).
- */
-function buildLocalizedUrl(
-  path: string,
-  localePrefix: string | null,
-  base: string
-): URL {
-  const prefix = localePrefix ? `/${localePrefix}` : ""
-  return new URL(`${prefix}${path}`, base)
+function isOperatorPath(pathname: string): boolean {
+  return OPERATOR_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 }
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const session = getSessionCookie(request)
-  const isAuthenticated = !!session
 
-  const localePrefix = extractLocalePrefix(pathname)
-  const strippedPath = stripLocale(pathname, localePrefix)
+  if (isOperatorPath(pathname)) {
+    const { response, userId } = await updateOperatorSession(request)
 
-  if (PROTECTED_PATHS.some((path) => strippedPath.startsWith(path))) {
-    if (!isAuthenticated) {
-      const loginUrl = buildLocalizedUrl("/login", localePrefix, request.url)
-      loginUrl.searchParams.set("redirect", pathname)
+    // Première barrière : pas de session → page de connexion opérateur.
+    if ((pathname === "/admin" || pathname.startsWith("/admin/")) && !userId) {
+      const loginUrl = new URL("/login", request.url)
+      loginUrl.searchParams.set("next", pathname)
       return NextResponse.redirect(loginUrl)
     }
-  }
-
-  if (AUTH_ROUTES.includes(strippedPath) && isAuthenticated) {
-    return NextResponse.redirect(
-      buildLocalizedUrl("/dashboard", localePrefix, request.url)
-    )
+    return response
   }
 
   return intlProxy(request)
@@ -80,7 +35,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Toutes les routes sauf _next, api, fichiers statiques
+    // Toutes les routes sauf _next, api, _vercel et fichiers statiques.
     "/((?!_next|api|_vercel|.*\\..*).*)",
   ],
 }

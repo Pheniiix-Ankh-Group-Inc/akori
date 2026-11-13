@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useMemo } from "react"
 import * as d3 from "d3"
 import { feature } from "topojson-client"
 import { fmt, fmtK } from "./format"
@@ -42,11 +42,10 @@ export function SobMap({ map, labels }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const legendRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const [top10, setTop10] = useState<SobCountry[]>([])
-
-  useEffect(() => {
-    setTop10([...map].sort((a, b) => b.commits_lifetime - a.commits_lifetime).slice(0, 10))
-  }, [map])
+  const top10 = useMemo<SobCountry[]>(
+    () => [...map].sort((a, b) => b.commits_lifetime - a.commits_lifetime).slice(0, 10),
+    [map],
+  )
 
   useEffect(() => {
     const svgEl = svgRef.current
