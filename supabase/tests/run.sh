@@ -18,6 +18,6 @@ for f in "$DIR"/migrations/*.sql; do
   echo "migration: $(basename "$f")"
   psql "$TARGET" -v ON_ERROR_STOP=1 -q -f "$f" >/dev/null
 done
-# Rejouer toutes les migrations : elles doivent être idempotentes ou échouer
-# proprement ; on vérifie seulement qu'une installation vierge réussit.
-psql "$TARGET" -v ON_ERROR_STOP=1 -f "$DIR/tests/10_security_and_integrity.sql"
+for t in "$DIR"/tests/[1-9]*.sql; do
+  psql "$TARGET" -v ON_ERROR_STOP=1 -f "$t"
+done

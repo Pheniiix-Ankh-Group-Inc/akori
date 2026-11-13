@@ -1,0 +1,62 @@
+name: State of BIB — promotion après approbation
+
+# Étape D de la gouvernance State of BIB.
+# Se déclenche UNIQUEMENT quand des JSON public/data/** arrivent sur la branche
+# par défaut, c'est-à-dire après revue et fusion de la PR proposée par
+# refresh-data.yml. Vérifie que les fichiers du commit fusionné ont exactement
+# les empreintes SHA-256 de la candidate préparée, puis bascule atomiquement la
+# version courante (promote_dataset_version). Aucun effet tant que
+# SOB_SUPABASE_SYNC ≠ "true".
+# Repli manuel : workflow_dispatch avec rollback_version.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public/data/*.json"
+  workflow_dispatch:
+    inputs:
+      rollback_version:
+        description: "Version source à réactiver (laisser vide pour promouvoir le commit courant de main)"
+        type: string
+        required: false
+
+concurrency:
+  group: state-of-bib-data
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    if: vars.SOB_SUPABASE_SYNC == 'true' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: data-pipeline/requirements.txt
+      - run: pip install -r data-pipeline/requirements.txt
+      - name: Validate approved data
+        run: python data-pipeline/validate.py public/data
+      - name: Promote approved candidate
+        if: inputs.rollback_version == ''
+        working-directory: data-pipeline
+        env:
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: python publish_supabase.py promote --commit "${GITHUB_SHA}"
+      - name: Roll back to a previous version
+        if: inputs.rollback_version != ''
+        working-directory: data-pipeline
+        env:
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          ROLLBACK_VERSION: ${{ inputs.rollback_version }}
+        run: python publish_supabase.py rollback --version "$ROLLBACK_VERSION"

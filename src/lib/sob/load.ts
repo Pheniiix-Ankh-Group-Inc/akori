@@ -81,7 +81,18 @@ export const loadSobSnapshot = unstable_cache(
         fetchJson<SobEcosystemMix>(arts["ecosystem_mix.json"]),
         fetchJson<SobCohort>(arts["tenure_cohort.json"]),
       ])
-      if (!Array.isArray(countryMap) || !Array.isArray(topCities) || typeof headline?.devs_active_28d !== "number") return bundled
+      const version = (data as { provider_version: string }).provider_version
+      // Ensemble cohérent ou rien : tous les fichiers doivent appartenir à la
+      // version courante annoncée, sinon repli complet sur les JSON embarqués.
+      if (
+        !Array.isArray(countryMap) ||
+        !Array.isArray(topCities) ||
+        typeof headline?.devs_active_28d !== "number" ||
+        String((meta as { dataset_version?: unknown }).dataset_version ?? "") !== version
+      ) {
+        console.error("[state-of-bib] snapshot Supabase incohérent, repli sur les JSON embarqués")
+        return bundled
+      }
       return { origin: "supabase", meta, headline, countryMap, topCities, ecoMix, cohort }
     } catch (e) {
       console.error("[state-of-bib] lecture Supabase impossible, repli sur les JSON embarqués", (e as Error).message)

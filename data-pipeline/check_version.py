@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -49,10 +50,25 @@ def local_version() -> str | None:
         return None
 
 
+VERSION_RE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
+MAX_FAILED_ATTEMPTS = int(os.environ.get("SOB_MAX_FAILED_ATTEMPTS", "3"))
+
+
+def fetch_remote_version() -> str:
+    """Lit le manifeste (HTTPS, hôte attendu, taille bornée) et valide la version."""
+    r = requests.get(MANIFEST_URL, timeout=60, allow_redirects=False)
+    if r.status_code != 200:
+        raise RuntimeError(f"manifeste indisponible (HTTP {r.status_code})")
+    if len(r.content) > 1_000_000:
+        raise RuntimeError("manifeste anormalement volumineux")
+    version = str(r.json()["dataset"]["version"])
+    if not VERSION_RE.match(version):
+        raise RuntimeError(f"version de manifeste inattendue : {version!r}")
+    return version
+
+
 def main() -> int:
-    r = requests.get(MANIFEST_URL, timeout=60)
-    r.raise_for_status()
-    remote = r.json()["dataset"]["version"]
+    remote = fetch_remote_version()
 
     sync = os.environ.get("SOB_SUPABASE_SYNC", "").strip() == "true"
     if sync:
@@ -66,8 +82,18 @@ def main() -> int:
             "limit": "1",
         })
         status = rows[0]["status"] if rows else None
-        needs = status is None or status in ("detected", "processing", "failed", "validated")
+        # « validated » = candidate déjà préparée, en attente de revue : pas de
+        # nouveau traitement lourd. Les échecs répétés exigent une intervention.
+        needs = status is None or status in ("detected", "processing", "failed")
         reason = "nouvelle version" if status is None else f"version connue (statut {status})"
+        if status == "failed" and rows:
+            failed = sb.select("ingestion_runs", {
+                "select": "id", "dataset_version_id": f"eq.{rows[0]['id']}",
+                "kind": "eq.build", "status": "eq.failed",
+            })
+            if len(failed) >= MAX_FAILED_ATTEMPTS:
+                needs = False
+                reason = f"{len(failed)} échecs pour cette version : intervention humaine requise"
         sb.insert("ingestion_runs", {
             "source_id": SOURCE_ID,
             "kind": "version_check",

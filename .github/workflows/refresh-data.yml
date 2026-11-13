@@ -8,6 +8,8 @@ name: State of BIB — contrôle quotidien et historisation
 # Gouvernance : ce workflow ne pousse JAMAIS sur main. Les JSON régénérés
 # sont proposés dans une branche dédiée data/state-of-bib-<version> avec une
 # pull request à relire et fusionner par une personne.
+# Supabase : seule une CANDIDATE est préparée ici (jamais publiée) ; la
+# promotion suit la fusion de la PR (sob-promote.yml).
 # L'historisation Supabase ne s'exécute que si SOB_SUPABASE_SYNC = "true" et
 # que les secrets SUPABASE_URL / SUPABASE_SECRET_KEY (projet BIB) existent.
 # Voir docs/DEPLOYMENT.md.
@@ -33,6 +35,7 @@ jobs:
   check:
     if: github.event_name == 'workflow_dispatch' || vars.BIB_SCHEDULES_ENABLED == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       needs_build: ${{ steps.check.outputs.needs_build }}
       version: ${{ steps.check.outputs.version }}
@@ -57,6 +60,7 @@ jobs:
     needs: check
     if: needs.check.outputs.needs_build == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: write        # branche dédiée data/… uniquement, jamais main
       pull-requests: write
@@ -76,13 +80,16 @@ jobs:
         working-directory: data-pipeline
         run: python build_data.py --version "${{ needs.check.outputs.version }}"
 
-      - name: Historise in Supabase BIB (optional)
+      # Préparation d'une CANDIDATE uniquement (bucket privé, statut
+      # « validated ») : le pointeur de version publiée n'est PAS déplacé.
+      # La publication a lieu après fusion de la PR (workflow sob-promote.yml).
+      - name: Stage candidate in Supabase BIB (optional)
         working-directory: data-pipeline
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
-        run: python publish_supabase.py
+        run: python publish_supabase.py stage
 
       # Les JSON embarqués (compatibilité du site actuel) sont proposés par
       # pull request ; aucune écriture directe sur la branche par défaut.
