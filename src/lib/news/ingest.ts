@@ -2,6 +2,8 @@ import "server-only"
 import { createHash } from "node:crypto"
 import { XMLParser } from "fast-xml-parser"
 import { getAdminClient } from "@/lib/supabase/admin"
+import { safeFetchText } from "@/lib/net/safe-fetch"
+import { hasEntityDeclarations, isFeedContentType, validateExternalUrl } from "@/lib/net/ssrf"
 
 /**
  * Veille quotidienne NEWS — légère et sans IA :
@@ -126,18 +128,22 @@ export async function ingestNews(): Promise<IngestReport> {
 
   for (const s of (sources ?? []) as { id: string; name: string; feed_url: string; language: string | null; region_tags: string[] }[]) {
     try {
-      const res = await fetch(s.feed_url, {
-        headers: { "user-agent": "BIB-newsletter-watch/1.0 (+https://anbachain.org)" },
-        signal: AbortSignal.timeout(20000),
-        cache: "no-store",
+      // URL issue de la base : non fiable → récupération protégée (SSRF,
+      // redirections revalidées, taille et délai bornés, type contrôlé).
+      const res = await safeFetchText(s.feed_url, {
+        headers: { "user-agent": "BIB-newsletter-watch/1.0 (+https://anbachain.org)", accept: "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8" },
+        maxBytes: 2 * 1024 * 1024,
+        timeoutMs: 20_000,
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const items = parseFeed(await res.text()).slice(0, 50)
+      if (!isFeedContentType(res.contentType)) throw new Error("content_type_not_feed")
+      if (hasEntityDeclarations(res.text)) throw new Error("dtd_entities_forbidden")
+      const items = parseFeed(res.text).slice(0, 50)
       report.fetched += items.length
       const rows = items
         .map((it) => {
           const canonical = canonicalUrl(it.url)
-          if (!canonical) return null
+          // Lien d'article : public uniquement (jamais d'IP ni d'hôte interne).
+          if (!canonical || !validateExternalUrl(canonical).ok) return null
           const c = classify(`${it.title} ${it.summary}`)
           if (c.excluded) return null
           return {

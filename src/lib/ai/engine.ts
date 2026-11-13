@@ -25,12 +25,30 @@ export type AiPurpose = "newsletter_draft" | "newsletter_regen" | "sob_insight"
 
 export interface AiBudget {
   remainingCalls: number
+  /** Jetons (entrée + sortie) restants pour l'exécution ; dépassement = arrêt. */
+  remainingTokens?: number
 }
 
-export const newBudget = (): AiBudget => ({ remainingCalls: env.ai.maxCallsPerRun })
+export const newBudget = (): AiBudget => ({ remainingCalls: env.ai.maxCallsPerRun, remainingTokens: env.ai.maxTokensPerRun })
+
+/** Erreur temporaire du fournisseur (429, 5xx) : un seul nouvel essai borné. */
+export class AiTransientError extends Error {
+  constructor(message: string, public readonly retryAfterMs: number | null) {
+    super(message)
+  }
+}
+
+function providerError(res: Response): Error {
+  if (res.status === 429 || res.status >= 500) {
+    const ra = Number(res.headers.get("retry-after"))
+    return new AiTransientError(`fournisseur IA → HTTP ${res.status}`, Number.isFinite(ra) && ra > 0 ? ra * 1000 : null)
+  }
+  return new Error(`fournisseur IA → HTTP ${res.status}`)
+}
 
 interface RawResult {
   text: string
+  truncated?: boolean
   inputTokens?: number
   outputTokens?: number
 }
@@ -62,10 +80,10 @@ async function callAnthropic(system: string, user: string, signal: AbortSignal):
       messages: [{ role: "user", content: user }],
     }),
   })
-  if (!res.ok) throw new Error(`fournisseur IA → HTTP ${res.status}`)
-  const body = (await res.json()) as { content?: { type: string; text?: string }[]; usage?: { input_tokens?: number; output_tokens?: number } }
+  if (!res.ok) throw providerError(res)
+  const body = (await res.json()) as { content?: { type: string; text?: string }[]; stop_reason?: string; usage?: { input_tokens?: number; output_tokens?: number } }
   const text = (body.content ?? []).filter((c) => c.type === "text").map((c) => c.text ?? "").join("")
-  return { text, inputTokens: body.usage?.input_tokens, outputTokens: body.usage?.output_tokens }
+  return { text, truncated: body.stop_reason === "max_tokens", inputTokens: body.usage?.input_tokens, outputTokens: body.usage?.output_tokens }
 }
 
 async function callOpenAiCompatible(system: string, user: string, signal: AbortSignal): Promise<RawResult> {
@@ -84,17 +102,28 @@ async function callOpenAiCompatible(system: string, user: string, signal: AbortS
       ],
     }),
   })
-  if (!res.ok) throw new Error(`fournisseur IA → HTTP ${res.status}`)
-  const body = (await res.json()) as { choices?: { message?: { content?: string } }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } }
-  return { text: body.choices?.[0]?.message?.content ?? "", inputTokens: body.usage?.prompt_tokens, outputTokens: body.usage?.completion_tokens }
+  if (!res.ok) throw providerError(res)
+  const body = (await res.json()) as { choices?: { message?: { content?: string }; finish_reason?: string }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } }
+  return {
+    text: body.choices?.[0]?.message?.content ?? "",
+    truncated: body.choices?.[0]?.finish_reason === "length",
+    inputTokens: body.usage?.prompt_tokens,
+    outputTokens: body.usage?.completion_tokens,
+  }
 }
 
-function extractJson(text: string): unknown {
+export function extractJson(text: string): unknown {
   const start = text.indexOf("{")
   const end = text.lastIndexOf("}")
   if (start < 0 || end <= start) throw new AiOutputError("Réponse IA sans objet JSON.")
-  return JSON.parse(text.slice(start, end + 1))
+  try {
+    return JSON.parse(text.slice(start, end + 1))
+  } catch {
+    throw new AiOutputError("Réponse IA : JSON invalide.")
+  }
 }
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 /**
  * Appel structuré : un seul essai par appel (le budget borne les
@@ -132,14 +161,32 @@ export async function generateStructured<S extends z.ZodType>(opts: {
 
   let raw: RawResult | undefined
   try {
-    const result: RawResult = await withTimeout((signal) =>
-      env.ai.provider === "anthropic"
-        ? callAnthropic(opts.system, opts.user, signal)
-        : env.ai.provider === "openai-compatible"
-          ? callOpenAiCompatible(opts.system, opts.user, signal)
-          : Promise.reject(new AiDisabledError(`Fournisseur IA inconnu : ${env.ai.provider}`)),
-    )
+    const call = () =>
+      withTimeout((signal) =>
+        env.ai.provider === "anthropic"
+          ? callAnthropic(opts.system, opts.user, signal)
+          : env.ai.provider === "openai-compatible"
+            ? callOpenAiCompatible(opts.system, opts.user, signal)
+            : Promise.reject(new AiDisabledError(`Fournisseur IA inconnu : ${env.ai.provider}`)),
+      )
+    let result: RawResult
+    try {
+      result = await call()
+    } catch (e) {
+      // Un seul nouvel essai, uniquement pour une erreur temporaire, avec une
+      // attente bornée (jamais de boucle d'appels non contrôlée).
+      if (!(e instanceof AiTransientError)) throw e
+      await sleep(Math.min(e.retryAfterMs ?? 2_000, 10_000))
+      result = await call()
+    }
     raw = result
+    if (opts.budget.remainingTokens !== undefined) {
+      opts.budget.remainingTokens -= (result.inputTokens ?? 0) + (result.outputTokens ?? 0)
+    }
+    if (result.truncated) throw new AiOutputError("Réponse IA tronquée (limite de jetons atteinte).")
+    if (opts.budget.remainingTokens !== undefined && opts.budget.remainingTokens < 0) {
+      throw new AiBudgetError("Budget de jetons IA dépassé pour cette exécution.")
+    }
     const parsed = opts.schema.safeParse(extractJson(result.text))
     if (!parsed.success) throw new AiOutputError(`Sortie IA non conforme : ${parsed.error.issues[0]?.message ?? "schéma"}`)
     await finish("succeeded", raw)

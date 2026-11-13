@@ -44,6 +44,7 @@ export const env = {
     apiKey: str("AI_API_KEY"),
     baseUrl: str("AI_BASE_URL"),
     maxCallsPerRun: int("AI_MAX_CALLS_PER_RUN", 4),
+    maxTokensPerRun: int("AI_MAX_TOKENS_PER_RUN", 60000),
     maxOutputTokens: int("AI_MAX_OUTPUT_TOKENS", 4000),
     timeoutMs: int("AI_TIMEOUT_MS", 60000),
   },
