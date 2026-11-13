@@ -14,6 +14,7 @@ psql "$PGURL" -v ON_ERROR_STOP=1 -qc "create database $DB"
 trap 'psql "$PGURL" -qc "drop database if exists $DB" >/dev/null 2>&1 || true' EXIT
 TARGET="${PGURL%/*}/$DB"
 psql "$TARGET" -v ON_ERROR_STOP=1 -q -f "$DIR/tests/00_supabase_stub.sql"
+psql "$TARGET" -v ON_ERROR_STOP=1 -q -f "$DIR/ops/00_preflight_bib.sql"
 for f in "$DIR"/migrations/*.sql; do
   echo "migration: $(basename "$f")"
   psql "$TARGET" -v ON_ERROR_STOP=1 -q -f "$f" >/dev/null

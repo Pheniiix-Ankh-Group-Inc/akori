@@ -9,6 +9,55 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Remédiation (audit de la branche, novembre 2026)
+
+Corrections ciblées sans refonte UI/UX ; détail et preuves :
+`docs/audits/BIB_REMEDIATION_REPORT.md`.
+
+#### Security
+
+- CSP construite à partir de `NEXT_PUBLIC_SUPABASE_URL` (connect, img, media),
+  sans Sanity ni joker ; `object-src 'none'`, `base-uri`, `form-action`,
+  `frame-ancestors` ; HSTS sans `preload` ; `X-XSS-Protection` retiré,
+  `Referrer-Policy` et `Cross-Origin-Opener-Policy` ajoutés.
+- `SobMap` et `SobCohort` : plus d'`innerHTML` sur des données.
+- Limiteur de débit partagé en échec fermé (503) en production ; IP validées.
+- Veille : récupération protégée contre la SSRF (DNS, redirections, taille,
+  type, entités XML).
+- Médias et preuves : signature binaire réelle vérifiée à l'import.
+- Moteur IA : réponses tronquées refusées, un seul nouvel essai sur 429/5xx,
+  budget de jetons, données externes délimitées comme non fiables.
+- Journaux structurés avec masquage des e-mails, jetons et clés.
+
+#### Fixed
+
+- Publications transactionnelles (migration 0006) : fiche + traductions +
+  audit en une transaction, verrou optimiste, galerie remplacée sans perte,
+  transitions conditionnelles et idempotentes, médias non diffusables refusés
+  en base, suppression d'un média publié interdite, politiques Storage
+  durcies, rapport de réconciliation médias ↔ Storage en lecture seule.
+- State of BIB (migration 0007) : la préparation crée une candidate privée ;
+  la publication n'a lieu qu'après fusion de la PR, avec vérification des
+  empreintes SHA-256 du commit approuvé ; repli ; publication non vérifiée
+  révoquée.
+- Newsletter (migration 0008) : validation atomique de la paire FR/EN,
+  éditions validées immuables, envois confirmés définitifs, fenêtre revérifiée
+  avant chaque envoi, cycle interrompu figé sans renvoi, états de demande de
+  consentement tracés avant l'appel Brevo.
+- Jour d'envoi de la newsletter corrigé (mercredi 9 h, heure de Toronto).
+- Contenus non sourcés de l'accueil masqués par défaut (registre central).
+
+#### Added
+
+- Tests : Vitest (85 tests), unittest du pipeline, suites SQL/RLS sur base
+  jetable ; CI étendue (job `sql`, en-têtes servis).
+- `supabase/ops/` : préflight de conflits de noms, inventaire en lecture seule,
+  modèle de nettoyage bloqué.
+- Documentation : `SECURITY.md`, `TEST_PLAN.md`, `SUPABASE_MIGRATION_PLAN.md`,
+  `OPERATIONS_RUNBOOK.md`, `EDITORIAL_CLAIMS.md`, rapport de remédiation.
+
+### Architecture cible
+
 Architecture cible Black in Blockchain. Les services externes sont intégrés
 mais **désactivés par défaut** ; aucune migration n'a été appliquée sur une
 base distante. Design et navigation inchangés.

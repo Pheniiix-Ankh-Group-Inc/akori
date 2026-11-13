@@ -16,7 +16,7 @@ l'administration privée minimale et les traitements de données associés.
 | BIB en action (rétrospectives, médias, témoignages) | Implémenté | Projet Supabase BIB + clé serveur |
 | Administration privée (`/admin`) | Implémentée | Premier opérateur à initialiser |
 | State of BIB (JSON) | Opérationnel | — |
-| State of BIB historisé (Supabase) | Implémenté | `SOB_SUPABASE_SYNC`, `FEATURE_SOB_READ_FROM_SUPABASE` |
+| State of BIB historisé (Supabase) | Implémenté (candidate → revue → promotion vérifiée) | `SOB_SUPABASE_SYNC`, `FEATURE_SOB_READ_FROM_SUPABASE` |
 | Inscription newsletter (double opt-in Brevo) | Implémentée | `FEATURE_NEWSLETTER_SUBSCRIBE` + Brevo |
 | Veille actualités | Implémentée | `FEATURE_NEWS_INGEST` + sources autorisées |
 | Moteur IA + newsletter autonome FR/EN | Implémentés | `FEATURE_AI`, `FEATURE_NEWSLETTER_AUTOSEND` |
@@ -28,7 +28,12 @@ Voir [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 Le design et la navigation existants sont conservés : les nouveaux écrans
 réutilisent les classes et composants déjà présents. Une refonte visuelle est
-différée.
+différée (travaux UI/UX menés séparément).
+
+Les modules dépendant d'un service externe (Supabase BIB, Brevo, IA) sont
+**implémentés et testés localement, mais pas encore validés en conditions
+réelles** : une recette sur un environnement de staging BIB isolé est requise
+(voir [docs/TEST_PLAN.md](docs/TEST_PLAN.md)).
 
 ## Stack
 
@@ -110,13 +115,16 @@ Détails : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
 [docs/DATA_MODEL.md](docs/DATA_MODEL.md),
 [docs/EDITORIAL_WORKFLOWS.md](docs/EDITORIAL_WORKFLOWS.md).
 
-## Accueil : sections non sourcées
+## Accueil : contenus non sourcés
 
-Plusieurs sections héritées de l'accueil affichent des chiffres, noms ou
-citations qui ne sont pas sourcés dans le dépôt (Constellation, Pillars, Data,
-News, Portraits, Chains, Gathering, Stats, Ticker). Elles restent affichées par
-défaut pour ne pas modifier le design ; `HOME_SHOW_UNVERIFIED_SECTIONS=false`
-les masque en attendant leur validation éditoriale.
+Les chiffres, annonces, historiques et organisations tierces de l'accueil qui
+ne sont pas sourcés dans le dépôt sont **masqués par défaut** (sections
+Constellation, Ledger, Pillars, Data, Orgs, News, Portraits, Chains, Gathering,
+Stats, Ticker ; éléments « 37 chapitres » du bandeau et délai « 72 heures » de
+l'appel à rejoindre). Registre central : `src/lib/content/claims.ts`.
+`HOME_SHOW_UNVERIFIED_SECTIONS=true` les réaffiche sur décision éditoriale.
+Inventaire à confirmer : [docs/EDITORIAL_CLAIMS.md](docs/EDITORIAL_CLAIMS.md)
+(`python3 scripts/editorial_claims.py` pour le régénérer).
 
 ## Administration
 
@@ -133,21 +141,43 @@ client.
 
 ## Sécurité
 
+Détail : [docs/SECURITY.md](docs/SECURITY.md).
+
+- CSP dérivée du projet Supabase configuré (aucun joker, plus de Sanity), HSTS
+  sans preload, aucune donnée externe insérée comme HTML.
 - Autorisation vérifiée côté serveur sur chaque page et action d'administration
-  (jeton Supabase validé + habilitation active dans `public.editors`).
-- RLS activée sur toutes les tables ; le rôle `anon` ne lit que le publié.
-- Brouillons et preuves de consentement dans des buckets privés ; URL signées
-  de courte durée pour les aperçus.
-- Formulaire public : même origine, champ piège, limitation de débit, double
-  opt-in, réponse uniforme.
-- Aucun secret journalisé.
+  (jeton Supabase validé + habilitation active dans `public.editors`) et en
+  base (RLS + fonctions transactionnelles).
+- Publications transactionnelles : fiche + traductions + audit dans une seule
+  transaction, verrou optimiste, transitions idempotentes, médias refusés en
+  base s'ils ne sont pas diffusables.
+- Brouillons, preuves de consentement et candidates State of BIB dans des
+  buckets privés ; signature binaire des fichiers importés vérifiée.
+- Formulaire public : même origine, champ piège, limiteur partagé en échec
+  fermé, double opt-in tracé, réponse uniforme.
+- Veille protégée contre la SSRF ; prompts IA isolant les données externes.
+- Journaux structurés masquant e-mails, jetons et clés.
 
 ## Tests
 
-Aucun test automatisé n'a été ajouté dans cette version, sur instruction. La CI
-exécute uniquement des contrôles statiques (lint, typage, build, audit,
-compilation Python, analyse SQL).
+Plan et couverture : [docs/TEST_PLAN.md](docs/TEST_PLAN.md).
+
+```bash
+pnpm test                                   # unitaires et sécurité (sans réseau)
+python -m unittest discover -s data-pipeline/tests
+PGURL=postgresql://postgres@localhost:5432/postgres pnpm test:sql   # base JETABLE uniquement
+```
+
+La CI exécute ces trois suites (la suite SQL sur un conteneur PostgreSQL
+éphémère), plus lint, typage, build, audit et vérification des en-têtes servis.
+
+## Exploitation
+
+[docs/OPERATIONS_RUNBOOK.md](docs/OPERATIONS_RUNBOOK.md) — newsletter, State of
+BIB, médias, veille, incidents. Migration du projet Supabase existant :
+[docs/SUPABASE_MIGRATION_PLAN.md](docs/SUPABASE_MIGRATION_PLAN.md).
 
 ## Limitations connues
 
-Voir [docs/IMPLEMENTATION_REPORT.md](docs/IMPLEMENTATION_REPORT.md#limitations-et-risques).
+Voir [docs/audits/BIB_REMEDIATION_REPORT.md](docs/audits/BIB_REMEDIATION_REPORT.md)
+et [docs/IMPLEMENTATION_REPORT.md](docs/IMPLEMENTATION_REPORT.md#limitations-et-risques).

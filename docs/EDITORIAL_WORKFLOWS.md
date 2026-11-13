@@ -100,7 +100,9 @@ Aucun scraping n'est effectué.
 d'indicateurs valides · aucun chiffre non issu des données · événements encore
 à venir au moment de l'envoi · titres disponibles dans la langue · licences et
 citations des actualités · attribution State of BIB · ligne éditoriale (pas de
-conseil spéculatif) · langue attendue · au moins deux rubriques non vides ·
+conseil spéculatif) · aucune formulation de conseil financier (« achetez »,
+« rendement garanti »…) · aucun lien rédigé par le modèle · langue attendue
+(heuristique : jamais une preuve linguistique) · au moins deux rubriques non vides ·
 liens HTTPS autorisés · lien de désabonnement · rubriques dans l'ordre · mêmes
 éléments en FR et EN.
 
@@ -119,6 +121,34 @@ liens HTTPS autorisés · lien de désabonnement · rubriques dans l'ordre · m�
 
 Chaque e-mail contient le lien de désabonnement Brevo. Brevo reste la source
 de vérité des consentements et désabonnements.
+
+### Paire validée
+
+Le mardi, la paire FR/EN contrôlée est validée en une seule transaction ; son
+contenu devient immuable. Le mercredi, c'est exactement cette paire (même
+version) qui est recontrôlée puis envoyée, et la fenêtre 09:00–09:59 est
+revérifiée avant chaque langue : une langue n'est jamais envoyée après 09:59.
+
+## Modifications concurrentes
+
+Deux opérateurs ouvrant la même fiche : le second enregistrement est refusé
+(« modifié par une autre personne ») ; recharger la page pour repartir de la
+dernière version. Un double clic sur « Publier » n'a aucun effet supplémentaire.
+
+## Contenus non sourcés de l'accueil
+
+Inventaire : `docs/EDITORIAL_CLAIMS.md`. Pour publier un élément : obtenir et
+consigner la source, puis le retirer du registre `src/lib/content/claims.ts`
+par pull request. Ne jamais remplacer un chiffre par un autre non sourcé.
+
+## State of BIB : revue d'une nouvelle version
+
+Une nouvelle version source donne lieu à une PR `data/state-of-bib-<version>`.
+Avant fusion : vérifier le périmètre (Afrique + Caraïbes, jamais présenté comme
+une mesure de la diaspora), l'attribution « Electric Capital Open Source
+Developer Data (CC BY 4.0) » et l'absence de saut incohérent. Ne pas modifier
+les JSON dans la PR : la promotion vérifie leurs empreintes et refuserait une
+version retouchée.
 
 ## Insights IA State of BIB
 

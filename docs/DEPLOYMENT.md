@@ -20,14 +20,20 @@ avant la production.
 ## 2. Migrations
 
 ```bash
-# Supabase CLI, depuis la racine du dépôt
+# Supabase CLI, depuis la racine du dépôt — APRÈS autorisation explicite
+psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/ops/00_preflight_bib.sql   # conflits de noms → arrêt
 supabase link --project-ref <ref-staging>
-supabase db push            # applique supabase/migrations/*.sql
+supabase db push --dry-run  # diff à présenter avant toute application
+supabase db push            # applique supabase/migrations/*.sql (0001 → 0008)
 ```
+
+Projet existant contenant un ancien schéma (cas d'`akori`) : suivre
+`docs/SUPABASE_MIGRATION_PLAN.md` (inventaire, sauvegarde testée, préflight).
+Validation locale sans aucun projet distant : `PGURL=… bash supabase/tests/run.sh`.
 
 Vérifier ensuite dans le tableau de bord : tables, RLS activée partout,
 buckets `bib-media-drafts`, `bib-media-public`, `bib-consents`,
-`bib-sob-snapshots`. Les avertissements du linter Supabase sur les vues
+`bib-sob-snapshots`, `bib-sob-candidates` (privé). Les avertissements du linter Supabase sur les vues
 `media_public` et `testimonials_public` sont attendus (vues filtrantes
 volontaires).
 
@@ -133,17 +139,23 @@ Puis : `FEATURE_NEWSLETTER_AUTOSEND=true` en production.
 
 ## 10. State of BIB historisé
 
-1. `SOB_SUPABASE_SYNC=true` + secrets Supabase dans GitHub.
-2. Lancer manuellement « State of BIB — contrôle quotidien et historisation »
-   avec `force_build` pour enregistrer la version courante.
-3. Vérifier `dataset_versions` (une version `published`, `is_current = true`).
-   Les JSON embarqués régénérés ne sont jamais poussés sur `main` : le
-   workflow ouvre une pull request depuis `data/state-of-bib-<version>`, à
-   relire et fusionner par une personne (le jeton du workflow doit pouvoir
-   créer des PR : réglage « Allow GitHub Actions to create and approve pull
-   requests » de l'organisation/du dépôt).
-4. Côté site : `FEATURE_SOB_READ_FROM_SUPABASE=true`. En cas de problème, la
-   page revient automatiquement aux JSON embarqués.
+Gouvernance (migration 0007) : **préparation → revue → promotion → repli**.
+
+1. GitHub : variable `SOB_SUPABASE_SYNC=true` + secrets `SUPABASE_URL`,
+   `SUPABASE_SECRET_KEY` (projet BIB uniquement). Réglage « Allow GitHub
+   Actions to create and approve pull requests » requis pour ouvrir la PR.
+2. « State of BIB — contrôle quotidien et historisation » (`force_build` pour la
+   première fois) : construit et valide les JSON, enregistre une **candidate**
+   (statut `validated`, bucket privé `bib-sob-candidates`), ouvre la PR
+   `data/state-of-bib-<version>`. **Rien n'est publié à ce stade.**
+3. Relire puis fusionner la PR. Le workflow « State of BIB — promotion après
+   approbation » (`sob-promote.yml`) vérifie que les fichiers du commit fusionné
+   ont exactement les empreintes de la candidate, les copie dans
+   `bib-sob-snapshots` puis bascule la version courante. Sinon : refus, la
+   version précédente reste en ligne.
+4. Repli : lancer `sob-promote.yml` manuellement avec `rollback_version`.
+5. Côté site : `FEATURE_SOB_READ_FROM_SUPABASE=true`. La page lit un ensemble
+   complet et cohérent de la version courante, sinon les JSON embarqués.
 
 ## 11. DNS et domaines
 
@@ -164,3 +176,39 @@ Supabase Auth.
 - **Médias** : révoquer les droits d'un média dans `/admin/medias` le retire
   immédiatement du bucket public.
 - Les e-mails déjà délivrés par Brevo ne peuvent pas être rappelés.
+
+## 13. Matrice des variables
+
+Valeurs réelles : jamais dans le dépôt ni dans un rapport. « Repli » = valeur
+appliquée si la variable est absente.
+
+| Variable | Rôle | Environnements | Sensible | Obligatoire | Repli sûr | Fonctionnalité |
+|---|---|---|---|---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | URL canonique | tous | non | oui (prod) | `http://localhost:3000` | liens, redirections Auth, CSRF |
+| `NEXT_PUBLIC_SUPABASE_URL` | Projet Supabase (CSP dérivée au build) | tous | non | pour l'admin et les données | aucun accès Supabase | admin, événements, médias |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clé publique | tous | non | idem | idem | idem |
+| `SUPABASE_SECRET_KEY` | Clé serveur | staging, prod | **oui** | pour newsletter, veille, médias publics | fonctions serveur désactivées | publication médias, limiteur, newsletter |
+| `CRON_SECRET` | Authentifie les tâches | staging, prod | **oui** | pour les tâches | tâches refusées (401) | cron, rapport médias |
+| `NEWSLETTER_EMAIL_HASH_PEPPER` | Empreintes e-mail/IP | staging, prod | **oui** | pour l'inscription (≥ 32 car.) | inscription fermée (503) | newsletter |
+| `NEWSLETTER_CONSENT_VERSION` | Version du texte de consentement | tous | non | oui | `2026-11-v1` | preuve de consentement |
+| `NEWSLETTER_MAX_REGENERATIONS` | Régénérations du mardi | tous | non | non | 2 | cycle |
+| `BREVO_API_KEY` | API Brevo | staging, prod | **oui** | pour la newsletter | inscription/envoi fermés | newsletter, alertes |
+| `BREVO_API_URL` | Point d'accès Brevo | tous | non | non | API officielle | idem |
+| `BREVO_LIST_ID_FR/EN`, `BREVO_DOI_TEMPLATE_ID_FR/EN` | Listes et modèles | staging, prod | non | pour la newsletter | inscription fermée | idem |
+| `BREVO_SENDER_EMAIL/NAME` | Expéditeur | staging, prod | non | pour l'envoi | envoi impossible | envoi |
+| `AI_PROVIDER`, `AI_MODEL`, `AI_BASE_URL` | Fournisseur IA | staging, prod | non | si `FEATURE_AI` | IA désactivée | génération |
+| `AI_API_KEY` | Clé IA | staging, prod | **oui** | si `FEATURE_AI` | IA désactivée | génération |
+| `AI_MAX_CALLS_PER_RUN`, `AI_MAX_TOKENS_PER_RUN`, `AI_MAX_OUTPUT_TOKENS`, `AI_TIMEOUT_MS` | Garde-fous coût | tous | non | non | 4 / 60 000 / 4 000 / 60 000 ms | génération |
+| `OPS_ALERT_EMAIL_TO` | Destinataires d'alerte | staging, prod | données perso. | si alertes | pas d'alerte | incidents |
+| `FEATURE_NEWSLETTER_SUBSCRIBE` | Inscription | tous | non | non | `false` | formulaire |
+| `FEATURE_NEWSLETTER_AUTOSEND` | Envoi réel | prod (sur décision) | non | non | `false` | envoi |
+| `FEATURE_AI`, `FEATURE_NEWS_INGEST`, `FEATURE_OPS_ALERTS` | Activations | tous | non | non | `false` | IA, veille, alertes |
+| `FEATURE_SOB_READ_FROM_SUPABASE` | Lecture State of BIB en base | tous | non | non | `false` (JSON embarqués) | State of BIB |
+| `HOME_SHOW_UNVERIFIED_SECTIONS` | Contenus non sourcés | tous | non | non | masqués | accueil |
+| GitHub `BIB_SCHEDULES_ENABLED` | Tâches planifiées | dépôt | non | non | désactivées | cron |
+| GitHub `SOB_SUPABASE_SYNC` | Écritures State of BIB | dépôt | non | non | désactivées | pipeline |
+| GitHub `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Pipeline | dépôt (secrets) | **oui** | si sync | aucune écriture | pipeline |
+| GitHub `BIB_SITE_URL` (variable), `BIB_CRON_SECRET` (secret) | Déclencheurs | dépôt | `BIB_CRON_SECRET` oui | si planification | aucun appel | cron |
+
+Contrôle d'identité avant migration : la référence dans `NEXT_PUBLIC_SUPABASE_URL`
+(`zwfyuhgnbdrjhetkyanj` pour `akori`) doit être celle du projet visé.

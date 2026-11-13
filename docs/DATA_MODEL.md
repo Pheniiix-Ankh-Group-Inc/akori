@@ -109,7 +109,7 @@ transactionnelle, refuse une version non validée ou sans artefact.
 | `edition_checks` | Résultat de chaque contrôle (bloquant, réussi, détails) |
 | `send_runs` | `idempotency_key` unique (`semaine:langue`), `brevo_campaign_id`, statut |
 | `ops_incidents` | Type, gravité, message, `notified_at` |
-| `newsletter_consents` | `email_sha256` (avec poivre), langue, version du texte de consentement |
+| `newsletter_consents` | `email_sha256` (avec poivre), langue, version du texte de consentement, `status` de la **demande** (`pending` → `requested` / `request_failed`, migration 0008) ; la confirmation reste dans Brevo |
 | `sob_insights` | Brouillons IA ; lecture publique seulement si `status = published` |
 
 ## Sécurité (RLS)
@@ -131,10 +131,27 @@ transactionnelle, refuse une version non validée ou sans artefact.
 | `bib-media-drafts` | Non | 200 Mo | JPEG, PNG, WebP, AVIF, MP4, VTT | Éditeurs (politiques `storage.objects`) |
 | `bib-consents` | Non | 10 Mo | PDF, JPEG, PNG | Éditeurs |
 | `bib-media-public` | Oui (lecture) | 200 Mo | idem drafts | Écriture serveur uniquement |
-| `bib-sob-snapshots` | Oui (lecture) | 50 Mo | JSON | Écriture pipeline uniquement |
+| `bib-sob-snapshots` | Oui (lecture) | 50 Mo | JSON | Écriture pipeline uniquement, **après promotion** |
+| `bib-sob-candidates` | Non | 50 Mo | JSON | Pipeline uniquement (candidates en attente de revue, 0007) |
 
 Chemins : `uploads/AAAA/MM/<uuid>.<ext>` (brouillons), `published/<media_id>/…`
 (public), `media/<media_id>/<uuid>.<ext>` (preuves),
-`versions/<provider_version>/<fichier>.json` (snapshots).
+`versions/<provider_version>/<fichier>.json` (snapshots et candidates).
+Les chemins des brouillons et preuves sont imposés par les politiques Storage
+(migration 0006).
 Limites applicatives plus strictes à l'import : photos 15 Mo, vidéo 200 Mo,
 sous-titres 1 Mo.
+
+## Migrations correctives (0006 → 0008)
+
+Aucune table ajoutée : le modèle compte toujours **26 tables**.
+
+| Migration | Ajouts |
+|---|---|
+| `20261113000600_editorial_integrity` | `save_event`, `save_story`, `replace_story_media`, `transition_event`, `transition_story` (INVOKER, transaction unique, audit, verrou optimiste) ; `private.media_is_publishable`, `private.assert_editor` ; déclencheur interdisant la suppression d'un média publié ; `media_storage_report` (service, lecture seule) ; politiques Storage avec `WITH CHECK` et chemins |
+| `20261113000700_sob_governance` | `dataset_versions.approved_commit_sha`, `candidate_at` ; bucket privé `bib-sob-candidates` ; `promote_dataset_version` (empreintes vérifiées), `rollback_dataset_version` ; `publish_dataset_version` révoquée pour le service ; une seule préparation en cours |
+| `20261113000800_newsletter_integrity` | `newsletter_validate_pair` (atomique) ; éditions validées/envoyées immuables ; envois confirmés définitifs ; états de demande de consentement |
+
+Codes d'erreur applicatifs : `BIB01` conflit de modification, `BIB02`
+introuvable, `BIB03` média non diffusable, `BIB04` transition interdite,
+`BIB05` contenu incomplet, `BIB06` empreintes State of BIB différentes.

@@ -56,9 +56,13 @@ flowchart TB
 | Newsletter | `src/lib/newsletter/`, `src/lib/brevo.ts`, `src/app/api/newsletter/` | Inscription, cycle autonome, rendu, contrôles, envoi idempotent |
 | Veille | `src/lib/news/ingest.ts` | Flux RSS/Atom autorisés, thèmes, déduplication |
 | Moteur IA | `src/lib/ai/engine.ts` | Adaptateurs « anthropic » / « openai-compatible », budget, sortie JSON validée, traces `ai_runs` |
-| Exploitation | `src/lib/ops/incidents.ts`, `src/lib/security/` | Incidents + alertes e-mail, limitation de débit, CSRF, secret de planification |
-| Base | `supabase/migrations/` | Schéma, RLS, fonctions, buckets |
-| Automatisations | `.github/workflows/` | `ci.yml`, `refresh-data.yml`, `news-ingest.yml`, `newsletter.yml` |
+| Opérations éditoriales | `src/lib/editorial/rpc.ts` + RPC `save_*`, `replace_story_media`, `transition_*` | Écritures transactionnelles, verrou optimiste, erreurs traduites |
+| Médias (contrôles) | `src/lib/media/sniff.ts`, `inspect.ts`, `reconcile.ts` | Signature binaire réelle, rapport de réconciliation en lecture seule |
+| Contenus non sourcés | `src/lib/content/claims.ts` | Registre central de visibilité (masqués par défaut) |
+| Sécurité | `src/lib/security/headers.ts`, `rate-limit.ts`, `cron.ts`, `src/lib/dom/safe.ts`, `src/lib/net/` | CSP/en-têtes, limiteur partagé (échec fermé), CSRF, rendu DOM sûr, garde-fous SSRF |
+| Exploitation | `src/lib/ops/incidents.ts`, `src/lib/ops/log.ts` | Incidents + alertes e-mail ; journaux JSON corrélés et masqués |
+| Base | `supabase/migrations/` (0001 → 0008), `supabase/ops/`, `supabase/tests/` | Schéma, RLS, fonctions, buckets ; préflight et inventaire ; tests SQL |
+| Automatisations | `.github/workflows/` | `ci.yml`, `refresh-data.yml` (préparation), `sob-promote.yml` (promotion/repli), `news-ingest.yml`, `newsletter.yml` |
 
 ## Principaux flux
 
@@ -95,13 +99,38 @@ sequenceDiagram
     end
 ```
 
+**État des publications éditoriales.** Les écritures dépendantes passent par
+des fonctions PostgreSQL (`SECURITY INVOKER`, donc soumises à la RLS) : fiche,
+traductions et journal d'audit dans une même transaction ; verrou optimiste
+(`updated_at` lu à l'ouverture) ; transitions conditionnelles et idempotentes.
+Storage et PostgreSQL ne partageant pas de transaction, l'ordre est :
+validation → copie publique des médias → transaction en base ; en cas d'échec
+de la transaction, compensation (retrait des copies devenues inutiles) ; tout
+résidu est visible dans le rapport de réconciliation.
+
+```mermaid
+sequenceDiagram
+    participant A as Action admin
+    participant S as Storage
+    participant DB as PostgreSQL
+    A->>DB: lecture statut + droits (aucune écriture)
+    A->>S: copie publique des médias approuvés (idempotente)
+    A->>DB: transition_story / save_story (transaction, revérifie les droits)
+    alt échec
+        A->>S: retrait des copies non utilisées (compensation)
+    end
+```
+
 **State of BIB.** Chaque jour, `check_version.py` lit le manifeste de la source
-(sans téléchargement lourd). Si une version est nouvelle ou en échec, le build
-Python/DuckDB s'exécute, écrit dans un dossier temporaire, valide, puis
-remplace `public/data`. Si l'historisation est activée, `publish_supabase.py`
-téléverse des snapshots immuables, enregistre les observations et déplace
-atomiquement le pointeur « version courante ». Un échec laisse la version
-précédente en ligne.
+(sans téléchargement lourd, version validée). Si une version est nouvelle ou en
+échec (3 échecs maximum), le build Python/DuckDB valide le lot puis
+`publish_supabase.py stage` enregistre une **candidate** (bucket privé, statut
+`validated`) et la PR des JSON est ouverte. Après fusion, `sob-promote.yml`
+exécute `publish_supabase.py promote` : les empreintes SHA-256 du commit fusionné
+doivent être identiques à celles de la candidate ; les fichiers approuvés sont
+copiés dans le bucket public puis le pointeur « version courante » bascule en
+une transaction. Repli : `rollback_dataset_version`. Le site lit un ensemble
+complet de la version courante ou, à défaut, les JSON embarqués.
 
 ## Séparation des responsabilités
 

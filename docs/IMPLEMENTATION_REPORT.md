@@ -1,5 +1,13 @@
 # Rapport d'implémentation — architecture cible BIB
 
+> **Note (13 novembre 2026).** Ce rapport décrit l'implémentation initiale et
+> ses constats historiques ; il est conservé tel quel. Une passe de
+> remédiation a suivi (sécurité, transactions, gouvernance State of BIB,
+> newsletter, tests) : voir
+> [`docs/audits/BIB_REMEDIATION_REPORT.md`](audits/BIB_REMEDIATION_REPORT.md).
+> Les résultats de contrôle cités ci-dessous concernent l'état antérieur à
+> cette remédiation et ne valent pas pour elle.
+
 - **Date** : 12–13 novembre 2026
 - **Base** : `origin/main` = `b1c2a522bb7dc1bea63f97db8d2826ad98c902e2` (18 mai 2026)
 - **Branche** : `feature/bib-architecture-cible-complete`
