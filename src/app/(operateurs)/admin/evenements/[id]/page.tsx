@@ -79,6 +79,7 @@ export default async function EditEventPage({ params, searchParams }: Props) {
         mediaOptions={mediaOptions}
         values={{
           id: event.id,
+          updated_at: event.updated_at,
           slug: event.slug,
           time_zone: event.time_zone,
           starts_local: utcIsoToZonedLocal(event.starts_at, event.time_zone),

@@ -8,10 +8,11 @@ import { requireEditor } from "@/lib/auth/editor"
 import { createClient } from "@/lib/supabase/server"
 import { logAudit } from "@/lib/audit"
 import { CONSENT_LIMITS, MEDIA_LIMITS } from "@/lib/stories/types"
-import { CONSENT_BUCKET, DRAFT_BUCKET, forceRetractMedia } from "@/lib/media/publication"
+import { CONSENT_BUCKET, DRAFT_BUCKET, forceRetractMedia, publishMedia } from "@/lib/media/publication"
 import { MEDIA_TAG } from "@/lib/events/queries"
 import { STORIES_TAG } from "@/lib/stories/queries"
 import { CONTENT_LOCALES } from "@/lib/content/locales"
+import { sniffStoredObject } from "@/lib/media/inspect"
 
 const EXT: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -72,7 +73,9 @@ export async function registerUploadedMedia(input: z.infer<typeof registerSchema
   if (infoError || !info) return { ok: false, error: "Fichier introuvable après l'envoi." }
   const mime = info.contentType ?? ""
   const limits = MEDIA_LIMITS[v.kind]
-  if (!limits.mimes.includes(mime) || !info.size || info.size > limits.maxBytes) {
+  // Type déclaré, taille, puis signature réelle du contenu (premiers octets).
+  const sniffed = limits.mimes.includes(mime) ? await sniffStoredObject(supabase, DRAFT_BUCKET, v.path) : null
+  if (!limits.mimes.includes(mime) || !info.size || info.size > limits.maxBytes || sniffed !== mime) {
     await supabase.storage.from(DRAFT_BUCKET).remove([v.path])
     return { ok: false, error: "Fichier refusé (type ou taille non conformes)." }
   }
@@ -156,6 +159,18 @@ export async function saveMediaDetails(formData: FormData) {
     .eq("id", v.id)
   if (error) go(`error=${encodeURIComponent("Enregistrement impossible.")}`)
   await logAudit(supabase, editor.id, `media.rights_${v.rights_status}`, "media", v.id)
+  // Média déjà diffusé : ses nouveaux compagnons (affiche, sous-titres) suivent.
+  if (v.rights_status === "approved") {
+    const { data: cur } = await supabase.from("media_assets").select("public_path").eq("id", v.id).maybeSingle()
+    if ((cur as { public_path: string | null } | null)?.public_path) {
+      try {
+        const { refused } = await publishMedia([v.id])
+        if (refused.length) go(`error=${encodeURIComponent("Enregistré, mais l'affiche ou les sous-titres associés ne sont pas diffusables.")}`)
+      } catch (e) {
+        go(`error=${encodeURIComponent((e as Error).message)}`)
+      }
+    }
+  }
   updateTag(MEDIA_TAG)
   updateTag(STORIES_TAG)
   go("saved=1")
@@ -183,6 +198,11 @@ export async function attachConsentProof(input: { mediaId: string; path: string 
   const supabase = await createClient()
   const { data: exists } = await supabase.storage.from(CONSENT_BUCKET).exists(input.path)
   if (!exists) return { ok: false, error: "Fichier de preuve introuvable." }
+  const sniffed = await sniffStoredObject(supabase, CONSENT_BUCKET, input.path)
+  if (!sniffed || !CONSENT_LIMITS.mimes.includes(sniffed)) {
+    await supabase.storage.from(CONSENT_BUCKET).remove([input.path])
+    return { ok: false, error: "Preuve refusée : le contenu du fichier n'est pas un PDF, JPEG ou PNG." }
+  }
   const { error } = await supabase.from("media_assets").update({ consent_proof_path: input.path }).eq("id", input.mediaId)
   if (error) return { ok: false, error: "Enregistrement de la preuve impossible." }
   await logAudit(supabase, editor.id, "media.consent_attached", "media", input.mediaId)
@@ -204,16 +224,28 @@ export async function deleteMediaAction(formData: FormData) {
     redirect(`/admin/medias/${id}?error=${encodeURIComponent("Ce média est encore utilisé par un contenu.")}`)
   }
   const { data } = await supabase.from("media_assets").select("draft_path, consent_proof_path").eq("id", id).single()
+  // 1. Copie publique retirée en premier (aucune exposition résiduelle).
   try {
     await forceRetractMedia(id)
   } catch (e) {
     redirect(`/admin/medias/${id}?error=${encodeURIComponent((e as Error).message)}`)
   }
-  const row = data as { draft_path: string; consent_proof_path: string | null } | null
-  if (row?.draft_path) await supabase.storage.from(DRAFT_BUCKET).remove([row.draft_path])
-  if (row?.consent_proof_path) await supabase.storage.from(CONSENT_BUCKET).remove([row.consent_proof_path])
+  // 2. Fiche supprimée (la base refuse si un contenu publié l'utilise encore).
   const { error } = await supabase.from("media_assets").delete().eq("id", id)
   if (error) redirect(`/admin/medias/${id}?error=${encodeURIComponent("Suppression impossible.")}`)
+  // 3. Fichiers privés supprimés ensuite ; un échec laisse un objet orphelin
+  //    signalé par la réconciliation (jamais une fiche sans fichier).
+  const row = data as { draft_path: string; consent_proof_path: string | null } | null
+  const leftovers: string[] = []
+  if (row?.draft_path) {
+    const { error: e1 } = await supabase.storage.from(DRAFT_BUCKET).remove([row.draft_path])
+    if (e1) leftovers.push("draft")
+  }
+  if (row?.consent_proof_path) {
+    const { error: e2 } = await supabase.storage.from(CONSENT_BUCKET).remove([row.consent_proof_path])
+    if (e2) leftovers.push("consent")
+  }
+  if (leftovers.length) console.error("[media] fichiers privés non supprimés — voir la réconciliation", id, leftovers.join(","))
   await logAudit(supabase, editor.id, "media.delete", "media", id)
   updateTag(MEDIA_TAG)
   redirect("/admin/medias?deleted=1")

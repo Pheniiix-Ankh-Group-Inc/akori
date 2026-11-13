@@ -72,6 +72,7 @@ export default async function EditStoryPage({ params, searchParams }: { params: 
         events={events}
         values={{
           id: story.id,
+          updated_at: story.updated_at,
           slug: story.slug,
           occurred_on: story.occurred_on ?? "",
           event_id: story.event_id ?? "",

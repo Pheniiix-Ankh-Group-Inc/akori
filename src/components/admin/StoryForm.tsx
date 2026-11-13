@@ -6,6 +6,8 @@ import type { MediaOption } from "./EventForm"
 
 export interface StoryFormValues {
   id?: string
+  /** Horodatage lu à l'ouverture : contrôle de modification concurrente. */
+  updated_at?: string
   slug: string
   occurred_on: string
   event_id: string
@@ -35,6 +37,7 @@ export function StoryForm({
   return (
     <form action={action} className="adm-form">
       {values.id && <input type="hidden" name="id" value={values.id} />}
+      {values.updated_at && <input type="hidden" name="expected_updated_at" value={values.updated_at} />}
       {state.error && (
         <div className="adm-notice adm-notice-error" role="alert">
           <p style={{ margin: 0 }}>{state.error}</p>

@@ -5,6 +5,8 @@ import { saveEvent, type FormState } from "@/app/(operateurs)/admin/evenements/a
 
 export interface EventFormValues {
   id?: string
+  /** Horodatage lu à l'ouverture : contrôle de modification concurrente. */
+  updated_at?: string
   slug: string
   time_zone: string
   starts_local: string
@@ -37,6 +39,7 @@ export function EventForm({ values, mediaOptions }: { values: EventFormValues; m
   return (
     <form action={action} className="adm-form">
       {values.id && <input type="hidden" name="id" value={values.id} />}
+      {values.updated_at && <input type="hidden" name="expected_updated_at" value={values.updated_at} />}
 
       {state.error && (
         <div className="adm-notice adm-notice-error" role="alert">
