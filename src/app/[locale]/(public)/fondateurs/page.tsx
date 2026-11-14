@@ -50,16 +50,23 @@ export default async function AboutPage({ params }: Props) {
           <h2 id="about-founders" className="ed-h2" style={{ marginBottom: "2rem" }}>{t("foundersTitle")}</h2>
           <div className="ed-grid">
             {founders.map((f) => (
-              <Link key={f.slug} href={`/fondateurs/${f.slug}`} className="ed-card ed-founder">
+              <article key={f.slug} className="ed-card ed-founder">
                 <div className="ed-portrait ed-portrait-card">
                   <Image src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 220px" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
                 </div>
                 <div className="ed-card-body">
-                  <span className="ed-h3">{f.name}</span>
+                  <h3 className="ed-h3">
+                    <Link href={`/fondateurs/${f.slug}`}>{f.name}</Link>
+                  </h3>
                   <span className="text-sm">{f.role}</span>
-                  <span className="ed-link" style={{ marginTop: "auto" }}>{t("readProfile")} →</span>
+                  <div className="ed-row" style={{ gap: "0.5rem 1.25rem", marginTop: "auto" }}>
+                    <Link href={`/fondateurs/${f.slug}`} className="ed-link">{t("readProfile")} →</Link>
+                    <a href={f.linkedin} target="_blank" rel="noopener noreferrer" className="ed-link" aria-label={t("linkedinOf", { name: f.name })}>
+                      {t("linkedin")} ↗
+                    </a>
+                  </div>
                 </div>
-              </Link>
+              </article>
             ))}
           </div>
         </div>

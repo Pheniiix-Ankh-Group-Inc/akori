@@ -34,6 +34,11 @@ instantané State of BIB sont affichés.
   indicateur principal, analyse publiée, cinq mouvements ; carte et
   graphiques recolorés (ivoire → or, encre).
 - Administration et connexion : même charte, rubrique courante signalée.
+- Pages `about`, `mission`, `membership`, `resources`, `press`, `contact` :
+  gabarit « page en préparation » (titre, chapeau, mention, liens utiles),
+  exclues de l'indexation (`noindex`) jusqu'à la publication de leur contenu ;
+  liées depuis la colonne « Plus » du pied de page.
+- Fondateurs : lien LinkedIn sur les cartes À propos et sur chaque profil.
 - Pied de page limité aux pages existantes.
 
 #### Removed
@@ -43,8 +48,6 @@ instantané State of BIB sont affichés.
   `HomeModules`. Le registre `src/lib/content/claims.ts` reste en place, mais
   ces sections ne sont plus rendues : `HOME_SHOW_UNVERIFIED_SECTIONS` n'a donc
   plus d'effet visible.
-- Pages vides `about`, `mission`, `membership`, `resources`, `press`,
-  `contact` : elles redirigent vers À propos.
 - Bandeau défilant et colophon de State of BIB (numéro de bloc, textes
   décoratifs non sourcés).
 

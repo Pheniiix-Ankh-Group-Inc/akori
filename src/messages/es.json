@@ -1116,7 +1116,9 @@
       "ctaEvents": "Ver los eventos",
       "ctaNewsletter": "Suscribirse al boletín",
       "founder": "Fundador·a",
-      "back": "Acerca de"
+      "back": "Acerca de",
+      "linkedin": "LinkedIn",
+      "linkedinOf": "Perfil de LinkedIn de {name}"
     },
     "events": {
       "title": "Los encuentros BIB",
@@ -1151,6 +1153,38 @@
       "updated": "Se recalcula cuando Electric Capital publica una nueva instantánea; si falla, se mantiene la última versión válida.",
       "devsIndex": "{devs} devs · índice {index}",
       "commitsTop": "Top 10 · commits acumulados"
+    },
+    "pages": {
+      "draft": "Página en preparación",
+      "note": "El contenido de esta página se está redactando y se publicará próximamente.",
+      "meanwhile": "Mientras tanto",
+      "more": "Más",
+      "items": {
+        "about": {
+          "title": "Acerca de Black in Blockchain",
+          "lede": "Quiénes somos, de dónde venimos y qué nos une."
+        },
+        "mission": {
+          "title": "Nuestra misión",
+          "lede": "Lo que Black in Blockchain busca lograr, y cómo."
+        },
+        "membership": {
+          "title": "Unirse a BIB",
+          "lede": "Las formas de participar en la comunidad Black in Blockchain."
+        },
+        "resources": {
+          "title": "Recursos",
+          "lede": "Guías, lecturas y herramientas seleccionadas por la comunidad."
+        },
+        "press": {
+          "title": "Prensa",
+          "lede": "Comunicados, kit de prensa y contactos para periodistas."
+        },
+        "contact": {
+          "title": "Contacto",
+          "lede": "Escribir al equipo de Black in Blockchain."
+        }
+      }
     }
   }
 }

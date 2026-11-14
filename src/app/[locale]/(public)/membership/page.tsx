@@ -1,11 +1,15 @@
-import { setRequestLocale } from "next-intl/server"
-import { redirect } from "@/i18n/navigation"
+import type { Metadata } from "next"
+import { PlaceholderPage, placeholderMetadata } from "@/components/pages/PlaceholderPage"
 
 type Props = { params: Promise<{ locale: string }> }
 
-/** Page sans contenu validé : redirigée vers « À propos ». */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
+  return placeholderMetadata(locale, "membership")
+}
+
+/** Page en préparation : contenu à fournir. */
 export default async function Page({ params }: Props) {
   const { locale } = await params
-  setRequestLocale(locale)
-  redirect({ href: "/fondateurs", locale })
+  return <PlaceholderPage locale={locale} page="membership" />
 }

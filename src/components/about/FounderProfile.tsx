@@ -5,12 +5,13 @@ import { Link } from "@/i18n/navigation"
 const BIO_KEYS = ["p1", "p2", "p3", "p4", "p5", "p6"] as const
 
 export const FOUNDERS = [
-  { slug: "fadjiah", ns: "fadjiah", image: "/images/fadjiah_collin_mazile.jpg" },
-  { slug: "brice", ns: "brice", image: "/images/brice_mimifir.jpg" },
+  { slug: "fadjiah", ns: "fadjiah", image: "/images/fadjiah_collin_mazile.jpg", linkedin: "https://www.linkedin.com/in/fadjiahcollin" },
+  { slug: "brice", ns: "brice", image: "/images/brice_mimifir.jpg", linkedin: "https://www.linkedin.com/in/brice-mimifir" },
 ] as const
 
 /** Profil d'un fondateur : photo, nom, rôle et biographie (textes existants). */
-export async function FounderProfile({ locale, ns, image }: { locale: string; ns: "brice" | "fadjiah"; image: string }) {
+export async function FounderProfile({ locale, ns }: { locale: string; ns: "brice" | "fadjiah" }) {
+  const { image, linkedin } = FOUNDERS.find((f) => f.ns === ns)!
   const t = await getTranslations({ locale, namespace: ns })
   const s = await getTranslations({ locale, namespace: "Site.about" })
   const paragraphs = BIO_KEYS.map((k) => t(`bio.${k}`)).filter((p) => p.trim() !== "")
@@ -27,6 +28,9 @@ export async function FounderProfile({ locale, ns, image }: { locale: string; ns
             <p className="ed-eyebrow">{s("founder")}</p>
             <h1 className="ed-h1">{t("name")}</h1>
             <p className="ed-lede" style={{ fontSize: "1.15rem" }}>{t("role")}</p>
+            <a href={linkedin} target="_blank" rel="noopener noreferrer" className="ed-btn ed-btn-line" style={{ alignSelf: "flex-start" }} aria-label={s("linkedinOf", { name: t("name") })}>
+              {s("linkedin")} ↗
+            </a>
             <div className="ed-prose" style={{ borderTop: "1px solid var(--border)", paddingTop: "2rem", marginTop: "0.5rem" }}>
               {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
             </div>
