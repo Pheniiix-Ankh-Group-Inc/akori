@@ -121,3 +121,10 @@ drop trigger if exists send_runs_guard on public.send_runs;
 create trigger send_runs_guard
   before update on public.send_runs
   for each row execute function private.guard_send_run();
+
+-- ---------------------------------------------------------------------------
+-- IA : usage « healthcheck » (test de connexion manuel, /api/ops/ai-status)
+-- ---------------------------------------------------------------------------
+alter table public.ai_runs drop constraint if exists ai_runs_purpose_check;
+alter table public.ai_runs add constraint ai_runs_purpose_check
+  check (purpose in ('newsletter_draft', 'newsletter_regen', 'sob_insight', 'healthcheck'));

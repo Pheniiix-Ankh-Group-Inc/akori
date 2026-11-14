@@ -98,10 +98,26 @@ chantier.
 ## 7. Veille et moteur IA
 
 1. Choisir et autoriser des sources (voir `docs/EDITORIAL_WORKFLOWS.md`).
-2. Choisir un fournisseur IA, fixer budget et plafonds (`AI_MAX_CALLS_PER_RUN`,
-   `AI_MAX_OUTPUT_TOKENS`), puis `AI_PROVIDER`, `AI_MODEL`, `AI_API_KEY`
-   (`AI_BASE_URL` pour un fournisseur compatible OpenAI).
-3. `FEATURE_NEWS_INGEST=true`, `FEATURE_AI=true`.
+2. Moteur IA — tout est en place ; il suffit d'ajouter la clé :
+
+   | Fournisseur | Variables minimales |
+   |---|---|
+   | Anthropic | `AI_PROVIDER=anthropic`, `AI_API_KEY` (modèle par défaut `claude-sonnet-5-5`, modifiable par `AI_MODEL`) |
+   | OpenAI | `AI_PROVIDER=openai`, `AI_API_KEY`, `AI_MODEL` |
+   | Mistral | `AI_PROVIDER=mistral`, `AI_API_KEY`, `AI_MODEL` |
+   | Autre (compatible OpenAI) | `AI_PROVIDER=openai-compatible`, `AI_API_KEY`, `AI_MODEL`, `AI_BASE_URL` (https) |
+   | Simulation (staging, recette) | `AI_PROVIDER=mock`, aucune clé — refusé en production |
+
+   Puis `FEATURE_AI=true`. Garde-fous de coût : `AI_MAX_CALLS_PER_RUN`,
+   `AI_MAX_TOKENS_PER_RUN`, `AI_MAX_OUTPUT_TOKENS`, `AI_TIMEOUT_MS`.
+3. Vérifier sans appel : `curl -H "Authorization: Bearer $CRON_SECRET" https://<site>/api/ops/ai-status`
+   (fournisseur, modèle, présence de la clé, problèmes — jamais la clé).
+   Tester la clé (un seul appel de quelques jetons) : même URL en `POST`.
+4. Ce que l'IA produit : brouillons de newsletter FR/EN (lundi, régénération
+   bornée le mardi) et brouillons d'insights State of BIB (`/admin/insights`).
+   Rien n'est publié ni envoyé sans les contrôles hors IA et, pour les
+   insights, sans validation d'un administrateur.
+5. `FEATURE_NEWS_INGEST=true` pour la veille.
 
 ## 8. Planification (GitHub Actions)
 

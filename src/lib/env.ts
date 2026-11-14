@@ -1,4 +1,5 @@
 import "server-only"
+import { resolveAiConfig } from "@/lib/ai/providers"
 
 /**
  * Configuration serveur centralisée.
@@ -39,7 +40,7 @@ export const env = {
   },
 
   ai: {
-    provider: str("AI_PROVIDER"), // "anthropic" | "openai-compatible" | undefined
+    provider: str("AI_PROVIDER"), // anthropic | openai | mistral | openai-compatible | mock
     model: str("AI_MODEL"),
     apiKey: str("AI_API_KEY"),
     baseUrl: str("AI_BASE_URL"),
@@ -84,5 +85,15 @@ export const isSupabaseAdminConfigured = (): boolean =>
 export const isBrevoConfigured = (): boolean =>
   Boolean(env.brevo.apiKey && env.brevo.senderEmail && env.brevo.listIdFr && env.brevo.listIdEn)
 
-export const isAiConfigured = (): boolean =>
-  Boolean(env.flags.ai && env.ai.provider && env.ai.model && env.ai.apiKey)
+/** Configuration IA résolue (préréglages fournisseur, sans valeur secrète). */
+export const aiConfig = () =>
+  resolveAiConfig({
+    enabled: env.flags.ai,
+    provider: env.ai.provider,
+    model: env.ai.model,
+    apiKey: env.ai.apiKey,
+    baseUrl: env.ai.baseUrl,
+    deployment: process.env.VERCEL_ENV ?? null,
+  })
+
+export const isAiConfigured = (): boolean => aiConfig().ready

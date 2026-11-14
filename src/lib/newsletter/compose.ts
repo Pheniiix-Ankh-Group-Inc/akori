@@ -75,5 +75,47 @@ export async function draftEdition(inputs: EditionInputs, budget: AiBudget, feed
     user,
     schema: draftSchema,
     budget,
+    mock: () => mockDraft(inputs),
   })
+}
+
+/**
+ * Brouillon SIMULÉ (fournisseur « mock ») : construit uniquement à partir des
+ * éléments fournis, sans aucun chiffre libre, pour tester le cycle complet
+ * (contrôles, validation, rendu) sans clé IA. Sujet préfixé « [Simulation] ».
+ * Jamais disponible en production (voir src/lib/ai/providers.ts).
+ */
+export function mockDraft(inputs: EditionInputs): EditionDraft {
+  const facts = inputs.facts.slice(0, 2)
+  const news = inputs.news.slice(0, 3)
+  const events = inputs.events.slice(0, 3)
+  const stories = inputs.stories.slice(0, 2)
+  const insights = (locale: "fr" | "en") =>
+    facts.length
+      ? facts
+          .map((f) => (locale === "fr" ? `Le suivi des ${f.label.fr} indique {{fact:${f.key}}} selon la dernière version des données.` : `The tracking of ${f.label.en} shows {{fact:${f.key}}} in the latest data release.`))
+          .join(" ")
+      : ""
+  const draft = (locale: "fr" | "en") => ({
+    subject: locale === "fr" ? "[Simulation] La newsletter BIB de la semaine" : "[Simulation] The BIB newsletter of the week",
+    preheader: locale === "fr" ? "Édition simulée pour la recette et les tests." : "Simulated edition for testing and review.",
+    intro:
+      locale === "fr"
+        ? "Cette édition est une simulation : elle reprend les éléments publiés et les données de la semaine, sans rédaction par une IA."
+        : "This edition is a simulation: it lists the published items and the data of the week, without any AI writing.",
+    blockchain_insights: { text: insights(locale) },
+    blockchain_news: news.map((n) => ({
+      news_id: n.id,
+      blurb: locale === "fr" ? `À lire : un article de la source ${n.sourceName} sélectionné pour la veille de la semaine.` : `Worth reading: an article from ${n.sourceName} selected for the weekly watch.`,
+    })),
+    bib_events: events.map((e) => ({
+      event_id: e.id,
+      blurb: locale === "fr" ? "Un prochain événement de la communauté et le lien pour s'inscrire." : "An upcoming community event and the link to register.",
+    })),
+    bib_highlights: stories.map((st) => ({
+      story_id: st.id,
+      blurb: locale === "fr" ? "Retour sur un temps fort de la communauté et des participants." : "A look back at a highlight of the community and the participants.",
+    })),
+  })
+  return { fr: draft("fr"), en: draft("en") }
 }

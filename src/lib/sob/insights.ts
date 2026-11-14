@@ -69,7 +69,29 @@ Rules: write in ${locale === "fr" ? "French" : locale === "es" ? "Spanish" : "En
     directions: Object.fromEntries(Object.entries(comparison).map(([k, v]) => [k, v.previous === null ? "no_previous" : v.current > v.previous ? "up" : v.current < v.previous ? "down" : "flat"])),
   })
 
-  const { value, runId } = await generateStructured({ purpose: "sob_insight", system, user, schema: insightSchema, budget: newBudget() })
+  const keys = Object.keys(facts)
+  const { value, runId } = await generateStructured({
+    purpose: "sob_insight",
+    system,
+    user,
+    schema: insightSchema,
+    budget: newBudget(),
+    // Fournisseur « mock » (hors production) : texte neutre, marqueurs uniquement.
+    mock: () => ({
+      title: locale === "fr" ? "[Simulation] État des données" : locale === "es" ? "[Simulación] Estado de los datos" : "[Simulation] State of the data",
+      // Aucun libellé chiffré : seuls les marqueurs portent des valeurs.
+      body: keys
+        .slice(0, 2)
+        .map((k) => `${locale === "fr" ? "Indicateur suivi" : locale === "es" ? "Indicador seguido" : "Tracked indicator"} : {{fact:${k}}}.`)
+        .join(" "),
+      limitations:
+        locale === "fr"
+          ? "Texte simulé : activité open source uniquement, géographie déduite, Afrique et Caraïbes."
+          : locale === "es"
+            ? "Texto simulado: solo actividad de código abierto, geografía inferida, África y el Caribe."
+            : "Simulated text: open-source activity only, inferred geography, Africa and the Caribbean.",
+    }),
+  })
 
   // Contrôles hors LLM : aucun chiffre libre, marqueurs connus uniquement.
   const text = `${value.title} ${value.body} ${value.limitations}`

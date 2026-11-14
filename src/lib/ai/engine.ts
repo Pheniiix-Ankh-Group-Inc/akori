@@ -1,13 +1,14 @@
 import "server-only"
 import { z } from "zod"
-import { env, isAiConfigured, isSupabaseAdminConfigured } from "@/lib/env"
+import { aiConfig, env, isSupabaseAdminConfigured } from "@/lib/env"
 import { getAdminClient } from "@/lib/supabase/admin"
 
 /**
  * Moteur IA commun (newsletter + insights State of BIB).
  *
- * - Fournisseur NON choisi : configurable par AI_PROVIDER ("anthropic" ou
- *   "openai-compatible"), AI_MODEL, AI_API_KEY, AI_BASE_URL.
+ * - Fournisseur configurable (src/lib/ai/providers.ts) : anthropic, openai,
+ *   mistral, openai-compatible ou mock (simulation sans clé, hors production).
+ *   Ajouter AI_API_KEY (et AI_MODEL hors Anthropic) + FEATURE_AI=true suffit.
  * - « Fail closed » : sans FEATURE_AI=true et configuration complète, aucun
  *   appel n'est fait (AiDisabledError).
  * - Budget par exécution (AI_MAX_CALLS_PER_RUN), plafond de jetons de sortie,
@@ -21,7 +22,7 @@ export class AiDisabledError extends Error {}
 export class AiBudgetError extends Error {}
 export class AiOutputError extends Error {}
 
-export type AiPurpose = "newsletter_draft" | "newsletter_regen" | "sob_insight"
+export type AiPurpose = "newsletter_draft" | "newsletter_regen" | "sob_insight" | "healthcheck"
 
 export interface AiBudget {
   remainingCalls: number
@@ -63,9 +64,10 @@ async function withTimeout<T>(fn: (signal: AbortSignal) => Promise<T>): Promise<
   }
 }
 
-async function callAnthropic(system: string, user: string, signal: AbortSignal): Promise<RawResult> {
-  const base = env.ai.baseUrl ?? "https://api.anthropic.com"
-  const res = await fetch(`${base}/v1/messages`, {
+type Resolved = ReturnType<typeof aiConfig>
+
+async function callAnthropic(cfg: Resolved, system: string, user: string, signal: AbortSignal): Promise<RawResult> {
+  const res = await fetch(`${cfg.baseUrl}/v1/messages`, {
     method: "POST",
     signal,
     headers: {
@@ -74,7 +76,7 @@ async function callAnthropic(system: string, user: string, signal: AbortSignal):
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: env.ai.model,
+      model: cfg.model,
       max_tokens: env.ai.maxOutputTokens,
       system,
       messages: [{ role: "user", content: user }],
@@ -86,16 +88,16 @@ async function callAnthropic(system: string, user: string, signal: AbortSignal):
   return { text, truncated: body.stop_reason === "max_tokens", inputTokens: body.usage?.input_tokens, outputTokens: body.usage?.output_tokens }
 }
 
-async function callOpenAiCompatible(system: string, user: string, signal: AbortSignal): Promise<RawResult> {
-  if (!env.ai.baseUrl) throw new AiDisabledError("AI_BASE_URL requis pour un fournisseur compatible OpenAI.")
-  const res = await fetch(`${env.ai.baseUrl.replace(/\/+$/, "")}/chat/completions`, {
+/** OpenAI, Mistral et tout fournisseur compatible « chat completions ». */
+async function callOpenAiProtocol(cfg: Resolved, system: string, user: string, signal: AbortSignal): Promise<RawResult> {
+  const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
     method: "POST",
     signal,
     headers: { "content-type": "application/json", authorization: `Bearer ${env.ai.apiKey}` },
     body: JSON.stringify({
-      model: env.ai.model,
-      max_tokens: env.ai.maxOutputTokens,
-      response_format: { type: "json_object" },
+      model: cfg.model,
+      [cfg.maxTokensParam]: env.ai.maxOutputTokens,
+      ...(cfg.jsonMode ? { response_format: { type: "json_object" } } : {}),
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
@@ -135,8 +137,12 @@ export async function generateStructured<S extends z.ZodType>(opts: {
   user: string
   schema: S
   budget: AiBudget
+  /** Réponse simulée (fournisseur « mock » uniquement, jamais en production). */
+  mock?: () => unknown
 }): Promise<{ value: z.infer<S>; runId: string | null }> {
-  if (!isAiConfigured()) throw new AiDisabledError("Moteur IA désactivé ou non configuré.")
+  const cfg = aiConfig()
+  if (!cfg.ready) throw new AiDisabledError(`Moteur IA désactivé ou non configuré (${cfg.problems.join(", ")}).`)
+  if (cfg.protocol === "mock" && !opts.mock) throw new AiDisabledError("Fournisseur simulé non disponible pour cet usage.")
   if (opts.budget.remainingCalls <= 0) throw new AiBudgetError("Budget d'appels IA épuisé pour cette exécution.")
   opts.budget.remainingCalls -= 1
 
@@ -145,7 +151,7 @@ export async function generateStructured<S extends z.ZodType>(opts: {
   if (admin) {
     const { data } = await admin
       .from("ai_runs")
-      .insert({ purpose: opts.purpose, provider: env.ai.provider, model: env.ai.model, status: "running" })
+      .insert({ purpose: opts.purpose, provider: cfg.provider, model: cfg.model, status: "running" })
       .select("id")
       .single()
     runId = (data as { id: string } | null)?.id ?? null
@@ -161,14 +167,12 @@ export async function generateStructured<S extends z.ZodType>(opts: {
 
   let raw: RawResult | undefined
   try {
-    const call = () =>
-      withTimeout((signal) =>
-        env.ai.provider === "anthropic"
-          ? callAnthropic(opts.system, opts.user, signal)
-          : env.ai.provider === "openai-compatible"
-            ? callOpenAiCompatible(opts.system, opts.user, signal)
-            : Promise.reject(new AiDisabledError(`Fournisseur IA inconnu : ${env.ai.provider}`)),
-      )
+    const call = (): Promise<RawResult> =>
+      cfg.protocol === "mock"
+        ? Promise.resolve({ text: JSON.stringify(opts.mock!()), inputTokens: 0, outputTokens: 0 })
+        : withTimeout((signal) =>
+            cfg.protocol === "anthropic" ? callAnthropic(cfg, opts.system, opts.user, signal) : callOpenAiProtocol(cfg, opts.system, opts.user, signal),
+          )
     let result: RawResult
     try {
       result = await call()

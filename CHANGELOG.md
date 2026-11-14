@@ -49,7 +49,11 @@ Corrections ciblées sans refonte UI/UX ; détail et preuves :
 
 #### Added
 
-- Tests : Vitest (85 tests), unittest du pipeline, suites SQL/RLS sur base
+- IA prête à l'emploi : préréglages `anthropic` (modèle par défaut), `openai`,
+  `mistral`, `openai-compatible`, et `mock` (simulation sans clé, interdite en
+  production) ; `/api/ops/ai-status` (diagnostic GET, test de clé POST) ;
+  usage `healthcheck` dans `ai_runs`.
+- Tests : Vitest (99 tests), unittest du pipeline, suites SQL/RLS sur base
   jetable ; CI étendue (job `sql`, en-têtes servis).
 - `supabase/ops/` : préflight de conflits de noms, inventaire en lecture seule,
   modèle de nettoyage bloqué.
