@@ -431,7 +431,6 @@ begin
   return old;
 end $$;
 
-drop trigger if exists media_assets_prevent_published_delete on public.media_assets;
 create trigger media_assets_prevent_published_delete
   before delete on public.media_assets
   for each row execute function private.prevent_published_media_delete();
@@ -483,15 +482,13 @@ grant execute on function public.media_storage_report() to service_role;
 -- Storage : WITH CHECK sur la mise à jour (empêche de déplacer un objet vers
 -- un autre bucket) et chemins attendus.
 -- ---------------------------------------------------------------------------
-drop policy if exists bib_drafts_editor_update on storage.objects;
-create policy bib_drafts_editor_update on storage.objects
-  for update to authenticated
+-- ALTER POLICY (et non DROP/CREATE) : la politique existante de 0003 est
+-- durcie en place, sans fenêtre où elle serait absente.
+alter policy bib_drafts_editor_update on storage.objects
   using (bucket_id in ('bib-media-drafts', 'bib-consents') and (select private.is_editor()))
   with check (bucket_id in ('bib-media-drafts', 'bib-consents') and (select private.is_editor()));
 
-drop policy if exists bib_drafts_editor_insert on storage.objects;
-create policy bib_drafts_editor_insert on storage.objects
-  for insert to authenticated
+alter policy bib_drafts_editor_insert on storage.objects
   with check (
     (select private.is_editor())
     and (

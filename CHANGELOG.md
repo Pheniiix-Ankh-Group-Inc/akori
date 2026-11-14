@@ -51,8 +51,7 @@ Corrections ciblées sans refonte UI/UX ; détail et preuves :
 
 - IA prête à l'emploi : préréglages `anthropic` (modèle par défaut), `openai`,
   `mistral`, `openai-compatible`, et `mock` (simulation sans clé, interdite en
-  production) ; `/api/ops/ai-status` (diagnostic GET, test de clé POST) ;
-  usage `healthcheck` dans `ai_runs`.
+  production) ; `/api/ops/ai-status` (diagnostic GET, test de clé POST, non journalisé).
 - Tests : Vitest (99 tests), unittest du pipeline, suites SQL/RLS sur base
   jetable ; CI étendue (job `sql`, en-têtes servis).
 - `supabase/ops/` : préflight de conflits de noms, inventaire en lecture seule,

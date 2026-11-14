@@ -27,7 +27,6 @@ alter table public.newsletter_consents
 create index if not exists newsletter_consents_recent_idx
   on public.newsletter_consents (email_sha256, created_at desc);
 
-drop trigger if exists newsletter_consents_set_updated_at on public.newsletter_consents;
 create trigger newsletter_consents_set_updated_at
   before update on public.newsletter_consents
   for each row execute function private.set_updated_at();
@@ -97,7 +96,6 @@ begin
   return new;
 end $$;
 
-drop trigger if exists newsletter_editions_immutable on public.newsletter_editions;
 create trigger newsletter_editions_immutable
   before update on public.newsletter_editions
   for each row execute function private.guard_edition_immutability();
@@ -117,14 +115,7 @@ begin
   return new;
 end $$;
 
-drop trigger if exists send_runs_guard on public.send_runs;
 create trigger send_runs_guard
   before update on public.send_runs
   for each row execute function private.guard_send_run();
 
--- ---------------------------------------------------------------------------
--- IA : usage « healthcheck » (test de connexion manuel, /api/ops/ai-status)
--- ---------------------------------------------------------------------------
-alter table public.ai_runs drop constraint if exists ai_runs_purpose_check;
-alter table public.ai_runs add constraint ai_runs_purpose_check
-  check (purpose in ('newsletter_draft', 'newsletter_regen', 'sob_insight', 'healthcheck'));

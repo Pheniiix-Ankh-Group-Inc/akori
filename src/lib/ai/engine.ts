@@ -146,7 +146,8 @@ export async function generateStructured<S extends z.ZodType>(opts: {
   if (opts.budget.remainingCalls <= 0) throw new AiBudgetError("Budget d'appels IA épuisé pour cette exécution.")
   opts.budget.remainingCalls -= 1
 
-  const admin = isSupabaseAdminConfigured() ? getAdminClient() : null
+  // Le test de connexion (healthcheck) n'est pas journalisé dans ai_runs.
+  const admin = isSupabaseAdminConfigured() && opts.purpose !== "healthcheck" ? getAdminClient() : null
   let runId: string | null = null
   if (admin) {
     const { data } = await admin
