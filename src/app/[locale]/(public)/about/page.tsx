@@ -1,30 +1,11 @@
-import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { setRequestLocale } from "next-intl/server"
+import { redirect } from "@/i18n/navigation"
 
-export default function TermsPage() {
-  const t = useTranslations("terms")
+type Props = { params: Promise<{ locale: string }> }
 
-  return (
-    <main>
-      <section className="section">
-        <div className="wrap-sm">
-
-          <div style={{ marginBottom: "4rem", paddingBottom: "2rem", borderBottom: "1px solid var(--border)" }}>
-            <Link href="/" className="label">
-              ← {t("header.back")}
-            </Link>
-
-            <h1 className="heading-md">
-              {t("header.title")}
-            </h1>
-
-            <p className="text-xs" style={{ marginTop: "1rem" }}>
-              {t("header.lastUpdated")}
-            </p>
-          </div>
-
-        </div>
-      </section>
-    </main>
-  )
+/** Page sans contenu validé : redirigée vers « À propos ». */
+export default async function Page({ params }: Props) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  redirect({ href: "/fondateurs", locale })
 }

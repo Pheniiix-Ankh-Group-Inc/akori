@@ -21,7 +21,7 @@ export default async function LoginPage({ searchParams }: Props) {
     <div className="auth-page">
       <div className="auth-card">
         <Link href="/" className="auth-logo">
-          <span className="logo">Black in <em>Blockchain</em></span>
+          <span className="logo">Black <em>in</em> Blockchain</span>
         </Link>
         <div className="auth-box">
           <h1 className="auth-title">Espace opérateurs</h1>

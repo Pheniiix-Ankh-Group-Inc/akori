@@ -34,8 +34,8 @@ export default async function StoryPage({ params }: Props) {
     const evTr = ev ? pickTranslation(ev.event_translations, locale) : null
     if (ev && evTr) {
       eventLink = (
-        <p className="text-sm">
-          {t("relatedEvent")} : <Link href={`/evenements/${ev.slug}`}>{evTr.value.title}</Link>
+        <p className="ed-muted">
+          {t("relatedEvent")} : <Link className="ed-link" href={`/evenements/${ev.slug}`}>{evTr.value.title}</Link>
         </p>
       )
     }
@@ -48,7 +48,7 @@ export default async function StoryPage({ params }: Props) {
       media={toPublicMediaViews(media, locale)}
       testimonials={testimonials}
       eventLink={eventLink}
-      backLink={<Link href="/en-action" className="label">← {t("back")}</Link>}
+      backLink={<Link href="/en-action" className="ed-link">← {t("back")}</Link>}
     />
   )
 }

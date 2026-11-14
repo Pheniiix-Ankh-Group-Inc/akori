@@ -85,7 +85,7 @@ export function SobMap({ map, labels }: Props) {
         const minCommits = d3.min(map, d => d.commits_lifetime) || 1
         const color = d3.scaleSequentialLog()
           .domain([Math.max(minCommits, 100), maxCommits])
-          .interpolator(d3.interpolateLab("#f2ece0", "#c7382c"))
+          .interpolator(d3.interpolateLab("#F2EDE4", "#5E4619"))
 
         svg.append("g").attr("class", "bg")
           .selectAll("path").data(otherFeats).join("path")
@@ -98,7 +98,7 @@ export function SobMap({ map, labels }: Props) {
           .attr("class", "country")
           .attr("fill", d => {
             const m = byA3.get(ISO_NUM_TO_A3[d.id])
-            return m && m.commits_lifetime > 0 ? color(m.commits_lifetime) : "rgba(11,15,28,0.08)"
+            return m && m.commits_lifetime > 0 ? color(m.commits_lifetime) : "#E4DFD6"
           })
           .on("mousemove", (ev: MouseEvent, d) => {
             const m = byA3.get(ISO_NUM_TO_A3[d.id])
@@ -109,9 +109,9 @@ export function SobMap({ map, labels }: Props) {
             // Valeurs de données insérées comme texte, jamais comme HTML.
             renderSafe(tooltipEl, [
               { tag: "b", children: [String(m.name ?? "")] },
-              `${fmt(m.commits_lifetime)} ${labels.tipCommits.toUpperCase()}`,
+              `${fmt(m.commits_lifetime)} ${labels.tipCommits}`,
               { tag: "br" },
-              `${fmt(m.devs_active_28d)} ${labels.tipActive.toUpperCase()}`,
+              `${fmt(m.devs_active_28d)} ${labels.tipActive}`,
             ])
           })
           .on("mouseleave", () => { tooltipEl.style.opacity = "0" })
@@ -149,8 +149,8 @@ export function SobMap({ map, labels }: Props) {
           <div>{labels.legendLabel}</div>
           <div className="sob-legend-scale" ref={legendRef} />
           <div className="sob-legend-ends">
-            <span>{labels.legendLow.toUpperCase()}</span>
-            <span>{labels.legendHigh.toUpperCase()}</span>
+            <span>{labels.legendLow}</span>
+            <span>{labels.legendHigh}</span>
           </div>
         </div>
       </aside>

@@ -9,6 +9,45 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Design — charte éditoriale (novembre 2026)
+
+Application de la maquette validée, sur toutes les pages publiques et
+l'administration. Aucune donnée ni affirmation nouvelle : seuls des textes
+existants, des contenus publiés dans Supabase et les chiffres du dernier
+instantané State of BIB sont affichés.
+
+#### Changed
+
+- Charte claire : ivoire `#FAF8F4`, encre `#141414`, or `#8A6A2F` ;
+  Fraunces (titres) et Inter (texte) via `next/font` ; contraste AA vérifié
+  (texte atténué 5,4:1, or 4,7:1 sur ivoire).
+- En-tête sticky avec menu mobile (bouton accessible, `aria-current`),
+  sélecteur FR/EN/ES qui conserve la page, bouton « S'abonner ».
+- Accueil : hero, prémisse, Explorer BIB, événements à venir, BIB en action
+  (si rétrospectives publiées), indicateurs State of BIB, newsletter.
+- À propos (`/fondateurs`) : prémisse et fondateurs ; profils restylés.
+- Événements : en cours, à venir, passés (avec lien de rétrospective) ;
+  fiche en deux colonnes avec encadré pratique et une seule pastille d'état.
+- BIB en action : rétrospective vedette, grille, témoignages ; fiche avec
+  vidéo, récit, galerie et témoignages.
+- State of BIB : faits de l'instantané (licence des données CC BY 4.0),
+  indicateur principal, analyse publiée, cinq mouvements ; carte et
+  graphiques recolorés (ivoire → or, encre).
+- Administration et connexion : même charte, rubrique courante signalée.
+- Pied de page limité aux pages existantes.
+
+#### Removed
+
+- Sections décoratives de l'ancien thème sombre (`src/components/bib/*`,
+  `bib.css`, curseur, parallaxe, défilements, filigrane) et le composant
+  `HomeModules`. Le registre `src/lib/content/claims.ts` reste en place, mais
+  ces sections ne sont plus rendues : `HOME_SHOW_UNVERIFIED_SECTIONS` n'a donc
+  plus d'effet visible.
+- Pages vides `about`, `mission`, `membership`, `resources`, `press`,
+  `contact` : elles redirigent vers À propos.
+- Bandeau défilant et colophon de State of BIB (numéro de bloc, textes
+  décoratifs non sourcés).
+
 ### Remédiation (audit de la branche, novembre 2026)
 
 Corrections ciblées sans refonte UI/UX ; détail et preuves :

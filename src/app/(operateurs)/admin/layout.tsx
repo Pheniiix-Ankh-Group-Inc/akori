@@ -2,6 +2,7 @@ import "./admin.css"
 import Link from "next/link"
 import { requireEditor } from "@/lib/auth/editor"
 import { signOut } from "../login/actions"
+import { AdminNav } from "./AdminNav"
 
 export const dynamic = "force-dynamic"
 
@@ -18,15 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="member-sidebar-logo">
           <Link href="/admin" className="logo">BIB <em>admin</em></Link>
         </div>
-        <nav className="member-sidebar-nav">
-          <Link href="/admin" className="member-nav-link">Tableau de bord</Link>
-          <Link href="/admin/evenements" className="member-nav-link">Événements</Link>
-          <Link href="/admin/en-action" className="member-nav-link">BIB en action</Link>
-          <Link href="/admin/medias" className="member-nav-link">Médias</Link>
-          <Link href="/admin/temoignages" className="member-nav-link">Témoignages</Link>
-          <Link href="/admin/insights" className="member-nav-link">Insights State of BIB</Link>
-          <Link href="/admin/newsletter" className="member-nav-link">Newsletter (suivi)</Link>
-        </nav>
+        <AdminNav />
         <div className="member-sidebar-footer">
           <p className="adm-muted" style={{ padding: "0 0.85rem 0.75rem" }}>
             {editor.email} · {editor.role === "admin" ? "administrateur" : "éditeur"}

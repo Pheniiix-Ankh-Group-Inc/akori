@@ -50,22 +50,24 @@ export function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: 520 }}>
-      <div className="auth-field">
-        <label className="auth-label" htmlFor="nl-email">{t("emailLabel")}</label>
-        <input id="nl-email" name="email" type="email" required autoComplete="email" className="auth-input" />
+    <form onSubmit={onSubmit} noValidate className="ed-form">
+      <div className="ed-field">
+        <label htmlFor="nl-email">{t("emailLabel")}</label>
+        <input id="nl-email" name="email" type="email" required autoComplete="email" placeholder="nom@exemple.com" className="ed-input" />
       </div>
       <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
-        <legend className="auth-label" style={{ marginBottom: "0.5rem" }}>{t("languageLabel")}</legend>
-        <label style={{ marginRight: "1.5rem" }}>
-          <input type="radio" name="locale" value="fr" defaultChecked={siteLocale !== "en"} /> {t("langFr")}
-        </label>
-        <label>
-          <input type="radio" name="locale" value="en" defaultChecked={siteLocale === "en"} /> {t("langEn")}
-        </label>
+        <legend className="ed-legend" style={{ marginBottom: "0.25rem" }}>{t("languageLabel")}</legend>
+        <div className="ed-row" style={{ gap: "1.5rem" }}>
+          <label className="ed-radio">
+            <input type="radio" name="locale" value="fr" defaultChecked={siteLocale !== "en"} /> {t("langFr")}
+          </label>
+          <label className="ed-radio">
+            <input type="radio" name="locale" value="en" defaultChecked={siteLocale === "en"} /> {t("langEn")}
+          </label>
+        </div>
       </fieldset>
-      <label className="text-sm" style={{ display: "flex", gap: "0.6rem", alignItems: "flex-start" }}>
-        <input type="checkbox" name="consent" required style={{ marginTop: "0.25rem" }} />
+      <label className="ed-check">
+        <input type="checkbox" name="consent" required />
         <span>{t("consentLabel")}</span>
       </label>
       {/* Champ piège : invisible pour les personnes, rempli par les robots. */}
@@ -73,16 +75,16 @@ export function NewsletterForm() {
         <label htmlFor="nl-website">Website</label>
         <input id="nl-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
-      <button type="submit" className="auth-social-btn" disabled={status === "sending"} style={{ alignSelf: "flex-start" }}>
+      <button type="submit" className="ed-btn ed-btn-dark" disabled={status === "sending"}>
         {status === "sending" ? t("submitting") : t("submit")}
       </button>
       {message[status] && (
-        <p role={status === "ok" || status === "disabled" ? "status" : "alert"} className="text-sm" style={{ margin: 0 }}>
+        <p role={status === "ok" || status === "disabled" ? "status" : "alert"} className={status === "ok" || status === "disabled" ? "ed-status-ok" : "ed-status-err"} style={{ margin: 0 }}>
           {message[status]}
         </p>
       )}
-      <p className="text-xs" style={{ margin: 0 }}>
-        {t("privacyNote")} <Link href="/privacy">→</Link>
+      <p className="ed-muted" style={{ margin: 0, fontSize: "0.8rem" }}>
+        {t("privacyNote")} <Link href="/privacy" className="ed-link" style={{ minHeight: 0, display: "inline" }}>→</Link>
       </p>
     </form>
   )

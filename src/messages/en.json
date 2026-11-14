@@ -1006,7 +1006,7 @@
   },
   "Newsletter": {
     "title": "The BIB newsletter",
-    "intro": "Four sections every week, in French or English, with a focus on Africa, the Caribbean and the diasporas.",
+    "intro": "Every Wednesday at 9 a.m. (Toronto time), four sections, in French or English, with a focus on Africa, the Caribbean and the diasporas.",
     "rubrics": {
       "blockchain_insights": {
         "title": "Blockchain Insights",
@@ -1048,5 +1048,109 @@
     "sobTitle": "State of BIB",
     "sobLink": "Open the report",
     "sobNote": "Data as of {date} · Africa and the Caribbean · {source} ({license})"
+  },
+  "Site": {
+    "nav": {
+      "about": "About",
+      "events": "Events",
+      "inAction": "BIB in action",
+      "stateOfBib": "State of BIB",
+      "subscribe": "Subscribe",
+      "language": "Language",
+      "main": "Main navigation",
+      "open": "Open menu",
+      "close": "Close menu",
+      "subscribeLong": "Subscribe to the newsletter"
+    },
+    "footer": {
+      "explore": "Explore",
+      "legal": "Legal",
+      "terms": "Terms of use",
+      "privacy": "Privacy",
+      "cookies": "Cookies",
+      "newsletter": "Newsletter",
+      "data": "State of BIB data: Electric Capital, CC BY 4.0 licence.",
+      "copyright": "© {year} Black in Blockchain"
+    },
+    "home": {
+      "eyebrow": "Blockchain community · Africa, the Caribbean and the diasporas",
+      "ctaEvents": "See events",
+      "ctaSob": "Explore State of BIB",
+      "premise": "The premise",
+      "exploreTitle": "Explore BIB",
+      "explore": {
+        "events": {
+          "title": "Events",
+          "desc": "Upcoming BIB gatherings. Registration is handled on Luma."
+        },
+        "inAction": {
+          "title": "BIB in action",
+          "desc": "Recaps, photos and testimonials from the community."
+        },
+        "sob": {
+          "title": "State of BIB",
+          "desc": "Blockchain developers in Africa and the Caribbean, in open data."
+        },
+        "newsletter": {
+          "title": "Newsletter",
+          "desc": "Four sections every Wednesday, in French or English."
+        }
+      },
+      "noEvents": "No upcoming event has been published yet.",
+      "sobScope": "These figures cover Africa and the Caribbean; they do not measure the diaspora.",
+      "kpi": {
+        "devs": "active developers over 28 days",
+        "ecosystems": "blockchain ecosystems",
+        "countries": "countries with at least one active developer",
+        "cities": "cities",
+        "commits": "lifetime commits"
+      }
+    },
+    "about": {
+      "eyebrow": "About",
+      "title": "A collective, a correspondence, a commons.",
+      "premiseTitle": "The premise",
+      "foundersTitle": "The founders",
+      "readProfile": "Read the profile",
+      "ctaTitle": "Join the next BIB gathering",
+      "ctaEvents": "See events",
+      "ctaNewsletter": "Subscribe to the newsletter",
+      "founder": "Founder",
+      "back": "About"
+    },
+    "events": {
+      "title": "BIB gatherings",
+      "ctaTitle": "Don't miss the next one",
+      "ctaText": "The BIB Events section of the newsletter announces every gathering.",
+      "noRetrospective": "No recap",
+      "until": "Until {time}",
+      "practical": "Practical information"
+    },
+    "inAction": {
+      "title": "The community, in pictures",
+      "ctaTitle": "Be part of the next gathering",
+      "ctaEvents": "See upcoming events",
+      "enlarge": "Enlarge photo {n}"
+    },
+    "sob": {
+      "eyebrow": "State of BIB · Vol. 01",
+      "titleStart": "The state of Black",
+      "titleIn": "in",
+      "titleEnd": "Blockchain",
+      "lede": "An audit of open-source developer activity across 54 African countries and 22 Caribbean countries and territories.",
+      "facts": {
+        "asOf": "Data as of",
+        "source": "Source",
+        "license": "Data licence",
+        "scope": "Scope",
+        "scopeVal": "{n} countries in Africa and the Caribbean",
+        "version": "Version"
+      },
+      "analysis": "Analysis",
+      "analysisNote": "AI-assisted writing, approved by an administrator before publication.",
+      "updated": "Recomputed when Electric Capital publishes a new snapshot; if processing fails, the last valid version stays online.",
+      "devsIndex": "{devs} devs · index {index}",
+      "commitsTop": "Top 10 · lifetime commits"
+    }
   }
 }

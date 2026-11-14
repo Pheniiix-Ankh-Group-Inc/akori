@@ -32,7 +32,7 @@ export default async function EventPage({ params }: Props) {
       locale={locale}
       cover={cover}
       coverUrl={publicMediaUrl(cover?.public_path)}
-      backLink={<Link href="/evenements" className="label">← {t("back")}</Link>}
+      backLink={<Link href="/evenements" className="ed-link">← {t("back")}</Link>}
     />
   )
 }

@@ -26,9 +26,11 @@ sur aucune base distante, aucune tâche planifiée n'est active, aucun e-mail
 n'est envoyé tant que les drapeaux et la configuration ne sont pas en place.
 Voir [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-Le design et la navigation existants sont conservés : les nouveaux écrans
-réutilisent les classes et composants déjà présents. Une refonte visuelle est
-différée (travaux UI/UX menés séparément).
+Le site applique la charte éditoriale validée (maquette Design « BIB ») :
+fond ivoire, encre, accent or, titres Fraunces et texte Inter, cibles
+tactiles de 44 px. Navigation : À propos, Événements, BIB en action,
+State of BIB, langues FR/EN/ES et abonnement. Les anciennes sections
+décoratives de l'accueil (`src/components/bib/*`, `bib.css`) ont été retirées.
 
 Les modules dépendant d'un service externe (Supabase BIB, Brevo, IA) sont
 **implémentés et testés localement, mais pas encore validés en conditions
@@ -40,7 +42,7 @@ réelles** : une recette sur un environnement de staging BIB isolé est requise
 | Couche | Technologie (version du dépôt) |
 | --- | --- |
 | Web | Next.js 16.4 (App Router), React 19.2, TypeScript 5 (strict) |
-| UI | Tailwind CSS 4 + CSS existants (`globals.css`, `bib.css`, `state-of-bib.css`) |
+| UI | Tailwind CSS 4 + CSS existants (`globals.css` (classes `ed-*`), `state-of-bib.css`, `admin.css`) |
 | Langues | next-intl 4 — `en` (défaut, sans préfixe), `fr`, `es` |
 | Base, auth, fichiers | Supabase (PostgreSQL, Auth, Storage) — projet BIB dédié |
 | Newsletter | Brevo (API serveur) |

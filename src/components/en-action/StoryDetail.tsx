@@ -36,72 +36,79 @@ export async function StoryDetail({
 
   return (
     <main>
-      <section className="section">
-        <div className="wrap-sm">
-          <div style={{ marginBottom: "2.5rem", paddingBottom: "2rem", borderBottom: "1px solid var(--border)" }}>
-            {backLink}
-            <h1 className="heading-md">{tr?.value.title ?? story.slug}</h1>
-            {story.occurred_on && (
-              <p className="text-sm">
-                {new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${story.occurred_on}T00:00:00Z`))}
-              </p>
-            )}
-            {eventLink}
-            {tr?.isFallback && (
-              <p className="text-xs" style={{ marginTop: "0.5rem" }}>{t("translationFallback", { language: LANG_NAMES[tr.shownLocale] ?? tr.shownLocale })}</p>
-            )}
-          </div>
-
-          {video ? (
-            <figure style={{ margin: "0 0 2.5rem" }}>
-              <video
-                controls
-                preload="none"
-                playsInline
-                crossOrigin="anonymous"
-                poster={video.posterUrl ?? cover?.url ?? undefined}
-                style={{ width: "100%", borderRadius: "var(--r)", background: "#000" }}
-                aria-label={video.alt || t("videoLabel")}
-              >
-                <source src={video.url} type="video/mp4" />
-                {video.subtitlesUrl && <track kind="subtitles" src={video.subtitlesUrl} srcLang={locale} label={locale.toUpperCase()} default />}
-              </video>
-              {video.credit && <figcaption className="text-xs">{t("credit")} : {video.credit}</figcaption>}
-            </figure>
-          ) : (
-            cover && (
-              // eslint-disable-next-line @next/next/no-img-element -- fichiers Supabase Storage
-              <img src={cover.url} alt={cover.alt} loading="lazy" style={{ width: "100%", height: "auto", borderRadius: "var(--r)", marginBottom: "2.5rem" }} />
-            )
+      <section className="ed-wrap" style={{ paddingTop: "4rem", paddingBottom: "3rem" }}>
+        {backLink && <div style={{ marginBottom: "2rem" }}>{backLink}</div>}
+        <div className="ed-stack" style={{ maxWidth: "52rem", gap: "1rem" }}>
+          {story.occurred_on && (
+            <p className="ed-eyebrow">
+              {new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${story.occurred_on}T00:00:00Z`))}
+            </p>
           )}
-
-          {tr?.value.summary && <p className="section-intro" style={{ marginBottom: "1.5rem" }}>{tr.value.summary}</p>}
-          {tr?.value.body && <div className="legal-content" style={{ whiteSpace: "pre-line", marginBottom: "3rem" }}>{tr.value.body}</div>}
-
-          {gallery.length > 0 && (
-            <section aria-labelledby="gallery-title" style={{ marginBottom: "3rem" }}>
-              <h2 id="gallery-title" className="heading-sm" style={{ marginBottom: "1.25rem" }}>{t("gallery")}</h2>
-              <Gallery items={gallery} closeLabel="×" />
-            </section>
-          )}
-
-          {testimonials.length > 0 && (
-            <section aria-labelledby="testimonials-title">
-              <h2 id="testimonials-title" className="heading-sm" style={{ marginBottom: "1.25rem" }}>{t("testimonials")}</h2>
-              <div style={{ display: "grid", gap: "1.25rem" }}>
-                {testimonials.map((q) => (
-                  <figure key={q.id} className="card" style={{ margin: 0, padding: "1.5rem" }}>
-                    <blockquote lang={q.locale} className="text-italic" style={{ margin: 0 }}>« {q.quote} »</blockquote>
-                    <figcaption className="text-sm" style={{ marginTop: "0.75rem" }}>
-                      {q.author_name}{q.author_role ? ` · ${q.author_role}` : ""}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            </section>
-          )}
+          <h1 className="ed-h1">{tr?.value.title ?? story.slug}</h1>
+          {tr?.value.summary && <p className="ed-lede">{tr.value.summary}</p>}
+          {eventLink}
+          {tr?.isFallback && <p className="ed-muted">{t("translationFallback", { language: LANG_NAMES[tr.shownLocale] ?? tr.shownLocale })}</p>}
         </div>
       </section>
+
+      <section className="ed-wrap" style={{ paddingBottom: "4rem" }}>
+        {video ? (
+          <figure className="ed-figure">
+            <video
+              className="ed-video"
+              controls
+              preload="none"
+              playsInline
+              crossOrigin="anonymous"
+              poster={video.posterUrl ?? cover?.url ?? undefined}
+              aria-label={video.alt || t("videoLabel")}
+            >
+              <source src={video.url} type="video/mp4" />
+              {video.subtitlesUrl && <track kind="subtitles" src={video.subtitlesUrl} srcLang={locale} label={locale.toUpperCase()} default />}
+            </video>
+            {video.credit && <figcaption>{t("credit")} : {video.credit}</figcaption>}
+          </figure>
+        ) : (
+          cover && (
+            <figure className="ed-figure">
+              {/* eslint-disable-next-line @next/next/no-img-element -- fichiers Supabase Storage */}
+              <img src={cover.url} alt={cover.alt} loading="lazy" />
+              {cover.credit && <figcaption>{t("credit")} : {cover.credit}</figcaption>}
+            </figure>
+          )
+        )}
+      </section>
+
+      {tr?.value.body && (
+        <section className="ed-wrap-narrow" style={{ paddingBottom: "5rem" }}>
+          <div className="ed-prose" style={{ whiteSpace: "pre-line" }}>{tr.value.body}</div>
+        </section>
+      )}
+
+      {gallery.length > 0 && (
+        <section className="ed-section ed-section-white" aria-labelledby="gallery-title">
+          <div className="ed-wrap">
+            <h2 id="gallery-title" className="ed-h2" style={{ marginBottom: "1.75rem" }}>{t("gallery")}</h2>
+            <Gallery items={gallery} closeLabel="×" />
+          </div>
+        </section>
+      )}
+
+      {testimonials.length > 0 && (
+        <section className="ed-section" aria-labelledby="testimonials-title">
+          <div className="ed-wrap">
+            <h2 id="testimonials-title" className="ed-h2" style={{ marginBottom: "1.75rem" }}>{t("testimonials")}</h2>
+            <div className="ed-grid">
+              {testimonials.map((q) => (
+                <figure key={q.id} className="ed-testimonial">
+                  <blockquote lang={q.locale}>« {q.quote} »</blockquote>
+                  <figcaption>{q.author_name}{q.author_role ? ` · ${q.author_role}` : ""}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   )
 }

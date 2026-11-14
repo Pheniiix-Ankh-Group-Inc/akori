@@ -1006,7 +1006,7 @@
   },
   "Newsletter": {
     "title": "La newsletter BIB",
-    "intro": "Chaque semaine, quatre rubriques, en français ou en anglais, avec une priorité à l'Afrique, aux Caraïbes et aux diasporas.",
+    "intro": "Chaque mercredi à 9 h (heure de Toronto), quatre rubriques, en français ou en anglais, avec une priorité à l'Afrique, aux Caraïbes et aux diasporas.",
     "rubrics": {
       "blockchain_insights": {
         "title": "Blockchain Insights",
@@ -1048,5 +1048,109 @@
     "sobTitle": "State of BIB",
     "sobLink": "Voir le rapport",
     "sobNote": "Données au {date} · Afrique et Caraïbes · {source} ({license})"
+  },
+  "Site": {
+    "nav": {
+      "about": "À propos",
+      "events": "Événements",
+      "inAction": "BIB en action",
+      "stateOfBib": "State of BIB",
+      "subscribe": "S'abonner",
+      "language": "Langue",
+      "main": "Navigation principale",
+      "open": "Ouvrir le menu",
+      "close": "Fermer le menu",
+      "subscribeLong": "S'abonner à la newsletter"
+    },
+    "footer": {
+      "explore": "Explorer",
+      "legal": "Légal",
+      "terms": "Conditions d'utilisation",
+      "privacy": "Confidentialité",
+      "cookies": "Cookies",
+      "newsletter": "Newsletter",
+      "data": "Données State of BIB : Electric Capital, licence CC BY 4.0.",
+      "copyright": "© {year} Black in Blockchain"
+    },
+    "home": {
+      "eyebrow": "Communauté blockchain · Afrique, Caraïbes et diasporas",
+      "ctaEvents": "Voir les événements",
+      "ctaSob": "Explorer State of BIB",
+      "premise": "La prémisse",
+      "exploreTitle": "Explorer BIB",
+      "explore": {
+        "events": {
+          "title": "Événements",
+          "desc": "Les rencontres BIB à venir. L'inscription se fait sur Luma."
+        },
+        "inAction": {
+          "title": "BIB en action",
+          "desc": "Rétrospectives, photos et témoignages de la communauté."
+        },
+        "sob": {
+          "title": "State of BIB",
+          "desc": "Les développeurs blockchain en Afrique et dans les Caraïbes, en données ouvertes."
+        },
+        "newsletter": {
+          "title": "Newsletter",
+          "desc": "Quatre rubriques chaque mercredi, en français ou en anglais."
+        }
+      },
+      "noEvents": "Aucun événement à venir n'est encore publié.",
+      "sobScope": "Ces chiffres couvrent l'Afrique et les Caraïbes ; ils ne mesurent pas la diaspora.",
+      "kpi": {
+        "devs": "développeurs actifs sur 28 jours",
+        "ecosystems": "écosystèmes blockchain",
+        "countries": "pays avec au moins un développeur actif",
+        "cities": "villes",
+        "commits": "commits cumulés"
+      }
+    },
+    "about": {
+      "eyebrow": "À propos",
+      "title": "Un collectif, une correspondance, un commun.",
+      "premiseTitle": "La prémisse",
+      "foundersTitle": "Les fondateurs",
+      "readProfile": "Lire le profil",
+      "ctaTitle": "Rejoindre la prochaine rencontre BIB",
+      "ctaEvents": "Voir les événements",
+      "ctaNewsletter": "S'abonner à la newsletter",
+      "founder": "Fondateur·rice",
+      "back": "À propos"
+    },
+    "events": {
+      "title": "Les rencontres BIB",
+      "ctaTitle": "Ne manquez pas le prochain",
+      "ctaText": "La rubrique BIB Events de la newsletter annonce chaque rencontre.",
+      "noRetrospective": "Pas de rétrospective",
+      "until": "Jusqu'à {time}",
+      "practical": "Informations pratiques"
+    },
+    "inAction": {
+      "title": "La communauté, en images",
+      "ctaTitle": "Vivre la prochaine rencontre",
+      "ctaEvents": "Voir les événements à venir",
+      "enlarge": "Agrandir la photo {n}"
+    },
+    "sob": {
+      "eyebrow": "State of BIB · Vol. 01",
+      "titleStart": "L'état de Black",
+      "titleIn": "in",
+      "titleEnd": "Blockchain",
+      "lede": "Un audit de l'activité des développeurs open source à travers 54 pays africains et 22 pays et territoires caribéens.",
+      "facts": {
+        "asOf": "Données au",
+        "source": "Source",
+        "license": "Licence des données",
+        "scope": "Périmètre",
+        "scopeVal": "{n} pays d'Afrique et des Caraïbes",
+        "version": "Version"
+      },
+      "analysis": "Analyse",
+      "analysisNote": "Rédaction assistée, validée par un administrateur avant publication.",
+      "updated": "Recalculé quand Electric Capital publie un nouvel instantané ; en cas d'échec, la dernière version valide reste affichée.",
+      "devsIndex": "{devs} devs · indice {index}",
+      "commitsTop": "Top 10 · commits cumulés"
+    }
   }
 }

@@ -1,9 +1,9 @@
 import "../globals.css"
 import type { Metadata } from "next"
-import { Inter, Source_Serif_4 } from "next/font/google"
+import { Inter, Fraunces } from "next/font/google"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
-const serif = Source_Serif_4({ subsets: ["latin"], variable: "--font-serif", display: "swap" })
+const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
+const serif = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap", axes: ["opsz"], style: ["normal", "italic"] })
 
 export const metadata: Metadata = {
   title: { template: "%s | BIB — opérateurs", default: "BIB — espace opérateurs" },
@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 
 /**
  * Espace opérateurs (connexion et administration), hors du routage de langue.
- * Réutilise les styles existants (globals.css : auth-*, member-*, dash-*).
+ * Même charte claire que le site public (globals.css : auth-*, member-*, dash-*).
  */
 export default function OperatorsLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body suppressHydrationWarning className={`${serif.variable} ${inter.variable}`}>
+      <body suppressHydrationWarning className={`${serif.variable} ${sans.variable}`}>
         {children}
       </body>
     </html>

@@ -43,9 +43,9 @@ export function SobCohort({ cohort, labels }: Props) {
 
     const keys = ["devs_0_1y", "devs_1_2y", "devs_2y_plus"] as const
     const palette: Record<(typeof keys)[number], { color: string; short: string; name: string }> = {
-      devs_0_1y:    { color: "#e8a836", short: labels.newcomersShort, name: labels.newcomersName },
-      devs_1_2y:    { color: "#c7382c", short: labels.apprenticedShort, name: labels.apprenticedName },
-      devs_2y_plus: { color: "#2d5cc9", short: labels.eldersShort, name: labels.eldersName },
+      devs_0_1y:    { color: "#D9C49A", short: labels.newcomersShort, name: labels.newcomersName },
+      devs_1_2y:    { color: "#8A6A2F", short: labels.apprenticedShort, name: labels.apprenticedName },
+      devs_2y_plus: { color: "#141414", short: labels.eldersShort, name: labels.eldersName },
     }
 
     const svg = d3.select(svgEl)
@@ -77,7 +77,7 @@ export function SobCohort({ cohort, labels }: Props) {
       .attr("class", "area")
       .attr("d", d => area(d) || "")
       .attr("fill", d => palette[d.key as keyof typeof palette].color)
-      .attr("fill-opacity", 0.85)
+      .attr("fill-opacity", 0.9)
 
     svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - margin.bottom})`)
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%b '%y") as (v: Date | d3.NumberValue) => string))

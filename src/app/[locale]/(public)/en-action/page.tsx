@@ -3,8 +3,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
 import { getPublishedStories } from "@/lib/stories/queries"
 import { toPublicMediaViews } from "@/lib/stories/media-views"
-import { pickTranslation } from "@/lib/content/locales"
-import { Gallery } from "@/components/en-action/Gallery"
+import { intlLocale, pickTranslation } from "@/lib/content/locales"
+import type { StoryRecord } from "@/lib/stories/types"
+import type { MediaView } from "@/components/en-action/types"
 
 export const revalidate = 300
 
@@ -16,79 +17,99 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") }
 }
 
+/** BIB en action : la rétrospective la plus récente en vedette, puis les autres. */
 export default async function InActionPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "InAction" })
+  const s = await getTranslations({ locale, namespace: "Site.inAction" })
   const { configured, stories, media, testimonials } = await getPublishedStories()
   const views = toPublicMediaViews(media, locale)
-  const gallery = stories
-    .flatMap((s) => [...s.story_media].sort((a, b) => a.position - b.position))
-    .map((sm) => views[sm.media_id])
-    .filter((m) => m && m.kind === "image")
-    .slice(0, 24)
-    .map((m) => ({ media: m, caption: m.alt }))
+  const dateFmt = new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "long", timeZone: "UTC" })
+  const [featured, ...rest] = stories
+
+  const info = (st: StoryRecord) => {
+    const tr = pickTranslation(st.story_translations, locale)
+    const cover: MediaView | undefined = st.cover_media_id ? views[st.cover_media_id] : undefined
+    const date = st.occurred_on ? dateFmt.format(new Date(`${st.occurred_on}T00:00:00Z`)) : null
+    return { tr, cover, date }
+  }
 
   return (
     <main>
-      <section className="section">
-        <div className="wrap-sm">
-          <div style={{ marginBottom: "3rem", paddingBottom: "2rem", borderBottom: "1px solid var(--border)" }}>
-            <Link href="/" className="label">← Black in Blockchain</Link>
-            <h1 className="heading-md">{t("title")}</h1>
-            <p className="section-intro" style={{ marginTop: "1rem" }}>{t("intro")}</p>
+      <section className="ed-wrap" style={{ paddingTop: "7rem", paddingBottom: "4rem" }}>
+        <div className="ed-stack" style={{ maxWidth: "52rem" }}>
+          <p className="ed-eyebrow">{t("eyebrow")}</p>
+          <h1 className="ed-h1">{s("title")}</h1>
+          <p className="ed-lede">{t("intro")}</p>
+        </div>
+      </section>
+
+      <section className="ed-wrap" style={{ paddingBottom: "6rem" }} aria-labelledby="retros">
+        <h2 id="retros" className="ed-h2" style={{ marginBottom: "1.75rem" }}>{t("retrospectives")}</h2>
+        {!configured && <p className="ed-note">{t("notConfigured")}</p>}
+        {configured && stories.length === 0 && <p className="ed-note">{t("empty")}</p>}
+
+        {featured && (() => {
+          const { tr, cover, date } = info(featured)
+          return (
+            <Link href={`/en-action/${featured.slug}`} className="ed-card ed-featured" style={{ marginBottom: "1.25rem" }}>
+              {cover && (
+                // eslint-disable-next-line @next/next/no-img-element -- fichiers Supabase Storage
+                <img className="ed-card-media" src={cover.url} alt={cover.alt} loading="lazy" />
+              )}
+              <div className="ed-card-body" style={{ padding: "2.25rem", gap: "0.9rem", justifyContent: "center" }}>
+                {date && <span className="ed-muted">{date}</span>}
+                <span className="ed-h2">{tr?.value.title ?? featured.slug}</span>
+                {tr?.value.summary && <span className="text-sm">{tr.value.summary}</span>}
+                <span className="ed-link">{t("viewStory")} →</span>
+              </div>
+            </Link>
+          )
+        })()}
+
+        {rest.length > 0 && (
+          <div className="ed-grid">
+            {rest.map((st) => {
+              const { tr, cover, date } = info(st)
+              return (
+                <Link key={st.id} href={`/en-action/${st.slug}`} className="ed-card">
+                  {cover && (
+                    // eslint-disable-next-line @next/next/no-img-element -- fichiers Supabase Storage
+                    <img className="ed-card-media" src={cover.url} alt={cover.alt} loading="lazy" />
+                  )}
+                  <div className="ed-card-body">
+                    {date && <span className="ed-muted">{date}</span>}
+                    <span className="ed-h3">{tr?.value.title ?? st.slug}</span>
+                    {tr?.value.summary && <span className="text-sm">{tr.value.summary}</span>}
+                  </div>
+                </Link>
+              )
+            })}
           </div>
+        )}
+      </section>
 
-          {!configured && <p className="text-sm">{t("notConfigured")}</p>}
-          {configured && stories.length === 0 && <p className="text-sm">{t("empty")}</p>}
+      {testimonials.length > 0 && (
+        <section className="ed-section ed-section-white" aria-labelledby="testimonials">
+          <div className="ed-wrap">
+            <h2 id="testimonials" className="ed-h2" style={{ marginBottom: "1.75rem" }}>{t("testimonials")}</h2>
+            <div className="ed-grid">
+              {testimonials.slice(0, 6).map((q) => (
+                <figure key={q.id} className="ed-testimonial">
+                  <blockquote lang={q.locale}>« {q.quote} »</blockquote>
+                  <figcaption>{q.author_name}{q.author_role ? ` · ${q.author_role}` : ""}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-          {stories.length > 0 && (
-            <section aria-labelledby="retros" style={{ marginBottom: "4rem" }}>
-              <h2 id="retros" className="heading-sm" style={{ marginBottom: "1.5rem" }}>{t("retrospectives")}</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem" }}>
-                {stories.map((s) => {
-                  const tr = pickTranslation(s.story_translations, locale)
-                  const cover = s.cover_media_id ? views[s.cover_media_id] : undefined
-                  return (
-                    <article key={s.id} className="card" style={{ overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                      {cover && (
-                        // eslint-disable-next-line @next/next/no-img-element -- fichiers Supabase Storage
-                        <img src={cover.url} alt={cover.alt} loading="lazy" style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover" }} />
-                      )}
-                      <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                        {s.occurred_on && <span className="text-xs">{s.occurred_on}</span>}
-                        <h3 className="heading-xs" style={{ margin: 0 }}>
-                          <Link href={`/en-action/${s.slug}`}>{tr?.value.title ?? s.slug}</Link>
-                        </h3>
-                        {tr?.value.summary && <p className="text-sm" style={{ margin: 0 }}>{tr.value.summary}</p>}
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            </section>
-          )}
-
-          {gallery.length > 0 && (
-            <section aria-labelledby="gallery" style={{ marginBottom: "4rem" }}>
-              <h2 id="gallery" className="heading-sm" style={{ marginBottom: "1.5rem" }}>{t("gallery")}</h2>
-              <Gallery items={gallery} closeLabel="×" />
-            </section>
-          )}
-
-          {testimonials.length > 0 && (
-            <section aria-labelledby="testimonials">
-              <h2 id="testimonials" className="heading-sm" style={{ marginBottom: "1.5rem" }}>{t("testimonials")}</h2>
-              <div style={{ display: "grid", gap: "1.25rem" }}>
-                {testimonials.slice(0, 6).map((q) => (
-                  <figure key={q.id} className="card" style={{ margin: 0, padding: "1.5rem" }}>
-                    <blockquote lang={q.locale} className="text-italic" style={{ margin: 0 }}>« {q.quote} »</blockquote>
-                    <figcaption className="text-sm" style={{ marginTop: "0.75rem" }}>{q.author_name}{q.author_role ? ` · ${q.author_role}` : ""}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            </section>
-          )}
+      <section className="ed-section">
+        <div className="ed-wrap ed-row" style={{ justifyContent: "space-between", gap: "1.5rem" }}>
+          <p className="ed-h3" style={{ fontSize: "1.75rem" }}>{s("ctaTitle")}</p>
+          <Link href="/evenements" className="ed-btn ed-btn-dark">{s("ctaEvents")}</Link>
         </div>
       </section>
     </main>
