@@ -224,7 +224,7 @@
       },
       "p9": {
         "title": "El <em>despacho</em>",
-        "text": "Un boletín semanal destilando la semana en blockchain, liderazgo negro y economías de la diáspora. Editorial, específico, sin prisas. Enviado los viernes.",
+        "text": "Un boletín semanal destilando la semana en blockchain, liderazgo negro y economías de la diáspora. Editorial, específico, sin prisas. Enviado los miércoles a las 9 h, hora de Toronto.",
         "meta1": "Semanal",
         "meta2": "14,2K lectores"
       }
@@ -718,7 +718,7 @@
         "title": "3. Compartir información",
         "p1": "No vendemos datos personales.",
         "p2": "Compartimos con proveedores.",
-        "p3": "Ejemplo: Stripe, Supabase, Vercel.",
+        "p3": "Proveedores técnicos: Vercel (alojamiento del sitio), Supabase (base de datos y archivos de BIB), Brevo (boletín, con doble confirmación de suscripción) y Luma (inscripción a eventos, en el sitio de Luma).",
         "p4": "Podemos divulgar si lo exige la ley."
       },
       "blockchain": {
@@ -957,6 +957,234 @@
       "blockLabel": "Bloque",
       "copyright": "© 2026 Black in Blockchain Collective",
       "url": "anbachain.org · Un registro · Cuatro continentes"
+    }
+  },
+  "Events": {
+    "metaTitle": "Eventos — Black in Blockchain",
+    "metaDescription": "Eventos de Black in Blockchain próximos y pasados. La inscripción se realiza en Luma.",
+    "eyebrow": "Eventos",
+    "title": "Eventos",
+    "intro": "Cada ficha presenta un evento de BIB. La inscripción, las entradas y la lista de participantes se gestionan en Luma; no se necesita una cuenta BIB.",
+    "upcoming": "Próximos",
+    "ongoing": "En curso",
+    "past": "Eventos pasados",
+    "ended": "Finalizado",
+    "registerLuma": "Inscribirse en Luma",
+    "registerNote": "Abre la página oficial del evento en Luma.",
+    "noUpcoming": "Todavía no se ha publicado ningún evento próximo.",
+    "noPast": "Todavía no se ha publicado ningún evento pasado.",
+    "notConfigured": "Los eventos aparecerán aquí cuando la base de datos de BIB esté configurada.",
+    "inPerson": "Presencial",
+    "online": "En línea",
+    "hybrid": "Híbrido",
+    "joinOnline": "Enlace de acceso en línea",
+    "when": "Cuándo",
+    "where": "Dónde",
+    "format": "Formato",
+    "back": "Todos los eventos",
+    "translationFallback": "Este contenido aún no está disponible en su idioma; se muestra en {language}.",
+    "viewDetails": "Ver la ficha",
+    "viewRetrospective": "Ver la retrospectiva"
+  },
+  "InAction": {
+    "metaTitle": "BIB en acción — Black in Blockchain",
+    "metaDescription": "Retrospectivas, fotos, videos y testimonios de los encuentros de Black in Blockchain.",
+    "eyebrow": "BIB en acción",
+    "title": "BIB en acción",
+    "intro": "Retrospectivas, fotos y testimonios de nuestros encuentros. Solo se publican medios con autorización de difusión.",
+    "retrospectives": "Retrospectivas",
+    "gallery": "Galería",
+    "testimonials": "Testimonios",
+    "empty": "Todavía no se ha publicado ninguna retrospectiva.",
+    "notConfigured": "Las retrospectivas aparecerán aquí cuando la base de datos de BIB esté configurada.",
+    "back": "Todas las retrospectivas",
+    "relatedEvent": "Evento relacionado",
+    "credit": "Crédito",
+    "translationFallback": "Este contenido aún no está disponible en su idioma; se muestra en {language}.",
+    "viewStory": "Leer la retrospectiva",
+    "videoLabel": "Video destacado"
+  },
+  "Newsletter": {
+    "title": "El boletín de BIB",
+    "intro": "Cada miércoles a las 9 h (hora de Toronto), cuatro secciones, en francés o en inglés, con prioridad a África, el Caribe y las diásporas.",
+    "rubrics": {
+      "blockchain_insights": {
+        "title": "Blockchain Insights",
+        "desc": "Análisis basados en los datos publicados de State of BIB"
+      },
+      "blockchain_news": {
+        "title": "Blockchain News",
+        "desc": "Noticias de fuentes autorizadas"
+      },
+      "bib_events": {
+        "title": "BIB Events",
+        "desc": "Los próximos eventos de BIB"
+      },
+      "bib_highlights": {
+        "title": "BIB Highlights",
+        "desc": "Los momentos destacados de la comunidad"
+      }
+    },
+    "emailLabel": "Correo electrónico (obligatorio)",
+    "languageLabel": "Idioma del boletín",
+    "langFr": "Francés",
+    "langEn": "Inglés",
+    "consentLabel": "Acepto recibir el boletín de BIB. Puedo darme de baja en cualquier momento.",
+    "submit": "Suscribirse",
+    "submitting": "Enviando…",
+    "successDoi": "Revise su bandeja de entrada: confirme su suscripción con el enlace que acabamos de enviar.",
+    "successDisabled": "Las suscripciones aún no están abiertas. Vuelva pronto.",
+    "errorInvalid": "Introduzca un correo válido, como nombre@ejemplo.com.",
+    "errorConsent": "Marque la casilla para confirmar su consentimiento.",
+    "errorRate": "Demasiados intentos. Vuelva a intentarlo en unos minutos.",
+    "errorServer": "No se pudo registrar su suscripción. Vuelva a intentarlo más tarde.",
+    "privacyNote": "Su dirección solo se usa para este boletín y la procesa Brevo. Consulte la política de privacidad."
+  },
+  "HomeBlocks": {
+    "eventsTitle": "Próximos eventos",
+    "eventsAll": "Todos los eventos",
+    "inActionTitle": "BIB en acción",
+    "inActionAll": "Todas las retrospectivas",
+    "sobTitle": "State of BIB",
+    "sobLink": "Ver el informe",
+    "sobNote": "Datos al {date} · África y el Caribe · {source} ({license})"
+  },
+  "Site": {
+    "nav": {
+      "about": "Acerca de",
+      "events": "Eventos",
+      "inAction": "BIB en acción",
+      "stateOfBib": "State of BIB",
+      "subscribe": "Suscribirse",
+      "language": "Idioma",
+      "main": "Navegación principal",
+      "open": "Abrir el menú",
+      "close": "Cerrar el menú",
+      "subscribeLong": "Suscribirse al boletín"
+    },
+    "footer": {
+      "explore": "Explorar",
+      "legal": "Legal",
+      "terms": "Condiciones de uso",
+      "privacy": "Privacidad",
+      "cookies": "Cookies",
+      "newsletter": "Boletín",
+      "data": "Datos de State of BIB: Electric Capital, licencia CC BY 4.0.",
+      "copyright": "© {year} Black in Blockchain"
+    },
+    "home": {
+      "eyebrow": "Comunidad blockchain · África, el Caribe y las diásporas",
+      "ctaEvents": "Ver los eventos",
+      "ctaSob": "Explorar State of BIB",
+      "premise": "La premisa",
+      "exploreTitle": "Explorar BIB",
+      "explore": {
+        "events": {
+          "title": "Eventos",
+          "desc": "Los próximos encuentros BIB. La inscripción se hace en Luma."
+        },
+        "inAction": {
+          "title": "BIB en acción",
+          "desc": "Retrospectivas, fotos y testimonios de la comunidad."
+        },
+        "sob": {
+          "title": "State of BIB",
+          "desc": "Los desarrolladores blockchain en África y el Caribe, en datos abiertos."
+        },
+        "newsletter": {
+          "title": "Boletín",
+          "desc": "Cuatro secciones cada miércoles, en francés o en inglés."
+        }
+      },
+      "noEvents": "Todavía no se ha publicado ningún evento próximo.",
+      "sobScope": "Estas cifras cubren África y el Caribe; no miden la diáspora.",
+      "kpi": {
+        "devs": "desarrolladores activos en 28 días",
+        "ecosystems": "ecosistemas blockchain",
+        "countries": "países con al menos un desarrollador activo",
+        "cities": "ciudades",
+        "commits": "commits acumulados"
+      }
+    },
+    "about": {
+      "eyebrow": "Acerca de",
+      "title": "Un colectivo, una correspondencia, un bien común.",
+      "premiseTitle": "La premisa",
+      "foundersTitle": "Los fundadores",
+      "readProfile": "Leer el perfil",
+      "ctaTitle": "Únete al próximo encuentro BIB",
+      "ctaEvents": "Ver los eventos",
+      "ctaNewsletter": "Suscribirse al boletín",
+      "founder": "Fundador·a",
+      "back": "Acerca de",
+      "linkedin": "LinkedIn",
+      "linkedinOf": "Perfil de LinkedIn de {name}"
+    },
+    "events": {
+      "title": "Los encuentros BIB",
+      "ctaTitle": "No te pierdas el próximo",
+      "ctaText": "La sección BIB Events del boletín anuncia cada encuentro.",
+      "noRetrospective": "Sin retrospectiva",
+      "until": "Hasta las {time}",
+      "practical": "Información práctica"
+    },
+    "inAction": {
+      "title": "La comunidad, en imágenes",
+      "ctaTitle": "Vive el próximo encuentro",
+      "ctaEvents": "Ver los próximos eventos",
+      "enlarge": "Ampliar la foto {n}"
+    },
+    "sob": {
+      "eyebrow": "State of BIB · Vol. 01",
+      "titleStart": "El estado de Black",
+      "titleIn": "in",
+      "titleEnd": "Blockchain",
+      "lede": "Una auditoría de la actividad de los desarrolladores de código abierto en 54 países africanos y 22 países y territorios caribeños.",
+      "facts": {
+        "asOf": "Datos al",
+        "source": "Fuente",
+        "license": "Licencia de los datos",
+        "scope": "Alcance",
+        "scopeVal": "{n} países de África y el Caribe",
+        "version": "Versión"
+      },
+      "analysis": "Análisis",
+      "analysisNote": "Redacción asistida, validada por un administrador antes de publicarse.",
+      "updated": "Se recalcula cuando Electric Capital publica una nueva instantánea; si falla, se mantiene la última versión válida.",
+      "devsIndex": "{devs} devs · índice {index}",
+      "commitsTop": "Top 10 · commits acumulados"
+    },
+    "pages": {
+      "draft": "Página en preparación",
+      "note": "El contenido de esta página se está redactando y se publicará próximamente.",
+      "meanwhile": "Mientras tanto",
+      "more": "Más",
+      "items": {
+        "about": {
+          "title": "Acerca de Black in Blockchain",
+          "lede": "Quiénes somos, de dónde venimos y qué nos une."
+        },
+        "mission": {
+          "title": "Nuestra misión",
+          "lede": "Lo que Black in Blockchain busca lograr, y cómo."
+        },
+        "membership": {
+          "title": "Unirse a BIB",
+          "lede": "Las formas de participar en la comunidad Black in Blockchain."
+        },
+        "resources": {
+          "title": "Recursos",
+          "lede": "Guías, lecturas y herramientas seleccionadas por la comunidad."
+        },
+        "press": {
+          "title": "Prensa",
+          "lede": "Comunicados, kit de prensa y contactos para periodistas."
+        },
+        "contact": {
+          "title": "Contacto",
+          "lede": "Escribir al equipo de Black in Blockchain."
+        }
+      }
     }
   }
 }

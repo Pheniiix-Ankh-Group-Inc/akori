@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * Error Page Component
  * Affiche une page d'erreur structurée
@@ -5,6 +7,8 @@
  * Usage côté serveur:
  * return <ErrorPage message="Impossible de charger les données." />
  */
+
+import Link from "next/link"
 
 interface ErrorPageProps {
   message?: string
@@ -72,7 +76,7 @@ export function ErrorPage({
           </p>
         )}
 
-        <a
+        <Link
           href="/"
           style={{
             display: "inline-block",
@@ -86,14 +90,14 @@ export function ErrorPage({
             cursor: "pointer",
           }}
           onMouseEnter={(e) => {
-            (e.target as HTMLAnchorElement).style.backgroundColor = "#d4b882"
+            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#d4b882"
           }}
           onMouseLeave={(e) => {
-            (e.target as HTMLAnchorElement).style.backgroundColor = "var(--accent)"
+            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--accent)"
           }}
         >
-          Retourner à l'accueil
-        </a>
+          Retourner à l&apos;accueil
+        </Link>
       </div>
     </main>
   )

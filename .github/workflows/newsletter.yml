@@ -1,0 +1,64 @@
+name: Newsletter BIB — cycle hebdomadaire
+
+# Déclenche les étapes du cycle autonome sur le site déployé :
+#   lundi    → generate (rédaction FR/EN + contrôles)
+#   mardi    → check    (recontrôle, régénération bornée)
+#   mercredi → send     (09:00–09:59 America/Toronto ; deux créneaux UTC
+#                        couvrent l'heure d'été et l'heure normale, l'application
+#                        décide selon l'heure réelle de Toronto)
+#
+# DÉSACTIVÉ PAR DÉFAUT : rien ne s'exécute tant que la variable de dépôt
+# BIB_SCHEDULES_ENABLED n'est pas égale à "true". L'envoi réel exige en plus
+# FEATURE_NEWSLETTER_AUTOSEND=true côté application. Voir docs/DEPLOYMENT.md.
+
+on:
+  schedule:
+    - cron: "11 13 * * 1" # lundi
+    - cron: "11 13 * * 2" # mardi
+    - cron: "2 13 * * 3"  # mercredi 09:02 heure d'été (EDT)
+    - cron: "2 14 * * 3"  # mercredi 09:02 heure normale (EST)
+  workflow_dispatch:
+    inputs:
+      step:
+        description: "Étape à exécuter"
+        type: choice
+        options: [generate, check, send]
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bib-newsletter
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    if: vars.BIB_SCHEDULES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Determine step
+        id: step
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "step=${{ inputs.step }}" >> "$GITHUB_OUTPUT"
+          else
+            case "$(date -u +%u)" in
+              1) echo "step=generate" >> "$GITHUB_OUTPUT" ;;
+              2) echo "step=check" >> "$GITHUB_OUTPUT" ;;
+              3) echo "step=send" >> "$GITHUB_OUTPUT" ;;
+              *) echo "step=" >> "$GITHUB_OUTPUT" ;;
+            esac
+          fi
+      - name: Call the site
+        if: steps.step.outputs.step != ''
+        env:
+          SITE_URL: ${{ vars.BIB_SITE_URL }}
+          CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+        run: |
+          test -n "$SITE_URL" || { echo "BIB_SITE_URL manquant"; exit 1; }
+          test -n "$CRON_SECRET" || { echo "BIB_CRON_SECRET manquant"; exit 1; }
+          curl --fail-with-body -sS -X POST \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${SITE_URL}/api/cron/newsletter?step=${{ steps.step.outputs.step }}"

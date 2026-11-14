@@ -1,86 +1,84 @@
 "use client"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { useTranslations, useLocale } from "next-intl"
+import { useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
+import { Link, usePathname } from "@/i18n/navigation"
+import { routing } from "@/i18n/routing"
 
-type NavItem =
-  | { key: "manifesto" | "chapters" | "work" | "chains" | "gathering"; hash: string }
-  | { key: "stateOfBib"; route: string }
-
-const NAV: readonly NavItem[] = [
-  { key: "manifesto", hash: "manifesto" },
-  { key: "chapters", hash: "chapters" },
-  { key: "work", hash: "pillars" },
-  { key: "chains", hash: "chains" },
-  { key: "gathering", hash: "gathering" },
-  { key: "stateOfBib", route: "/state_of_bib" },
+const NAV = [
+  { key: "about", href: "/fondateurs" },
+  { key: "events", href: "/evenements" },
+  { key: "inAction", href: "/en-action" },
+  { key: "stateOfBib", href: "/state_of_bib" },
 ] as const
 
+/** En-tête du site public : menu principal, langues FR/EN/ES, abonnement. */
 export function Header() {
-  const t = useTranslations("Nav")
+  const t = useTranslations("Site.nav")
   const locale = useLocale()
-  const prefix = locale === "en" ? "" : `/${locale}`
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : ""
-    return () => { document.body.style.overflow = "" }
-  }, [open])
+  const close = () => setOpen(false)
+
+  const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+
+  const languages = (
+    <div className="ed-lang" role="group" aria-label={t("language")}>
+      {routing.locales.map((l) => (
+        <Link key={l} href={pathname} locale={l} aria-current={l === locale ? "true" : undefined} hrefLang={l}>
+          {l.toUpperCase()}
+        </Link>
+      ))}
+    </div>
+  )
 
   return (
-    <>
-      <nav className="bib-nav" aria-label="Primary">
-        <Link href={`${prefix}/`} className="bib-logo" onClick={() => setOpen(false)}>
-          Black <em>in</em> <b>Blockchain</b>
+    <header className="ed-header">
+      <div className="ed-header-inner">
+        <Link href="/" className="ed-logo">
+          Black <em>in</em> Blockchain
         </Link>
 
-        <ul className="bib-nav-links">
-          {NAV.map((item) => {
-            const href = "route" in item ? `${prefix}${item.route}` : `${prefix}/#${item.hash}`
-            return (
-              <li key={item.key}>
-                <Link href={href}>{t(item.key)}</Link>
-              </li>
-            )
-          })}
-        </ul>
+        <nav className="ed-nav" aria-label={t("main")}>
+          {NAV.map((item) => (
+            <Link key={item.key} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+              {t(item.key)}
+            </Link>
+          ))}
+        </nav>
 
-        <Link href={`${prefix}/#join`} className="bib-nav-cta">
-          {t("cta")}
-        </Link>
+        <div className="ed-header-tools">
+          {languages}
+          <Link href="/#newsletter" className="ed-btn ed-btn-dark">
+            {t("subscribe")}
+          </Link>
+        </div>
 
         <button
           type="button"
-          className={`bib-nav-burger${open ? " open" : ""}`}
+          className="ed-burger"
           aria-label={open ? t("close") : t("open")}
           aria-expanded={open}
-          onClick={() => setOpen(v => !v)}
+          aria-controls="ed-mobile-menu"
+          onClick={() => setOpen((v) => !v)}
         >
-          <span /><span /><span />
+          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+            <path d={open ? "M5 5 L15 15 M15 5 L5 15" : "M3 6 H17 M3 10 H17 M3 14 H17"} stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          </svg>
         </button>
-      </nav>
-
-      <div className={`bib-nav-mobile${open ? " open" : ""}`} aria-hidden={!open}>
-        {NAV.map((item) => {
-          const href = "route" in item ? `${prefix}${item.route}` : `${prefix}/#${item.hash}`
-          return (
-            <Link
-              key={item.key}
-              href={href}
-              onClick={() => setOpen(false)}
-            >
-              {t(item.key)}
-            </Link>
-          )
-        })}
-        <Link
-          href={`${prefix}/#join`}
-          className="bib-nav-cta"
-          onClick={() => setOpen(false)}
-        >
-          {t("cta")}
-        </Link>
       </div>
-    </>
+
+      <nav id="ed-mobile-menu" className={`ed-mobile${open ? " open" : ""}`} aria-label={t("main")} hidden={!open}>
+        {NAV.map((item) => (
+          <Link key={item.key} href={item.href} className="ed-mobile-link" onClick={close} aria-current={isCurrent(item.href) ? "page" : undefined}>
+            {t(item.key)}
+          </Link>
+        ))}
+        {languages}
+        <Link href="/#newsletter" className="ed-btn ed-btn-dark" onClick={close}>
+          {t("subscribeLong")}
+        </Link>
+      </nav>
+    </header>
   )
 }

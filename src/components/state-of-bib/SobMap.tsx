@@ -1,9 +1,10 @@
 "use client"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useMemo } from "react"
 import * as d3 from "d3"
 import { feature } from "topojson-client"
 import { fmt, fmtK } from "./format"
 import type { SobCountry } from "./types"
+import { renderSafe } from "@/lib/dom/safe"
 
 const ISO_NUM_TO_A3: Record<string, string> = {
   "012": "DZA", "024": "AGO", "204": "BEN", "072": "BWA", "854": "BFA", "108": "BDI", "132": "CPV", "120": "CMR",
@@ -42,11 +43,10 @@ export function SobMap({ map, labels }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const legendRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
-  const [top10, setTop10] = useState<SobCountry[]>([])
-
-  useEffect(() => {
-    setTop10([...map].sort((a, b) => b.commits_lifetime - a.commits_lifetime).slice(0, 10))
-  }, [map])
+  const top10 = useMemo<SobCountry[]>(
+    () => [...map].sort((a, b) => b.commits_lifetime - a.commits_lifetime).slice(0, 10),
+    [map],
+  )
 
   useEffect(() => {
     const svgEl = svgRef.current
@@ -85,7 +85,7 @@ export function SobMap({ map, labels }: Props) {
         const minCommits = d3.min(map, d => d.commits_lifetime) || 1
         const color = d3.scaleSequentialLog()
           .domain([Math.max(minCommits, 100), maxCommits])
-          .interpolator(d3.interpolateLab("#f2ece0", "#c7382c"))
+          .interpolator(d3.interpolateLab("#F2EDE4", "#5E4619"))
 
         svg.append("g").attr("class", "bg")
           .selectAll("path").data(otherFeats).join("path")
@@ -98,7 +98,7 @@ export function SobMap({ map, labels }: Props) {
           .attr("class", "country")
           .attr("fill", d => {
             const m = byA3.get(ISO_NUM_TO_A3[d.id])
-            return m && m.commits_lifetime > 0 ? color(m.commits_lifetime) : "rgba(11,15,28,0.08)"
+            return m && m.commits_lifetime > 0 ? color(m.commits_lifetime) : "#E4DFD6"
           })
           .on("mousemove", (ev: MouseEvent, d) => {
             const m = byA3.get(ISO_NUM_TO_A3[d.id])
@@ -106,7 +106,13 @@ export function SobMap({ map, labels }: Props) {
             tooltipEl.style.left = (ev.clientX + 16) + "px"
             tooltipEl.style.top = (ev.clientY + 16) + "px"
             tooltipEl.style.opacity = "1"
-            tooltipEl.innerHTML = `<b>${m.name}</b>${fmt(m.commits_lifetime)} ${labels.tipCommits.toUpperCase()}<br>${fmt(m.devs_active_28d)} ${labels.tipActive.toUpperCase()}`
+            // Valeurs de données insérées comme texte, jamais comme HTML.
+            renderSafe(tooltipEl, [
+              { tag: "b", children: [String(m.name ?? "")] },
+              `${fmt(m.commits_lifetime)} ${labels.tipCommits}`,
+              { tag: "br" },
+              `${fmt(m.devs_active_28d)} ${labels.tipActive}`,
+            ])
           })
           .on("mouseleave", () => { tooltipEl.style.opacity = "0" })
 
@@ -143,8 +149,8 @@ export function SobMap({ map, labels }: Props) {
           <div>{labels.legendLabel}</div>
           <div className="sob-legend-scale" ref={legendRef} />
           <div className="sob-legend-ends">
-            <span>{labels.legendLow.toUpperCase()}</span>
-            <span>{labels.legendHigh.toUpperCase()}</span>
+            <span>{labels.legendLow}</span>
+            <span>{labels.legendHigh}</span>
           </div>
         </div>
       </aside>

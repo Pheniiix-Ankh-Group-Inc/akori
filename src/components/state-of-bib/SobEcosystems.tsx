@@ -45,14 +45,14 @@ export function SobEcosystems({ ecosystems, labels }: Props) {
         const arrow = down ? "↓" : "↑"
         return (
           <div key={e.id} className="sob-eco-card">
-            <div className="sob-eco-rank">— {String(i + 1).padStart(2, "0")}</div>
+            <div className="sob-eco-rank">{String(i + 1).padStart(2, "0")}</div>
             <div className="sob-eco-name">{e.name}<em>.</em></div>
             <div className="sob-eco-devs">
-              <b>{fmt(e.devs_recent)}</b> {labels.devsLabel.toUpperCase()}
+              <b>{fmt(e.devs_recent)}</b> {labels.devsLabel}
             </div>
             <svg className="sob-eco-spark" id={`spark-${e.id}`} viewBox="0 0 240 72" preserveAspectRatio="none" />
             <div className="sob-eco-change">
-              <span>{labels.indexLabel.toUpperCase()} {first} → {last}</span>
+              <span>{labels.indexLabel} {first} → {last}</span>
               <b className={down ? "down" : ""}>{arrow} {Math.abs(delta)}%</b>
             </div>
           </div>

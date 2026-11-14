@@ -1,30 +1,15 @@
-import Link from "next/link"
-import { useTranslations } from "next-intl"
+import type { Metadata } from "next"
+import { PlaceholderPage, placeholderMetadata } from "@/components/pages/PlaceholderPage"
 
-export default function TermsPage() {
-  const t = useTranslations("terms")
+type Props = { params: Promise<{ locale: string }> }
 
-  return (
-    <main>
-      <section className="section">
-        <div className="wrap-sm">
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
+  return placeholderMetadata(locale, "about")
+}
 
-          <div style={{ marginBottom: "4rem", paddingBottom: "2rem", borderBottom: "1px solid var(--border)" }}>
-            <Link href="/" className="label">
-              ← {t("header.back")}
-            </Link>
-
-            <h1 className="heading-md">
-              {t("header.title")}
-            </h1>
-
-            <p className="text-xs" style={{ marginTop: "1rem" }}>
-              {t("header.lastUpdated")}
-            </p>
-          </div>
-
-        </div>
-      </section>
-    </main>
-  )
+/** Page en préparation : contenu à fournir. */
+export default async function Page({ params }: Props) {
+  const { locale } = await params
+  return <PlaceholderPage locale={locale} page="about" />
 }
