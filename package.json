@@ -1,6 +1,6 @@
 {
   "name": "anbachain",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -16,9 +16,12 @@
     "@stripe/stripe-js": "^8.8.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.98.0",
+    "@types/d3": "^7.4.3",
+    "@types/topojson-client": "^3.1.5",
     "@vercel/analytics": "^2.0.1",
     "better-auth": "^1.4.19",
     "clsx": "^2.1.1",
+    "d3": "^7.9.0",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
@@ -33,6 +36,8 @@
     "stripe": "^20.4.0",
     "styled-components": "^6.3.11",
     "tailwind-merge": "^3.5.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {

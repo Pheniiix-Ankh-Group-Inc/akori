@@ -1,0 +1,4 @@
+duckdb>=1.0.0
+pandas>=2.0.0
+pycountry>=23.12.11
+requests>=2.31.0

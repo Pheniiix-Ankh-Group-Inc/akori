@@ -8,6 +8,11 @@ This project follows [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+## [0.13.0] — 2026-05-18
+
+### Fix
+
+- fix cron
 
 ## [0.12.0] — 2026-04-25
 
