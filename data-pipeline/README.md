@@ -1,6 +1,6 @@
 # State of Black in Blockchain — data pipeline
 
-Weekly pipeline that reads the [Electric Capital developer dataset](https://opendevdata.org)
+Pipeline that reads the [Electric Capital developer dataset](https://opendevdata.org)
 and writes six JSON files for the editorial dashboard on
 [anbachain.org](https://anbachain.org).
 
@@ -28,7 +28,7 @@ pip install -r requirements.txt
 python build_data.py
 ```
 
-Output lands in `./data/`. First run prints every table's schema — use
+Output lands in `data/state-of-bib/current/` at the repository root (internal copy, **not served** by the site; the published source of truth is Supabase — see `docs/V2_ARCHITECTURE_CIBLE.md`). Resource URLs come from the provider's manifest (`source_manifest.py`). First run prints every table's schema — use
 that to patch any column-name drift in `build_data.py`.
 
 ## How it pulls data
@@ -55,9 +55,11 @@ that list that looks in-scope should be added to `NAME_OVERRIDES`.
 
 ## Scheduled refresh
 
-`.github/workflows/refresh-data.yml` runs the pipeline every Monday at
-06:00 UTC and commits the refreshed `data/` folder back to the repo.
-Manual runs available from the Actions tab.
+`.github/workflows/refresh-data.yml` checks the provider's manifest every hour
+and rebuilds only when the version or the resource fingerprint changed. A valid
+batch is published to Supabase automatically; the repository copy is updated
+through a pull request and never pushed to `main`. Manual runs are available
+from the Actions tab. See `docs/SOB_AUTOMATION.md`.
 
 ## Methodology, briefly
 

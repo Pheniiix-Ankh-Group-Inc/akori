@@ -1,0 +1,34 @@
+name: Événements Luma — synchronisation
+
+# Luma → flux iCal → Supabase → site. Toutes les 3 heures, plus à la demande.
+# Désactivé par défaut : nécessite BIB_SCHEDULES_ENABLED=true (variable de
+# dépôt) et FEATURE_LUMA_SYNC=true côté application. Idempotent : relancer
+# une synchronisation ne crée ni doublon ni suppression.
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: events-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    # Planification désactivable ; le déclenchement manuel reste toujours possible.
+    if: github.event_name == 'workflow_dispatch' || vars.BIB_SCHEDULES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call the site
+        env:
+          SITE_URL: ${{ vars.BIB_SITE_URL }}
+          CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+        run: |
+          test -n "$SITE_URL" || { echo "BIB_SITE_URL manquant"; exit 1; }
+          test -n "$CRON_SECRET" || { echo "BIB_CRON_SECRET manquant"; exit 1; }
+          curl --fail-with-body -sS --retry 2 --retry-delay 20 -X POST -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/luma-sync"

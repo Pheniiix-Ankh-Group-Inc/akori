@@ -1,44 +1,16 @@
 import { routing } from "@/i18n/routing";
 import "../globals.css"
-import "../bib.css"
 import "../state-of-bib.css"
 import { Analytics } from '@vercel/analytics/next';
 import { setRequestLocale }  from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { Source_Serif_4, Inter, Fraunces, Archivo, JetBrains_Mono } from "next/font/google"
+import { Inter, Fraunces } from "next/font/google"
 
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap"
-});
-
-const serif = Source_Serif_4({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap"
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-  axes: ["opsz"]
-});
-
-const archivo = Archivo({
-  subsets: ["latin"],
-  variable: "--font-archivo",
-  display: "swap"
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-  display: "swap"
-});
+// Charte éditoriale : Fraunces (titres) et Inter (texte), servies localement
+// par next/font (compatible avec la CSP « font-src 'self' »).
+const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
+const serif = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap", axes: ["opsz"], style: ["normal", "italic"] })
 
 
 type Props = {
@@ -61,7 +33,7 @@ export default async  function LocaleLayout({ children, params }: Props) {
 
   return (
     <html lang={locale}>
-      <body suppressHydrationWarning className={`${serif.variable} ${inter.variable} ${fraunces.variable} ${archivo.variable} ${jetbrains.variable}`}>
+      <body suppressHydrationWarning className={`${serif.variable} ${sans.variable}`}>
         <NextIntlClientProvider>
           {children}
           <Analytics />
