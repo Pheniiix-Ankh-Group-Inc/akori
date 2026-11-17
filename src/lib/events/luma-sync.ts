@@ -137,10 +137,11 @@ export async function runLumaSync(
     const { data: counts, error } = await admin.rpc("sync_luma_events", { p_run_id: runId, p_events: payload, p_complete: complete })
     if (error) throw new Error(`écriture refusée : ${error.message}`)
 
-    await admin
+    const finalization = await admin
       .from("event_sync_runs")
       .update({ status: "succeeded", finished_at: new Date().toISOString(), feed_host: host, feed_bytes: Buffer.byteLength(text), warnings: warnings.slice(0, 50) })
       .eq("id", runId)
+    if (finalization.error) throw new Error("finalisation du journal Luma impossible après synchronisation")
     logEvent("info", "events.luma_sync", { runId, trigger: opts.trigger, events: payload.length, ...(counts as Record<string, number>) })
     return { ok: true, runId, counts: counts as Record<string, number>, feedEvents: payload.length, candidateUrl, warnings }
   } catch (e) {

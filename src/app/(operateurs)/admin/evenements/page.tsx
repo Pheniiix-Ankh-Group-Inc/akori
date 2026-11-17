@@ -109,7 +109,7 @@ export default async function AdminEventsPage({ searchParams }: Props) {
           <dt>Synchronisation planifiée</dt>
           <dd>Planifiée toutes les 10 min après activation sur main avec BIB_SCHEDULES_ENABLED=true ; statut réel à vérifier dans GitHub Actions</dd>
           <dt>Flux iCal</dt>
-          <dd>{env.luma.icalUrl ? "URL configurée (LUMA_ICAL_URL)" : "URL candidate construite depuis l'identifiant du calendrier — à confirmer par une première synchronisation réussie"}</dd>
+          <dd>{env.luma.icalUrl ? "URL iCal configurée ; identité du calendrier contrôlée lors de la synchronisation" : "Flux iCal vérifié du calendrier BIB utilisé automatiquement"}</dd>
           <dt>Dernière exécution</dt>
           <dd>{last ? <>{fmt(last.started_at)} · {TRIGGER_LABEL[last.trigger] ?? last.trigger} · <RunBadge status={last.status} /></> : "Aucune"}</dd>
           <dt>Dernière réussite</dt>

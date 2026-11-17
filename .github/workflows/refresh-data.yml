@@ -52,7 +52,7 @@ env:
 
 jobs:
   check:
-    if: github.event_name == 'workflow_dispatch' || vars.BIB_SCHEDULES_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
@@ -61,6 +61,12 @@ jobs:
       reason: ${{ steps.check.outputs.reason }}
       checked: ${{ steps.check.outputs.checked }}
     steps:
+      - name: Verify BIB schedule configuration (never silently skip)
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}
+        run: |
+          [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::Repository Actions variable BIB_SCHEDULES_ENABLED must be exactly true (environment-scoped variables are not inherited)."; exit 78; }
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -77,8 +83,7 @@ jobs:
           [ "$SOB_SUPABASE_SYNC" = "true" ] || missing="$missing SOB_SUPABASE_SYNC(=true)"
           [ -n "$SUPABASE_URL" ] || missing="$missing SUPABASE_URL"
           [ -n "$SUPABASE_SECRET_KEY" ] || missing="$missing SUPABASE_SECRET_KEY"
-          [ -n "$SITE_URL" ] || missing="$missing BIB_SITE_URL"
-          [ -n "$CRON_SECRET" ] || missing="$missing BIB_CRON_SECRET"
+          # Website settings are validated after the database is published.
           if [ -n "$missing" ]; then
             echo "::error title=State of BIB::configuration manquante :$missing — le pipeline automatique ne peut pas fonctionner."
             exit 78
@@ -174,6 +179,10 @@ jobs:
           CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
           VERSION: ${{ steps.reconcile.outputs.current_version }}
         run: |
+          # Database ingestion must not be blocked by website refresh settings.
+          [ -n "$SITE_URL" ] || { echo "::error title=State of BIB::BIB_SITE_URL missing; dataset may already be published."; exit 78; }
+          [ -n "$CRON_SECRET" ] || { echo "::error title=State of BIB::BIB_CRON_SECRET missing; dataset may already be published."; exit 78; }
+          case "$SITE_URL" in https://*) ;; *) echo "::error title=State of BIB::BIB_SITE_URL must be HTTPS"; exit 78 ;; esac
           url="${SITE_URL%/}/api/cron/sob-refresh"
           [ -n "$VERSION" ] && url="$url?version=$VERSION"
           for attempt in 1 2 3; do

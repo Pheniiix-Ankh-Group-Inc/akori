@@ -119,6 +119,47 @@ class OfflineBuildTest(unittest.TestCase):
         self.assertEqual(cities, [])
         self.assertEqual(headline["cities"], 0)
 
+    def test_country_without_recent_commits_has_zero_not_nan(self):
+        """A country with only historical activity must emit a numeric zero, not NaN."""
+        con = make_db()
+        con.execute("UPDATE developer_activities SET day=DATE '2020-01-01' WHERE developer_id IN (4,5,7)")
+        _, headline, countries, *_ = self.build(con)
+        old_only = [country for country in countries if country["iso_a3"] in ("KEN", "JAM")]
+        self.assertTrue(old_only)
+        self.assertTrue(all(country["commits_lifetime"] > 0 for country in old_only))
+        self.assertTrue(all(country["commits_last_12m"] == 0 for country in old_only))
+        self.assertEqual(sum(c["commits_lifetime"] for c in countries), headline["commits_lifetime"])
+
+    def test_live_provider_country_spelling_is_resolved(self):
+        self.assertEqual(bd.resolve_iso_a3("Democratic Republic of the Congo"), "COD")
+        self.assertEqual(bd.resolve_iso_a3("The Bahamas"), "BHS")
+        self.assertEqual(bd.resolve_iso_a3("The Gambia"), "GMB")
+        self.assertTrue({"COD", "BHS", "GMB"}.issubset(bd.SCOPE_ISO_A3))
+    def test_verified_2026_upstream_schema_derives_real_first_activity(self):
+        """Provider uses canonical_developer_id, locality and no first_commit_date."""
+        con = make_db()
+        con.execute("ALTER TABLE canonical_developer_locations RENAME COLUMN city TO locality")
+        con.execute("ALTER TABLE canonical_developers DROP COLUMN first_commit_date")
+        con.execute("ALTER TABLE canonical_developers RENAME COLUMN developer_id TO id")
+        con.execute("ALTER TABLE developer_activities RENAME COLUMN developer_id TO canonical_developer_id")
+        con.execute("ALTER TABLE eco_developer_activities RENAME COLUMN developer_id TO canonical_developer_id")
+        scope, headline, countries, cities, eco, cohort, verification = self.build(con)
+        self.assertEqual(headline["devs_active_28d"], 4)
+        self.assertEqual(headline["commits_lifetime"], 42)
+        self.assertEqual(headline["countries"], 3)
+        self.assertTrue(any(c["city"] == "Lagos" for c in cities))
+        self.assertEqual(verification["commits_lifetime"], headline["commits_lifetime"])
+        self.assertEqual(cohort["months"], eco["months"])
+        self.assertEqual(bd.resolve_schema(con)["tenure_source"], "min(developer_activities.day)")
+        self.assertEqual(str(con.execute("SELECT first_commit_date FROM dev_profiles WHERE developer_id=1").fetchone()[0]), "2023-05-05")
+
+    def test_verified_schema_missing_both_city_and_locality_is_explicitly_supported(self):
+        con = make_db(with_city=False)
+        con.execute("ALTER TABLE developer_activities RENAME COLUMN developer_id TO canonical_developer_id")
+        con.execute("ALTER TABLE eco_developer_activities RENAME COLUMN developer_id TO canonical_developer_id")
+        _, headline, _, cities, *_ = self.build(con)
+        self.assertEqual(headline["cities"], 0)
+        self.assertEqual(cities, [])
     def test_unexpected_schema_stops_the_build(self):
         con = make_db()
         con.execute("ALTER TABLE developer_activities RENAME COLUMN num_commits TO commits")

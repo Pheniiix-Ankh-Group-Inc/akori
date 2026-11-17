@@ -1,9 +1,22 @@
+# Exception de risque temporaire — GHSA-fc5q-39xc-vjpf (picomatch).
+# Dépendances de développement ESLint uniquement; expiration 2026-12-17.
+# La CI refuse cette exception après échéance OU si picomatch devient prod.
+# Les autres vulnérabilités restent bloquantes. Suivi : GitHub issue #37.
+# Ne PAS ajouter d'autres exceptions sans revue sécurité explicite.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-fc5q-39xc-vjpf
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
 
 # Correctifs de sécurité de dépendances transitives (voir docs/IMPLEMENTATION_REPORT.md).
+# BIB does not use next-intl's useExtracted message extractor.
+# Remove its watcher to eliminate unpatched production picomatch CVE-2026-112366.
 overrides:
+  "@typescript-eslint/typescript-estree>minimatch": "^11.0.1"
+  "next-intl@4.15.1>@parcel/watcher": "-"
   ws: ">=8.21.0 <9"
   browserslist: "^4.28.7"
   source-map-js: "^1.2.2"

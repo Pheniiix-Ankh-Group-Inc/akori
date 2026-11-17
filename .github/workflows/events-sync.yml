@@ -3,6 +3,9 @@ name: Luma events — synchronization
 # One Supabase BIB project. Manual calls use a Preview URL if configured;
 # otherwise the canonical site URL. URL and matching cron secret are paired.
 on:
+  # Trigger the first automatic backfill when this release reaches main.
+  push:
+    branches: [main]
   schedule:
     - cron: "7,17,27,37,47,57 * * * *"
   workflow_dispatch: {}
@@ -15,10 +18,16 @@ concurrency:
 
 jobs:
   sync:
-    if: github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' && vars.BIB_SCHEDULES_ENABLED == 'true')
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
+      - name: Verify BIB schedule configuration (never silently skip)
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}
+        run: |
+          [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::Repository Actions variable BIB_SCHEDULES_ENABLED must be exactly true (environment-scoped variables are not inherited)."; exit 78; }
       - name: Call Luma synchronization
         env:
           PROD_SITE_URL: ${{ vars.BIB_SITE_URL }}
@@ -38,6 +47,18 @@ jobs:
           test -n "$SITE_URL" || { echo "::error::Missing BIB_SITE_URL (or BIB_STAGING_SITE_URL)"; exit 78; }
           test -n "$CRON_SECRET" || { echo "::error::Missing cron secret for selected URL"; exit 78; }
           case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
-          curl --fail-with-body --silent --show-error --retry 2 --retry-delay 20 \
-            --max-time 110 -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
-            "${SITE_URL%/}/api/cron/luma-sync"
+          response=$(mktemp)
+          code=$(curl --silent --show-error --retry 2 --retry-delay 20 \
+            --max-time 110 --output "$response" --write-out '%{http_code}' \
+            -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${SITE_URL%/}/api/cron/luma-sync") || { echo "::error title=Luma::Endpoint unreachable"; exit 1; }
+          echo "Luma endpoint HTTP $code"
+          [ "$code" = "200" ] || { cat "$response"; echo "::error title=Luma::Synchronization failed (HTTP $code)"; exit 1; }
+          python - "$response" <<'PY'
+          import json, sys
+          with open(sys.argv[1], encoding="utf-8") as fd:
+              report = json.load(fd)
+          if report.get("ok") is not True or not isinstance(report.get("feedEvents"), int) or report["feedEvents"] < 1:
+              raise SystemExit("Luma feed empty or synchronization unverified")
+          print("Luma feed events:", report["feedEvents"], "sync counters:", report.get("counts"))
+          PY
