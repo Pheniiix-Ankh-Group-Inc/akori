@@ -50,11 +50,11 @@ from source_manifest import SOB_TABLES, ManifestError, fetch_manifest, fingerpri
 SOURCE_ID = "electric-capital-osdd"
 META_PATH = DATA_DIR / "meta.json"
 HEADLINE_PATH = DATA_DIR / "headline.json"
-MAX_FAILED_ATTEMPTS = int(os.environ.get("SOB_MAX_FAILED_ATTEMPTS", "3"))
+MAX_FAILED_ATTEMPTS = int(os.environ.get("SOB_MAX_FAILED_ATTEMPTS") or "3")
 STALE_DAYS = int(os.environ.get("SOB_STALE_DAYS", "120"))
 # Quarantaine : tentatives automatiques bornées et espacées.
-MAX_BLOCKED_ATTEMPTS = int(os.environ.get("SOB_MAX_BLOCKED_ATTEMPTS", "5"))
-BLOCKED_RETRY_HOURS = float(os.environ.get("SOB_BLOCKED_RETRY_HOURS", "24"))
+MAX_BLOCKED_ATTEMPTS = int(os.environ.get("SOB_MAX_BLOCKED_ATTEMPTS") or "5")
+BLOCKED_RETRY_HOURS = float(os.environ.get("SOB_BLOCKED_RETRY_HOURS") or "24")
 CHECK_INTERVAL_HOURS = float(os.environ.get("SOB_CHECK_INTERVAL_HOURS", "1") or "1")
 
 

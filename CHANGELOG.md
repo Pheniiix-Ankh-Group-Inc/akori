@@ -6,6 +6,74 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Fixed — production Vercel Supabase credential migration compatibility
+
+- Accept the server-only pre-existing Vercel secret `SUPABASE_SERVICE_ROLE_KEY` as a transitional fallback when `SUPABASE_SECRET_KEY` is not yet configured, so production can read/write the single `akori` Supabase project without revealing or copying credentials. Prefer the new secret name when present and migrate it separately when validated.
+
+
+### Security — explicit 30-day exception for unpatched picomatch ReDoS
+
+- Document owner-approved, **time-limited** risk acceptance for `GHSA-fc5q-39xc-vjpf` (`CVE-2026-112366`), affecting only the current ESLint development dependency paths; no official fixed version exists as of 2026-11-17.
+- Apply **only this GHSA** through pnpm v10's `auditConfig.ignoreGhsas`, retaining the production and full-Low-severity blocking audits for all other advisories.
+- The CI fails closed if any additional GHSA is allowlisted, `picomatch` is introduced into the production graph, or the exception expires on **2026-12-17 UTC**. Every run visibly warns about the unresolved risk and tracks it in issue #37.
+- The waiver is not a security fix and does not dismiss Dependabot alerts. Remove it immediately after upstream remediation and audited lockfile update.
+
+
+### Fixed — scheduled workflows never silently skip a missing activation flag
+
+- A real scheduled Luma run [#44196388614](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44196388614) was skipped despite being scheduled on main; the workflow's variable condition was false.
+- Luma and State of BIB now fail explicitly with an actionable error when the repository-level Actions variable `BIB_SCHEDULES_ENABLED` is missing or not exactly `true`, rather than silently skipping. Manual dispatch remains available.
+
+
+### Verified — real Electric Capital dataset processing
+
+- Full live-source DuckDB build and output validation succeeded in GitHub Actions run #44195969050 (no database credentials): six JSON files generated from source snapshot 2026-11-09; actual aggregations contain 1,556 active developers, 2,105 ecosystems, 71 countries, 684 cities, and 2,515,407 lifetime commits. End-to-end publication to Supabase is a separate pending operational step.
+
+
+### Fixed — Source-derived empty aggregates and geographic identifiers
+
+- Handle real provider rows where a country had no contributions in the last twelve months: SQL aggregates now return **zero** rather than NaN, preventing a first-build ValueError in the country map.
+- Normalize provider-verified country names `Democratic Republic of the Congo`, `The Bahamas`, and `The Gambia` into the existing Africa/Caribbean country scope without inventing a region.
+- Increment the State of BIB pipeline version to `2026.11.3` so prior blocked builds are retried using the corrected logic.
+
+### Fixed — Electric Capital's current Parquet schema (live source verification)
+
+- Correct a confirmed first-build blocker: 2026 Open Dev Data activity tables contain `canonical_developer_id`, not `developer_id`, and locations expose `locality`, not `city`.
+- The provider no longer publishes `canonical_developers.first_commit_date`; derive tenure from actual earliest recorded developer activity (`MIN(day)`) instead of inventing ages or silently dropping cohorts.
+- Keep legacy schema compatibility through normalized DuckDB views and add offline regression tests that reproduce the verified upstream schema.
+
+### Fixed — automatic first-run State of BIB and Luma sync
+
+- Trigger the Luma sync on first main release and every ten minutes, and require a verified, nonempty success response instead of relying only on HTTP status.
+- Reject configured Luma iCal URLs targeting another calendar ID; fail the run if its status cannot be finalized in Supabase.
+- Allow initial State of BIB ingestion to publish into Supabase even if website delivery settings are missing; fail explicitly in the website refresh step.
+- Live-source diagnostics from a secrets-free GitHub runner confirmed: Luma calendar iCal returned one VEVENT dated 2026; the Electric Capital manifest returned HTTP 200, version `20261117T130335`, with all six requested parquet sources. Historical events not present in that feed cannot be reconstructed without another source.
+
+### Security — Dependabot remediation (35 open alerts)
+
+- Upgrade `happy-dom` to `21.0.4` and `vitest` to `5.1.0` together with regenerated pnpm lockfile; resolve compatible updated transitive `tinypool`, `@vitest/mocker`, `js-yaml`, `brace-expansion`, `nanoid`, and `postcss` versions via supported pnpm tooling.
+- Replace the vulnerable transitive `minimatch@10.2.6` inside `@typescript-eslint/typescript-estree` with the published fixed `minimatch@11.0.9` using a narrowly scoped pnpm override; validate ESLint compatibility in CI.
+- Keep the **unpatched** `picomatch` security finding visible. No ignore rules, no vulnerability dismissal, no artificial green audits. Revalidate the list using both production and full security audits.
+
+### Security — full dependency audit without exclusions
+
+- Add a blocking full npm audit at Low severity to GitHub Actions (including dev/build tooling and Moderate Dependabot alerts), preserving the existing production-only audit, so unresolved vulnerabilities cannot be hidden by limiting scope.
+- Document the still-vulnerable development-only `picomatch` dependency and the upstream absence of a patched release in `docs/SECURITY.md`.
+
+### Security — GHSA-fc5q-39xc-vjpf (CVE-2026-112366)
+
+- Remove unused `next-intl@4.15.1 -> @parcel/watcher` from the **production** dependency graph via pnpm's targeted removal override. BIB does not use `useExtracted`. This prevents unpatched `picomatch@4.0.4` from being installed via that path.
+- Configure the `next-intl/config` Turbopack alias explicitly in `next.config.ts` instead of loading the unused `next-intl/plugin` message extractor; verified Next.js 16 build is required in CI.
+- Keep **both** `pnpm audit --prod --audit-level=high` and `pnpm audit --audit-level=low` as mandatory blocking CI gates; the second exposes vulnerable development dependencies, currently still awaiting an upstream fix. Do not mute or ignore the advisory.
+- Revisit the override when the upstream advisory lists a patched release.
+
+### Fixed — GitHub Actions State of BIB startup defaults
+
+- Accept absent **or empty** optional GitHub Actions variables (`SOB_MAX_FAILED_ATTEMPTS`, `SOB_MAX_BLOCKED_ATTEMPTS`, `SOB_BLOCKED_RETRY_HOURS`, `SOB_STRONG_VARIATION`) without crashing at Python import time; keep documented safe defaults.
+- Install `blake3` so explicitly enabling `SOB_VERIFY_B3=true` does not fail for a missing Python dependency.
+- Add subprocess regression tests that reproduce GitHub Actions' empty optional environment variables and confirm explicit overrides.
+
+
 ### Fixed — single Supabase project and autonomous State of BIB
 
 - Respect the project's **single existing Supabase `akori` database** across deployments; remove obsolete requirements to provision a second database.

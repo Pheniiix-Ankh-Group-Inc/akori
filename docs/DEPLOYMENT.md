@@ -45,6 +45,14 @@ Par environnement (Preview → staging, Production → production) :
 | `NEXT_PUBLIC_SITE_URL` | public | URL canonique |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | public | |
 | `SUPABASE_SECRET_KEY` | **Sensitive** | serveur uniquement |
+
+**Transition Vercel existante (anbachain).** La production utilise encore
+`SUPABASE_SERVICE_ROLE_KEY` (Sensitive) ; le serveur accepte temporairement
+cet ancien nom comme repli, seulement lorsque `SUPABASE_SECRET_KEY` est
+absente. Ne pas préfixer la variable de `NEXT_PUBLIC_`, ne pas exposer la
+valeur et ne pas créer de nouveau projet Supabase. Migrer ultérieurement
+l'ancien secret vers `SUPABASE_SECRET_KEY` après avoir vérifié sa validité ;
+la compatibilité actuelle évite une interruption de service lors de la release.
 | `BREVO_*`, `NEWSLETTER_*` | Sensitive pour les clés | |
 | `AI_*` | Sensitive pour la clé | fournisseur à choisir |
 | `CRON_SECRET` | Sensitive | ≥ 32 caractères aléatoires |

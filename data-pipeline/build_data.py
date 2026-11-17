@@ -108,19 +108,24 @@ class SchemaError(RuntimeError):
 
 # Colonnes indispensables ; pour l'identifiant de développeur, plusieurs noms
 # sont acceptés (le premier trouvé est utilisé).
-DEV_ID_CANDIDATES = ("developer_id", "canonical_developer_id", "id")
+DEV_ID_CANDIDATES = ("canonical_developer_id", "developer_id", "id")
 REQUIRED_COLUMNS = {
-    "developer_activities": ("developer_id", "day", "num_commits"),
-    "eco_developer_activities": ("developer_id", "ecosystem_id", "day"),
+    "developer_activities": ("day", "num_commits"),
+    "eco_developer_activities": ("ecosystem_id", "day"),
     "ecosystems": ("id", "name"),
-    "canonical_developers": ("first_commit_date",),
+    "canonical_developers": (),  # first_commit_date was removed upstream
     "canonical_developer_locations": ("country",),
 }
 
 
 def resolve_schema(con: duckdb.DuckDBPyConnection) -> dict:
-    """Vérifie les colonnes nécessaires et crée deux vues normalisées
-    (dev_locations, dev_profiles) dont l'identifiant s'appelle developer_id."""
+    """Normalize verified upstream Parquet schemas without inventing data.
+
+    New Electric Capital snapshots use canonical_developer_id in activity
+    tables, locality instead of city and omit canonical_developers.first_commit_date.
+    Compute first observed commit from activity dates when the field is absent.
+    Older snapshots with legacy column names remain supported.
+    """
     columns = {t: set(con.execute(f"DESCRIBE {t}").df()["column_name"].tolist()) for t in REQUIRED_COLUMNS}
     problems = [f"{t}: colonne « {c} » absente (colonnes : {', '.join(sorted(columns[t]))})"
                 for t, cols in REQUIRED_COLUMNS.items() for c in cols if c not in columns[t]]
@@ -131,23 +136,59 @@ def resolve_schema(con: duckdb.DuckDBPyConnection) -> dict:
             problems.append(f"{table}: aucun identifiant de développeur parmi {', '.join(DEV_ID_CANDIDATES)}")
         return found
 
-    cdl_dev, cd_dev = dev_id("canonical_developer_locations"), dev_id("canonical_developers")
+    ids = {table: dev_id(table) for table in (
+        "canonical_developer_locations", "canonical_developers",
+        "developer_activities", "eco_developer_activities",
+    )}
     if problems:
         raise SchemaError("schéma de la source inattendu — " + " ; ".join(problems))
-    has_city = "city" in columns["canonical_developer_locations"]
-    city_expr = "city" if has_city else "CAST(NULL AS VARCHAR)"
+
+    city_col = "city" if "city" in columns["canonical_developer_locations"] else (
+        "locality" if "locality" in columns["canonical_developer_locations"] else None
+    )
+    city_expr = city_col if city_col else "CAST(NULL AS VARCHAR)"
     con.execute(f"""
         CREATE OR REPLACE VIEW dev_locations AS
-        SELECT {cdl_dev} AS developer_id, country, {city_expr} AS city
+        SELECT {ids["canonical_developer_locations"]} AS developer_id, country, {city_expr} AS city
         FROM canonical_developer_locations
     """)
     con.execute(f"""
-        CREATE OR REPLACE VIEW dev_profiles AS
-        SELECT {cd_dev} AS developer_id, first_commit_date
-        FROM canonical_developers
+        CREATE OR REPLACE VIEW dev_activities AS
+        SELECT {ids["developer_activities"]} AS developer_id, day, num_commits
+        FROM developer_activities
     """)
-    return {"location_dev_id": cdl_dev, "profile_dev_id": cd_dev, "has_city": has_city}
-
+    con.execute(f"""
+        CREATE OR REPLACE VIEW eco_dev_activities AS
+        SELECT {ids["eco_developer_activities"]} AS developer_id, ecosystem_id, day
+        FROM eco_developer_activities
+    """)
+    if "first_commit_date" in columns["canonical_developers"]:
+        # Legacy provider snapshots included the canonical start date.
+        con.execute(f"""
+            CREATE OR REPLACE VIEW dev_profiles AS
+            SELECT {ids["canonical_developers"]} AS developer_id, first_commit_date
+            FROM canonical_developers
+        """)
+        tenure_source = "canonical_developers.first_commit_date"
+    else:
+        # Verified 2026 upstream schema has no first_commit_date. The first
+        # observed contribution is derived from REAL source activity records.
+        # A developer with no activity cannot contribute to the cohort.
+        con.execute("""
+            CREATE OR REPLACE VIEW dev_profiles AS
+            SELECT developer_id, min(day) AS first_commit_date
+            FROM dev_activities
+            GROUP BY developer_id
+        """)
+        tenure_source = "min(developer_activities.day)"
+    return {
+        "location_dev_id": ids["canonical_developer_locations"],
+        "profile_dev_id": ids["canonical_developers"],
+        "activity_dev_id": ids["developer_activities"],
+        "ecosystem_activity_dev_id": ids["eco_developer_activities"],
+        "has_city": bool(city_col), "city_source": city_col,
+        "tenure_source": tenure_source,
+    }
 
 def register_scope(con: duckdb.DuckDBPyConnection) -> dict:
     """Résout les pays en ISO a3, filtre le périmètre Afrique/Caraïbes et
@@ -191,11 +232,11 @@ def query_headline(con, country_map: list) -> dict:
     DÉRIVÉS de la table par pays (une seule définition, cohérente par
     construction) ; écosystèmes, villes et date viennent de requêtes dédiées.
     query_verification() recalcule ensuite les totaux indépendamment."""
-    snapshot_date = con.execute("SELECT max(day) FROM developer_activities").fetchone()[0]
+    snapshot_date = con.execute("SELECT max(day) FROM dev_activities").fetchone()[0]
 
     ecosystems = con.execute("""
         SELECT count(DISTINCT eda.ecosystem_id) AS n
-        FROM eco_developer_activities eda
+        FROM eco_dev_activities eda
         JOIN scoped_devs sd USING (developer_id)
     """).fetchone()[0]
 
@@ -225,19 +266,19 @@ def query_verification(con) -> dict:
     bloque la version)."""
     devs = con.execute("""
         SELECT count(DISTINCT da.developer_id)
-        FROM developer_activities da
+        FROM dev_activities da
         WHERE da.developer_id IN (SELECT developer_id FROM scoped_devs)
-          AND da.day >= (SELECT max(day) FROM developer_activities) - INTERVAL 28 DAY
+          AND da.day >= (SELECT max(day) FROM dev_activities) - INTERVAL 28 DAY
     """).fetchone()[0]
     commits = con.execute("""
         SELECT coalesce(sum(da.num_commits), 0)
-        FROM developer_activities da
+        FROM dev_activities da
         WHERE da.developer_id IN (SELECT developer_id FROM scoped_devs)
     """).fetchone()[0]
     countries = con.execute("""
         SELECT count(DISTINCT sd.iso_a3)
         FROM scoped_devs sd
-        WHERE EXISTS (SELECT 1 FROM developer_activities da WHERE da.developer_id = sd.developer_id)
+        WHERE EXISTS (SELECT 1 FROM dev_activities da WHERE da.developer_id = sd.developer_id)
     """).fetchone()[0]
     return {
         "method": "direct recount (no per-country aggregate)",
@@ -251,18 +292,18 @@ def query_country_map(con) -> list:
     """One row per country: active devs (28d), commits all-time,
     commits last 12 months. Feeds the D3 choropleth."""
     df = con.execute("""
-        WITH max_day AS (SELECT max(day) AS d FROM developer_activities),
+        WITH max_day AS (SELECT max(day) AS d FROM dev_activities),
              by_country AS (
                 SELECT
                     sd.iso_a3,
                     count(DISTINCT da.developer_id) FILTER (
                         WHERE da.day >= max_day.d - INTERVAL 28 DAY
                     ) AS devs_active_28d,
-                    sum(da.num_commits) AS commits_lifetime,
-                    sum(da.num_commits) FILTER (
+                    coalesce(sum(da.num_commits), 0) AS commits_lifetime,
+                    coalesce(sum(da.num_commits) FILTER (
                         WHERE da.day >= max_day.d - INTERVAL 365 DAY
-                    ) AS commits_last_12m
-                FROM developer_activities da
+                    ), 0) AS commits_last_12m
+                FROM dev_activities da
                 JOIN scoped_devs sd USING (developer_id), max_day
                 GROUP BY sd.iso_a3
              )
@@ -289,10 +330,10 @@ def query_top_cities(con, limit: int = 12) -> list:
     développeur est compté dans une ville de SON pays de rattachement, ce qui
     garantit qu'une ville ne dépasse jamais son pays."""
     df = con.execute(f"""
-        WITH max_day AS (SELECT max(day) AS d FROM developer_activities),
+        WITH max_day AS (SELECT max(day) AS d FROM dev_activities),
              recent AS (
                 SELECT DISTINCT da.developer_id
-                FROM developer_activities da, max_day
+                FROM dev_activities da, max_day
                 WHERE da.day >= max_day.d - INTERVAL 28 DAY
              )
         SELECT
@@ -326,7 +367,7 @@ def month_axis(con, months: int = 48) -> list:
     """Axe mensuel commun aux séries (écosystèmes et ancienneté) : du mois
     situé `months` mois avant le dernier jour connu jusqu'au mois de ce jour."""
     df = con.execute(f"""
-        WITH max_day AS (SELECT max(day) AS d FROM developer_activities)
+        WITH max_day AS (SELECT max(day) AS d FROM dev_activities)
         SELECT unnest(generate_series(
             date_trunc('month', max_day.d - INTERVAL {months} MONTH),
             date_trunc('month', max_day.d),
@@ -342,10 +383,10 @@ def query_ecosystem_mix(con, axis: list, top_n: int = 8, months: int = 48) -> di
     series start so shapes are comparable regardless of volume."""
     # 1. Rank ecosystems by recent scoped devs
     ranked = con.execute(f"""
-        WITH max_day AS (SELECT max(day) AS d FROM eco_developer_activities)
+        WITH max_day AS (SELECT max(day) AS d FROM eco_dev_activities)
         SELECT e.id, e.name,
                count(DISTINCT eda.developer_id) AS devs_recent
-        FROM eco_developer_activities eda
+        FROM eco_dev_activities eda
         JOIN scoped_devs sd USING (developer_id)
         JOIN ecosystems e ON e.id = eda.ecosystem_id, max_day
         WHERE eda.day >= max_day.d - INTERVAL 28 DAY
@@ -363,7 +404,7 @@ def query_ecosystem_mix(con, axis: list, top_n: int = 8, months: int = 48) -> di
     # 2. Monthly active devs per ecosystem, scoped to AFR+CARIB devs.
     #    Active = at least one activity in that calendar month.
     monthly = con.execute(f"""
-        WITH max_day AS (SELECT max(day) AS d FROM developer_activities),
+        WITH max_day AS (SELECT max(day) AS d FROM dev_activities),
              start_day AS (
                 SELECT date_trunc('month', max_day.d - INTERVAL {months} MONTH) AS d
                 FROM max_day
@@ -372,7 +413,7 @@ def query_ecosystem_mix(con, axis: list, top_n: int = 8, months: int = 48) -> di
             eda.ecosystem_id,
             date_trunc('month', eda.day) AS month,
             count(DISTINCT eda.developer_id) AS devs
-        FROM eco_developer_activities eda
+        FROM eco_dev_activities eda
         JOIN scoped_devs sd USING (developer_id), start_day
         WHERE eda.ecosystem_id IN ({id_list_sql})
           AND eda.day >= start_day.d
@@ -417,12 +458,12 @@ def query_tenure_cohort(con, axis: list, months: int = 48) -> dict:
     """Monthly stack of 0–1y / 1–2y / 2y+ developers among scoped devs.
 
     Tenure is measured as months since each developer's first commit
-    (from canonical_developers.first_commit_date), evaluated at each
+    (from an upstream date field when available, otherwise the earliest
     month's start. A dev is counted in the month if they had any
     activity in that calendar month.
     """
     df = con.execute(f"""
-        WITH max_day AS (SELECT max(day) AS d FROM developer_activities),
+        WITH max_day AS (SELECT max(day) AS d FROM dev_activities),
              start_day AS (
                 SELECT date_trunc('month',
                                  max_day.d - INTERVAL {months} MONTH) AS d
@@ -432,7 +473,7 @@ def query_tenure_cohort(con, axis: list, months: int = 48) -> dict:
                 SELECT
                     da.developer_id,
                     date_trunc('month', da.day) AS month
-                FROM developer_activities da
+                FROM dev_activities da
                 JOIN scoped_devs sd USING (developer_id), start_day
                 WHERE da.day >= start_day.d
                 GROUP BY da.developer_id, date_trunc('month', da.day)

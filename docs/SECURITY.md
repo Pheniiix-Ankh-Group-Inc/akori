@@ -138,3 +138,68 @@ fonction DEFINER fixe `search_path` et qu'aucune n'est exécutable par `anon`.
 pnpm test                       # en-têtes, XSS, SSRF, signatures, limiteur…
 PGURL=postgresql://… pnpm test:sql   # base JETABLE uniquement
 ```
+
+## 10. Dépendances npm — contrôles bloquants
+
+- La CI exécute **les deux** commandes `pnpm audit --prod --audit-level=high` et
+  `pnpm audit --audit-level=low`. La seconde inclut les outils de développement
+  et leurs dépendances transitives ; elle reste bloquante dès la gravité **Low**,
+  pour **toutes les vulnérabilités autres que l'exception unique documentée ci-dessous**.
+  Ni `continue-on-error`, ni suppression du job, ni `--ignore-unfixable` n'est autorisé.
+- `GHSA-fc5q-39xc-vjpf` / `CVE-2026-112366` : le chemin de production
+  `next-intl -> @parcel/watcher -> picomatch` est retiré de la branche de
+  correction, mais `picomatch@4.0.4` reste inclus via Vite/Vitest et d'autres
+  outils de développement. **La dette de sécurité demeure ouverte**, même si
+  l'audit production réussit. L'avis GitHub (consulté le 17-11-2026) ne publie
+  aucune version officiellement corrigée.
+- Ne pas prétendre que le produit est exempt de vulnérabilités sur la seule base
+  d'une CI de production verte. Ne pas forcer une version fictive ni modifier
+  artificiellement les métadonnées des dépendances pour obtenir un résultat vert.
+  Suivre le fournisseur et examiner les versions corrigées ou alternatives
+  maintenues et compatibles, puis supprimer l'exception dès qu'un correctif validé existe.
+
+### Acceptation de risque TEMPORAIRE — GHSA-fc5q-39xc-vjpf
+
+**Autorisation du propriétaire le 17 novembre 2026 :** avancer sur la fusion de
+la PR #36 malgré cette vulnérabilité connue, sans neutraliser les autres audits.
+Ce n'est **pas** une correction ni un effacement des alertes Dependabot.
+
+| Champ | Décision |
+|---|---|
+| Identifiant unique autorisé | `GHSA-fc5q-39xc-vjpf` / `CVE-2026-112366` |
+| Dépendance | `picomatch` jusqu'à la version `4.0.7` |
+| Motif | Aucune version corrigée officielle au 17-11-2026 |
+| Chaînes affectées à cette date | `eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch > picomatch` et `eslint-config-next > eslint-import-resolver-typescript > tinyglobby > picomatch` |
+| Périmètre accepté | Outils ESLint de développement uniquement ; **pas** de chemin de production |
+| Échéance stricte | **17 décembre 2026 (UTC)** ; échec CI dès cette date |
+| Suivi | Issue [#37](https://github.com/Pheniiix-Ankh-Group-Inc/akori/issues/37) |
+| Responsable | Mainteneur du projet BIB ; réévaluer au plus tard à l'échéance |
+
+**Implémentation :** dans `pnpm-workspace.yaml`, `auditConfig.ignoreGhsas`
+ne contient que cette GHSA, compatible avec `pnpm@10.28.0`.
+Le workflow CI vérifie **avant l'audit complet** : une seule exception, le
+respect de la date limite, et l'absence de `picomatch` dans le graphe de
+dépendances de production (`pnpm why picomatch --prod`). Si l'un échoue,
+**la CI échoue**. Chaque exécution émet un avertissement visible contenant la
+référence de la vulnérabilité et de l'issue. L'audit de production et l'audit
+complet restent obligatoires ; toute **autre** GHSA bloque la fusion.
+
+À la publication d'une version corrigée, retirer la section
+`auditConfig.ignoreGhsas`, mettre à jour le lockfile avec le résolveur pnpm,
+exécuter les deux audits sans exception, puis clôturer l'issue #37.
+
+- La page GitHub Security > Dependabot peut présenter **d'autres alertes**
+  indépendantes de cette CVE : chacune doit être vérifiée et corrigée à la
+  source sur le graphe de dépendances de la branche par défaut. Le connecteur
+  GitHub utilisé par l'audit ne permet pas de lire cet inventaire privé.
+
+### Dependency remediation — 17 novembre 2026 (PR #36)
+
+Les captures Dependabot du propriétaire montrent 35 alertes ouvertes, dont 6 critiques. Les doublons `package.json` / `pnpm-lock.yaml` ne représentent pas des vulnérabilités indépendantes. Toutes les alertes affichées concernent les dépendances de développement, qui restent soumises à l'audit complet.
+
+- Mise à jour de `happy-dom` de `18.0.1` vers `21.0.4` : corrige les avis relatifs à l'exécution de code, à l'injection et à la gestion des URLs, selon leurs versions officiellement corrigées.
+- Mise à jour de `vitest` de `3.2.4` vers `5.1.0` : actualise également `@vitest/mocker` et le moteur de workers ; il faut toujours confirmer la compatibilité par les tests.
+- Résolution des versions compatibles de `eslint` et `@tailwindcss/postcss`, avec actualisation des dépendances transitives `brace-expansion`, `js-yaml`, `nanoid` et `postcss` dans le lockfile.
+- Mise à jour ciblée de `minimatch` pour `@typescript-eslint/typescript-estree` : forcer une version corrigée `>=11.0.1` via un override pnpm auditable, actuellement résolu en `11.0.9`. Validation du lint et des tests nécessaire après l'upgrade majeur.
+- **`picomatch` reste dans l'outillage de développement**, et l'avis GHSA-fc5q-39xc-vjpf ne possède pas de version corrigée officielle à la date de ce rapport. Une **exception ciblée et temporaire**, approuvée le 17 novembre 2026 et détaillée ci-dessus, est autorisée pour permettre la fusion ; tout autre avis et tout chemin de production restent bloquants.
+- Le statut de remédiation doit être vérifié par `pnpm install --frozen-lockfile`, `pnpm test`, `pnpm build`, et les deux audits **bloquants** (hors l'exception GHSA unique documentée). Toute autre vulnérabilité qui dépasse le seuil d'audit bloque la release.
