@@ -37,6 +37,34 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
       - name: Dependency audit (production, high and critical)
         run: pnpm audit --prod --audit-level=high
+      # Risk acceptance, not remediation: one GHSA, dev tooling only, fixed expiry.
+      # This guard fails closed on any additional GHSA allowlist entry, a production
+      # dependency path, or a date >= 2026-12-17. See docs/SECURITY.md and #37.
+      - name: Temporary picomatch risk exception — expires 2026-12-17
+        run: |
+          set -euo pipefail
+          ghsa="GHSA-fc5q-39xc-vjpf"
+          expiry="2026-12-17"
+          # Ensure exactly ONE ignored advisory, and it is the reviewed one.
+          allowed=$(grep -Ec '^[[:space:]]+- GHSA-' pnpm-workspace.yaml || true)
+          if [ "$allowed" -ne 1 ] || ! grep -Fxq "    - $ghsa" pnpm-workspace.yaml; then
+            echo "::error title=Audit policy::Only $ghsa may be allowlisted"; exit 1
+          fi
+          if [[ ! "$(date -u +%Y-%m-%d)" < "$expiry" ]]; then
+            echo "::error title=Expired security exception::$ghsa expired $expiry; remove exception and remediate or renew via explicit risk review"; exit 1
+          fi
+          # A new PRODUCTION path for picomatch is not covered by this waiver.
+          pnpm why picomatch --prod --depth 100 > /tmp/picomatch-production-paths.txt
+          if [ -s /tmp/picomatch-production-paths.txt ]; then
+            cat /tmp/picomatch-production-paths.txt
+            echo "::error title=Risk scope changed::picomatch is now in the production dependency graph. Stop release."; exit 1
+          fi
+          echo "::warning title=Temporary security exception::$ghsa (CVE-2026-112366) remains unresolved in development tooling. Explicit waiver expires $expiry; tracking #37."
+      # Full audit still scans all dependencies at Low severity. pnpm 10's
+      # auditConfig.ignoreGhsas suppresses ONLY the one reviewed advisory.
+      # Any other finding retains its default nonzero exit status.
+      - name: Dependency audit (all packages and all severities — scoped exception)
+        run: pnpm audit --audit-level=low
       - name: No server secret in the client bundle
         run: |
           if grep -rIl -E "SUPABASE_SECRET_KEY|BREVO_API_KEY|AI_API_KEY|CRON_SECRET|NEWSLETTER_EMAIL_HASH_PEPPER" .next/static 2>/dev/null; then

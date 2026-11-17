@@ -166,7 +166,9 @@ describe("normalisation et empreinte", () => {
   it("URL du flux : hôtes Luma uniquement, candidate signalée", () => {
     expect(lumaFeedUrl(undefined, "cal-aqEzCpUP5LXSBcL")).toEqual({ url: "https://api.lu.ma/ics/get?entity=calendar&id=cal-aqEzCpUP5LXSBcL", candidate: false })
     expect(lumaFeedUrl(undefined, "cal-OtherVerifiedId123").candidate).toBe(true)
-    expect(lumaFeedUrl("https://api.lu.ma/ics/get?x=1", "cal-aqEzCpUP5LXSBcL").candidate).toBe(false)
+    expect(lumaFeedUrl("https://api.lu.ma/ics/get?entity=calendar&id=cal-aqEzCpUP5LXSBcL", "cal-aqEzCpUP5LXSBcL").candidate).toBe(false)
+    expect(() => lumaFeedUrl("https://api.lu.ma/ics/get?entity=calendar&id=cal-AnotherCalendar123", "cal-aqEzCpUP5LXSBcL")).toThrow(/ne correspond pas/)
+    expect(() => lumaFeedUrl("https://api.lu.ma/ics/get?x=1", "cal-aqEzCpUP5LXSBcL")).toThrow(/ne correspond pas/)
     expect(() => assertLumaFeedUrl("https://evil.example/ics")).toThrow(/non autorisé/)
     expect(() => assertLumaFeedUrl("http://lu.ma/ics")).toThrow(/non autorisé/)
     expect(() => assertLumaFeedUrl("https://user:pw@lu.ma/ics")).toThrow(/non autorisé/)

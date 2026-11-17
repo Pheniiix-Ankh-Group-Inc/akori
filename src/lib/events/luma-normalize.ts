@@ -12,7 +12,15 @@ export const VERIFIED_BIB_ICAL_URL = "https://api.lu.ma/ics/get?entity=calendar&
 /** Use an explicitly configured URL, the verified BIB feed, or a flagged
  * candidate only for a different calendar ID. */
 export function lumaFeedUrl(configured: string | undefined, calendarId: string): { url: string; candidate: boolean } {
-  if (configured) return { url: configured, candidate: false }
+  if (configured) {
+    // Reject a stale Vercel URL pointing to another calendar or feed type.
+    // The BIB owner has confirmed the canonical calendar identifier.
+    const u = assertLumaFeedUrl(configured)
+    if (u.pathname !== "/ics/get" || u.searchParams.get("entity") !== "calendar" || u.searchParams.get("id") !== calendarId) {
+      throw new Error("LUMA_ICAL_URL ne correspond pas au calendrier Luma BIB configuré")
+    }
+    return { url: configured, candidate: false }
+  }
   if (!/^cal-[A-Za-z0-9]{6,40}$/.test(calendarId)) throw new Error("identifiant de calendrier Luma invalide")
   if (calendarId === VERIFIED_BIB_CALENDAR_ID) return { url: VERIFIED_BIB_ICAL_URL, candidate: false }
   return { url: `https://api.lu.ma/ics/get?entity=calendar&id=${encodeURIComponent(calendarId)}`, candidate: true }

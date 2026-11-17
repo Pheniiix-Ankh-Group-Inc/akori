@@ -116,7 +116,7 @@ est appelé avec le secret des tâches planifiées. Aucune session utilisateur.
    `supabase db push`). Vérifier :
    `select module, mode from public.automation_settings order by module;`
 2. **Vercel** — déployer la branche ; vérifier `SUPABASE_SECRET_KEY` et `CRON_SECRET`.
-3. **GitHub** — renseigner les variables et secrets ci-dessus.
+3. **GitHub** — renseigner les variables et secrets ci-dessus. Pour la collecte et la publication dans la base, les seuls paramètres requis dans le job `check` sont `SOB_SUPABASE_SYNC=true`, `SUPABASE_URL` et `SUPABASE_SECRET_KEY`. Si `BIB_SITE_URL` ou `BIB_CRON_SECRET` manque, la base peut être alimentée, mais la dernière étape de vérification/rafraîchissement du site échoue explicitement.
 4. **Première exécution** — Actions → « State of BIB — pipeline automatique » →
    Run workflow (`force_build` coché). La première version est publiée sans
    aucune approbation, y compris sur une base vide.
@@ -130,12 +130,23 @@ qui manque : il n'y a jamais de faux succès.
 Suspendre exceptionnellement : `/admin/automatisations` → mode « En pause », ou
 `supabase/ops/akori/07_set_sob_auto.sql` pour revenir en automatique.
 
-## 7. Limites connues
+## 7. Schéma fournisseur réel validé (17 novembre 2026)
 
-- Aucune exécution réelle n'a encore eu lieu : le manifeste et le schéma des
-  fichiers de la source n'ont pas pu être lus depuis l'environnement de
-  développement. Le pipeline vérifie les colonnes attendues et s'arrête avec un
-  message explicite si le schéma diffère.
+Le test réseau réel GitHub Actions [run #44194922073](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44194922073) a identifié un changement de schéma **bloquant** pour la génération des statistiques :
+
+- `developer_activities` et `eco_developer_activities` utilisent désormais `canonical_developer_id` et non `developer_id`.
+- `canonical_developer_locations` expose `locality` plutôt que `city`.
+- `canonical_developers` n'a plus de champ `first_commit_date` : la date réelle de première contribution est calculée par `MIN(day)` depuis `developer_activities`, sans inventer de données.
+- Les noms alternatifs des anciens schémas sont toujours pris en charge pour préserver la compatibilité historique.
+- Les colonnes normalisées sont exposées par des vues DuckDB et les calculs existants les utilisent. Des tests locaux valident les deux formats.
+
+**Vérification complète des données réelles réussie.** GitHub Actions [run #44195969050](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44195969050) a exécuté `build_data.py` directement sur les Parquet HTTPS, produit les six JSON et exécuté `validate.py` avec succès, sans secrets ni écriture dans Supabase. L'instantané `2026-11-09` contient 1 556 développeurs actifs (28 jours), 2 105 écosystèmes, 71 pays ayant de l'activité, 684 villes et 2 515 407 commits cumulés.
+
+**Attention : cette réussite prouve la génération et la validation, pas la publication dans Supabase ni l'affichage sur le site.** Il faut encore exécuter le workflow authentifié sur `main`, confirmer les lignes `dataset_versions` et `ingestion_runs`, puis vérifier la route publique.
+
+## 8. Limites connues
+
+- Une vérification externe le 17 novembre 2026, depuis un runner GitHub sans secrets, a confirmé que le manifeste Electric Capital répond HTTP 200, version `20261117T130335`, 19 ressources dont les six attendues. Cela **ne prouve pas** qu'un build DuckDB et une publication authentifiée ont réussi. La première exécution de `refresh-data.yml` après release reste indispensable.
 - L'intégrité des fichiers source est contrôlée par leur taille ; la
   vérification blake3 complète est optionnelle (`SOB_VERIFY_B3`).
 - PostgreSQL, Storage et le dépôt ne forment pas une transaction unique : la
