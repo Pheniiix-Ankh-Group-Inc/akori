@@ -7,7 +7,7 @@ permissions:
 jobs:
   schema:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,4 +31,17 @@ jobs:
           con=open_connection(resources)
           log_schemas(con)
           print("Resolved source schema:",resolve_schema(con))
+          PY
+      - name: Build complete source-derived BIB snapshot (no database writes)
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python data-pipeline/build_data.py --output-dir /tmp/bib-sob-generated
+          python data-pipeline/validate.py /tmp/bib-sob-generated
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path("/tmp/bib-sob-generated")
+          x=json.loads((p/"headline.json").read_text())
+          print("VALIDATED SOURCE SNAPSHOT",x)
+          print("Artifacts",sorted(f.name for f in p.glob("*.json")))
           PY
