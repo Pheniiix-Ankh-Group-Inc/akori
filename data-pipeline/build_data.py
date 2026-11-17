@@ -299,10 +299,10 @@ def query_country_map(con) -> list:
                     count(DISTINCT da.developer_id) FILTER (
                         WHERE da.day >= max_day.d - INTERVAL 28 DAY
                     ) AS devs_active_28d,
-                    sum(da.num_commits) AS commits_lifetime,
-                    sum(da.num_commits) FILTER (
+                    coalesce(sum(da.num_commits), 0) AS commits_lifetime,
+                    coalesce(sum(da.num_commits) FILTER (
                         WHERE da.day >= max_day.d - INTERVAL 365 DAY
-                    ) AS commits_last_12m
+                    ), 0) AS commits_last_12m
                 FROM dev_activities da
                 JOIN scoped_devs sd USING (developer_id), max_day
                 GROUP BY sd.iso_a3
