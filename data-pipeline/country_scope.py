@@ -43,6 +43,7 @@ NAME_OVERRIDES = {
     "Congo - Kinshasa": "COD",
     "Congo-Kinshasa": "COD",
     "Democratic Republic of Congo": "COD",
+    "Democratic Republic of the Congo": "COD",
     "DR Congo": "COD",
     "Congo - Brazzaville": "COG",
     "Congo-Brazzaville": "COG",
@@ -68,6 +69,9 @@ NAME_OVERRIDES = {
     "Antigua & Barbuda": "ATG",
     "Tanzania": "TZA",
     "Tanzania, United Republic of": "TZA",
+    # Confirmed names from the live Electric Capital 2026-11-17 source.
+    "The Bahamas": "BHS",
+    "The Gambia": "GMB",
 }
 
 

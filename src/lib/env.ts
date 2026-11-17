@@ -25,7 +25,10 @@ export const env = {
   supabase: {
     url: str("NEXT_PUBLIC_SUPABASE_URL"),
     publishableKey: str("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
-    secretKey: str("SUPABASE_SECRET_KEY"),
+    // Compatibility bridge for the existing production Vercel project.
+    // Both names are server-only credentials for the SAME Supabase project.
+    // Retire the legacy fallback after the Vercel secret is migrated.
+    secretKey: str("SUPABASE_SECRET_KEY") ?? str("SUPABASE_SERVICE_ROLE_KEY"),
   },
 
   brevo: {
