@@ -1,99 +1,172 @@
 "use client"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import * as d3 from "d3"
-import { fmtK } from "./format"
+import { useLocale, useTranslations } from "next-intl"
 import type { SobCohort as SobCohortData } from "./types"
+import { COHORT_KEYS, cohortSeries, type CohortKey } from "@/lib/sob/explore"
+import { useSobExplorer } from "./SobExplorer"
+import { useMonthLabel } from "./SobEcosystems"
 
-type Props = {
-  cohort: SobCohortData
-  labels: {
-    newcomersShort: string
-    newcomersName: string
-    apprenticedShort: string
-    apprenticedName: string
-    eldersShort: string
-    eldersName: string
-  }
-}
+const PALETTE: Record<CohortKey, string> = { devs_0_1y: "#D9C49A", devs_1_2y: "#8A6A2F", devs_2y_plus: "#141414" }
 
-type Row = {
-  month: Date
-  devs_0_1y: number
-  devs_1_2y: number
-  devs_2y_plus: number
-}
+type Labels = Record<CohortKey, { short: string; name: string }>
 
-export function SobCohort({ cohort, labels }: Props) {
-  const svgRef = useRef<SVGSVGElement>(null)
-  const legendRef = useRef<HTMLDivElement>(null)
+/**
+ * Développeurs actifs par ancienneté : catégories activables, affichage en
+ * effectifs ou en parts, lecture mois par mois (survol ou clavier), mise en
+ * évidence d'une série. Un mois sans valeur reste un trou dans l'aire : rien
+ * n'est interpolé.
+ */
+export function SobCohort({ cohort, labels }: { cohort: SobCohortData; labels: Labels }) {
+  const t = useTranslations("SobExplore.cohort")
+  const locale = useLocale()
+  const monthLabel = useMonthLabel()
+  const { filters, update, reducedMotion } = useSobExplorer()
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(820)
+  const [cursor, setCursor] = useState<number | null>(null)
+  const [focusKey, setFocusKey] = useState<CohortKey | null>(null)
+  const nf = useMemo(() => new Intl.NumberFormat(locale), [locale])
+  const pf = useMemo(() => new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 1 }), [locale])
 
   useEffect(() => {
-    const svgEl = svgRef.current
-    const legendEl = legendRef.current
-    if (!svgEl || !legendEl) return
+    const el = wrapRef.current
+    if (!el || typeof ResizeObserver === "undefined") return
+    const ro = new ResizeObserver(([e]) => setWidth(Math.max(280, Math.round(e.contentRect.width))))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
-    const parse = d3.timeParse("%Y-%m")
-    const data: Row[] = cohort.months.map((m, i) => ({
-      month: parse(m) as Date,
-      devs_0_1y: cohort.devs_0_1y[i],
-      devs_1_2y: cohort.devs_1_2y[i],
-      devs_2y_plus: cohort.devs_2y_plus[i],
-    }))
+  const points = useMemo(() => cohortSeries(cohort, filters), [cohort, filters])
+  const keys = COHORT_KEYS.filter((k) => filters.cohorts.includes(k))
+  const share = filters.cohortMode === "share"
+  const H = width < 560 ? 300 : 420
+  const m = { top: 10, right: 16, bottom: 36, left: 52 }
 
-    const keys = ["devs_0_1y", "devs_1_2y", "devs_2y_plus"] as const
-    const palette: Record<(typeof keys)[number], { color: string; short: string; name: string }> = {
-      devs_0_1y:    { color: "#e8a836", short: labels.newcomersShort, name: labels.newcomersName },
-      devs_1_2y:    { color: "#c7382c", short: labels.apprenticedShort, name: labels.apprenticedName },
-      devs_2y_plus: { color: "#2d5cc9", short: labels.eldersShort, name: labels.eldersName },
+  type Row = { i: number } & Record<CohortKey, number>
+  // Un mois où une catégorie affichée manque devient un trou (NaN), jamais 0.
+  const rows: Row[] = points.map((p, i) => {
+    const missing = keys.some((k) => p.values[k] === null)
+    const total = p.total ?? 0
+    const r = { i } as Row
+    for (const k of keys) {
+      r[k] = missing ? NaN : share ? (total > 0 ? (p.values[k] as number) / total : 0) : (p.values[k] as number)
     }
+    return r
+  })
+  const stacked = d3.stack<Row>().keys(keys)(rows)
+  const x = d3.scaleLinear().domain([0, Math.max(1, points.length - 1)]).range([m.left, width - m.right])
+  const yMax = share ? 1 : (d3.max(stacked.at(-1) ?? [], (d) => (Number.isFinite(d[1]) ? d[1] : 0)) || 1)
+  const y = d3.scaleLinear().domain([0, yMax * (share ? 1 : 1.04)]).nice().range([H - m.bottom, m.top])
+  const area = d3
+    .area<d3.SeriesPoint<Row>>()
+    .defined((d) => Number.isFinite(d[0]) && Number.isFinite(d[1]))
+    .x((d) => x(d.data.i))
+    .y0((d) => y(d[0]))
+    .y1((d) => y(d[1]))
+    .curve(d3.curveMonotoneX)
 
-    const svg = d3.select(svgEl)
-    svg.selectAll("*").remove()
-    const bbox = svgEl.getBoundingClientRect()
-    const W = Math.max(bbox.width || 800, 320)
-    const H = 460
-    const margin = { top: 10, right: 40, bottom: 40, left: 48 }
-    svg.attr("viewBox", `0 0 ${W} ${H}`)
+  const onMove = (ev: React.PointerEvent<SVGRectElement>) => {
+    const r = ev.currentTarget.getBoundingClientRect()
+    const px = ((ev.clientX - r.left) / r.width) * (width - m.left - m.right) + m.left
+    setCursor(Math.max(0, Math.min(points.length - 1, Math.round(x.invert(px)))))
+  }
+  const onKey = (e: React.KeyboardEvent) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return
+    e.preventDefault()
+    setCursor((c) => {
+      const cur = c ?? points.length - 1
+      if (e.key === "Home") return 0
+      if (e.key === "End") return points.length - 1
+      return Math.max(0, Math.min(points.length - 1, cur + (e.key === "ArrowRight" ? 1 : -1)))
+    })
+  }
+  const toggle = (k: CohortKey) => {
+    const on = filters.cohorts.includes(k)
+    // Au moins une catégorie reste affichée.
+    if (on && filters.cohorts.length === 1) return
+    update({ cohorts: on ? filters.cohorts.filter((c) => c !== k) : COHORT_KEYS.filter((c) => c === k || filters.cohorts.includes(c)) })
+  }
 
-    const stack = d3.stack<Row>().keys(keys as unknown as string[])
-    const stacked = stack(data)
-
-    const x = d3.scaleTime()
-      .domain(d3.extent(data, d => d.month) as [Date, Date])
-      .range([margin.left, W - margin.right])
-    const yMax = d3.max(stacked[stacked.length - 1], d => d[1]) || 1
-    const y = d3.scaleLinear()
-      .domain([0, yMax * 1.02])
-      .range([H - margin.bottom, margin.top])
-
-    const area = d3.area<d3.SeriesPoint<Row>>()
-      .x(d => x(d.data.month))
-      .y0(d => y(d[0]))
-      .y1(d => y(d[1]))
-      .curve(d3.curveMonotoneX)
-
-    svg.append("g").selectAll("path").data(stacked).join("path")
-      .attr("class", "area")
-      .attr("d", d => area(d) || "")
-      .attr("fill", d => palette[d.key as keyof typeof palette].color)
-      .attr("fill-opacity", 0.85)
-
-    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - margin.bottom})`)
-      .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%b '%y") as (v: Date | d3.NumberValue) => string))
-    svg.append("g").attr("class", "axis").attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y).ticks(5).tickFormat((v) => fmtK(v as number)))
-
-    legendEl.innerHTML = keys.map(k => `
-      <div class="sob-cohort-legend-item">
-        <span class="sob-cohort-legend-swatch" style="background:${palette[k].color}"></span>
-        <span>${palette[k].short} · <b>${palette[k].name}</b></span>
-      </div>`).join("")
-  }, [cohort, labels])
+  const ticks = x.ticks(width < 560 ? 4 : 8).filter((v) => Number.isInteger(v))
+  const p = cursor !== null ? points[cursor] : null
 
   return (
-    <>
-      <svg ref={svgRef} className="sob-cohort-svg" role="img" aria-label="Tenure cohort over time" />
-      <div ref={legendRef} className="sob-cohort-legend" />
-    </>
+    <div className="sob-cohort" ref={wrapRef}>
+      <div className="sob-chart-head">
+        <fieldset className="sob-toggles">
+          <legend className="sob-aside-title">{t("show")}</legend>
+          {COHORT_KEYS.map((k) => {
+            const on = filters.cohorts.includes(k)
+            return (
+              <button
+                key={k}
+                type="button"
+                className="sob-toggle"
+                aria-pressed={on}
+                onClick={() => toggle(k)}
+                onPointerEnter={() => setFocusKey(k)}
+                onPointerLeave={() => setFocusKey(null)}
+                onFocus={() => setFocusKey(k)}
+                onBlur={() => setFocusKey(null)}
+              >
+                <span className="sob-cohort-legend-swatch" style={{ background: on ? PALETTE[k] : "transparent", borderColor: PALETTE[k] }} />
+                {labels[k].short} · <b>{labels[k].name}</b>
+              </button>
+            )
+          })}
+        </fieldset>
+        <span role="group" aria-label={t("mode")} className="sob-seg">
+          <button type="button" aria-pressed={!share} onClick={() => update({ cohortMode: "count" })}>{t("count")}</button>
+          <button type="button" aria-pressed={share} onClick={() => update({ cohortMode: "share" })}>{t("share")}</button>
+        </span>
+      </div>
+      <p className="ed-muted sob-chart-hint">{t("hint")}</p>
+      <div className="sob-chart-stage">
+        <svg className="sob-cohort-svg" viewBox={`0 0 ${width} ${H}`} width="100%" height={H} role="img" aria-label={t("label")} tabIndex={0} onKeyDown={onKey}>
+          <g className="axis" aria-hidden="true">
+            {y.ticks(5).map((v) => (
+              <g key={v} transform={`translate(0,${y(v)})`}>
+                <line x1={m.left} x2={width - m.right} className="sob-grid" />
+                <text x={m.left - 8} dy="0.32em" textAnchor="end">{share ? pf.format(v) : nf.format(v)}</text>
+              </g>
+            ))}
+            {ticks.map((i) => (
+              <text key={i} x={x(i)} y={H - m.bottom + 18} textAnchor="middle">{points[i] ? monthLabel(points[i].month) : ""}</text>
+            ))}
+          </g>
+          <g className={reducedMotion ? undefined : "sob-fade"} key={`${keys.join()}-${filters.cohortMode}-${filters.from}-${filters.to}`}>
+            {stacked.map((s) => (
+              <path
+                key={s.key}
+                d={area(s) ?? ""}
+                fill={PALETTE[s.key as CohortKey]}
+                fillOpacity={focusKey && focusKey !== s.key ? 0.25 : 0.9}
+                className="sob-area"
+              />
+            ))}
+          </g>
+          {cursor !== null && <line className="sob-cursor" x1={x(cursor)} x2={x(cursor)} y1={m.top} y2={H - m.bottom} />}
+          <rect x={m.left} y={m.top} width={Math.max(0, width - m.left - m.right)} height={Math.max(0, H - m.top - m.bottom)} fill="transparent" onPointerMove={onMove} onPointerLeave={() => setCursor(null)} />
+        </svg>
+        {p && (
+          <div className="sob-chart-readout" role="status" aria-live="polite">
+            <b>{monthLabel(p.month)}</b>
+            <ul>
+              {COHORT_KEYS.filter((k) => filters.cohorts.includes(k)).map((k) => (
+                <li key={k} className={focusKey === k ? "is-current" : undefined}>
+                  <span>{labels[k].name}</span>
+                  <span>
+                    {p.values[k] === null ? "—" : nf.format(p.values[k] as number)}
+                    {p.values[k] !== null && p.total ? ` · ${pf.format((p.values[k] as number) / p.total)}` : ""}
+                  </span>
+                </li>
+              ))}
+              <li><span>{t("total")}</span><span>{p.total === null ? "—" : nf.format(p.total)}</span></li>
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

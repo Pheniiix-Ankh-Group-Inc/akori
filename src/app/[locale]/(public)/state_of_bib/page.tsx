@@ -1,27 +1,19 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
-import { fmt, fmtK } from "@/components/state-of-bib/format"
-import type {
-  SobMeta,
-  SobHeadline,
-  SobCountry,
-  SobCity,
-  SobEcosystemMix,
-  SobCohort as SobCohortData,
-} from "@/components/state-of-bib/types"
+import { intlLocale } from "@/lib/content/locales"
+import { sobFreshness } from "@/lib/sob/freshness"
 import { SobMap } from "@/components/state-of-bib/SobMap"
 import { SobEcosystems } from "@/components/state-of-bib/SobEcosystems"
 import { SobCohort } from "@/components/state-of-bib/SobCohort"
-import { SobMarquee } from "@/components/state-of-bib/SobMarquee"
+import { SobExplorerProvider } from "@/components/state-of-bib/SobExplorer"
+import { SobPeriodBar } from "@/components/state-of-bib/SobPeriodBar"
+import { LazyMount } from "@/components/state-of-bib/LazyMount"
+import { Link } from "@/i18n/navigation"
+import { isSobAvailable, loadSobState, loadSobTrend } from "@/lib/sob/load"
+import { SobTrend } from "@/components/state-of-bib/SobTrend"
+import { getPublishedInsight } from "@/lib/sob/insights"
 
-import metaData from "../../../../../public/data/meta.json"
-import headlineData from "../../../../../public/data/headline.json"
-import countryMapData from "../../../../../public/data/country_map.json"
-import topCitiesData from "../../../../../public/data/top_cities.json"
-import ecoMixData from "../../../../../public/data/ecosystem_mix.json"
-import cohortData from "../../../../../public/data/tenure_cohort.json"
-
-export const revalidate = 3600
+export const revalidate = 900
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -35,110 +27,120 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const meta = metaData as SobMeta
-const headline = headlineData as SobHeadline
-const countryMap = countryMapData as SobCountry[]
-const topCities = topCitiesData as SobCity[]
-const ecoMix = ecoMixData as SobEcosystemMix
-const cohort = cohortData as SobCohortData
 
-function formatMovementNum(raw: string): string {
-  const parts = raw.split(/\s{2,}/)
-  if (parts.length < 2) return `<b>${raw}</b>`
-  const [num, ...rest] = parts
-  return `<b>${num}</b>&nbsp;&nbsp;${rest.join(" ").toUpperCase()}`
-}
+/** « § 01  Mouvement Un » → « § 01 · Mouvement Un ». */
+const movementNum = (raw: string) => raw.replace(/\s{2,}/, " · ")
 
+/**
+ * State of BIB (charte claire) : faits de l'instantané, indicateur principal,
+ * analyse publiée (si un administrateur l'a validée), puis cinq mouvements.
+ * Tous les chiffres viennent de la version vérifiée courante ; sans version
+ * valide, la page affiche un état d'indisponibilité (jamais de chiffres non
+ * contrôlés). Fournisseurs et licences : page légale /data-sources uniquement.
+ */
 export default async function StateOfBibPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "StateOfBib" })
+  const s = await getTranslations({ locale, namespace: "Site.sob" })
+  const [snapshot, trend] = await Promise.all([loadSobState(), loadSobTrend("devs_active_28d")])
+  if (!isSobAvailable(snapshot)) {
+    return (
+      <main>
+        <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "6rem" }}>
+          <div className="ed-stack" style={{ gap: "1.75rem", maxWidth: "46rem" }}>
+            <p className="ed-eyebrow">{s("eyebrow")}</p>
+            <h1 className="ed-display" style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)" }}>
+              {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
+            </h1>
+            <div className="ed-note" role="status">
+              <h2 className="ed-h3" style={{ marginBottom: "0.5rem" }}>{s("unavailableTitle")}</h2>
+              <p>{s("unavailableText")}</p>
+            </div>
+            <p><Link href="/data-sources" className="ed-link">{s("methodLink")} →</Link></p>
+          </div>
+        </section>
+      </main>
+    )
+  }
+  const { meta, headline, countryMap, topCities, ecoMix, cohort, origin } = snapshot
+  // Analyse IA : affichée uniquement si elle a été publiée par un administrateur.
+  const insight = await getPublishedInsight(locale)
+  const loc = intlLocale(locale)
+  const nf = new Intl.NumberFormat(loc)
+  const asOf = new Intl.DateTimeFormat(loc, { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${headline.snapshot_date}T00:00:00Z`))
+  const freshness = sobFreshness(headline.snapshot_date)
 
   return (
-    <main className="sob">
-      <header className="sob-masthead">
-        <div className="sob-wrap">
-          <div className="sob-masthead-top">
-            <span>{t("masthead.editorial").toUpperCase()}</span>
-            <span>
-              {t("masthead.vol").toUpperCase()} <b>{t("masthead.volNum")}</b> · {t("masthead.volDate").toUpperCase()}
-            </span>
-            <span>
-              {t("masthead.block").toUpperCase()} <b>{fmt(meta.block_number)}</b>
-            </span>
-          </div>
-          <div className="sob-section-num">
-            <b>{t("masthead.sectionNum")}</b>&nbsp;&nbsp;{t("masthead.sectionLabel").toUpperCase()}
-          </div>
-          <h1 className="sob-masthead-title">
-            {t("masthead.titleLine1")}<br />
-            {t("masthead.titleLine2")} <em>{t("masthead.titleLine2In")}</em> {t("masthead.titleLine2Last")}
+    <main>
+      <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "4rem" }}>
+        <div className="ed-stack" style={{ gap: "1.75rem" }}>
+          <p className="ed-eyebrow">{s("eyebrow")}</p>
+          <h1 className="ed-display" style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)" }}>
+            {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
           </h1>
-          <div className="sob-masthead-sub">
-            <p className="sob-masthead-lede">{t("masthead.lede")}</p>
-            <div className="sob-masthead-meta">
-              <div>{t("masthead.metaDataset").toUpperCase()} <span>{meta.dataset_version}</span></div>
-              <div>{t("masthead.metaSnapshot").toUpperCase()} <span>{headline.snapshot_date}</span></div>
-              <div>{t("masthead.metaSource").toUpperCase()} <span>{t("masthead.metaSourceVal")}</span></div>
-              <div>{t("masthead.metaLicence").toUpperCase()} <span>{t("masthead.metaLicenceVal")}</span></div>
-            </div>
-          </div>
+          <p className="ed-lede">{s("lede")}</p>
+          <dl className="sob-facts">
+            <div><dt>{s("facts.asOf")}</dt><dd>{asOf}</dd></div>
+            <div><dt>{s("facts.scope")}</dt><dd>{s("facts.scopeVal", { n: meta.scope.countries_in_scope })}</dd></div>
+            <div><dt>{s("facts.version")}</dt><dd>{snapshot.version}</dd></div>
+          </dl>
+          <p className="ed-muted">{s("diaspora")} <Link href="/data-sources" className="ed-link">{s("methodLink")}</Link></p>
+          {freshness.stale && <p className="ed-note" role="note">{s("stale", { date: asOf })}</p>}
+          {origin === "fallback" && <p className="ed-note" role="note">{s("fallback")}</p>}
         </div>
-      </header>
+      </section>
 
-      <section className="sob-hero">
-        <div className="sob-halo">
-          <svg className="sob-halo-ring" viewBox="0 0 480 480" aria-hidden>
-            <defs>
-              <path id="sob-halo-path" d="M 240 240 m -216, 0 a 216,216 0 1,1 432,0 a 216,216 0 1,1 -432,0" />
-            </defs>
-            <text>
-              <textPath href="#sob-halo-path" startOffset="0%">
-                BLACK IN BLOCKCHAIN · ONE LEDGER · FOUR CONTINENTS · SIGNED ON-CHAIN ·
-              </textPath>
-            </text>
-          </svg>
-        </div>
-        <div className="sob-wrap sob-hero-inner">
-          <div className="sob-hero-eyebrow">{t("hero.eyebrow")}</div>
-          <div className="sob-hero-number">
-            {fmt(headline.devs_active_28d)}<em>.</em>
+      <section className="ed-section ed-section-white" aria-labelledby="sob-headline">
+        <div className="ed-wrap ed-stack" style={{ gap: "2.5rem" }}>
+          <div className="ed-stack" style={{ gap: "1rem" }}>
+            <h2 id="sob-headline" className="sob-hero-number">{nf.format(headline.devs_active_28d)}</h2>
+            <p className="sob-hero-caption">
+              {t("hero.captionStart")} <b>{nf.format(headline.ecosystems)}</b> {t("hero.captionMid")} <b>{nf.format(headline.cities)}</b> {t("hero.captionMid2")} {t("hero.captionEmEnd")}
+            </p>
           </div>
-          <p className="sob-hero-caption">
-            {t("hero.captionStart")} <b>{fmt(headline.ecosystems)}</b> {t("hero.captionMid")} <b>{fmt(headline.cities)}</b> {t("hero.captionMid2")} <em>{t("hero.captionEmEnd")}</em>
-          </p>
-          <div className="sob-hero-stats">
-            <div className="sob-hero-stat">
-              <div className="sob-hero-stat-label">{t("hero.stat1Label").toUpperCase()}</div>
-              <div className="sob-hero-stat-num">{fmtK(headline.commits_lifetime)}</div>
-              <div className="sob-hero-stat-sub">{t("hero.stat1Sub").toUpperCase()}</div>
-            </div>
-            <div className="sob-hero-stat">
-              <div className="sob-hero-stat-label">{t("hero.stat2Label").toUpperCase()}</div>
-              <div className="sob-hero-stat-num">{fmt(headline.countries)}</div>
-              <div className="sob-hero-stat-sub">{t("hero.stat2Sub").toUpperCase()}</div>
-            </div>
-            <div className="sob-hero-stat">
-              <div className="sob-hero-stat-label">{t("hero.stat3Label").toUpperCase()}</div>
-              <div className="sob-hero-stat-num">{fmt(headline.ecosystems)}</div>
-              <div className="sob-hero-stat-sub">{t("hero.stat3Sub").toUpperCase()}</div>
-            </div>
-            <div className="sob-hero-stat">
-              <div className="sob-hero-stat-label">{t("hero.stat4Label").toUpperCase()}</div>
-              <div className="sob-hero-stat-num"><em>{t("hero.stat4Num")}</em></div>
-              <div className="sob-hero-stat-sub">{meta.dataset_version}</div>
-            </div>
+          <div className="ed-stats">
+            <div className="ed-stat"><strong>{nf.format(headline.commits_lifetime)}</strong><span>{(await getTranslations({ locale, namespace: "Site.home" }))("kpi.commits")}</span></div>
+            <div className="ed-stat"><strong>{nf.format(headline.countries)}</strong><span>{t("hero.stat2Sub")}</span></div>
+            <div className="ed-stat"><strong>{nf.format(headline.ecosystems)}</strong><span>{t("hero.stat3Sub")}</span></div>
+          </div>
+          <p className="ed-muted">{s("updated")}</p>
+          <div className="ed-stack" style={{ gap: "1rem" }}>
+            <h3 className="ed-h3">{s("trendTitle")}</h3>
+            <SobTrend points={trend} locale={loc} label={s("trendLabel")} emptyNote={s("trendEmpty")} />
           </div>
         </div>
       </section>
 
-      <SobMarquee cities={topCities} />
+      {insight && (
+        <section className="ed-section" aria-labelledby="sob-analysis">
+          <div className="ed-wrap-narrow ed-stack" style={{ gap: "1.25rem" }}>
+            <p className="ed-eyebrow">{s("analysis")}</p>
+            <h2 id="sob-analysis" className="ed-h2">{insight.content.title}</h2>
+            <div className="ed-prose" style={{ whiteSpace: "pre-line" }}>{insight.content.rendered_body}</div>
+            {insight.content.limitations && <p className="ed-note">{insight.content.limitations}</p>}
+            <p className="ed-muted">
+              {insight.sources[0]?.as_of_date} — {s("analysisNote")}
+            </p>
+          </div>
+        </section>
+      )}
 
-      <section className="sob-movement light">
-        <div className="sob-wrap">
+      <SobExplorerProvider
+        months={ecoMix.months}
+        countries={countryMap.map((c) => c.iso_a3)}
+        ecosystems={ecoMix.ecosystems.map((e) => e.id)}
+      >
+      <div className="sob-sticky-filters">
+        <div className="ed-wrap">
+          <SobPeriodBar />
+        </div>
+      </div>
+      <section className="ed-section">
+        <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
-              <div className="sob-section-num" dangerouslySetInnerHTML={{ __html: formatMovementNum(t("m1.num")) }} />
+              <p className="sob-section-num">{movementNum(t("m1.num"))}</p>
               <h2 className="sob-movement-title" dangerouslySetInnerHTML={{ __html: t.raw("m1.title") }} />
             </div>
             <div className="sob-movement-lede">
@@ -146,25 +148,15 @@ export default async function StateOfBibPage({ params }: Props) {
               <p>{t("m1.lede2")}</p>
             </div>
           </div>
-          <SobMap
-            map={countryMap}
-            labels={{
-              top10: t("m1.top10"),
-              legendLabel: t("m1.legendLabel"),
-              legendLow: t("m1.legendLow"),
-              legendHigh: t("m1.legendHigh"),
-              tipCommits: t("m1.tipCommits"),
-              tipActive: t("m1.tipActive"),
-            }}
-          />
+          <SobMap map={countryMap} />
         </div>
       </section>
 
-      <section className="sob-movement">
-        <div className="sob-wrap">
+      <section className="ed-section ed-section-white">
+        <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
-              <div className="sob-section-num" dangerouslySetInnerHTML={{ __html: formatMovementNum(t("m2.num")) }} />
+              <p className="sob-section-num">{movementNum(t("m2.num"))}</p>
               <h2 className="sob-movement-title" dangerouslySetInnerHTML={{ __html: t.raw("m2.title") }} />
             </div>
             <div className="sob-movement-lede">
@@ -177,16 +169,13 @@ export default async function StateOfBibPage({ params }: Props) {
               const max = Math.max(...topCities.map(c => c.devs_active_28d))
               return topCities.map(c => (
                 <div key={c.city} className="sob-city-row">
-                  <div className="sob-city-rank">— {String(c.rank).padStart(2, "0")}</div>
+                  <div className="sob-city-rank">{String(c.rank).padStart(2, "0")}</div>
                   <div className="sob-city-name">{c.city}<em>{c.country}</em></div>
                   <div
                     className="sob-city-bar"
-                    style={{
-                      width: `${((c.devs_active_28d / max) * 100).toFixed(1)}%`,
-                      animationDelay: `${c.rank * 60}ms`,
-                    }}
+                    style={{ width: `${((c.devs_active_28d / max) * 100).toFixed(1)}%` }}
                   />
-                  <div className="sob-city-count"><b>{fmt(c.devs_active_28d)}</b> {t("m2.devs").toUpperCase()}</div>
+                  <div className="sob-city-count"><b>{nf.format(c.devs_active_28d)}</b> {t("m2.devs")}</div>
                 </div>
               ))
             })()}
@@ -194,11 +183,11 @@ export default async function StateOfBibPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="sob-movement">
-        <div className="sob-wrap">
+      <section className="ed-section">
+        <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
-              <div className="sob-section-num" dangerouslySetInnerHTML={{ __html: formatMovementNum(t("m3.num")) }} />
+              <p className="sob-section-num">{movementNum(t("m3.num"))}</p>
               <h2 className="sob-movement-title" dangerouslySetInnerHTML={{ __html: t.raw("m3.title") }} />
             </div>
             <div className="sob-movement-lede">
@@ -206,18 +195,17 @@ export default async function StateOfBibPage({ params }: Props) {
               <p>{t("m3.lede2")}</p>
             </div>
           </div>
-          <SobEcosystems
-            ecosystems={ecoMix.ecosystems}
-            labels={{ devsLabel: t("m3.devsLabel"), indexLabel: t("m3.indexLabel") }}
-          />
+          <LazyMount minHeight={760}>
+            <SobEcosystems ecosystems={ecoMix.ecosystems} months={ecoMix.months} />
+          </LazyMount>
         </div>
       </section>
 
-      <section className="sob-movement">
-        <div className="sob-wrap">
+      <section className="ed-section ed-section-white">
+        <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
-              <div className="sob-section-num" dangerouslySetInnerHTML={{ __html: formatMovementNum(t("m4.num")) }} />
+              <p className="sob-section-num">{movementNum(t("m4.num"))}</p>
               <h2 className="sob-movement-title" dangerouslySetInnerHTML={{ __html: t.raw("m4.title") }} />
             </div>
             <div className="sob-movement-lede">
@@ -225,25 +213,26 @@ export default async function StateOfBibPage({ params }: Props) {
               <p>{t("m4.lede2")}</p>
             </div>
           </div>
-          <SobCohort
-            cohort={cohort}
-            labels={{
-              newcomersShort: t("m4.newcomersShort"),
-              newcomersName: t("m4.newcomersName"),
-              apprenticedShort: t("m4.apprenticedShort"),
-              apprenticedName: t("m4.apprenticedName"),
-              eldersShort: t("m4.eldersShort"),
-              eldersName: t("m4.eldersName"),
-            }}
-          />
+          <LazyMount minHeight={520}>
+            <SobCohort
+              cohort={cohort}
+              labels={{
+                devs_0_1y: { short: t("m4.newcomersShort"), name: t("m4.newcomersName") },
+                devs_1_2y: { short: t("m4.apprenticedShort"), name: t("m4.apprenticedName") },
+                devs_2y_plus: { short: t("m4.eldersShort"), name: t("m4.eldersName") },
+              }}
+            />
+          </LazyMount>
         </div>
       </section>
 
-      <section className="sob-movement light">
-        <div className="sob-wrap">
+      </SobExplorerProvider>
+
+      <section className="ed-section">
+        <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
-              <div className="sob-section-num" dangerouslySetInnerHTML={{ __html: formatMovementNum(t("m5.num")) }} />
+              <p className="sob-section-num">{movementNum(t("m5.num"))}</p>
               <h2 className="sob-movement-title" dangerouslySetInnerHTML={{ __html: t.raw("m5.title") }} />
             </div>
             <div className="sob-movement-lede">
@@ -271,33 +260,10 @@ export default async function StateOfBibPage({ params }: Props) {
               </ul>
             </div>
           </div>
+          <p style={{ marginTop: "2.5rem" }}><Link href="/data-sources" className="ed-link">{s("methodLink")} →</Link></p>
         </div>
       </section>
 
-      <section className="sob-colophon">
-        <div className="sob-colophon-inner">
-          <div className="sob-hero-eyebrow" style={{ justifyContent: "center" }}>
-            {t("colophon.num")}
-          </div>
-          <h2 className="sob-colophon-title">
-            {t("colophon.titleLine1")}<br />
-            <em>{t("colophon.titleLine2")}</em>
-          </h2>
-          <p className="sob-colophon-text">{t("colophon.text")}</p>
-          <div className="sob-colophon-meta">
-            {t("colophon.setInLabel").toUpperCase()} <b>{t("colophon.setInFonts").toUpperCase()}</b><br />
-            {t("colophon.builtFromLabel").toUpperCase()} <b>{t("colophon.builtFromVal").toUpperCase()}</b><br />
-            <br />
-            {t("colophon.volLabel").toUpperCase()} <b>{t("masthead.volNum")}</b> · {t("masthead.volDate").toUpperCase()}<br />
-            {t("colophon.datasetLabel").toUpperCase()} <span>{meta.dataset_version}</span> · {t("colophon.blockLabel").toUpperCase()} <span>{fmt(meta.block_number)}</span><br />
-            <br />
-            {t("colophon.copyright").toUpperCase()}<br />
-            {t("colophon.url").toUpperCase()}
-          </div>
-        </div>
-      </section>
-
-      <div className="sob-mega">Black <em>in</em> Blockchain.</div>
     </main>
   )
 }
