@@ -2,17 +2,104 @@
 
 All notable changes to this project are documented here.
 
-Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).  
-This project follows [Semantic Versioning](https://semver.org/).
-
----
+This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html) conventions. Historical release numbers and duplicate legacy entries are preserved as originally recorded.
 
 ## [Unreleased]
+
+### Fixed — single Supabase project and autonomous State of BIB
+
+- Respect the project's **single existing Supabase `akori` database** across deployments; remove obsolete requirements to provision a second database.
+- Trigger the State of BIB pipeline automatically on the first `main` push after release (when `BIB_SCHEDULES_ENABLED=true`), then hourly; no human dispatch is needed.
+- Correct State of BIB revalidation for unprefixed English routes (`/`, `/state_of_bib`, `/data-sources`) and prefixed French/Spanish routes. Failed verification no longer invalidates otherwise valid public caches.
+- Luma's manually triggered workflow now selects matching URL/secret pairs, with an optional Preview target. Manual news and newsletter workflows fail closed when a Preview URL is missing instead of silently targeting production.
+- State of BIB dataset and AI analysis modes remain **fully automatic** (`sob=auto`, `sob_insights=auto`). The optional technical snapshot still opens a PR but never automatically merges into protected `main`.
+- Add regression tests for locale-aware cache invalidation and workflow targeting. The new CI run must pass before release.
+- Verify the current database has no published dataset or sync runs; automatic publication requires the updated workflow on the default branch, valid credentials and write enablement — no human approval gate.
+
+> **Release status:** The platform architecture and pre-production corrections have been implemented and verified by offline CI. They have **not** been fully validated with live Luma, Brevo, an AI provider, production State of BIB data, or an isolated staging environment. No production release is authorized by these changes. See the [README](README.md#implementation-and-release-status) and [pre-production report](docs/audits/BIB_PREPROD_READINESS.md).
+
+### Fixed — pre-production hardening (PR #33)
+
+- **State of BIB cache correctness.** Publication verification now calls the `verify_current_dataset` RPC directly and rereads all six private artifacts without the Next.js `unstable_cache` layer, checking SHA-256 integrity. `revalidateTag(..., "max")` can still serve stale public content; the refresh response now explicitly distinguishes **database/Storage verification** from **unverified public visibility**.
+- **State of BIB refresh responses.** The cron endpoint rejects invalid version query parameters, reports a database verification outage as HTTP 503 and an integrity/version mismatch as HTTP 409, and does not falsely claim that client-side caches have refreshed.
+- **Luma false-positive success.** Removed the redundant `FEATURE_LUMA_SYNC` application flag. The cron endpoint no longer reports a skipped synchronization as successful; it returns HTTP 409 for an already-running job, a non-2xx response on processing errors, and an explicit failure for an empty iCalendar feed.
+- **Luma concurrency safety.** Removed the legacy non-atomic locking fallback. When migration 0012's `begin_event_sync_run` RPC is missing, synchronization fails closed instead of risking overlapping writes.
+- **Luma scheduling and staging.** Prepared `events-sync.yml` for a ten-minute schedule on the default branch, gated by `BIB_SCHEDULES_ENABLED`. Manual workflow runs use dedicated `BIB_STAGING_SITE_URL` and `BIB_STAGING_CRON_SECRET` settings and refuse an identical production/staging URL. Independent Supabase-project isolation must still be verified separately.
+- **Administration.** Updated the events and automation pages to remove references to `FEATURE_LUMA_SYNC` and to describe the planned ten-minute schedule without presenting it as already active.
+- **Regression coverage.** Added cases for stale-while-revalidate caching, unavailable publication verification, altered private artifacts, an empty Luma feed, and a missing atomic-lock migration.
+- **Documentation.** Updated the README, deployment/automation guides, environment examples, and pre-production audit; translated the README and changelog to English while retaining their technical scope and historical records.
+
+### Validation — latest verified CI
+
+- [GitHub Actions run 44008551701](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44008551701): all three jobs passed (`web`, `data`, `sql`).
+- **245/245 Vitest tests** across 21 test files; **63/63 Python tests**.
+- ESLint, TypeScript, Next.js production build, SQL migrations/RLS/concurrency on disposable PostgreSQL, security-header checks, and server-secret checks in the client bundle passed.
+- `pnpm audit --prod --audit-level=high` reported **no known vulnerabilities**.
+- No real Supabase writes, Luma sync, Brevo email delivery, AI calls, production deployment, or live E2E acceptance test was performed for these corrections.
+
+### Added — platform architecture (PR #32)
+
+- **Luma event synchronization.** Ingests Luma iCalendar feeds into Supabase using an RFC 5545-aware parser (time zones, all-day events, `RRULE`, `RDATE`, `EXDATE`, `RECURRENCE-ID`). Upserts are idempotent by event identity; a database-level lock prevents concurrent runs. Interrupted runs can recover, empty feeds are rejected, and significant feed-size drops do not silently remove events. Cancellations and missing events remain in history. Optional `.ics` import fills historical gaps.
+- **Public event experience.** Added `/evenements` and `/evenements/[slug]` with the embedded Luma calendar, list/month views, filters, paginated history, and links to event recaps.
+- **BIB in Action.** Added recaps, photo/video galleries, and testimonials with consent references at `/en-action` and `/en-action/[slug]`. Media stays private until publication and rights approval.
+- **State of BIB observatory.** Added URL-shareable geographic/metric/period filters, zoomable maps and comparisons, interactive trends, sortable rankings, cohorts, keyboard/touch support, reduced-motion support, and EN/FR/ES localization.
+- **State of BIB data pipeline.** Added manifest-driven source checks, detection of new versions or updated resources under the same version, independent Python/DuckDB aggregation, validations for format/coverage/duplicates/provenance, and historical versions/observations in Supabase.
+- **Automated State of BIB publication.** Added `auto` mode with strengthened checks for large changes, atomic version switching, concurrency and version-order protection, verification and automatic rollback, quarantining and bounded retries, PostgreSQL/Storage/repository reconciliation, and operational incidents.
+- **State of BIB server rendering.** Added integrity-checked reads of the current published version, an explicit unavailable state when no valid snapshot exists, cache invalidation after publication, and localized legal disclosures at `/data-sources`.
+- **AI insights.** Added a shared configurable provider engine (`anthropic`, `openai`, `mistral`, `openai-compatible`, `mock`) with budgets and timeouts; localized State of BIB analyses per dataset version; deterministic numeric placeholders, scope/direction checks, bounded retries, and `/api/ops/ai-status`.
+- **Brevo newsletter.** Added FR/EN double opt-in with consent evidence, controlled RSS/Atom source ingestion, four-section automated FR/EN drafting, deterministic validation, optional editorial review, manual or autonomous delivery, and protection against duplicate sends (status locking, idempotency keys, Brevo reconciliation).
+- **Automation settings.** Added audited `auto`, `review`, and `paused` modes for State of BIB, its insights, and the newsletter.
+- **Private administration.** Added `/admin` for events, recaps, media rights, testimonials, State of BIB, news sources, newsletter editions, automations, incidents, and audit history; Supabase Auth is invitation-only, with public sign-up closed.
+- **Supabase schema.** Added 13 numbered migrations (0001–0013) covering permissions, auditing, events, media, datasets, newsletter, and incidents; RLS for all tables; transactional RPCs including `sync_luma_events`, `begin_event_sync_run`, `publish_dataset_candidate`, and `verify_current_dataset`; private Storage and initial-admin operational scripts.
+- **Automation and monitoring.** Added `events-sync.yml`, `news-ingest.yml`, and `newsletter.yml`, with scheduling disabled until explicitly activated; structured redacted logging, execution history, incidents, and optional internal alerts.
+- **Quality gates.** Added Vitest unit/security tests, Python pipeline tests, disposable-PostgreSQL SQL/RLS/concurrency tests, Playwright suites, and `ci.yml` jobs (`web`, `data`, `sql`) covering dependencies, security headers, bundle secrets, and production build.
+- **Documentation.** Added architecture, data model, deployment, State of BIB automation, security, testing, operational, and editorial guides; pages-in-progress inventory; and an annotated `.env.example`.
+
+### Changed — platform architecture (PR #32)
+
+- **Visual system and navigation.** Replaced the previous dark homepage styling with an ivory/ink/gold editorial theme (Fraunces + Inter), accessible mobile navigation, persistent-page language switching, 44 px touch targets, AA contrast targets, and redesigned Home, About, Events, BIB in Action, and State of BIB pages.
+- **Events.** Made Luma the source of truth; removed manual event creation from the administration UI and limited local editing to BIB editorial additions.
+- **State of BIB.** Moved the public dataset source to Supabase. JSON files under `data/state-of-bib/` are technical copies only, eligible for fallback solely when valid and recent. Aggregation now assigns one country per developer and derives totals from the country-level dataset.
+- **Data workflow.** Reworked `refresh-data.yml` from a weekly process that wrote directly to `main` into an hourly manifest check with conditional rebuilds and no direct push to `main`. Missing required configuration now fails explicitly rather than silently succeeding.
+- **Pages in progress.** `/about`, `/mission`, `/membership`, `/resources`, `/press`, and `/contact` now show a shared non-indexed placeholder.
+- **Authentication routes.** `/register` indicates registration is closed; `/dashboard` redirects to `/admin`.
+- **Dependencies.** Upgraded to Next.js 16.4, next-intl 4.15, Zod 4.6, and supabase-js 2.119.
+
+### Removed — platform architecture (PR #32)
+
+- Sanity Studio/schema/client, better-auth, Stripe, `pg`, `styled-components`, the member area, and `package-lock.json` in favor of pnpm.
+- Public State of BIB JSON files previously served from `public/data/`, along with public dataset downloads.
+- Provider/license references outside the designated legal `/data-sources` page.
+- Unsupported statistical claims and decorative sections from the previous dark-themed homepage.
+- Database objects from an unrelated legacy product in the dedicated Supabase `akori` project.
+
+### Fixed — platform architecture (PR #32)
+
+- Restored previously broken `/login`, `/register`, and `/dashboard` routes.
+- Corrected the Wednesday 09:00 Toronto newsletter time across daylight-saving and standard time.
+- Made editorial records, translations, and audit changes transactional with optimistic concurrency control.
+- Resolved ESLint errors and unused imports in State of BIB components.
+
+### Security — platform architecture (PR #32)
+
+- Removed the publicly exposed `/api/emails/welcome` route that allowed arbitrary email sending; stopped logging Brevo key prefixes.
+- Added restrictive CSP based on configured Supabase origins, `object-src 'none'`, `base-uri`, `form-action`, `frame-ancestors`, HSTS, `Referrer-Policy`, and `Cross-Origin-Opener-Policy`.
+- Removed external HTML insertion from State of BIB map/cohort renderers.
+- Hardened subscriptions with same-origin checks, honeypots, fail-closed rate limiting, and uniform error responses.
+- Added SSRF protections for news ingestion (DNS, redirects, size, content type, XML entities) and isolated untrusted content in AI prompts.
+- Added binary media signature inspection and private-until-approved publication rules.
+- Hardened Supabase with `SECURITY INVOKER` views, limited anonymous column privileges, `SECURITY DEFINER` functions with restricted search paths, private State of BIB Storage, and restricted anonymous dataset access.
+- Reduced reported production dependency vulnerabilities from 234 to zero at the time of that audit; the later PR #33 audit also reported no known vulnerabilities.
+
+## Earlier versions
+
+The entries below preserve the original project changelog, including repeated version numbers and dates. They do **not** correspond to verified Git tags; `package.json` currently identifies the application as `0.3.0`.
+
 ## [0.13.0] — 2026-05-18
 
-### Fix
+### Fixed
 
-- fix cron
+- Fix cron
 
 ## [0.12.0] — 2026-04-25
 
@@ -22,8 +109,6 @@ This project follows [Semantic Versioning](https://semver.org/).
 - fix translation
 - update content
 - fix ui/ux mobile
-
-### In Progress
 
 ## [0.12.0] — 2026-04-25
 
@@ -37,142 +122,118 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 - Add Internationalisation
 
----
-
 ## [0.10.0] — 2026-04-17
 
 ### Added
 
-- Create CI workflows  
-- Remove animation data-reveal  
-- Update environment variables  
-- Add @vercel/analytics  
-- Update README  
-
----
+- Create CI workflows
+- Remove animation data-reveal
+- Update environment variables
+- Add @vercel/analytics
+- Update README
 
 ## [0.8.0] — 2026-04-17
 
 ### Added
 
-- Fix build on main branch  
-
----
+- Fix build on main branch
 
 ## [0.7.0] — 2026-04-16
 
 ### Added
 
-- Add social media links  
-- Update newsletter content  
-- Rename file  
-
----
+- Add social media links
+- Update newsletter content
+- Rename file
 
 ## [0.6.0] — 2026-04-15
 
 ### Added
 
-- Bug fixes  
-- Update footer menu content  
-
----
+- Bug fixes
+- Update footer menu content
 
 ## [0.5.0] — 2026-04-13
 
 ### Added
 
-- Bug fixes  
-- Add Luma iframe  
-- Increase Next.js config limits  
-
----
+- Bug fixes
+- Add Luma iframe
+- Increase Next.js config limits
 
 ## [0.4.0] — 2026-04-12
 
 ### Added
 
-- Bug fixes  
-- Rename Akori to AnbaChain  
-
----
+- Bug fixes
+- Rename Akori to AnbaChain
 
 ## [0.3.0] — 2026-04-07
 
 ### Added
 
-- Add member dashboard  
-- Add login page  
-- Add register page  
-- Fix middleware functionality  
-- Upgrade global CSS  
-
----
+- Add member dashboard
+- Add login page
+- Add register page
+- Fix middleware functionality
+- Upgrade global CSS
 
 ## [0.2.0] — 2026-04-05
 
 ### Added
 
-- Configure better-auth  
-- Configure Supabase  
-- Configure Brevo  
-- Configure Sanity  
-
----
+- Configure better-auth
+- Configure Supabase
+- Configure Brevo
+- Configure Sanity
 
 ## [0.2.0] — 2026-04-05
 
 ### Added
 
-- Fix build error  
-
----
+- Fix build error
 
 ## [0.2.0] — 2026-04-05
 
 ### Added
 
-- Configure better-auth  
-- Configure Supabase  
-- Configure Brevo  
-- Configure Sanity  
-
----
+- Configure better-auth
+- Configure Supabase
+- Configure Brevo
+- Configure Sanity
 
 ## [0.2.0] — 2026-03-02
 
 ### Added
 
-- Project architecture  
-- All sections  
-
----
+- Project architecture
+- All sections
 
 ## [0.1.0] — 2026-02-28
 
 ### Added
 
-- Initialize Next.js 15 project with App Router and TypeScript  
-- Configure Tailwind CSS with custom color palette  
-- Complete folder and file structure (public routes, members, auth, API)  
-- Configure `next.config.ts` with security headers and CDN remotePatterns  
-- Configure strict `tsconfig.json` with `@/*` alias  
-- Global CSS variables in `globals.css`  
-- Root layout `src/app/layout.tsx` with Inter font and base metadata  
-- Placeholder homepage `src/app/page.tsx`  
-- Custom 404 page `src/app/not-found.tsx`  
-- Utilities in `src/lib/utils.ts` (cn, formatDate, formatCurrency, truncate)  
-- Global types in `src/types/index.ts` (Plan, Sector, Profile, PartnerType)  
-- `.env.example` file with all required variables  
-- Prettier configuration with Tailwind plugin  
-- ESLint configuration  
+- Initialize Next.js 15 project with App Router and TypeScript
+- Configure Tailwind CSS with custom color palette
+- Complete folder and file structure (public routes, members, auth, API)
+- Configure `next.config.ts` with security headers and CDN remotePatterns
+- Configure strict `tsconfig.json` with `@/*` alias
+- Global CSS variables in `globals.css`
+- Root layout `src/app/layout.tsx` with Inter font and base metadata
+- Placeholder homepage `src/app/page.tsx`
+- Custom 404 page `src/app/not-found.tsx`
+- Utilities in `src/lib/utils.ts` (cn, formatDate, formatCurrency, truncate)
+- Global types in `src/types/index.ts` (Plan, Sector, Profile, PartnerType)
+- `.env.example` file with all required variables
+- Prettier configuration with Tailwind plugin
+- ESLint configuration
+- Dependencies:
+  - `next-sanity`, `@sanity/image-url`, `@sanity/client`
+  - `better-auth`
+  - `@supabase/supabase-js`, `@supabase/ssr`
+  - `stripe`, `@stripe/stripe-js`
+  - `@getbrevo/brevo`
+  - `react-hook-form`, `zod`, `@hookform/resolvers`
+  - `clsx`, `tailwind-merge`, `lucide-react`, `date-fns`
 
-### Dependencies Added
-
-- `next-sanity`, `@sanity/image-url`, `@sanity/client`  
-- `better-auth`  
-- `@supabase/supabase-js`, `@supabase/ssr`  
-- `stripe`, `@stripe/stripe-js`  
-- `@getbrevo/brevo`  
-- `react-hook-form`, `zod`, `@hookform/resolvers`  
-- `clsx`, `tailwind-merge`, `lucide-react`, `date-fns`  
+[Unreleased]: https://github.com/Pheniiix-Ankh-Group-Inc/akori/compare/main...develop

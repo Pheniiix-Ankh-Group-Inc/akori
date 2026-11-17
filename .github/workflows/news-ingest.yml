@@ -1,0 +1,42 @@
+name: Veille actualités BIB — quotidienne
+
+# Collecte légère des flux RSS/Atom des sources AUTORISÉES (sans IA).
+# Désactivé par défaut : nécessite BIB_SCHEDULES_ENABLED=true (variable de
+# dépôt) et FEATURE_NEWS_INGEST=true côté application.
+
+on:
+  schedule:
+    - cron: "41 10 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    # Planification désactivable ; le déclenchement manuel reste toujours possible.
+    if: github.event_name == 'workflow_dispatch' || vars.BIB_SCHEDULES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call the site
+        env:
+          PROD_SITE_URL: ${{ vars.BIB_SITE_URL }}
+          PROD_CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+          MANUAL_SITE_URL: ${{ vars.BIB_STAGING_SITE_URL }}
+          MANUAL_CRON_SECRET: ${{ secrets.BIB_STAGING_CRON_SECRET }}
+          TRIGGER: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "$TRIGGER" = "workflow_dispatch" ]; then
+            SITE_URL="$MANUAL_SITE_URL"
+            CRON_SECRET="$MANUAL_CRON_SECRET"
+            test -n "$SITE_URL" || { echo "::error::Manual workflow requires BIB_STAGING_SITE_URL"; exit 78; }
+          else
+            SITE_URL="$PROD_SITE_URL"
+            CRON_SECRET="$PROD_CRON_SECRET"
+          fi
+          case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
+          test -n "$SITE_URL" || { echo "BIB_SITE_URL manquant"; exit 1; }
+          test -n "$CRON_SECRET" || { echo "BIB_CRON_SECRET manquant"; exit 1; }
+          curl --fail-with-body -sS -X POST -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/news"

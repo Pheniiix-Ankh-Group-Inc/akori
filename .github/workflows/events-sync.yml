@@ -1,0 +1,43 @@
+name: Luma events — synchronization
+
+# One Supabase BIB project. Manual calls use a Preview URL if configured;
+# otherwise the canonical site URL. URL and matching cron secret are paired.
+on:
+  schedule:
+    - cron: "7,17,27,37,47,57 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+concurrency:
+  group: events-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' && vars.BIB_SCHEDULES_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Call Luma synchronization
+        env:
+          PROD_SITE_URL: ${{ vars.BIB_SITE_URL }}
+          PROD_CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+          MANUAL_SITE_URL: ${{ vars.BIB_STAGING_SITE_URL }}
+          MANUAL_CRON_SECRET: ${{ secrets.BIB_STAGING_CRON_SECRET }}
+          TRIGGER: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "$TRIGGER" = "workflow_dispatch" ] && [ -n "$MANUAL_SITE_URL" ]; then
+            SITE_URL="$MANUAL_SITE_URL"
+            CRON_SECRET="$MANUAL_CRON_SECRET"
+          else
+            SITE_URL="$PROD_SITE_URL"
+            CRON_SECRET="$PROD_CRON_SECRET"
+          fi
+          test -n "$SITE_URL" || { echo "::error::Missing BIB_SITE_URL (or BIB_STAGING_SITE_URL)"; exit 78; }
+          test -n "$CRON_SECRET" || { echo "::error::Missing cron secret for selected URL"; exit 78; }
+          case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
+          curl --fail-with-body --silent --show-error --retry 2 --retry-delay 20 \
+            --max-time 110 -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${SITE_URL%/}/api/cron/luma-sync"

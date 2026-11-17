@@ -224,7 +224,7 @@
       },
       "p9": {
         "title": "The <em>dispatch</em>",
-        "text": "A weekly newsletter distilling the week in blockchain, Black leadership, and diaspora economies. Editorial, specific, unhurried. Sent Fridays.",
+        "text": "A weekly newsletter distilling the week in blockchain, Black leadership, and diaspora economies. Editorial, specific, unhurried. Sent Wednesdays at 9 a.m. Toronto time.",
         "meta1": "Weekly",
         "meta2": "14.2K Readers"
       }
@@ -718,7 +718,7 @@
         "title": "3. Sharing of Information",
         "p1": "We do not sell personal data.",
         "p2": "We share with service providers.",
-        "p3": "Examples include Stripe, Supabase, Vercel.",
+        "p3": "Technical providers: Vercel (website hosting), Supabase (BIB database and files), Brevo (newsletter, with double opt-in confirmation) and Luma (event registration, on Luma's own website).",
         "p4": "We may disclose if required by law."
       },
       "blockchain": {
@@ -853,26 +853,6 @@
       "description": "A transcontinental audit of developer activity across 54 African nations and 22 Caribbean countries & territories — rendered from the ledger itself."
     },
     "nav": "State of BIB",
-    "masthead": {
-      "editorial": "Black in Blockchain · Editorial",
-      "vol": "Vol.",
-      "volNum": "01",
-      "volDate": "State of · Apr 2026",
-      "block": "Block",
-      "sectionNum": "§ 00",
-      "sectionLabel": "The Report",
-      "titleLine1": "The state of",
-      "titleLine2": "Black",
-      "titleLine2In": "in",
-      "titleLine2Last": "Blockchain.",
-      "lede": "A transcontinental audit of developer activity across 54 African nations and 22 Caribbean countries & territories — rendered from the ledger itself.",
-      "metaDataset": "Dataset",
-      "metaSnapshot": "Snapshot",
-      "metaSource": "Source",
-      "metaSourceVal": "Electric Capital · CC BY 4.0",
-      "metaLicence": "Licence",
-      "metaLicenceVal": "CC BY-SA 4.0"
-    },
     "hero": {
       "eyebrow": "— Chapter One · The Headline",
       "captionStart": "active developers across the continent and its islands — working on",
@@ -891,7 +871,7 @@
     "m1": {
       "num": "§ 01  Movement One",
       "title": "A geography <em>of code.</em>",
-      "lede1": "Commits per country over the lifetime of the Electric Capital index — scoped strictly to Africa and the Caribbean.",
+      "lede1": "Commits per country over the full period covered by the index — scoped strictly to Africa and the Caribbean.",
       "lede2": "Saturation follows log-scaled volume. Every country we see, we name.",
       "top10": "— Top 10 · Lifetime commits",
       "legendLabel": "— Commits · Log scale",
@@ -934,29 +914,421 @@
       "lede2": "We prefer to name them at the front, not bury them in a footnote.",
       "seesHeading": "✓ What we count",
       "sees1": "Developers whose <em>inferred</em> location — from GitHub profile, commit email domain, and timezone metadata — falls within one of the 76 countries in scope.",
-      "sees2": "Any commit attributed to an ecosystem in Electric Capital’s taxonomy. “Active” = at least one commit in the last 28 days of the snapshot.",
+      "sees2": "Any commit attributed to an ecosystem in the source’s taxonomy. “Active” = at least one commit in the last 28 days of the snapshot.",
       "sees3": "First commit across any ecosystem, which anchors each developer’s tenure bucket.",
-      "sees4": "All public repositories indexed by Electric Capital at the time of the weekly snapshot.",
+      "sees4": "All public repositories indexed by the source at the time of the snapshot.",
       "doesntHeading": "✕ What we don’t",
       "doesnt1": "Diaspora developers working from London, Montreal, Paris, Toronto, São Paulo. The dataset is geographic, not racial — we refuse to infer the latter from the former.",
       "doesnt2": "Private repositories, non-public work, and anything off-chain that doesn’t surface as a commit.",
-      "doesnt3": "Self-declared identity of any kind. Electric Capital infers location; we don’t override that inference.",
+      "doesnt3": "Self-declared identity of any kind. Location is inferred by the source; we don’t override that inference.",
       "doesnt4": "Activity before an ecosystem joined the EC taxonomy — some young protocols are undercounted early."
-    },
-    "colophon": {
-      "num": "§ 06  — Colophon · The Sign-Off",
-      "titleLine1": "Signed on-chain,",
-      "titleLine2": "this ledger, this hour.",
-      "text": "This report refreshes every Monday at 06:00 UTC against Electric Capital’s weekly snapshot. Corrections, additions, and country-name resolutions welcomed at the steering assembly.",
-      "setInLabel": "Set in",
-      "setInFonts": "Fraunces, Archivo, and JetBrains Mono",
-      "builtFromLabel": "Built from",
-      "builtFromVal": "Electric Capital developer data · CC BY 4.0",
-      "volLabel": "Vol.",
-      "datasetLabel": "Dataset",
-      "blockLabel": "Block",
-      "copyright": "© 2026 Black in Blockchain Collective",
-      "url": "anbachain.org · One ledger · Four continents"
     }
+  },
+  "Events": {
+    "metaTitle": "Events — Black in Blockchain",
+    "metaDescription": "Upcoming and past Black in Blockchain events. Registration takes place on Luma.",
+    "eyebrow": "Events",
+    "title": "Events",
+    "intro": "Each page presents a BIB event. Registration, tickets and attendee lists are handled on Luma; no BIB account is needed.",
+    "upcoming": "Upcoming",
+    "ongoing": "Happening now",
+    "past": "Past events",
+    "ended": "Ended",
+    "registerLuma": "Register on Luma",
+    "registerNote": "Opens the official event page on Luma.",
+    "noUpcoming": "No upcoming event has been published yet.",
+    "noPast": "No past event has been published yet.",
+    "notConfigured": "Events will appear here once the BIB database is configured.",
+    "inPerson": "In person",
+    "online": "Online",
+    "hybrid": "Hybrid",
+    "joinOnline": "Online access link",
+    "when": "When",
+    "where": "Where",
+    "format": "Format",
+    "back": "All events",
+    "translationFallback": "This content is not yet available in your language; it is shown in {language}.",
+    "viewDetails": "View event",
+    "viewRetrospective": "See the retrospective"
+  },
+  "InAction": {
+    "metaTitle": "BIB in action — Black in Blockchain",
+    "metaDescription": "Retrospectives, photos, videos and testimonials from Black in Blockchain gatherings.",
+    "eyebrow": "BIB in action",
+    "title": "BIB in action",
+    "intro": "Retrospectives, photos and testimonials from our gatherings. Only media cleared for publication are shown.",
+    "retrospectives": "Retrospectives",
+    "gallery": "Gallery",
+    "testimonials": "Testimonials",
+    "empty": "No retrospective has been published yet.",
+    "notConfigured": "Retrospectives will appear here once the BIB database is configured.",
+    "back": "All retrospectives",
+    "relatedEvent": "Related event",
+    "credit": "Credit",
+    "translationFallback": "This content is not yet available in your language; it is shown in {language}.",
+    "viewStory": "Read the retrospective",
+    "videoLabel": "Featured video"
+  },
+  "Newsletter": {
+    "title": "The BIB newsletter",
+    "intro": "Every Wednesday at 9 a.m. (Toronto time), four sections, in French or English, with a focus on Africa, the Caribbean and the diasporas.",
+    "rubrics": {
+      "blockchain_insights": {
+        "title": "Blockchain Insights",
+        "desc": "Analysis based on published State of BIB data"
+      },
+      "blockchain_news": {
+        "title": "Blockchain News",
+        "desc": "News from authorized sources"
+      },
+      "bib_events": {
+        "title": "BIB Events",
+        "desc": "Upcoming BIB events"
+      },
+      "bib_highlights": {
+        "title": "BIB Highlights",
+        "desc": "Highlights from the community"
+      }
+    },
+    "emailLabel": "Email address (required)",
+    "languageLabel": "Newsletter language",
+    "langFr": "French",
+    "langEn": "English",
+    "consentLabel": "I agree to receive the BIB newsletter. I can unsubscribe at any time.",
+    "submit": "Subscribe",
+    "submitting": "Sending…",
+    "successDoi": "Check your inbox: confirm your subscription using the link we just sent.",
+    "successDisabled": "Subscriptions are not open yet. Please come back soon.",
+    "errorInvalid": "Enter a valid email address, like name@example.com.",
+    "errorConsent": "Tick the box to confirm your consent.",
+    "errorRate": "Too many attempts. Please try again in a few minutes.",
+    "errorServer": "Your subscription could not be recorded. Please try again later.",
+    "privacyNote": "Your address is only used for this newsletter and is processed by Brevo. See the privacy policy."
+  },
+  "HomeBlocks": {
+    "eventsTitle": "Upcoming events",
+    "eventsAll": "All events",
+    "inActionTitle": "BIB in action",
+    "inActionAll": "All retrospectives",
+    "sobTitle": "State of BIB",
+    "sobLink": "Open the report",
+    "sobNote": "Data as of {date} · Africa and the Caribbean",
+    "sobUnavailable": "State of BIB indicators will appear as soon as a verified version is published."
+  },
+  "Site": {
+    "nav": {
+      "about": "About",
+      "events": "Events",
+      "inAction": "BIB in action",
+      "stateOfBib": "State of BIB",
+      "subscribe": "Subscribe",
+      "language": "Language",
+      "main": "Main navigation",
+      "open": "Open menu",
+      "close": "Close menu",
+      "subscribeLong": "Subscribe to the newsletter"
+    },
+    "footer": {
+      "explore": "Explore",
+      "legal": "Legal",
+      "terms": "Terms of use",
+      "privacy": "Privacy",
+      "cookies": "Cookies",
+      "newsletter": "Newsletter",
+      "copyright": "© {year} Black in Blockchain",
+      "team": "Team area",
+      "dataSources": "Data, methodology and sources"
+    },
+    "home": {
+      "eyebrow": "Blockchain community · Africa, the Caribbean and the diasporas",
+      "ctaEvents": "See events",
+      "ctaSob": "Explore State of BIB",
+      "premise": "The premise",
+      "exploreTitle": "Explore BIB",
+      "explore": {
+        "events": {
+          "title": "Events",
+          "desc": "Upcoming BIB gatherings. Registration is handled on Luma."
+        },
+        "inAction": {
+          "title": "BIB in action",
+          "desc": "Recaps, photos and testimonials from the community."
+        },
+        "sob": {
+          "title": "State of BIB",
+          "desc": "Blockchain developers in Africa and the Caribbean, in open data."
+        },
+        "newsletter": {
+          "title": "Newsletter",
+          "desc": "Four sections every Wednesday, in French or English."
+        }
+      },
+      "noEvents": "No upcoming event has been published yet.",
+      "sobScope": "These figures cover Africa and the Caribbean; they do not measure the diaspora.",
+      "kpi": {
+        "devs": "active developers over 28 days",
+        "ecosystems": "blockchain ecosystems",
+        "countries": "countries with at least one active developer",
+        "cities": "cities",
+        "commits": "lifetime commits"
+      }
+    },
+    "about": {
+      "eyebrow": "About",
+      "title": "A collective, a correspondence, a commons.",
+      "premiseTitle": "The premise",
+      "foundersTitle": "The founders",
+      "readProfile": "Read the profile",
+      "ctaTitle": "Join the next BIB gathering",
+      "ctaEvents": "See events",
+      "ctaNewsletter": "Subscribe to the newsletter",
+      "founder": "Founder",
+      "back": "About",
+      "linkedin": "LinkedIn",
+      "linkedinOf": "{name} on LinkedIn"
+    },
+    "events": {
+      "title": "BIB gatherings",
+      "ctaTitle": "Don't miss the next one",
+      "ctaText": "The BIB Events section of the newsletter announces every gathering.",
+      "noRetrospective": "No recap",
+      "until": "Until {time}",
+      "practical": "Practical information",
+      "viewList": "List",
+      "viewMonth": "Month",
+      "views": "View",
+      "status": "Status",
+      "statuses": {
+        "tous": "All",
+        "a-venir": "Upcoming",
+        "en-cours": "Ongoing",
+        "passes": "Past"
+      },
+      "year": "Year",
+      "allYears": "All",
+      "apply": "Filter",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "cancelled": "Cancelled",
+      "noneMonth": "No event this month.",
+      "noneFilter": "No event matches these filters.",
+      "pagePrev": "Previous page",
+      "pageNext": "Next page",
+      "pageOf": "Page {page} of {pages}",
+      "weekdays": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+      "retrospective": "Retrospective",
+      "sourceNote": "Details published on Luma, synchronised automatically.",
+      "sourceText": "Original text published on Luma.",
+      "calendar": "Events calendar",
+      "embedTitle": "Luma calendar",
+      "embedNote": "The official Black in Blockchain calendar on Luma: registrations and reminders happen there directly."
+    },
+    "inAction": {
+      "title": "The community, in pictures",
+      "ctaTitle": "Be part of the next gathering",
+      "ctaEvents": "See upcoming events",
+      "enlarge": "Enlarge photo {n}"
+    },
+    "sob": {
+      "eyebrow": "State of BIB · Vol. 01",
+      "titleStart": "The state of Black",
+      "titleIn": "in",
+      "titleEnd": "Blockchain",
+      "lede": "An audit of open-source developer activity across 54 African countries and 22 Caribbean countries and territories.",
+      "facts": {
+        "asOf": "Data as of",
+        "scope": "Scope",
+        "scopeVal": "{n} countries in Africa and the Caribbean",
+        "version": "Version"
+      },
+      "analysis": "Analysis",
+      "analysisNote": "AI-assisted writing, approved by an administrator before publication.",
+      "updated": "Recomputed with each new verified snapshot; if processing fails, the last valid version stays online.",
+      "devsIndex": "{devs} devs · index {index}",
+      "commitsTop": "Top 10 · lifetime commits",
+      "stale": "Snapshot of {date}: these figures do not reflect activity since that date. They will be replaced once a new version of the source has been verified.",
+      "fallback": "Shown from the last verified copy: the current version could not be read. Figures may be older.",
+      "trendTitle": "Change across published versions",
+      "trendLabel": "Active developers (28 days)",
+      "trendEmpty": "The history grows with each published version: the line will appear from the second release. No point is estimated.",
+      "methodLink": "Methodology, sources and licences",
+      "unavailableTitle": "Data temporarily unavailable",
+      "unavailableText": "No verified version of State of BIB is published at the moment. Rather than show old or unchecked figures, we show none. The statistics will return as soon as a version has passed the checks.",
+      "unavailableShort": "State of BIB indicators will appear as soon as a verified version is published.",
+      "diaspora": "These figures cover developers located in Africa and the Caribbean; they do not measure the global diaspora."
+    },
+    "pages": {
+      "draft": "Page in progress",
+      "note": "The content of this page is being written and will be published soon.",
+      "meanwhile": "In the meantime",
+      "more": "More",
+      "items": {
+        "about": {
+          "title": "About Black in Blockchain",
+          "lede": "Who we are, where we come from and what brings us together."
+        },
+        "mission": {
+          "title": "Our mission",
+          "lede": "What Black in Blockchain sets out to achieve, and how."
+        },
+        "membership": {
+          "title": "Join BIB",
+          "lede": "Ways to take part in the Black in Blockchain community."
+        },
+        "resources": {
+          "title": "Resources",
+          "lede": "Guides, reading and tools selected by the community."
+        },
+        "press": {
+          "title": "Press",
+          "lede": "Press releases, media kit and contacts for journalists."
+        },
+        "contact": {
+          "title": "Contact",
+          "lede": "Write to the Black in Blockchain team."
+        }
+      }
+    }
+  },
+  "SobExplore": {
+    "filters": {
+      "title": "Explore the data",
+      "region": "Region",
+      "regions": {
+        "all": "Africa and the Caribbean",
+        "Africa": "Africa",
+        "Caribbean": "Caribbean"
+      },
+      "metric": "Metric",
+      "metrics": {
+        "commits_lifetime": "Lifetime commits",
+        "devs_active_28d": "Active developers (28 d)",
+        "commits_last_12m": "Commits, last 12 months"
+      },
+      "period": "Period",
+      "from": "From",
+      "to": "To",
+      "reset": "Reset",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "active": "{n, plural, =0 {No filter} one {# active filter} other {# active filters}}"
+    },
+    "map": {
+      "label": "Country map: {metric}",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "resetView": "Reset map view",
+      "noData": "No data",
+      "country": "Country",
+      "none": "None",
+      "compare": "Compare with",
+      "pick": "Select a country on the map or in the list.",
+      "rank": "Rank {rank} of {total}",
+      "share": "{pct} of the scope total",
+      "clear": "Clear selection",
+      "top": "Top 10 · {metric}",
+      "legend": "{metric} · log scale",
+      "low": "Low",
+      "high": "High",
+      "empty": "No data available for this filter.",
+      "selected": "{name} selected",
+      "snapshotOnly": "The source has no per-country history: the map shows the snapshot only."
+    },
+    "timeline": {
+      "title": "Ecosystems over time",
+      "hint": "Hover, or use the arrow keys, to read exact values. Drag across the chart to choose a period.",
+      "play": "Play",
+      "pause": "Pause",
+      "indexed": "Indexed to 100",
+      "absolute": "Absolute values",
+      "value": "{value} developers",
+      "month": "Month",
+      "label": "Monthly developers by ecosystem"
+    },
+    "ranking": {
+      "sortBy": "Sort by",
+      "sorts": {
+        "devs_recent": "Recent developers",
+        "growth_abs": "Absolute change",
+        "growth_rel": "Relative change",
+        "start": "Starting value"
+      },
+      "period": "{first} → {last} over the period",
+      "na": "n/a",
+      "select": "Highlight {name}",
+      "highlighted": "{name} highlighted"
+    },
+    "cohort": {
+      "show": "Categories shown",
+      "mode": "View",
+      "count": "Counts",
+      "share": "Shares",
+      "total": "Total shown",
+      "label": "Active developers by tenure, month by month",
+      "hint": "Hover, or use the arrow keys, to read each month."
+    }
+  },
+  "DataSources": {
+    "metaTitle": "Data, methodology and sources",
+    "metaDescription": "Data providers, licences, attribution, methodology and limitations of the State of BIB statistics.",
+    "eyebrow": "Legal information",
+    "title": "Data, methodology and sources",
+    "updated": "This page was last updated on 15 November 2026",
+    "intro": "This page gathers, for the whole site, the information on where the State of BIB statistics come from: providers, datasets, licences, attribution, calculation method and limitations. The statistics pages link here.",
+    "sourcesTitle": "Data sources",
+    "provider": "Provider",
+    "dataset": "Dataset",
+    "site": "Official site",
+    "repository": "Official repository",
+    "license": "Licence",
+    "licenseText": "Licence text",
+    "attribution": "Attribution",
+    "changes": "Changes made",
+    "use": "Use on this site",
+    "s1Name": "Electric Capital",
+    "s1Dataset": "Open Dev Data (open data on open-source developers in the blockchain ecosystem)",
+    "s1License": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "s1Attribution": "“Open Dev Data by Electric Capital”, licensed under CC BY 4.0.",
+    "s1Changes": "Black in Blockchain does not republish the raw data. It is filtered to the countries of Africa and the Caribbean, then aggregated by country, city, ecosystem and tenure to produce the indicators, maps and charts on this site. These transformations are made by Black in Blockchain; they do not bind the provider, which endorses neither this site nor the use made of its data.",
+    "s1Use": "All indicators, rankings, maps, series and analyses in the State of BIB section, and the figures reused on the home page and in the newsletter.",
+    "s2Name": "Natural Earth, through the world-atlas package",
+    "s2Dataset": "Country outlines at 1:110,000,000 (base map)",
+    "s2License": "Natural Earth data: public domain. world-atlas package: ISC licence.",
+    "s2Attribution": "No attribution is required; it is given here for transparency.",
+    "s2Changes": "None: the base map is used as is to draw countries.",
+    "s2Use": "Country map in the State of BIB section.",
+    "scopeTitle": "Geographic scope",
+    "scopeText": "The statistics cover developers whose inferred location is in one of the 54 African countries or 22 Caribbean countries and territories in scope. A country appears only if it has at least one developer in the data.",
+    "diasporaTitle": "Reservation about the diaspora",
+    "diasporaText": "These figures do not measure the global Black diaspora. Developers of African descent living outside Africa and the Caribbean are not counted, and no data on origin or identity is used. The results describe located activity, not a community as a whole.",
+    "methodTitle": "General methodology",
+    "method": [
+      "A developer’s location is inferred by the provider from public information (profile and contribution metadata); Black in Blockchain does not correct it.",
+      "“Active developer”: at least one recorded contribution in the last 28 days of the snapshot.",
+      "Lifetime commits add up the indexed public contributions over the whole period covered.",
+      "Ecosystems follow the provider’s taxonomy; one contribution can belong to several ecosystems.",
+      "Tenure splits active developers by the time elapsed since their first indexed contribution.",
+      "Each batch is checked before publication: format, per-country totals, consistency between files, provenance, gap with the previous version. An inconsistent batch is not published."
+    ],
+    "limitsTitle": "Data limitations",
+    "limits": [
+      "Only contributions to indexed public repositories are visible; private or non-indexed work does not appear.",
+      "A developer with no inferable location is not attached to any country.",
+      "Small counts vary sharply from one snapshot to the next and should be read with caution.",
+      "The historical series shown contain real observations only: no point is interpolated or estimated.",
+      "These statistics are provided for information and education. They are not investment, financial, legal or tax advice."
+    ],
+    "updateTitle": "Update frequency and versions",
+    "updateText": "The availability of a new version at the provider is checked every day. A version is published on the site only after passing the checks; depending on the setting in force, publication is automatic or subject to an administrator’s approval. Previous versions are kept.",
+    "currentTitle": "Version currently shown",
+    "currentVersion": "Version",
+    "currentAsOf": "Reference date of the data",
+    "currentPublished": "Published on",
+    "currentNone": "No verified version is published at the moment.",
+    "noExportTitle": "Reuse",
+    "noExportText": "The site presents indicators and visualisations; it does not offer dataset downloads. To access the original data, contact the provider directly, under the terms of its licence.",
+    "contactTitle": "Contact",
+    "contactText": "To report an error or ask a question about this data, use the Contact page.",
+    "back": "Back to State of BIB"
   }
 }
