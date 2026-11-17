@@ -16,7 +16,7 @@ du cycle. Aucun compte administrateur n'est nécessaire au fonctionnement.
 | Publication | RPC `publish_dataset_candidate` (rôle de service) | Bascule atomique du pointeur courant, ancienne version marquée « remplacée », historique conservé, verrou contre les exécutions simultanées. |
 | Vérification | `verify_publication` | Pointeur unique, identifiant de version, empreintes SHA-256 dans Storage, observations. Anomalie → retour automatique à la version précédente + incident critique. |
 | Réconciliation | job `finalize` | PostgreSQL / Storage / copie du dépôt comparés à chaque exécution. |
-| Site | `POST /api/cron/sob-refresh?version=…` | Caches invalidés, version servie **vérifiée** (échec du workflow sinon). Aucun redéploiement. Filet de sécurité : expiration du cache en 15 minutes. |
+| Site | `POST /api/cron/sob-refresh?version=…` | Caches invalidés et version PostgreSQL/Storage vérifiée **hors cache**. La visibilité publique doit être vérifiée par une requête HTTP/E2E distincte. Aucun redéploiement. Filet de sécurité : expiration du cache en 15 minutes. |
 | Analyses IA | même appel | Analyse générée, contrôlée (faits, tendance, périmètre, règles éditoriales), publiée. Échec → rien n'est inventé, nouvelle tentative aux cycles suivants (3 par version et par langue). |
 | Copie du dépôt | job `repo-sync` | PR automatique avec fusion automatique demandée. Secondaire : le site ne l'attend jamais. |
 
@@ -62,7 +62,7 @@ incident `sob.quarantine`) ; la dernière version valide reste en ligne.
 | Quarantaine ou lot bloqué | Nouvelle tentative toutes les 24 h, 5 fois au plus ; immédiate si le pipeline est mis à jour ; une correction de la source crée une nouvelle révision, traitée normalement. |
 | Échec technique du traitement | 3 reprises, puis attente d'un changement de la source ou du pipeline. |
 | Publication non intègre | Retour automatique à la version précédente, incident critique `sob.desync`. |
-| Site non actualisé | 3 tentatives, incident `sob.site_not_updated`, expiration du cache en 15 minutes. |
+| Version en base non confirmée | 3 tentatives, incident `sob.verification_failed`, expiration du cache en 15 minutes. |
 | Analyse IA en échec | Statistiques publiées quand même ; 3 tentatives par version et par langue. |
 
 Un échec persistant sur une version n'empêche jamais la détection des versions suivantes.

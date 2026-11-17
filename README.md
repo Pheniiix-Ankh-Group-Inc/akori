@@ -1,442 +1,375 @@
 # Black in Blockchain (BIB)
 
-Site public multilingue, administration privée et traitements de données de
-**Black in Blockchain**, une communauté consacrée à la blockchain.
+Black in Blockchain is a multilingual community platform focused on blockchain education, events, and data-driven insights. This repository contains its **public website, private editorial administration, data pipelines, and automation**.
 
-> Ce README décrit le code de ce dépôt. Il ne définit ni la mission ni le
-> positionnement éditorial de BIB : les textes publics sont ceux validés par
-> l'équipe.
+> This README documents the software and its operational state. It does not replace the community's approved mission statement or editorial positioning.
 
-- [Présentation](#présentation)
-- [État des modules](#état-des-modules)
-- [Architecture technique](#architecture-technique)
-- [Fonctionnalités](#fonctionnalités)
-- [Flux de données](#flux-de-données)
-- [Structure du dépôt](#structure-du-dépôt)
-- [Développement local](#développement-local)
-- [Variables d'environnement](#variables-denvironnement)
+## Contents
+
+- [Overview](#overview)
+- [Implementation and release status](#implementation-and-release-status)
+- [Technology stack](#technology-stack)
+- [Features](#features)
+- [Data flows](#data-flows)
+- [Repository structure](#repository-structure)
+- [Local development](#local-development)
+- [Environment variables](#environment-variables)
 - [Supabase](#supabase)
-- [Automatisation](#automatisation)
-- [Déploiement](#déploiement)
-- [Sécurité](#sécurité)
-- [Documentation complémentaire](#documentation-complémentaire)
+- [Automation](#automation)
+- [Deployment](#deployment)
+- [Security](#security)
+- [Pre-production readiness](#pre-production-readiness)
+- [Further documentation](#further-documentation)
+- [License](#license)
 
-## Présentation
+## Overview
 
-La plateforme réunit :
+The platform includes:
 
-- un **site public** en anglais (langue par défaut, sans préfixe), français et
-  espagnol ;
-- les **événements** de la communauté, synchronisés depuis Luma ;
-- **BIB en action** : rétrospectives, médias et témoignages ;
-- **State of BIB** : un observatoire de l'activité des développeurs open source
-  en Afrique et dans les Caraïbes ;
-- une **newsletter** FR/EN diffusée par Brevo ;
-- une **administration** réservée à l'équipe (`/admin`, sur invitation).
+- A **public website** in English (default, unprefixed), French, and Spanish.
+- **Community events** sourced from Luma and synchronized into Supabase.
+- **BIB in Action**: event recaps, photos, videos, and testimonials.
+- **State of BIB**: an interactive observatory of open-source developer activity across Africa and the Caribbean.
+- A **French/English newsletter** powered by Brevo.
+- **Invitation-only administration** at `/admin`.
 
-Périmètre du dépôt (`akori`) : l'application Next.js, les migrations et tests
-Supabase, le pipeline de données Python et les workflows GitHub Actions. Le
-dépôt ne contient aucun secret et ne crée aucune ressource cloud par lui-même.
+The `akori` repository contains a Next.js application, Supabase SQL migrations and tests, a Python data pipeline, and GitHub Actions workflows. It does **not** provision cloud resources or contain live credentials.
 
-## État des modules
+## Implementation and release status
 
-« Implémenté » ne veut pas dire « déployé », et « déployé » ne veut pas dire
-« validé en production ». Le tableau distingue cinq niveaux. État constaté le
-16 novembre 2026.
+**Implemented does not mean deployed; deployed does not mean production-validated.** The table distinguishes code coverage from actual third-party integration and production readiness.
 
-| Module | Implémenté | Testé localement | Services externes configurés | Validé en environnement réel | Opérationnel en production |
+| Module | Implemented | Offline / CI tests | External services verified | Real-environment validation | Production-ready |
 | --- | --- | --- | --- | --- | --- |
-| Site public FR/EN/ES | Oui | Oui | Sans objet | Non (cette version n'est pas déployée) | Non |
-| Événements (Luma → Supabase) | Oui | Oui (flux simulés) | Schéma appliqué ; `LUMA_ICAL_URL` non vérifiée | Non (aucune synchronisation réelle) | Non |
-| BIB en action | Oui | Oui | Schéma et buckets appliqués | Non | Non |
-| State of BIB (pipeline et publication automatique) | Oui | Oui (source simulée) | Schéma appliqué, modes `auto` ; variables GitHub et Vercel non vérifiées | Non (aucune exécution du pipeline) | Non (aucune version publiée) |
-| Analyses IA State of BIB | Oui | Oui (fournisseur simulé) | Non vérifié | Non | Non |
-| Newsletter (inscription, cycle, envoi) | Oui | Oui (Brevo simulé) | Schéma appliqué ; Brevo et sources d'actualité non vérifiés | Non (aucun envoi réel) | Non |
-| Administration | Oui | Oui | Schéma appliqué ; **aucun administrateur créé** | Non | Non |
-| Workflows planifiés | Oui | Oui (hors exécution réelle) | Non vérifié | Non | Non |
+| Public website (EN/FR/ES) | Yes | Yes | Not required for basic rendering | No complete live acceptance test | No |
+| Events (Luma → Supabase) | Yes | Yes, simulated feeds | iCal URL and first live sync unverified | No | No |
+| BIB in Action | Yes | Yes | Schema/storage reported applied; live media flow unverified | No | No |
+| State of BIB pipeline / publishing | Yes | Yes, simulated source | Production workflow configuration unverified | No live source-to-site run | No |
+| AI-generated State of BIB insights | Yes | Yes, mocked provider | Live provider not verified | No | No |
+| Newsletter (DOI, editorial cycle, delivery) | Yes | Yes, mocked Brevo | Brevo credentials, templates, and sources unverified | No real delivery test | No |
+| Editorial administration | Yes | Yes | Admin provisioning not verified in staging | No live end-to-end test | No |
+| Scheduled workflows | Yes | CI validated; schedules not exercised | GitHub/Vercel secrets unverified | No | No |
 
-Constats vérifiés sur le projet Supabase `akori` : 13 migrations enregistrées
-(0001 à 0013), modes `sob = auto`, `sob_insights = auto`, `newsletter = review`,
-aucun administrateur, aucune version State of BIB, aucune exécution du pipeline,
-aucune synchronisation Luma. « Non vérifié » signifie que l'état n'a pas pu être
-lu depuis l'environnement de développement (variables GitHub, Vercel, Brevo).
+The previous Supabase inspection (November 16, 2026) recorded 13 migrations (0001–0013), `sob=auto`, `sob_insights=auto`, `newsletter=review`, and no initial administrator, published State of BIB version, completed pipeline run, or Luma synchronization. Those remote observations **have not been revalidated** in this documentation update.
 
-Tant qu'aucune version State of BIB valide n'est publiée, la page affiche un
-**état d'indisponibilité**, sans aucun chiffre.
+**Latest verified CI:** [GitHub Actions run 44008551701](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44008551701) passed all three jobs (`web`, `data`, `sql`) on the pre-production correction branch: 245/245 Vitest tests (21 files), 63/63 Python tests, TypeScript, ESLint, Next.js build, SQL/RLS checks on disposable PostgreSQL, HTTP security-header checks, and a production dependency audit reporting no known vulnerabilities. These results **do not certify staging or production**.
 
-## Architecture technique
+Until a valid State of BIB version has been published, its public interface displays an **unavailable state**, not unsubstantiated statistics.
 
-| Couche | Technologie (version du dépôt) |
+## Technology stack
+
+| Layer | Technology |
 | --- | --- |
 | Application | Next.js 16.4 (App Router), React 19.2, TypeScript 5 (strict) |
-| Interface | Tailwind CSS 4 et feuilles du projet (`globals.css`, `state-of-bib.css`, `admin.css`) |
-| Internationalisation | next-intl 4 — `en` (défaut, sans préfixe), `fr`, `es` |
-| Base de données | Supabase PostgreSQL (RLS sur toutes les tables, fonctions transactionnelles) |
-| Authentification | Supabase Auth — opérateurs invités uniquement, inscription publique fermée |
-| Fichiers | Supabase Storage (médias, preuves de consentement, lots State of BIB) |
-| Événements | Luma — calendrier embarqué et flux iCal |
-| Newsletter | Brevo (API serveur, double opt-in) |
-| Données | Python 3.12, DuckDB, pandas (`data-pipeline/`) |
-| IA | Moteur à fournisseur configurable (`anthropic`, `openai`, `mistral`, `openai-compatible`, `mock`) |
-| Visualisations | D3, TopoJSON, world-atlas |
-| Planification et CI | GitHub Actions |
-| Hébergement | Vercel |
+| Styling | Tailwind CSS 4 and project stylesheets (`globals.css`, `state-of-bib.css`, `admin.css`) |
+| Internationalization | next-intl 4; `en` (default), `fr`, `es` |
+| Database | Supabase PostgreSQL, row-level security (RLS), transactional RPCs |
+| Authentication | Supabase Auth; invited editors/admins only; public registration disabled |
+| Files and datasets | Supabase Storage for media, consent evidence, and State of BIB artifacts |
+| Events | Luma embedded calendar and iCalendar feed |
+| Newsletter | Brevo server-side API and double opt-in |
+| Data processing | Python 3.12, DuckDB, pandas (`data-pipeline/`) |
+| AI | Configurable provider: `anthropic`, `openai`, `mistral`, `openai-compatible`, `mock` |
+| Data visualizations | D3, TopoJSON, world-atlas |
+| CI and scheduling | GitHub Actions |
+| Hosting | Vercel |
 
-Gestionnaire de paquets : **pnpm 10** (`pnpm-lock.yaml`). Node ≥ 20.9.
+Package manager: **pnpm 10** with `pnpm-lock.yaml`. Runtime prerequisite: Node.js ≥ 20.9.
 
-## Fonctionnalités
+## Features
 
-### Site public
+### Public website
 
-Accueil, À propos (`/fondateurs`), Événements, BIB en action, State of BIB,
-pages légales (`/terms`, `/privacy`, `/cookies`, `/data-sources`). Six pages
-(`/about`, `/mission`, `/membership`, `/resources`, `/press`, `/contact`)
-affichent encore un gabarit « page en préparation », exclu de l'indexation :
-voir [docs/PAGES_IN_PROGRESS_AUDIT.md](docs/PAGES_IN_PROGRESS_AUDIT.md).
+The public experience includes Home, About (`/fondateurs`), Events, BIB in Action, State of BIB, and legal pages (`/terms`, `/privacy`, `/cookies`, `/data-sources`).
 
-### Événements, calendrier et historique
+Six additional pages (`/about`, `/mission`, `/membership`, `/resources`, `/press`, `/contact`) currently render a shared **coming-soon** layout and are excluded from search indexing. See [Pages in Progress Audit](docs/PAGES_IN_PROGRESS_AUDIT.md).
 
-- **Luma est la source de vérité.** L'équipe ne crée pas d'événement dans
-  l'administration ; elle n'ajoute que des compléments éditoriaux (visuel,
-  textes BIB par langue).
-- La page `/evenements` affiche le calendrier Luma embarqué, puis les
-  événements synchronisés : vues liste et mois, filtres, historique paginé,
-  annulations signalées, lien vers la rétrospective.
-- La synchronisation lit le flux iCal (RFC 5545 : fuseaux, journées entières,
-  `RRULE`, `RDATE`, `EXDATE`, `RECURRENCE-ID`) et l'enregistre dans Supabase.
-  Un événement n'est **jamais supprimé** : absent du flux, il est marqué comme
-  tel ; annulé, il reste affiché comme annulé.
-- Un flux iCal peut ne pas contenir les événements anciens : un fichier `.ics`
-  peut être importé depuis `/admin/evenements`.
-- Aucune donnée de participant, de billet ou de paiement n'est importée.
+### Events, calendar, and history
 
-### BIB en action
+- **Luma is the source of truth.** Events are created in Luma; admins can edit only BIB-specific editorial additions (approved cover imagery and translated descriptions).
+- The `/evenements` page combines the embedded Luma calendar with synchronized events, list/month views, filters, paginated history, cancellation indicators, and links to event recaps.
+- The iCalendar parser supports RFC 5545 features including time zones, all-day events, `RRULE`, `RDATE`, `EXDATE`, and `RECURRENCE-ID`.
+- A missing event is **marked as absent, not deleted**. A cancelled event retains its cancellation state.
+- Older events not exposed by the feed can be imported from a Luma `.ics` export in `/admin/evenements`. The feed alone cannot guarantee complete historical coverage.
+- Attendee, ticket, and payment data are **not imported**.
+- Synchronization is protected by an **atomic database lock**. Missing migration 0012, empty/invalid feeds, and concurrent or failed runs are handled explicitly; the cron route does not report a skipped run as successful.
 
-Rétrospectives, galerie, vidéo et témoignages avec référence de consentement.
-Un fichier reste privé tant qu'un contenu publié ne l'utilise pas **et** que
-ses droits ne sont pas approuvés ; le retrait supprime la copie publique.
+### BIB in Action
+
+Event recaps, media galleries, videos, and testimonials include consent references. Media remains private until it is referenced by published content **and** its usage rights have been approved. Retraction removes the public copy when no longer needed.
 
 ### State of BIB
 
-- Carte, courbes, classement et cohortes interactifs, filtres partagés dans
-  l'URL, en FR/EN/ES.
-- Périmètre : Afrique et Caraïbes (76 pays et territoires). Les chiffres ne
-  mesurent pas la diaspora.
-- **Aucun téléchargement public** : pas d'export CSV/JSON, pas d'URL
-  d'artefact. Les fournisseurs, licences et la méthodologie figurent
-  uniquement sur la page légale `/data-sources`.
-- Publication **entièrement automatique**, sans approbation humaine (voir
-  [Automatisation](#automatisation)).
-- **Données publiées et copie de repli.** La source affichée est la version
-  courante publiée dans Supabase. Le dossier `data/state-of-bib/current/` est
-  une copie technique interne, non servie par le site ; elle ne sert de repli
-  que si elle est cohérente, de provenance connue et âgée de moins de
-  120 jours. La copie actuellement présente date d'avril 2026, est incohérente
-  et antérieure au pipeline actuel : **elle est refusée** et ne doit pas être
-  lue comme une statistique à jour.
+- Interactive maps, trends, rankings, and cohorts with URL-persisted filters, in EN/FR/ES.
+- Geographic scope: **Africa and the Caribbean (76 countries and territories)**. The figures **do not measure the diaspora**.
+- **No public dataset downloads:** no CSV/JSON export or public artifact endpoints. Provider details, methodology, and licensing are restricted to `/data-sources`.
+- The pipeline is designed for **fully automated publication** in `auto` mode, without mandatory human approval.
+- Supabase is the primary source for the current published dataset. `data/state-of-bib/current/` is a **private technical fallback**, not a public dataset. It can be used only if internally consistent, from a known source, and less than 120 days old. The included April 2026 copy is not valid for current reporting and is rejected.
+- Post-publication checks now use `verify_current_dataset` directly and independently reread the six private artifacts with SHA-256 validation. This is a **database/Storage integrity check**, not proof that every visitor sees the latest version immediately; public visibility still requires HTTP/E2E validation.
 
-### Analyses IA
+### AI-generated insights
 
-Courtes analyses FR/EN/ES d'une version publiée de State of BIB. Les chiffres
-sont insérés par marqueurs depuis les données (jamais rédigés par l'IA) ; des
-contrôles hors IA vérifient la tendance, le périmètre et l'absence de mention
-de fournisseur. Une analyse n'est jamais affichée pour une autre version que
-la sienne. En cas d'échec, les statistiques restent publiées sans analyse.
+Short State of BIB analyses are generated in EN/FR/ES for a specific published dataset version. Numeric facts are inserted from data placeholders rather than invented by the model. Independent checks enforce direction, scope, and editorial rules. Insights cannot be displayed against a mismatched dataset version. A failed insight does not remove otherwise valid statistics.
 
 ### Newsletter
 
-| Étape | Comportement |
+| Stage | Behavior |
 | --- | --- |
-| Inscription | Formulaire FR ou EN, consentement explicite, double opt-in Brevo |
-| Sources d'actualité | Flux RSS/Atom ajoutés par l'équipe dans `/admin/newsletter/sources`, après lecture réelle et saisie des conditions de réutilisation. **Aucune source n'est préconfigurée.** |
-| Rédaction automatique | Lundi : brouillons FR et EN par l'IA, quatre rubriques (Blockchain Insights, Blockchain News, BIB Events, BIB Highlights). Mardi : contrôles hors IA, régénération bornée |
-| Relecture humaine (facultative) | L'équipe peut modifier textes, éléments et ordre dans `/admin/newsletter/[id]` ; toute modification repasse les contrôles |
-| Envoi autonome | Mercredi 09:00 (America/Toronto), seulement si `FEATURE_NEWSLETTER_AUTOSEND=true` et que le mode le permet. Sans rattrapage |
-| Envoi manuel | Un administrateur peut envoyer une édition validée (confirmation « ENVOYER »), **indépendamment** de `FEATURE_NEWSLETTER_AUTOSEND` |
+| Subscription | FR/EN forms, explicit consent, and Brevo double opt-in |
+| News sources | Editors configure RSS/Atom sources and reuse conditions in `/admin/newsletter/sources`; **none are preconfigured** |
+| Automated drafting | Monday: FR/EN drafts covering Blockchain Insights, Blockchain News, BIB Events, BIB Highlights |
+| Editorial checks | Tuesday: non-AI validation with bounded regeneration |
+| Optional human review | Editors can edit copy, items, and ordering in `/admin/newsletter/[id]`; edits are revalidated |
+| Autonomous sending | Wednesday at 09:00 `America/Toronto`, only when `FEATURE_NEWSLETTER_AUTOSEND=true` **and** the mode permits it; no late catch-up |
+| Manual sending | An admin may send a validated edition after explicit confirmation, independently of the autosend flag |
 
-Modes (`/admin/automatisations`) : `auto` (envoi autonome si tout est valide),
-`review` (approbation d'un administrateur requise — mode actuel), `paused`
-(ni génération ni envoi).
+Automation modes (`/admin/automatisations`): `auto` (eligible autonomous sending), `review` (**current mode**, admin approval required), and `paused` (no generation or sending).
 
 ### Administration
 
-`/admin` : événements (journal de synchronisation, compléments, import
-`.ics`), BIB en action, médias et droits, témoignages, State of BIB
-(supervision, incidents, restauration), newsletter, automatisations (modes,
-dernières exécutions, incidents, journal d'audit).
+The invitation-only `/admin` area includes event sync history and editorial additions, `.ics` import, BIB in Action, media/rights, testimonials, State of BIB monitoring and recovery, newsletters, automation modes, incidents, and audit history.
 
-### Observabilité
+### Observability
 
-Journaux structurés masquant e-mails, jetons et clés ; table `ops_incidents` ;
-journaux d'exécution (`event_sync_runs`, `ingestion_runs`) ; journal d'audit
-(`editorial_audit`) ; alertes e-mail internes facultatives
-(`FEATURE_OPS_ALERTS`).
+Structured logs redact addresses, tokens, and keys. Operational telemetry includes `ops_incidents`, `event_sync_runs`, `ingestion_runs`, and `editorial_audit`. Optional internal email alerts are controlled by `FEATURE_OPS_ALERTS`.
 
-## Flux de données
+## Data flows
 
 ```text
-Événements
-  Luma (flux iCal) ── GitHub Actions (events-sync, toutes les 3 h)
-                      └─ POST /api/cron/luma-sync ── Supabase ── site BIB
-  Luma (calendrier embarqué) ─────────────────────────────────── site BIB
+Events
+  Luma iCal feed ── GitHub Actions (events-sync, every 10 min after activation on main)
+                     └─ POST /api/cron/luma-sync ── Supabase ── BIB website
+  Luma embedded calendar ────────────────────────────── BIB website
 
 State of BIB
-  Electric Capital (manifeste Open Dev Data)
-    └─ GitHub Actions (refresh-data, toutes les heures)
-         ├─ check     lecture légère du manifeste
-         ├─ build     Python / DuckDB → six fichiers JSON → validation
-         │            → Supabase (PostgreSQL + Storage privé) → publication
-         └─ finalize  réconciliation → POST /api/cron/sob-refresh
-                      (caches, version servie, analyses IA)
-  Supabase ── lecture côté serveur ── page State of BIB
+  Electric Capital Open Dev Data manifest
+    └─ GitHub Actions (refresh-data, hourly)
+         ├─ check     compare source version and resource digests
+         ├─ build     Python / DuckDB → six JSON artifacts → validation
+         │            → Supabase PostgreSQL + private Storage → publication
+         └─ finalize  reconcile → POST /api/cron/sob-refresh
+                      (cache invalidation, direct PostgreSQL/Storage verification,
+                       AI insight cycle; public visibility not guaranteed)
+  Supabase ── server-side read ── State of BIB page
 
 Newsletter
-  Sources d'actualité autorisées ── veille (news-ingest, quotidienne)
-    └─ Supabase ── moteur IA ── éditions FR/EN ── contrôles hors IA
-         └─ relecture facultative ── Brevo ── abonnés
+  Approved RSS/Atom sources ── daily ingestion
+    └─ Supabase ── AI drafting ── FR/EN editions ── deterministic checks
+         └─ optional human review ── Brevo ── subscribers
 ```
 
-## Structure du dépôt
+## Repository structure
 
-| Chemin | Rôle |
+| Path | Purpose |
 | --- | --- |
-| `src/app/[locale]/(public)` | Pages publiques localisées |
-| `src/app/(operateurs)` | Connexion et administration |
-| `src/app/api` | Inscription newsletter, routes planifiées (`/api/cron/*`), diagnostics (`/api/ops/*`) |
-| `src/components` | Composants d'interface (site, State of BIB, administration) |
-| `src/lib` | Logique métier : `events`, `sob`, `newsletter`, `news`, `ai`, `auth`, `supabase`, `ops` |
-| `src/messages` | Traductions `en`, `fr`, `es` |
-| `data-pipeline` | Pipeline State of BIB (Python, DuckDB) et ses tests |
-| `data/state-of-bib` | Copie technique interne des lots (non servie) et historique |
-| `supabase/migrations` | Migrations versionnées |
-| `supabase/tests` | Tests SQL et RLS (base jetable uniquement) |
-| `supabase/ops`, `supabase/bootstrap` | Scripts d'exploitation et création du premier administrateur |
-| `tests` | Tests unitaires (Vitest) et navigateur (Playwright) |
-| `.github/workflows` | CI et tâches planifiées |
-| `docs` | Guides spécialisés |
+| `src/app/[locale]/(public)` | Localized public routes |
+| `src/app/(operateurs)` | Authentication and private administration |
+| `src/app/api` | Newsletter subscription, scheduled endpoints, operational diagnostics |
+| `src/components` | Public, State of BIB, and admin UI components |
+| `src/lib` | Domain logic: `events`, `sob`, `newsletter`, `news`, `ai`, `auth`, `supabase`, `ops` |
+| `src/messages` | EN/FR/ES translations |
+| `data-pipeline` | Python/DuckDB pipeline and unit tests |
+| `data/state-of-bib` | Internal current snapshot and historical copies |
+| `supabase/migrations` | Versioned schema changes |
+| `supabase/tests` | SQL/RLS tests on disposable PostgreSQL |
+| `supabase/ops`, `supabase/bootstrap` | Operator scripts and first-admin provisioning |
+| `tests` | Vitest tests and Playwright browser tests |
+| `.github/workflows` | CI and scheduled workflows |
+| `docs` | Architecture, operations, security, and rollout guides |
 
-## Développement local
+## Local development
 
-Prérequis : Node ≥ 20.9, pnpm 10 ; Python 3.12 pour le pipeline ; PostgreSQL
-pour les tests SQL (facultatif).
+Prerequisites: Node.js ≥ 20.9, pnpm 10, and optionally Python 3.12 and local PostgreSQL for pipeline/SQL tests.
 
 ```bash
 pnpm install --frozen-lockfile
-cp .env.example .env.local   # valeurs factices
-pnpm dev                     # http://localhost:3000
+cp .env.example .env.local  # placeholder values only
+pnpm dev                    # http://localhost:3000
 ```
 
-Sans Supabase configuré, le site démarre : Événements et BIB en action
-affichent un état vide, State of BIB un état d'indisponibilité, et
-l'administration est inaccessible.
+Without Supabase configuration, the public shell still starts. Events and BIB in Action show empty states, State of BIB shows its unavailable state, and administration remains inaccessible.
 
 ```bash
 pnpm lint
 pnpm typecheck
-pnpm test          # tests unitaires et de sécurité (Vitest, sans réseau)
+pnpm test          # offline unit/security tests
 pnpm build
-pnpm check         # lint + typecheck + test + build
+pnpm check         # lint + typecheck + tests + build
 
-# Pipeline de données
+# Python data pipeline
 pip install -r data-pipeline/requirements.txt
 python -m unittest discover -s data-pipeline/tests
 
-# SQL et RLS — base JETABLE uniquement (le script refuse une URL Supabase)
+# SQL/RLS on DISPOSABLE PostgreSQL only (real Supabase URLs are rejected)
 PGURL=postgresql://postgres@localhost:5432/postgres pnpm test:sql
 
-# Navigateur (site démarré)
+# Browser E2E, with the site running
 BASE_URL=http://localhost:3000 pnpm test:e2e
 BASE_URL=http://localhost:3000 SOB_EXPECT=unavailable pnpm test:e2e:rules
 ```
 
-Aucun test n'appelle Luma, Brevo, le fournisseur de données ou un fournisseur
-d'IA. Détail et jeux d'essai : [docs/TEST_PLAN.md](docs/TEST_PLAN.md).
+Offline suites do not send requests to real Luma, Brevo, AI, or dataset-provider accounts. See [Test Plan](docs/TEST_PLAN.md).
 
-## Variables d'environnement
+## Environment variables
 
-Liste complète et commentée : [.env.example](.env.example). Matrice détaillée :
-[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#13-matrice-des-variables). Ne jamais
-committer une valeur réelle.
+The complete reference is [.env.example](.env.example); see [deployment variable matrix](docs/DEPLOYMENT.md#13-matrice-des-variables). **Never commit real credentials.**
 
 ### Application (Vercel)
 
-| Nom | Fonction | Obligatoire | Défaut | Secret |
+| Variable | Purpose | Required when | Default / failure mode | Secret |
 | --- | --- | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | URL canonique | Oui en production | `http://localhost:3000` | Non |
-| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Projet Supabase BIB | Pour les données et l'administration | Aucun accès Supabase | Non |
-| `SUPABASE_SECRET_KEY` | Lectures et écritures serveur | Pour State of BIB, synchronisations, newsletter | Fonctions serveur désactivées | **Oui** |
-| `CRON_SECRET` | Authentifie `/api/cron/*` (≥ 32 caractères) | Pour les tâches planifiées | Appels refusés | **Oui** |
-| `NEXT_PUBLIC_LUMA_CALENDAR_ID` | Calendrier Luma (embarqué et flux) | Non | `cal-aqEzCpUP5LXSBcL` | Non |
-| `LUMA_ICAL_URL` | Flux iCal copié depuis Luma | Recommandé | URL candidate non vérifiée | Non |
-| `FEATURE_LUMA_SYNC` | Synchronisation planifiée | Non | `false` | Non |
-| `FEATURE_SOB_READ_FROM_SUPABASE` | Lecture State of BIB dans Supabase | Non | `true` | Non |
-| `SOB_INSIGHTS_MAX_ATTEMPTS` | Tentatives d'analyse par version et langue | Non | `3` | Non |
-| `FEATURE_AI`, `AI_PROVIDER`, `AI_MODEL`, `AI_BASE_URL` | Moteur IA | Si l'IA est activée | IA désactivée | Non |
-| `AI_API_KEY` | Clé du fournisseur IA | Si l'IA est activée | — | **Oui** |
-| `BREVO_API_KEY` | API Brevo | Pour la newsletter | Inscription et envoi fermés | **Oui** |
-| `BREVO_LIST_ID_FR/EN`, `BREVO_DOI_TEMPLATE_ID_FR/EN`, `BREVO_SENDER_EMAIL/NAME` | Listes, modèles, expéditeur | Pour la newsletter | — | Non |
-| `NEWSLETTER_EMAIL_HASH_PEPPER` | Empreintes e-mail et IP (≥ 32 caractères) | Pour l'inscription | Inscription fermée (503) | **Oui** |
-| `FEATURE_NEWSLETTER_SUBSCRIBE`, `FEATURE_NEWSLETTER_AUTOSEND`, `FEATURE_NEWS_INGEST`, `FEATURE_OPS_ALERTS` | Activations | Non | `false` | Non |
-| `GITHUB_DISPATCH_TOKEN` | Relance des workflows depuis l'administration | Non | Relance indisponible | **Oui** |
+| `NEXT_PUBLIC_SITE_URL` | Canonical application URL | Production | `http://localhost:3000` | No |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Dedicated BIB Supabase project | Data and admin features | Supabase access unavailable | No |
+| `SUPABASE_SECRET_KEY` | Server-side privileged data access | State of BIB, sync, newsletter | Server workflows unavailable | **Yes** |
+| `CRON_SECRET` | Authenticates `/api/cron/*` (min. 32 chars) | Scheduled jobs | Requests rejected | **Yes** |
+| `NEXT_PUBLIC_LUMA_CALENDAR_ID` | Embedded Luma calendar | Luma UI | `cal-aqEzCpUP5LXSBcL` | No |
+| `LUMA_ICAL_URL` | Official iCal subscription URL | Reliable Luma sync | Unverified candidate URL, may fail | No |
+| `FEATURE_SOB_READ_FROM_SUPABASE` | Use published Supabase State of BIB data | Normally enabled | `true` | No |
+| `SOB_INSIGHTS_MAX_ATTEMPTS` | AI insight attempts per version/locale | Optional | `3` | No |
+| `FEATURE_AI`, `AI_PROVIDER`, `AI_MODEL`, `AI_BASE_URL` | AI engine | AI features | Disabled by default | No |
+| `AI_API_KEY` | AI provider credential | AI enabled | AI unavailable | **Yes** |
+| `BREVO_API_KEY` | Brevo server API | Newsletter | Subscribe/send unavailable | **Yes** |
+| `BREVO_LIST_ID_FR/EN`, `BREVO_DOI_TEMPLATE_ID_FR/EN`, `BREVO_SENDER_EMAIL/NAME` | Brevo lists, DOI templates, sender | Newsletter | Unconfigured | No |
+| `NEWSLETTER_EMAIL_HASH_PEPPER` | Email/IP hashes (min. 32 chars) | Subscriptions | HTTP 503 on signup | **Yes** |
+| `FEATURE_NEWSLETTER_SUBSCRIBE`, `FEATURE_NEWSLETTER_AUTOSEND`, `FEATURE_NEWS_INGEST`, `FEATURE_OPS_ALERTS` | Feature activation | Optional | `false` | No |
+| `GITHUB_DISPATCH_TOKEN` | Optional workflow dispatch from admin | Admin-triggered jobs | Dispatch unavailable | **Yes** |
 
 ### Workflows (GitHub Actions)
 
-| Nom | Type | Fonction | Obligatoire | Défaut |
-| --- | --- | --- | --- | --- |
-| `BIB_SCHEDULES_ENABLED` | Variable | `true` active les exécutions planifiées | Non | Désactivées (déclenchement manuel possible) |
-| `BIB_SITE_URL` | Variable | URL du site appelé par les workflows | Oui | — |
-| `BIB_CRON_SECRET` | Secret | Même valeur que `CRON_SECRET` | Oui | — |
-| `SOB_SUPABASE_SYNC` | Variable | `true` autorise le pipeline à écrire | Oui pour State of BIB | Échec explicite |
-| `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Secrets | Projet BIB (pipeline) | Oui pour State of BIB | Échec explicite |
-| `SOB_CHECK_INTERVAL_HOURS`, `SOB_STRONG_VARIATION`, `SOB_MAX_FAILED_ATTEMPTS`, `SOB_MAX_BLOCKED_ATTEMPTS`, `SOB_BLOCKED_RETRY_HOURS`, `SOB_VERIFY_B3` | Variables | Cadence, seuils et reprises | Non | Voir [docs/SOB_AUTOMATION.md](docs/SOB_AUTOMATION.md) |
+| Variable | Type | Purpose | Required when |
+| --- | --- | --- | --- |
+| `BIB_SCHEDULES_ENABLED` | Variable | `true` enables eligible scheduled jobs | Only when activating schedules |
+| `BIB_SITE_URL` | Variable | Production HTTPS base URL for cron callbacks | Scheduled production jobs |
+| `BIB_CRON_SECRET` | Secret | Must match Vercel Production `CRON_SECRET` | Scheduled production jobs |
+| `BIB_STAGING_SITE_URL` | Variable | Separate HTTPS Preview/staging URL | Manual Luma workflow dispatch |
+| `BIB_STAGING_CRON_SECRET` | Secret | Must match Vercel Preview `CRON_SECRET` | Manual Luma workflow dispatch |
+| `SOB_SUPABASE_SYNC` | Variable | `true` explicitly allows State of BIB pipeline writes | State of BIB publishing |
+| `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Secrets | Database target for State of BIB pipeline | State of BIB publishing |
+| `SOB_CHECK_INTERVAL_HOURS`, `SOB_STRONG_VARIATION`, `SOB_MAX_FAILED_ATTEMPTS`, `SOB_MAX_BLOCKED_ATTEMPTS`, `SOB_BLOCKED_RETRY_HOURS`, `SOB_VERIFY_B3` | Variables | Check cadence, guardrails, retries | Optional; see [automation guide](docs/SOB_AUTOMATION.md) |
 
-Les clés secrètes restent côté serveur ; la CI vérifie qu'aucune n'apparaît
-dans le bundle client.
+**Staging isolation:** Separate URLs are only a preliminary check. Verify that the staging deployment actually uses an **independent Supabase project and distinct server keys** before running any write-capable job. CI checks that server secrets do not appear in the client bundle. The existence of live GitHub/Vercel secrets is not verified by this README.
 
 ## Supabase
 
-Projet : **`akori`**, dédié à BIB. Les objets hérités d'un autre produit ont
-été retirés ; aucun autre projet Supabase ne doit être utilisé.
+The previously inspected `akori` project is dedicated to BIB. Do not reuse a database belonging to a different product.
 
 ### Migrations
 
-Treize migrations, à appliquer dans l'ordre. Toutes sont enregistrées sur
-`akori` (vérifié le 16 novembre 2026). Une migration appliquée n'est jamais
-modifiée ni rejouée.
+Thirteen numbered migrations (0001–0013) were recorded as applied on `akori` during the November 16, 2026 inspection. Applied migrations must **never be rewritten or replayed**. Migration 0010 is a separately operated legacy cleanup script, not a regular `db push` migration.
 
-| N° | Nom | Objet |
+| No. | Name | Purpose |
 | --- | --- | --- |
-| 0001 | `core_admin` | Habilitations (`editors`), audit, fonctions d'autorisation |
-| 0002 | `events` | Événements et traductions |
-| 0003 | `bib_en_action` | Rétrospectives, médias, témoignages, buckets |
-| 0004 | `state_of_bib` | Sources, versions, artefacts, observations, analyses |
-| 0005 | `newsletter_ai` | Veille, cycles, éditions, IA, incidents |
-| 0006 | `editorial_integrity` | Publications transactionnelles, verrou optimiste |
-| 0007 | `sob_governance` | Candidates privées, vérification des empreintes |
-| 0008 | `newsletter_integrity` | Paire FR/EN atomique, éditions validées immuables |
-| 0009 | `security_hardening` | Vues en `SECURITY INVOKER`, droits par colonne, index |
-| 0010 | `legacy_koriventure_cleanup` | Retrait des objets hérités — script hors `db push` (`supabase/ops/akori/sql/`) |
-| 0011 | `bib_v2_automation` | Modes d'automatisation, synchronisation Luma, publication par RPC |
-| 0012 | `bib_finalisation` | Buckets privés, fin de la lecture anonyme, verrou Luma |
-| 0013 | `sob_full_auto` | Modes `auto`, verrou de publication, quarantaine, vérification |
+| 0001 | `core_admin` | Editor roles, audit, permission helpers |
+| 0002 | `events` | Events and localized copy |
+| 0003 | `bib_en_action` | Recaps, media, testimonials, Storage buckets |
+| 0004 | `state_of_bib` | Sources, versions, artifacts, observations, insights |
+| 0005 | `newsletter_ai` | News ingestion, cycles, editions, AI, incidents |
+| 0006 | `editorial_integrity` | Transactional publishing, optimistic locking |
+| 0007 | `sob_governance` | Private candidates, checksum validation |
+| 0008 | `newsletter_integrity` | Atomic FR/EN pair, immutable approved editions |
+| 0009 | `security_hardening` | `SECURITY INVOKER` views, column permissions, indexes |
+| 0010 | `legacy_koriventure_cleanup` | Separate cleanup script in `supabase/ops/akori/sql/` |
+| 0011 | `bib_v2_automation` | Automation modes, Luma ingestion, publication RPC |
+| 0012 | `bib_finalisation` | Private buckets, anonymous access restrictions, atomic Luma lock |
+| 0013 | `sob_full_auto` | `auto` mode, publishing lock, quarantine, verification |
 
-### Sécurité des données
+### Data security
 
-- **RLS** activée sur toutes les tables. Le public ne lit que les contenus
-  publiés ; les données State of BIB ne sont lues que côté serveur.
-- **Buckets** : `bib-media-public` (public, médias publiés aux droits
-  approuvés) ; `bib-media-drafts`, `bib-consents`, `bib-sob-snapshots`,
-  `bib-sob-candidates` (privés).
-- **RPC principales** (`SECURITY DEFINER`, `search_path` vide) :
-  `sync_luma_events`, `begin_event_sync_run`, `publish_dataset_candidate`,
-  `verify_current_dataset`. Les erreurs métier portent les codes BIB01 à BIB09.
+- **RLS on all tables.** Public users can read only permitted published content; State of BIB raw data remains server-side.
+- **Storage:** `bib-media-public` is for rights-approved published media. `bib-media-drafts`, `bib-consents`, `bib-sob-snapshots`, and `bib-sob-candidates` are private.
+- **Privileged RPCs:** `sync_luma_events`, `begin_event_sync_run`, `publish_dataset_candidate`, and `verify_current_dataset` use `SECURITY DEFINER` with a restricted `search_path`. Business errors use `BIB01`–`BIB09`.
 
-### Premier administrateur
+### Initial administrator
 
-Aucun compte n'obtient de rôle automatiquement. Procédure :
-[supabase/bootstrap/first_editor.sql](supabase/bootstrap/first_editor.sql) et
-[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#5-premier-opérateur).
+No account receives admin privileges automatically. Follow [first_editor.sql](supabase/bootstrap/first_editor.sql) and the [deployment guide](docs/DEPLOYMENT.md#5-premier-opérateur) only after the target environment has been verified.
 
 ### Validation
 
-`pnpm test:sql` applique les migrations sur une base jetable et exécute les
-tests SQL, RLS et de concurrence. Plan de migration et historique :
-[docs/SUPABASE_MIGRATION_PLAN.md](docs/SUPABASE_MIGRATION_PLAN.md).
+`pnpm test:sql` runs schema migrations, RLS checks, and concurrency tests against a disposable PostgreSQL instance. See [Supabase Migration Plan](docs/SUPABASE_MIGRATION_PLAN.md).
 
-## Automatisation
+## Automation
 
-Les exécutions planifiées ne démarrent que si `BIB_SCHEDULES_ENABLED=true` ;
-chaque workflow reste déclenchable manuellement.
+Schedules are gated by `BIB_SCHEDULES_ENABLED=true` and are intended to run only after the relevant workflow exists on GitHub's **default branch (`main`)**. The staging-only manual Luma dispatch has separate URL/secret requirements.
 
-| Workflow | Fréquence (UTC) | Rôle |
+| Workflow | Schedule | Purpose |
 | --- | --- | --- |
-| `events-sync.yml` | Toutes les 3 h | Synchronisation Luma → Supabase (`FEATURE_LUMA_SYNC`) |
-| `refresh-data.yml` | Toutes les heures | Pipeline State of BIB |
-| `news-ingest.yml` | Chaque jour, 10:41 | Veille des sources autorisées (`FEATURE_NEWS_INGEST`) |
-| `newsletter.yml` | Lundi, mardi, mercredi | Cycle newsletter |
-| `ci.yml` | Push et pull request | Contrôles et tests |
+| `events-sync.yml` | Every 10 minutes, once enabled on `main` | Luma → Supabase events |
+| `refresh-data.yml` | Hourly | State of BIB manifest check and pipeline |
+| `news-ingest.yml` | Daily, 10:41 UTC | Ingest approved feeds |
+| `newsletter.yml` | Monday/Tuesday/Wednesday and scheduled send-slot checks | Generate, review/check, and deliver validated editions |
+| `ci.yml` | Pull requests to `main` and `develop`, plus manual dispatch | Static checks, tests, build, and security audit |
 
-### State of BIB
+**Note:** GitHub Actions schedules and manual dispatches for workflows not present on `main` cannot be treated as already operational. A ten-minute schedule is best effort, subject to provider/API limits and GitHub Actions quotas.
 
-1. **Détection** — lecture légère du manifeste chaque heure. Rien n'est
-   téléchargé si la version et l'empreinte des ressources n'ont pas changé.
-2. **Construction et contrôles** — calcul des indicateurs, puis validation :
-   format, valeurs, dates, périmètre, doublons, totaux, cohérence entre
-   fichiers, provenance.
-3. **Forte variation** (plus de 50 % par défaut) — sept contrôles renforcés
-   automatiques au lieu d'une revue humaine.
-4. **Publication** (mode `auto`) — bascule transactionnelle de la version
-   courante, protégée contre les exécutions simultanées ; une version plus
-   ancienne que la version en ligne est refusée. L'historique est conservé.
-5. **Vérification après publication** — intégrité des fichiers publiés ; en
-   cas d'écart, retour automatique à la version précédente et incident.
-6. **Quarantaine et reprises** — un lot non confirmé est mis en quarantaine ;
-   la dernière version valide reste en ligne. Nouvelle tentative toutes les
-   24 h, cinq fois au plus, ou dès que la source ou le pipeline change.
-7. **Actualisation du site** — caches invalidés, version servie vérifiée,
-   analyses IA générées. Aucun redéploiement n'est nécessaire.
+### State of BIB processing
 
-Les modes `review` et `paused` restent disponibles pour suspendre le cycle.
-Guide complet et activation : [docs/SOB_AUTOMATION.md](docs/SOB_AUTOMATION.md).
+1. **Detection:** an hourly lightweight manifest check avoids downloading unchanged resources.
+2. **Build and validation:** Python/DuckDB computes the metrics and verifies schema, values, dates, geography, duplicates, totals, source identity, and cross-artifact consistency.
+3. **Large changes:** variations over 50% (default) trigger seven automated reinforced checks.
+4. **Atomic publication:** in `auto`, only a fully validated candidate may replace the current version; concurrent writes and regressions to older versions are blocked.
+5. **Post-publish integrity:** PostgreSQL/Storage checks verify the current pointer and private artifacts. The pipeline can roll back a failed publication and raise an incident.
+6. **Quarantine and retries:** unconfirmed candidates are quarantined while the last valid release stays available; bounded retries are scheduled or triggered by source changes.
+7. **Site refresh:** invalidates cache tags and paths, verifies the **published database/Storage version without reading the public cache**, and runs the AI insight cycle. No redeployment is required for the database update, but **public visibility is not verified** by the refresh endpoint.
 
-### Luma
+`review` and `paused` modes remain available. See [State of BIB Automation](docs/SOB_AUTOMATION.md).
 
-Verrou atomique en base (une synchronisation à la fois), reprise des
-exécutions interrompues, flux vide refusé, protection contre une chute
-anormale du nombre d'événements, journal dans `/admin/evenements`.
+### Luma processing
 
-### Newsletter
+The SQL-backed atomic lock prevents overlapping imports. The importer has bounded retries, rejects empty feeds and missing locks, protects against sudden drops in feed size, and records each run in `/admin/evenements`. A concurrent run is reported as **skipped (HTTP 409)** rather than a successful synchronization.
 
-Lundi : génération. Mardi : contrôles. Mercredi 09:00 (America/Toronto) :
-envoi. Une édition non valide ne part pas, dans aucune des deux langues ; il
-n'y a pas de rattrapage automatique. Les tâches planifiées GitHub peuvent
-démarrer en retard : un retard de plus d'une heure le mercredi annule l'envoi
-autonome.
+### Newsletter processing
 
-## Déploiement
+Monday: generation. Tuesday: validation. Wednesday, 09:00 Toronto time: eligible sending. Invalid or incomplete FR/EN editions are never sent. A missed sending window is not automatically replayed; GitHub schedules can be delayed.
 
-| Élément | Rôle |
+## Deployment
+
+| Component | Policy |
 | --- | --- |
-| `develop` | Branche d'intégration. Les branches de fonctionnalité y sont fusionnées par pull request |
-| `main` | Branche de production, protégée. Reçoit `develop` par pull request |
-| Pull requests | CI obligatoire (`web`, `data`, `sql`) ; fusion par squash ou rebase |
-| Vercel Preview | Un déploiement de prévisualisation par branche poussée |
-| Vercel Production | Déploiement de `main` |
-| Migrations | Appliquées séparément et volontairement, avant le code qui en dépend ; jamais par la CI |
+| `develop` | Integration branch for reviewed feature/fix pull requests |
+| `main` | Protected production branch; receives reviewed changes from `develop` |
+| Pull requests | CI jobs `web`, `data`, `sql`; squash/rebase merge preferred |
+| Vercel Preview | Branch-specific preview deployment, if connected and enabled |
+| Vercel Production | Deployment of `main` |
+| Database migrations | Separate, explicitly authorized operation, never run automatically by CI |
 
-Avant une fusion : `pnpm check`, tests Python, tests SQL sur base jetable,
-tests navigateur. L'activation d'un service (drapeaux `FEATURE_*`,
-planification) est une étape distincte du déploiement du code. Guide :
-[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+Before merging: lint, typecheck, unit tests, build, Python tests, SQL/RLS tests, and browser E2E where applicable. **Deploying code and enabling write-capable automation are separate decisions.** See [Deployment and Activation](docs/DEPLOYMENT.md).
 
-## Sécurité
+## Security
 
-- CSP dérivée du projet Supabase configuré, sans joker ; HSTS ; aucune donnée
-  externe insérée comme HTML.
-- Autorisation vérifiée côté serveur sur chaque page et action
-  d'administration, et en base (RLS, fonctions transactionnelles).
-- Formulaire public : même origine, champ piège, limiteur de débit en échec
-  fermé, double opt-in tracé, réponse uniforme.
-- Veille protégée contre la SSRF ; données externes isolées dans les prompts IA.
+- Restrictive CSP (including `object-src 'none'`), HSTS, and no unsafe insertion of external HTML.
+- Server-side authorization on admin pages/actions and database enforcement through RLS and transactional RPCs.
+- Public forms use same-origin checks, honeypots, fail-closed rate limits, uniform responses, and recorded double opt-in.
+- News ingestion includes SSRF defenses; untrusted source content is isolated in AI prompts.
+- Private media stays private until approved rights and publication conditions are met.
 
-Détail : [docs/SECURITY.md](docs/SECURITY.md).
+See [Security Guide](docs/SECURITY.md).
 
-## Documentation complémentaire
+## Pre-production readiness
 
-| Document | Contenu |
+The corrective work is tracked in **[PR #33](https://github.com/Pheniiix-Ankh-Group-Inc/akori/pull/33)** and [Pre-production Readiness Report](docs/audits/BIB_PREPROD_READINESS.md).
+
+- **Verified in CI:** 245 Vitest tests, 63 Python tests, SQL/RLS on throwaway PostgreSQL, ESLint, TypeScript, build, dependency audit, security headers, and client-bundle secret checks.
+- **Not verified in real environments:** isolated Supabase staging, genuine Luma iCal history and synchronization, live State of BIB ingestion/public display, Brevo and double opt-in, AI provider, media permissions, and end-to-end admin workflows.
+- **Unchanged safety boundaries:** no remote migrations or production writes; no live newsletter sends; no automatic production deployment; the newsletter remains in `review` until explicitly changed.
+- **Release decision:** **not approved for production**. Keep the PR in draft until staging acceptance and remaining security/operational reviews are complete.
+
+## Further documentation
+
+| Document | Coverage |
 | --- | --- |
-| [docs/V2_ARCHITECTURE_CIBLE.md](docs/V2_ARCHITECTURE_CIBLE.md) | Architecture cible : Luma, State of BIB, newsletter, administration |
-| [docs/SOB_AUTOMATION.md](docs/SOB_AUTOMATION.md) | Cycle automatique State of BIB, paramètres, activation |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Déploiement, activation, matrice des variables |
-| [docs/TEST_PLAN.md](docs/TEST_PLAN.md) | Suites de tests et couverture des risques |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DATA_MODEL.md](docs/DATA_MODEL.md) | Composants et modèle de données |
-| [docs/SECURITY.md](docs/SECURITY.md) | Mesures de sécurité |
-| [docs/OPERATIONS_RUNBOOK.md](docs/OPERATIONS_RUNBOOK.md) | Exploitation et incidents |
-| [docs/EDITORIAL_WORKFLOWS.md](docs/EDITORIAL_WORKFLOWS.md) | Procédures de l'équipe éditoriale |
-| [docs/SUPABASE_MIGRATION_PLAN.md](docs/SUPABASE_MIGRATION_PLAN.md) | Migration du projet `akori` |
-| [docs/PAGES_IN_PROGRESS_AUDIT.md](docs/PAGES_IN_PROGRESS_AUDIT.md) | Pages encore en préparation |
-| [CHANGELOG.md](CHANGELOG.md) | Historique des changements |
+| [V2 Target Architecture](docs/V2_ARCHITECTURE_CIBLE.md) | Luma, State of BIB, newsletter, administration |
+| [State of BIB Automation](docs/SOB_AUTOMATION.md) | Pipeline, limits, retries, activation |
+| [Deployment Guide](docs/DEPLOYMENT.md) | Environments, rollout steps, variable matrix |
+| [Test Plan](docs/TEST_PLAN.md) | Test suites and coverage |
+| [Architecture](docs/ARCHITECTURE.md) / [Data Model](docs/DATA_MODEL.md) | Components and schema |
+| [Security](docs/SECURITY.md) | Application and data protections |
+| [Operations Runbook](docs/OPERATIONS_RUNBOOK.md) | Monitoring and incident response |
+| [Editorial Workflows](docs/EDITORIAL_WORKFLOWS.md) | Editorial procedures |
+| [Supabase Migration Plan](docs/SUPABASE_MIGRATION_PLAN.md) | Migration sequencing and history |
+| [Pages in Progress Audit](docs/PAGES_IN_PROGRESS_AUDIT.md) | Unfinished public pages |
+| [Pre-production Readiness](docs/audits/BIB_PREPROD_READINESS.md) | Known gaps, remediation, rollout prerequisites |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
 
-## Licence
+## License
 
-Voir [LICENSE](LICENSE).
+See [LICENSE](LICENSE).

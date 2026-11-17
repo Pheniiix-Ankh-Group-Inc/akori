@@ -274,6 +274,17 @@ describe("orchestration de la synchronisation", () => {
     expect(calls.rpc).toHaveLength(0)
   })
 
+  it("flux vide : échec sans écriture", async () => {
+    const { admin, calls } = fakeAdmin()
+    const empty = ["BEGIN:VCALENDAR", "END:VCALENDAR"].join(String.fromCharCode(13, 10))
+    const r = await runLumaSync({ trigger: "schedule", now: new Date(NOW) }, {
+      admin, fetchFn: async () => ({ text: empty, finalUrl: "https://api.lu.ma/ics/get" }),
+    })
+    expect(r.ok).toBe(false)
+    expect(r.error).toMatch(/vide/)
+    expect(calls.rpc).toHaveLength(0)
+  })
+
   it("flux anormalement réduit : traité comme partiel (aucun absent), avertissement", async () => {
     const { admin, calls } = fakeAdmin({ previousFeed: 40 })
     const r = await runLumaSync({ trigger: "schedule", now: new Date(NOW) }, { admin, fetchFn: feedOk })
@@ -288,11 +299,12 @@ describe("orchestration de la synchronisation", () => {
     expect(calls.rpc[0].p_complete).toBe(true)
   })
 
-  it("base sans migration 0012 : ancien verrou utilisé et signalé", async () => {
-    const { admin } = fakeAdmin({ legacy: true })
+  it("base sans migration 0012 : verrou non atomique refusé", async () => {
+    const { admin, calls } = fakeAdmin({ legacy: true })
     const r = await runLumaSync({ trigger: "schedule", now: new Date(NOW) }, { admin, fetchFn: feedOk })
-    expect(r.ok).toBe(true)
-    expect(r.warnings.join(" ")).toMatch(/migration 0012/)
+    expect(r.ok).toBe(false)
+    expect(r.error).toMatch(/migration 0012/)
+    expect(calls.rpc).toHaveLength(0)
   })
 
   it("refus de la base (ex. flux vide) : échec journalisé", async () => {

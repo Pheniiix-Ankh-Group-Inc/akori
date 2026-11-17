@@ -115,8 +115,7 @@ async function readArtifact(a: Artifact): Promise<unknown> {
  * de dataset_versions, artefacts privés vérifiés par SHA-256 et recontrôlés).
  * FEATURE_SOB_READ_FROM_SUPABASE=false force le repli (diagnostic).
  */
-export const loadSobState = unstable_cache(
-  async (): Promise<SobState> => {
+export async function loadSobStateUncached(): Promise<SobState> {
     if (!env.flags.sobReadFromSupabase) return fallback("lecture Supabase désactivée")
     if (!isSupabaseAdminConfigured()) return fallback("Supabase non configuré côté serveur")
     try {
@@ -151,7 +150,11 @@ export const loadSobState = unstable_cache(
     } catch (e) {
       return fallback(`lecture Supabase impossible (${(e as Error).message})`)
     }
-  },
+}
+
+/** Public cache. Do not use to verify post-publication database state. */
+export const loadSobState = unstable_cache(
+  loadSobStateUncached,
   ["sob-state-v3"],
   // Invalidation explicite après chaque publication (/api/cron/sob-refresh) ;
   // l'expiration de 15 minutes est un filet de sécurité si cet appel échoue.
