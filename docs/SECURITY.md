@@ -138,3 +138,25 @@ fonction DEFINER fixe `search_path` et qu'aucune n'est exécutable par `anon`.
 pnpm test                       # en-têtes, XSS, SSRF, signatures, limiteur…
 PGURL=postgresql://… pnpm test:sql   # base JETABLE uniquement
 ```
+
+## 10. Dépendances npm — contrôles bloquants
+
+- La CI exécute **les deux** commandes `pnpm audit --prod --audit-level=high` et
+  `pnpm audit --audit-level=high`. La deuxième inclut les outils de développement,
+  les dépendances de build et leurs dépendances transitives. Aucun `--ignore`,
+  `continue-on-error` ni suppression du journal n'est autorisé.
+- `GHSA-fc5q-39xc-vjpf` / `CVE-2026-112366` : le chemin de production
+  `next-intl -> @parcel/watcher -> picomatch` est retiré de la branche de
+  correction, mais `picomatch@4.0.4` reste inclus via Vite/Vitest et d'autres
+  outils de développement. **La dette de sécurité demeure ouverte**, même si
+  l'audit production réussit. L'avis GitHub (consulté le 17-11-2026) ne publie
+  aucune version officiellement corrigée.
+- Ne pas prétendre que le produit est exempt de vulnérabilités sur la seule base
+  d'une CI de production verte. Ne pas forcer une version fictive, ignorer la
+  CVE, ou modifier artificiellement les métadonnées des dépendances pour
+  obtenir un résultat vert. Suivre le fournisseur et examiner les versions
+  corrigées ou alternatives maintenues et compatibles avant de fusionner.
+- La page GitHub Security > Dependabot peut présenter **d'autres alertes**
+  indépendantes de cette CVE : chacune doit être vérifiée et corrigée à la
+  source sur le graphe de dépendances de la branche par défaut. Le connecteur
+  GitHub utilisé par l'audit ne permet pas de lire cet inventaire privé.

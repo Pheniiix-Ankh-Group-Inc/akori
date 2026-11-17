@@ -37,6 +37,10 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
       - name: Dependency audit (production, high and critical)
         run: pnpm audit --prod --audit-level=high
+      # Full dependency audit: dev/build toolchain vulnerabilities remain visible.
+      # This is deliberately blocking: never suppress an unpatched advisory.
+      - name: Dependency audit (including development, high and critical)
+        run: pnpm audit --audit-level=high
       - name: No server secret in the client bundle
         run: |
           if grep -rIl -E "SUPABASE_SECRET_KEY|BREVO_API_KEY|AI_API_KEY|CRON_SECRET|NEWSLETTER_EMAIL_HASH_PEPPER" .next/static 2>/dev/null; then

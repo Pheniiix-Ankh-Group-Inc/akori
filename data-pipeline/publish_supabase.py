@@ -60,7 +60,7 @@ STALE_RUN_AFTER = timedelta(hours=2)
 SOURCE_URL = "https://github.com/electric-capital/open-dev-data"
 # Variation relative au-delà de laquelle les contrôles renforcés automatiques
 # s'appliquent avant publication (aucune approbation humaine n'est requise).
-REVIEW_DIVERGENCE = float(os.environ.get("SOB_STRONG_VARIATION", "0.5"))
+REVIEW_DIVERGENCE = float(os.environ.get("SOB_STRONG_VARIATION") or "0.5")
 TOTAL_METRICS = ("devs_active_28d", "ecosystems", "countries", "cities", "commits_lifetime")
 
 

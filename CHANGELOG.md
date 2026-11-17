@@ -6,6 +6,25 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Security — full dependency audit without exclusions
+
+- Add a blocking full npm audit to GitHub Actions (including dev/build tooling), preserving the existing production-only audit, so unresolved vulnerabilities cannot be hidden by limiting scope.
+- Document the still-vulnerable development-only `picomatch` dependency and the upstream absence of a patched release in `docs/SECURITY.md`.
+
+### Security — GHSA-fc5q-39xc-vjpf (CVE-2026-112366)
+
+- Remove unused `next-intl@4.15.1 -> @parcel/watcher` from the **production** dependency graph via pnpm's targeted removal override. BIB does not use `useExtracted`. This prevents unpatched `picomatch@4.0.4` from being installed via that path.
+- Configure the `next-intl/config` Turbopack alias explicitly in `next.config.ts` instead of loading the unused `next-intl/plugin` message extractor; verified Next.js 16 build is required in CI.
+- Keep **both** `pnpm audit --prod --audit-level=high` and `pnpm audit --audit-level=high` as mandatory blocking CI gates; the second exposes vulnerable development dependencies, currently still awaiting an upstream fix. Do not mute or ignore the advisory.
+- Revisit the override when the upstream advisory lists a patched release.
+
+### Fixed — GitHub Actions State of BIB startup defaults
+
+- Accept absent **or empty** optional GitHub Actions variables (`SOB_MAX_FAILED_ATTEMPTS`, `SOB_MAX_BLOCKED_ATTEMPTS`, `SOB_BLOCKED_RETRY_HOURS`, `SOB_STRONG_VARIATION`) without crashing at Python import time; keep documented safe defaults.
+- Install `blake3` so explicitly enabling `SOB_VERIFY_B3=true` does not fail for a missing Python dependency.
+- Add subprocess regression tests that reproduce GitHub Actions' empty optional environment variables and confirm explicit overrides.
+
+
 ### Fixed — single Supabase project and autonomous State of BIB
 
 - Respect the project's **single existing Supabase `akori` database** across deployments; remove obsolete requirements to provision a second database.

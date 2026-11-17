@@ -3,7 +3,10 @@ ignoredBuiltDependencies:
   - unrs-resolver
 
 # Correctifs de sécurité de dépendances transitives (voir docs/IMPLEMENTATION_REPORT.md).
+# BIB does not use next-intl's useExtracted message extractor.
+# Remove its watcher to eliminate unpatched production picomatch CVE-2026-112366.
 overrides:
+  "next-intl@4.15.1>@parcel/watcher": "-"
   ws: ">=8.21.0 <9"
   browserslist: "^4.28.7"
   source-map-js: "^1.2.2"
