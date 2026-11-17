@@ -9,7 +9,7 @@ du cycle. Aucun compte administrateur n'est nécessaire au fonctionnement.
 
 | Étape | Qui | Détail |
 |---|---|---|
-| Détection | `refresh-data.yml`, job `check`, **toutes les heures** | Lit le manifeste de la source ; compare la version et l'empreinte (chemin, taille, blake3) des fichiers utilisés. Rien n'est téléchargé si rien n'a changé. |
+| Détection | `refresh-data.yml`, job `check`, **au push sur main puis toutes les heures** | Lit le manifeste de la source ; compare la version et l'empreinte (chemin, taille, blake3) des fichiers utilisés. Rien n'est téléchargé si rien n'a changé. |
 | Ingestion | job `build` (seulement si nécessaire) | URLs lues dans le manifeste, contrôle d'intégrité, calculs Python/DuckDB, **recalcul indépendant des totaux**, génération des six JSON. |
 | Validation | `publish_supabase.py ingest` | Schéma, valeurs, dates, pays, villes, écosystèmes, doublons, totaux, cohérence entre fichiers, périmètre, provenance, comparaison avec la version courante. |
 | Forte variation (> 50 %) | `reinforced.py`, automatique | Contrôles renforcés ; publication s'ils confirment la cohérence, sinon quarantaine. **Jamais d'approbation humaine.** |
@@ -18,7 +18,7 @@ du cycle. Aucun compte administrateur n'est nécessaire au fonctionnement.
 | Réconciliation | job `finalize` | PostgreSQL / Storage / copie du dépôt comparés à chaque exécution. |
 | Site | `POST /api/cron/sob-refresh?version=…` | Caches invalidés et version PostgreSQL/Storage vérifiée **hors cache**. La visibilité publique doit être vérifiée par une requête HTTP/E2E distincte. Aucun redéploiement. Filet de sécurité : expiration du cache en 15 minutes. |
 | Analyses IA | même appel | Analyse générée, contrôlée (faits, tendance, périmètre, règles éditoriales), publiée. Échec → rien n'est inventé, nouvelle tentative aux cycles suivants (3 par version et par langue). |
-| Copie du dépôt | job `repo-sync` | PR automatique avec fusion automatique demandée. Secondaire : le site ne l'attend jamais. |
+| Copie du dépôt | job `repo-sync` | PR automatique **sans fusion automatique**. Secondaire : le site ne l'attend jamais. |
 
 **Délai de mise à jour.** La source ne propose pas de notification : une nouvelle
 version est détectée à la vérification horaire suivante, puis publiée après le
@@ -86,9 +86,9 @@ Un échec persistant sur une version n'empêche jamais la détection des version
 projet BIB), `BIB_CRON_SECRET` (même valeur que `CRON_SECRET` côté Vercel).
 
 **GitHub — réglages du dépôt** (facultatifs, pour la copie technique) :
-« Allow GitHub Actions to create and approve pull requests » et « Allow
-auto-merge ». Si les protections de `main` exigent une approbation, la PR de
-copie technique attend une fusion ; le site n'en dépend pas.
+activer « Allow GitHub Actions to create and approve pull requests » pour
+créer une PR de sauvegarde technique. Aucune fusion automatique de cette PR
+n'est demandée. La publication Supabase reste autonome et ne l'attend pas.
 
 **Vercel**
 

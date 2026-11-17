@@ -42,7 +42,7 @@ The `akori` repository contains a Next.js application, Supabase SQL migrations a
 | Module | Implemented | Offline / CI tests | External services verified | Real-environment validation | Production-ready |
 | --- | --- | --- | --- | --- | --- |
 | Public website (EN/FR/ES) | Yes | Yes | Not required for basic rendering | No complete live acceptance test | No |
-| Events (Luma → Supabase) | Yes | Yes, simulated feeds | iCal URL and first live sync unverified | No | No |
+| Events (Luma → Supabase) | Yes | Yes, simulated feeds | Calendar ID and URLs confirmed by project owner; DB sync not yet executed | No | No |
 | BIB in Action | Yes | Yes | Schema/storage reported applied; live media flow unverified | No | No |
 | State of BIB pipeline / publishing | Yes | Yes, simulated source | Production workflow configuration unverified | No live source-to-site run | No |
 | AI-generated State of BIB insights | Yes | Yes, mocked provider | Live provider not verified | No | No |
@@ -50,7 +50,7 @@ The `akori` repository contains a Next.js application, Supabase SQL migrations a
 | Editorial administration | Yes | Yes | Admin provisioning not verified in staging | No live end-to-end test | No |
 | Scheduled workflows | Yes | CI validated; schedules not exercised | GitHub/Vercel secrets unverified | No | No |
 
-The previous Supabase inspection (November 16, 2026) recorded 13 migrations (0001–0013), `sob=auto`, `sob_insights=auto`, `newsletter=review`, and no initial administrator, published State of BIB version, completed pipeline run, or Luma synchronization. Those remote observations **have not been revalidated** in this documentation update.
+The live Supabase inspection (November 16–17, 2026) confirmed **13 migrations** (0001–0013), `sob=auto`, `sob_insights=auto`, `newsletter=review`, and **zero current events, dataset versions, ingestion runs, event sync runs, or active administrators**. The source manifest for State of BIB is currently reachable, but no data has been published.
 
 **Latest verified CI:** [GitHub Actions run 44008551701](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44008551701) passed all three jobs (`web`, `data`, `sql`) on the pre-production correction branch: 245/245 Vitest tests (21 files), 63/63 Python tests, TypeScript, ESLint, Next.js build, SQL/RLS checks on disposable PostgreSQL, HTTP security-header checks, and a production dependency audit reporting no known vulnerabilities. These results **do not certify staging or production**.
 
@@ -223,7 +223,7 @@ The complete reference is [.env.example](.env.example); see [deployment variable
 | `SUPABASE_SECRET_KEY` | Server-side privileged data access | State of BIB, sync, newsletter | Server workflows unavailable | **Yes** |
 | `CRON_SECRET` | Authenticates `/api/cron/*` (min. 32 chars) | Scheduled jobs | Requests rejected | **Yes** |
 | `NEXT_PUBLIC_LUMA_CALENDAR_ID` | Embedded Luma calendar | Luma UI | `cal-aqEzCpUP5LXSBcL` | No |
-| `LUMA_ICAL_URL` | Official iCal subscription URL | Reliable Luma sync | Unverified candidate URL, may fail | No |
+| `LUMA_ICAL_URL` | `https://api.lu.ma/ics/get?entity=calendar&id=cal-aqEzCpUP5LXSBcL` (owner-confirmed) | Luma synchronization | Verified BIB fallback if unset; different calendar IDs remain candidates | No |
 | `FEATURE_SOB_READ_FROM_SUPABASE` | Use published Supabase State of BIB data | Normally enabled | `true` | No |
 | `SOB_INSIGHTS_MAX_ATTEMPTS` | AI insight attempts per version/locale | Optional | `3` | No |
 | `FEATURE_AI`, `AI_PROVIDER`, `AI_MODEL`, `AI_BASE_URL` | AI engine | AI features | Disabled by default | No |
@@ -241,13 +241,13 @@ The complete reference is [.env.example](.env.example); see [deployment variable
 | `BIB_SCHEDULES_ENABLED` | Variable | `true` enables eligible scheduled jobs | Only when activating schedules |
 | `BIB_SITE_URL` | Variable | Production HTTPS base URL for cron callbacks | Scheduled production jobs |
 | `BIB_CRON_SECRET` | Secret | Must match Vercel Production `CRON_SECRET` | Scheduled production jobs |
-| `BIB_STAGING_SITE_URL` | Variable | Separate HTTPS Preview/staging URL | Manual Luma workflow dispatch |
-| `BIB_STAGING_CRON_SECRET` | Secret | Must match Vercel Preview `CRON_SECRET` | Manual Luma workflow dispatch |
+| `BIB_STAGING_SITE_URL` | Variable | Optional HTTPS Preview URL; manual news/newsletter workflows require it | Manual Preview runs |
+| `BIB_STAGING_CRON_SECRET` | Secret | Must match Preview `CRON_SECRET` when Preview target is configured | Manual Preview runs |
 | `SOB_SUPABASE_SYNC` | Variable | `true` explicitly allows State of BIB pipeline writes | State of BIB publishing |
 | `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Secrets | Database target for State of BIB pipeline | State of BIB publishing |
 | `SOB_CHECK_INTERVAL_HOURS`, `SOB_STRONG_VARIATION`, `SOB_MAX_FAILED_ATTEMPTS`, `SOB_MAX_BLOCKED_ATTEMPTS`, `SOB_BLOCKED_RETRY_HOURS`, `SOB_VERIFY_B3` | Variables | Check cadence, guardrails, retries | Optional; see [automation guide](docs/SOB_AUTOMATION.md) |
 
-**Staging isolation:** Separate URLs are only a preliminary check. Verify that the staging deployment actually uses an **independent Supabase project and distinct server keys** before running any write-capable job. CI checks that server secrets do not appear in the client bundle. The existence of live GitHub/Vercel secrets is not verified by this README.
+**Single Supabase project (owner decision):** Both Preview and Production may point to the existing **`akori`** project (`zwfyuhgnbdrjhetkyanj`). There is **no separate staging database**, so Preview writes affect the same real data. Use test-only media, contacts and editorial content; never perform destructive migration or rollback drills against the shared database. Separate Preview/Production `CRON_SECRET` values and Brevo test lists still provide operational protection. The presence of GitHub/Vercel secrets has not been verified, and the CI only checks that server secret names are absent from the client bundle.
 
 ## Supabase
 
@@ -289,12 +289,12 @@ No account receives admin privileges automatically. Follow [first_editor.sql](su
 
 ## Automation
 
-Schedules are gated by `BIB_SCHEDULES_ENABLED=true` and are intended to run only after the relevant workflow exists on GitHub's **default branch (`main`)**. The staging-only manual Luma dispatch has separate URL/secret requirements.
+Schedules are gated by `BIB_SCHEDULES_ENABLED=true` and are intended to run only after the relevant workflow exists on GitHub's **default branch (`main`)**. Manual Luma dispatch uses the Preview URL/secret pair if configured; otherwise it explicitly uses the canonical site pair. Manual news/newsletter dispatches require the Preview URL/secret pair.
 
 | Workflow | Schedule | Purpose |
 | --- | --- | --- |
 | `events-sync.yml` | Every 10 minutes, once enabled on `main` | Luma → Supabase events |
-| `refresh-data.yml` | Hourly | State of BIB manifest check and pipeline |
+| `refresh-data.yml` | On a push to `main`, then hourly | Initial State of BIB build plus subsequent manifest checks/publishing |
 | `news-ingest.yml` | Daily, 10:41 UTC | Ingest approved feeds |
 | `newsletter.yml` | Monday/Tuesday/Wednesday and scheduled send-slot checks | Generate, review/check, and deliver validated editions |
 | `ci.yml` | Pull requests to `main` and `develop`, plus manual dispatch | Static checks, tests, build, and security audit |
@@ -309,7 +309,7 @@ Schedules are gated by `BIB_SCHEDULES_ENABLED=true` and are intended to run only
 4. **Atomic publication:** in `auto`, only a fully validated candidate may replace the current version; concurrent writes and regressions to older versions are blocked.
 5. **Post-publish integrity:** PostgreSQL/Storage checks verify the current pointer and private artifacts. The pipeline can roll back a failed publication and raise an incident.
 6. **Quarantine and retries:** unconfirmed candidates are quarantined while the last valid release stays available; bounded retries are scheduled or triggered by source changes.
-7. **Site refresh:** invalidates cache tags and paths, verifies the **published database/Storage version without reading the public cache**, and runs the AI insight cycle. No redeployment is required for the database update, but **public visibility is not verified** by the refresh endpoint.
+7. **Site refresh:** after successful database/Storage verification, invalidates tags and paths for unprefixed English and prefixed FR/ES routes, and runs the automatic AI insight cycle. No redeployment is required for the database update, but **public visibility is not verified** by the refresh endpoint.
 
 `review` and `paused` modes remain available. See [State of BIB Automation](docs/SOB_AUTOMATION.md).
 
@@ -348,10 +348,10 @@ See [Security Guide](docs/SECURITY.md).
 
 The corrective work is tracked in **[PR #33](https://github.com/Pheniiix-Ankh-Group-Inc/akori/pull/33)** and [Pre-production Readiness Report](docs/audits/BIB_PREPROD_READINESS.md).
 
-- **Verified in CI:** 245 Vitest tests, 63 Python tests, SQL/RLS on throwaway PostgreSQL, ESLint, TypeScript, build, dependency audit, security headers, and client-bundle secret checks.
-- **Not verified in real environments:** isolated Supabase staging, genuine Luma iCal history and synchronization, live State of BIB ingestion/public display, Brevo and double opt-in, AI provider, media permissions, and end-to-end admin workflows.
-- **Unchanged safety boundaries:** no remote migrations or production writes; no live newsletter sends; no automatic production deployment; the newsletter remains in `review` until explicitly changed.
-- **Release decision:** **not approved for production**. Keep the PR in draft until staging acceptance and remaining security/operational reviews are complete.
+- **Previously verified in CI:** 245 Vitest tests, 63 Python tests, SQL/RLS on throwaway PostgreSQL, ESLint, TypeScript, build, dependency audit, security headers, and client-bundle secret checks. New changes require a fresh CI run.
+- **Not verified in real environments:** live Luma ingestion (calendar ID and URLs have been confirmed by the owner), State of BIB ingestion/public display, Brevo and double opt-in, AI provider, media permissions, and end-to-end admin workflows on the shared Supabase project.
+- **Operational safety boundaries:** no remote migrations or live newsletter sends were performed by this code change. Preview and Production share the existing database by design. Newsletter stays in `review`; State of BIB and its insights remain in `auto`.
+- **Release decision:** the code is not yet production-validated; the old weekly workflow is still on `main`. Automated State of BIB publishing requires the new workflow to be merged onto `main` with correct GitHub Actions/Vercel credentials and `BIB_SCHEDULES_ENABLED=true` plus `SOB_SUPABASE_SYNC=true`. No human publication approval is required.
 
 ## Further documentation
 

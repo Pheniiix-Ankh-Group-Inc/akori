@@ -67,8 +67,8 @@ export const env = {
   luma: {
     // Identifiant public du calendrier Luma BIB (non secret).
     calendarId: str("NEXT_PUBLIC_LUMA_CALENDAR_ID") ?? "cal-aqEzCpUP5LXSBcL",
-    // URL iCal copiée depuis Luma (« Add iCal Subscription »). Si absente, une
-    // URL candidate est construite puis VÉRIFIÉE à chaque synchronisation.
+    // URL iCal : si absente, la valeur vérifiée du calendrier BIB est
+    // utilisée. Un autre identifiant donne une URL candidate signalée.
     icalUrl: str("LUMA_ICAL_URL"),
   },
 

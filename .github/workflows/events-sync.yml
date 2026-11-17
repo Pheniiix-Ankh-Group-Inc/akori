@@ -1,38 +1,43 @@
-name: Événements Luma — synchronisation
-# Schedule runs on the default branch only; manual calls must use staging.
+name: Luma events — synchronization
+
+# One Supabase BIB project. Manual calls use a Preview URL if configured;
+# otherwise the canonical site URL. URL and matching cron secret are paired.
 on:
   schedule:
     - cron: "7,17,27,37,47,57 * * * *"
   workflow_dispatch: {}
+
 permissions:
   contents: read
 concurrency:
   group: events-sync
   cancel-in-progress: false
+
 jobs:
   sync:
     if: github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' && vars.BIB_SCHEDULES_ENABLED == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Call Luma securely
+      - name: Call Luma synchronization
         env:
-          SITE_URL: ${{ github.event_name == 'workflow_dispatch' && vars.BIB_STAGING_SITE_URL || vars.BIB_SITE_URL }}
-          CRON_SECRET: ${{ github.event_name == 'workflow_dispatch' && secrets.BIB_STAGING_CRON_SECRET || secrets.BIB_CRON_SECRET }}
-          PROD_URL: ${{ vars.BIB_SITE_URL }}
+          PROD_SITE_URL: ${{ vars.BIB_SITE_URL }}
+          PROD_CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+          MANUAL_SITE_URL: ${{ vars.BIB_STAGING_SITE_URL }}
+          MANUAL_CRON_SECRET: ${{ secrets.BIB_STAGING_CRON_SECRET }}
           TRIGGER: ${{ github.event_name }}
         run: |
           set -euo pipefail
-          test -n "$SITE_URL" || { echo "::error::SITE_URL missing"; exit 78; }
-          test -n "$CRON_SECRET" || { echo "::error::CRON_SECRET missing"; exit 78; }
-          case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
-          if [ "$TRIGGER" = "workflow_dispatch" ]; then
-            test -n "$PROD_URL" || { echo "::error::Production URL required to validate staging isolation"; exit 78; }
-            if [ "${SITE_URL%/}" = "${PROD_URL%/}" ]; then
-              echo "::error::Manual dispatch must not target production"
-              exit 78
-            fi
+          if [ "$TRIGGER" = "workflow_dispatch" ] && [ -n "$MANUAL_SITE_URL" ]; then
+            SITE_URL="$MANUAL_SITE_URL"
+            CRON_SECRET="$MANUAL_CRON_SECRET"
+          else
+            SITE_URL="$PROD_SITE_URL"
+            CRON_SECRET="$PROD_CRON_SECRET"
           fi
+          test -n "$SITE_URL" || { echo "::error::Missing BIB_SITE_URL (or BIB_STAGING_SITE_URL)"; exit 78; }
+          test -n "$CRON_SECRET" || { echo "::error::Missing cron secret for selected URL"; exit 78; }
+          case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
           curl --fail-with-body --silent --show-error --retry 2 --retry-delay 20 \
             --max-time 110 -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
             "${SITE_URL%/}/api/cron/luma-sync"

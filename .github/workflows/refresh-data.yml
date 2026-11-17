@@ -12,10 +12,8 @@ name: State of BIB — pipeline automatique
 #   finalize (à chaque exécution) publie une candidate restée en attente,
 #            réconcilie PostgreSQL / Storage / dépôt, actualise le site
 #            (caches invalidés, version servie vérifiée) et lance les analyses IA.
-#   repo-sync propose la copie technique du dépôt par une PR automatique avec
-#            fusion automatique demandée. La branche main reste protégée : si
-#            ses règles exigent une approbation, la PR attend — sans jamais
-#            retarder le site, qui lit Supabase.
+#   repo-sync propose une copie technique par PR, sans fusion dans main.
+#            La publication Supabase reste autonome et indépendante de cette PR.
 #
 # Identité : rôle de service Supabase et secret des tâches planifiées. Aucun
 # compte administrateur, aucune session utilisateur.
@@ -26,6 +24,10 @@ name: State of BIB — pipeline automatique
 # Voir docs/SOB_AUTOMATION.md.
 
 on:
+  # Kick off initial ingestion automatically when the release reaches main,
+  # rather than waiting for the first hourly scheduled check.
+  push:
+    branches: [main]
   schedule:
     - cron: "7 * * * *" # toutes les heures, à la minute 7
   workflow_dispatch:
@@ -212,7 +214,7 @@ jobs:
           python history.py
           python publish_supabase.py export-current
           python validate.py --consistency
-      - name: Propose the technical copy (automatic PR, auto-merge requested)
+      - name: Propose the technical copy (automatic PR, no merge)
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ needs.finalize.outputs.current_version }}
@@ -228,7 +230,6 @@ jobs:
             --head data/state-of-bib-sync --base "${{ github.event.repository.default_branch }}" \
             --title "State of BIB — copie technique ${VERSION}" \
             --body "Synchronisation automatique de data/state-of-bib/current avec la version **${VERSION}** déjà publiée dans Supabase (artefacts vérifiés par SHA-256). Le site ne dépend pas de cette PR : elle met seulement à jour la copie de reprise du dépôt."
-          # Fusion automatique si les règles du dépôt l'autorisent ; sinon la PR
-          # reste ouverte (protections de main conservées) sans effet sur le site.
-          gh pr merge data/state-of-bib-sync --auto --squash \
-            || echo "::notice title=State of BIB::fusion automatique non disponible (protections de branche) : la PR de copie technique attend une fusion. Le site est déjà à jour."
+          # Updating the technical repository copy is separate from automated
+          # publication to Supabase. Never auto-merge into protected main.
+          echo "::notice title=State of BIB::technical snapshot PR opened; Supabase publication is already complete."

@@ -6,6 +6,16 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Fixed — single Supabase project and autonomous State of BIB
+
+- Respect the project's **single existing Supabase `akori` database** across deployments; remove obsolete requirements to provision a second database.
+- Trigger the State of BIB pipeline automatically on the first `main` push after release (when `BIB_SCHEDULES_ENABLED=true`), then hourly; no human dispatch is needed.
+- Correct State of BIB revalidation for unprefixed English routes (`/`, `/state_of_bib`, `/data-sources`) and prefixed French/Spanish routes. Failed verification no longer invalidates otherwise valid public caches.
+- Luma's manually triggered workflow now selects matching URL/secret pairs, with an optional Preview target. Manual news and newsletter workflows fail closed when a Preview URL is missing instead of silently targeting production.
+- State of BIB dataset and AI analysis modes remain **fully automatic** (`sob=auto`, `sob_insights=auto`). The optional technical snapshot still opens a PR but never automatically merges into protected `main`.
+- Add regression tests for locale-aware cache invalidation and workflow targeting. The new CI run must pass before release.
+- Verify the current database has no published dataset or sync runs; automatic publication requires the updated workflow on the default branch, valid credentials and write enablement — no human approval gate.
+
 > **Release status:** The platform architecture and pre-production corrections have been implemented and verified by offline CI. They have **not** been fully validated with live Luma, Brevo, an AI provider, production State of BIB data, or an isolated staging environment. No production release is authorized by these changes. See the [README](README.md#implementation-and-release-status) and [pre-production report](docs/audits/BIB_PREPROD_READINESS.md).
 
 ### Fixed — pre-production hardening (PR #33)

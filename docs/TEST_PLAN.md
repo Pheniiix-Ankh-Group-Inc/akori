@@ -41,7 +41,7 @@ Supabase), le préflight, les migrations, puis les tests, et supprime la base.
 ## 3. Vérifications NON automatisées (staging BIB requis)
 
 Ces scénarios exigent de vrais services ; ils sont à exécuter sur un projet
-Supabase de **staging BIB** isolé, avec Brevo en listes de test et l'IA en
+Supabase **akori partagé** entre Preview et Production : utiliser uniquement des données non destructives, avec Brevo en listes de test et l'IA en
 mode budget minimal, sans toucher à la production :
 
 1. Connexion opérateur (mot de passe, lien magique), refus d'un compte sans rôle.

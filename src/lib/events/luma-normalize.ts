@@ -5,10 +5,16 @@ import { normalizeLumaUrl } from "@/lib/luma"
 /** Hôtes autorisés pour le flux iCal Luma (protection SSRF complémentaire). */
 export const LUMA_FEED_HOSTS = new Set(["api.lu.ma", "api2.luma.com", "api.luma.com", "lu.ma", "luma.com", "www.luma.com"])
 
-/** URL du flux : celle configurée, sinon une candidate construite (à vérifier). */
+/** Calendar and iCal URL confirmed by the BIB owner. */
+export const VERIFIED_BIB_CALENDAR_ID = "cal-aqEzCpUP5LXSBcL"
+export const VERIFIED_BIB_ICAL_URL = "https://api.lu.ma/ics/get?entity=calendar&id=cal-aqEzCpUP5LXSBcL"
+
+/** Use an explicitly configured URL, the verified BIB feed, or a flagged
+ * candidate only for a different calendar ID. */
 export function lumaFeedUrl(configured: string | undefined, calendarId: string): { url: string; candidate: boolean } {
   if (configured) return { url: configured, candidate: false }
   if (!/^cal-[A-Za-z0-9]{6,40}$/.test(calendarId)) throw new Error("identifiant de calendrier Luma invalide")
+  if (calendarId === VERIFIED_BIB_CALENDAR_ID) return { url: VERIFIED_BIB_ICAL_URL, candidate: false }
   return { url: `https://api.lu.ma/ics/get?entity=calendar&id=${encodeURIComponent(calendarId)}`, candidate: true }
 }
 
