@@ -16,7 +16,7 @@ export interface SobRefreshReport {
   verification: { ok: boolean; version: string | null; versionId: string | null; reason?: string }
   /** Uncached SHA-256-verified private snapshot, not browser-visible state. */
   snapshot: { origin: string; version: string | null; snapshotDate: string | null; reason?: string }
-  cache: { invalidationRequested: true; publicVersionVerified: false }
+  cache: { invalidationRequested: boolean; publicVersionVerified: false }
   expected: string | null
   insights: InsightCycleReport | { skipped: string }
   statusCode: 200 | 409 | 503
@@ -25,14 +25,17 @@ export interface SobRefreshReport {
 function invalidate() {
   // max = stale-while-revalidate, not immediate client-side visibility.
   revalidateTag(SOB_TAG, "max")
-  for (const locale of routing.locales) for (const p of PATHS) revalidatePath(`/${locale}${p}`)
+  // Default English URLs have no locale prefix (localePrefix='as-needed').
+  for (const locale of routing.locales) {
+    const prefix = locale === routing.defaultLocale && routing.localePrefix === "as-needed" ? "" : `/${locale}`
+    for (const page of PATHS) revalidatePath(`${prefix}${page}` || "/")
+  }
 }
 
 /** Revalidation + direct PostgreSQL/Storage checks. HTTP 200 does not certify
  * visibility of this version via a cached public page or client router.
  */
 export async function refreshSob(expected: string | null = null): Promise<SobRefreshReport> {
-  invalidate()
   let verification: SobRefreshReport["verification"]
   let databaseUnavailable = false
   try {
@@ -62,6 +65,8 @@ export async function refreshSob(expected: string | null = null): Promise<SobRef
   const ok = verification.ok && snapshot.origin === "supabase"
     && snapshot.version === verification.version && (!expected || expected === verification.version)
   const statusCode: SobRefreshReport["statusCode"] = ok ? 200 : databaseUnavailable ? 503 : 409
+  // Only invalidate when the DB and private Storage confirm the publication.
+  if (ok) invalidate()
 
   let insights: SobRefreshReport["insights"] = { skipped: "vérification des données incomplète" }
   if (ok && !isAiConfigured()) {
@@ -85,6 +90,6 @@ export async function refreshSob(expected: string | null = null): Promise<SobRef
     } catch { /* incident service unavailable */ }
   }
   return { ok, verification, snapshot,
-    cache: { invalidationRequested: true, publicVersionVerified: false },
+    cache: { invalidationRequested: ok, publicVersionVerified: false },
     expected, insights, statusCode }
 }

@@ -27,7 +27,7 @@ vi.mock("next/cache", () => ({
   },
   revalidatePath: (p: string) => void cache.paths.push(p),
 }))
-vi.mock("@/i18n/routing", () => ({ routing: { locales: ["en", "fr", "es"] } }))
+vi.mock("@/i18n/routing", () => ({ routing: { locales: ["en", "fr", "es"], defaultLocale: "en", localePrefix: "as-needed" } }))
 vi.mock("@/lib/env", () => ({ env: { flags: { sobReadFromSupabase: true } }, isSupabaseAdminConfigured: () => true, isAiConfigured: () => false }))
 const incidents: { kind: string }[] = []
 vi.mock("@/lib/ops/incidents", () => ({ recordIncident: async (i: { kind: string }) => void incidents.push(i) }))
@@ -93,7 +93,8 @@ describe("Scénario G — actualisation automatique du site", () => {
     expect(report.cache.publicVersionVerified).toBe(false)
     expect(cache.tags).toContain("state-of-bib")
     // Accueil, State of BIB et page légale, dans chaque langue.
-    expect(cache.paths).toEqual(expect.arrayContaining(["/en", "/fr/state_of_bib", "/es/data-sources"]))
+    expect(cache.paths).toEqual(expect.arrayContaining(["/", "/state_of_bib", "/data-sources", "/fr/state_of_bib", "/es/data-sources"]))
+    expect(cache.paths).not.toContain("/en/state_of_bib")
 
     const after = await loadSobState()
     expect(isSobAvailable(after) && after.version).toBe("v2")
@@ -107,6 +108,8 @@ describe("Scénario G — actualisation automatique du site", () => {
     const report = await refreshSob("v2")
     expect(report.ok).toBe(false)
     expect(report.snapshot.version).toBe("v1")
+    expect(report.cache.invalidationRequested).toBe(false)
+    expect(cache.tags).toEqual([])
     expect(incidents.map((i) => i.kind)).toEqual(["sob.verification_failed"])
   })
 
@@ -135,6 +138,8 @@ describe("Scénario G — actualisation automatique du site", () => {
     const report = await refreshSob("v2")
     expect(report.ok).toBe(false)
     expect(report.statusCode).toBe(503)
+    expect(report.cache.invalidationRequested).toBe(false)
+    expect(cache.tags).toEqual([])
   })
 
   it("corrupted Storage artifact is refused after direct validation", async () => {

@@ -1,51 +1,53 @@
-# Black in Blockchain — Rapport préproduction
+# Black in Blockchain — corrective audit and release reality
 
-Branche corrective `fix/bib-preproduction-readiness`, cible `develop`. État : correctifs de code soumis à CI ; aucun déploiement ou test réel n'est attesté.
+> Updated for the owner's confirmed decisions: a **single existing Supabase database** and **fully autonomous State of BIB**, with the Luma calendar ID and links confirmed by the owner. Historical assumptions about creating an independent staging database are superseded by this decision.
 
-## Constats et corrections
+## Confirmed state (read-only inspection, November 16–17, 2026)
 
-| Priorité | Cause racine | Correction | Test |
-|---|---|---|---|
-| P0 State of BIB | `revalidateTag("max")` suivi de `unstable_cache` peut relire l'ancienne version | RPC directe `verify_current_dataset`, lecture non cachée des six artefacts privés et contrôle SHA-256 ; aucune affirmation de visibilité publique | Vitest, puis requête HTTP/E2E staging |
-| P0 Luma | Faux `ok: true` si `FEATURE_LUMA_SYNC` était désactivé | Suppression du drapeau, réponse 409 si traitement ignoré, rejet du flux vide et du verrou non atomique | Vitest + synchronisation staging |
-| P0 GitHub Actions | Planifications `develop` inactives tant que le workflow n'existe pas dans `main` | Cron dix minutes préparé, dispatch manuel staging seulement | Contrôle du déclenchement après validation |
-| P0 staging | Projet Supabase BIB staging distinct non confirmé | Plan d'isolement des secrets et données | Vérification manuelle avant tout test réel |
+- Supabase `akori` (`zwfyuhgnbdrjhetkyanj`), PostgreSQL 17, active.
+- Thirteen migrations through `sob_full_auto` are applied.
+- Automation settings: `sob=auto`, `sob_insights=auto`, `newsletter=review`.
+- Database currently contains **0 events, 0 event_sync_runs, 0 dataset_versions, 0 ingestion_runs, 0 active administrators**.
+- The Open Dev Data manifest is available and advertises a source snapshot dated November 16, 2026.
+- The previous CI on the correction branch passed; a fresh CI run is required for the changes in this branch.
+- Current `main` still has the legacy weekly State of BIB workflow. GitHub schedules on `develop` do not run automatically until the updated workflow is released on `main`.
+- Vercel project configuration and all secret values are not yet independently verified from the available connection.
 
-Fichiers modifiés : `src/lib/sob/load.ts`, `src/lib/sob/refresh.ts`, routes cron SOB et Luma, `src/lib/events/luma-sync.ts`, `src/lib/env.ts`, `.github/workflows/events-sync.yml`, deux tests unitaires, `.env.example`, README, CHANGELOG et guides. **Aucune migration existante modifiée.**
+## Code corrections
 
-## Variables GitHub nécessaires (noms uniquement)
+| Risk | Correction | Verification |
+| --- | --- | --- |
+| Default English pages not revalidated | Invalidate `/`, `/state_of_bib`, `/data-sources`, as well as FR/ES paths | Vitest regression |
+| Verification failure evicting valid public caches | Invalidate only after direct RPC + SHA-256 verification succeeds | Vitest regression |
+| Manual Luma required a second environment URL despite a single DB | Select a consistent Preview URL/secret pair if available; otherwise canonical URL/secret | Workflow contract test |
+| Manual news/newsletter could call the production site | Require explicit Preview URL/secret for manual dispatch | Workflow contract test |
+| Repository snapshot job could auto-merge into main | Open a technical PR only; Supabase publication remains fully automated | Workflow contract test |
+| Documentation incorrectly required two databases | Document shared `akori` and the resulting non-destructive testing restrictions | Documentation review |
 
-| Nom | Type | Portée | Si absent |
-|---|---|---|---|
-| `BIB_SCHEDULES_ENABLED` | Variable | Production, `true` uniquement après recette | Crons désactivés |
-| `BIB_SITE_URL` | Variable | Site HTTPS production | Preflight en échec |
-| `BIB_CRON_SECRET` | Secret | Valeur correspondant au Vercel `CRON_SECRET` production | Preflight en échec |
-| `BIB_STAGING_SITE_URL` | Variable | Site HTTPS Preview/staging pour Luma manuel | Manuel en échec |
-| `BIB_STAGING_CRON_SECRET` | Secret | Valeur correspondant au `CRON_SECRET` de Vercel Preview | Manuel en échec |
-| `SOB_SUPABASE_SYNC` | Variable | Pipeline SOB, `true` uniquement sur cible autorisée | Pipeline en échec |
-| `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | Secrets | Cible serveur du pipeline SOB | Pipeline en échec |
+## Enable State of BIB from the first production release
 
-Les valeurs réelles et la présence de ces variables n'ont pas été vérifiées ; ne jamais les publier. Variables de cadence et de seuil : `docs/SOB_AUTOMATION.md`.
+1. Release the updated `refresh-data.yml` workflow to GitHub's default branch `main` through the normal reviewed release PR; replace the legacy weekly workflow. A push to `main` triggers initial ingestion immediately when the automation gate is enabled, then hourly checks continue.
+2. GitHub Actions repository variable: `BIB_SCHEDULES_ENABLED=true`. This enables the scheduling layer, **not** a human approval gate.
+3. GitHub Actions variable: `SOB_SUPABASE_SYNC=true`. Point `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (secrets) to the existing **akori** project only.
+4. Set GitHub variable `BIB_SITE_URL` to the deployed HTTPS site, and secret `BIB_CRON_SECRET` equal to its Vercel Production `CRON_SECRET` (at least 32 random characters).
+5. Configure Vercel Production `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, and `FEATURE_SOB_READ_FROM_SUPABASE=true` for **akori**.
+6. On launch, the pipeline checks hourly, builds on a new source version, applies deterministic/reinforced validation, publishes in `sob=auto`, verifies the PostgreSQL pointer and private Storage hashes, invalidates the website cache, and attempts `sob_insights=auto` when the AI provider is configured. No human approval is needed.
+7. For AI insights, configure a real `AI_PROVIDER`, `AI_MODEL`, `AI_API_KEY`, `FEATURE_AI=true`, and spend limits. Never publish mock/simulated analyses in production.
+8. Run an initial controlled pipeline execution after confirming project and credentials. Actual source files can be large: budget GitHub runner memory/time, network and Supabase storage before launch.
 
-## Variables Vercel — isolation obligatoire
+The `data/state-of-bib/` copy is operational backup metadata only. The pipeline's optional `repo-sync` PR does **not** gate publication to the website and does not auto-merge code.
 
-Staging : `NEXT_PUBLIC_SITE_URL` = URL HTTPS Preview, `NEXT_PUBLIC_SUPABASE_URL` = projet Supabase BIB staging, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` = clé publique staging, `SUPABASE_SECRET_KEY` = clé secrète **staging**, `CRON_SECRET` = secret staging de 32 caractères minimum, `NEXT_PUBLIC_LUMA_CALENDAR_ID` et `LUMA_ICAL_URL` = identifiants et URL validés dans Luma. Production : mêmes noms, **valeurs différentes**, secrets indépendants, Supabase différent.
+## Luma and admin
 
-Conserver `FEATURE_AI=false`, `FEATURE_NEWSLETTER_AUTOSEND=false`, `FEATURE_NEWSLETTER_SUBSCRIBE=false` en recette initiale. Tester Brevo seulement avec listes et adresses dédiées : `BREVO_API_KEY`, `BREVO_LIST_ID_FR/EN`, `BREVO_DOI_TEMPLATE_ID_FR/EN`, `BREVO_SENDER_EMAIL`, `NEWSLETTER_EMAIL_HASH_PEPPER` (au moins 32 caractères). Newsletter en `review` : ne pas passer en `auto` sans autorisation.
+- Calendar ID: `cal-aqEzCpUP5LXSBcL`; confirmed iCal URL: `https://api.lu.ma/ics/get?entity=calendar&id=cal-aqEzCpUP5LXSBcL`. The application now uses this as the verified fallback for the known calendar. This does not imply a successful first live database synchronization.
+- Configure the verified `LUMA_ICAL_URL` in Vercel and the shared cron secret. Once the updated Luma workflow is on `main`, its schedule runs every ten minutes if `BIB_SCHEDULES_ENABLED=true`.
+- No active BIB administrator currently exists. Invite the approved address and run the reviewed first-admin bootstrap, then validate permissions and UI.
+- A single Supabase project means Preview cron/write tests affect real BIB data. Do not run destructive test scenarios.
 
-## Tests et recette restant à faire
+## Security and remaining release prerequisites
 
-- CI PR : `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm audit --prod --audit-level=high`, Python unitaires, tests SQL/RLS jetables ; Playwright E2E à exécuter avec environnement approprié.
-- Vérifier six RPC `SECURITY DEFINER`, les permissions `anon/authenticated/editor/admin/service`, Storage et première connexion administrateur ; aucune migration distante dans cette mission.
-- Vérifier physiquement que Preview Vercel cible **uniquement** Supabase staging ; configurer Preview, authentification et administrateur de test avec accord sur les éventuels coûts.
-- Luma : confirmer la vraie URL du flux, première synchronisation, réexécution, annulations, récurrences, cas de flux partiel et absence d'historique. Luma ne garantit pas d'exposer tous les anciens événements.
-- SOB : source réelle, manifeste, validation, publication, checksums, cache périmé, disponibilité publique via HTTP/E2E, échecs IA, reprise et rollback ; l'invalidation de cache ne constitue pas une preuve de disponibilité publique.
-- Newsletter : Brevo à adresses de test uniquement, DOI, consentements, fuseaux et aucun envoi réel ; tester la prévention des doubles envois.
-- Audit média (droits, téléchargement, cache CDN), journaux et quotas (GitHub cron dix minutes, Luma, Supabase, IA).
-- Préparer remplacement de l'ancien pipeline `main` afin d'empêcher les traitements concurrents, sans lancer ce remplacement.
+Supabase security advisors currently show informational RLS-policy omissions on private service-only tables and warnings about six authenticated-executable SECURITY DEFINER functions. Review their in-function role checks, intended `GRANT EXECUTE` exposure and RLS policies before altering an applied schema. Do not blindly revoke the admin's valid RPC access.
 
-## Verdict / rollback
+To declare real-world operation, verify GitHub/Vercel credentials, the Luma first sync, source pipeline completion/public visibility, admin bootstrap, Brevo DOI/authorized test recipient delivery, media permissions, and actual provider AI calls. CI alone cannot prove these integrations. No remote schema/data writes or production deployments were executed by this branch.
 
-**Code prêt pour contrôles CI ; staging non vérifié ; production NON prête.** Pas de donnée Supabase distante modifiée, pas de publication ni d'envoi Brevo et pas de déploiement durant cette correction.
-
-Rollback applicatif : revenir au déploiement précédent compatible avec le schéma ; aucune suppression/relecture d'anciennes migrations. Rollback SOB : voir procédure de restauration dans `docs/SOB_AUTOMATION.md`. Les risques résiduels ci-dessus bloquent la validation de production.
+**Current status: code corrections implemented; GitHub CI and live integrations are still required for production acceptance.**

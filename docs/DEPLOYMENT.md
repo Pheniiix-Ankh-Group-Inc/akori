@@ -1,30 +1,27 @@
 # Déploiement et activation — Black in Blockchain
 
-Toutes les étapes ci-dessous sont **manuelles et volontaires**. Ce dépôt ne
-crée aucun projet cloud, n'applique aucune migration distante, n'active aucune
-tâche planifiée et n'envoie aucun e-mail par lui-même. Procéder sur **staging**
-avant la production.
+La configuration initiale est volontaire. Ce dépôt ne crée aucun projet
+cloud ni ne lance de migration distante. Une fois déployés sur `main` et
+configurés, les workflows Luma et State of BIB s'exécutent automatiquement,
+sans validation éditoriale pour State of BIB. Les essais Preview doivent
+être non destructifs car ils utilisent la même base `akori`.
 
-## 1. Projets Supabase BIB (staging puis production)
+## 1. Base Supabase BIB unique — décision du propriétaire
 
-1. Créer deux projets Supabase **dédiés à BIB** (par ex. `bib-staging`,
-   `bib-production`) dans une organisation BIB. Ne jamais utiliser un projet
-   d'un autre produit.
-2. Version PostgreSQL ≥ 15 (les migrations utilisent `unique nulls not distinct`).
-3. Auth > Sign In / Providers : **désactiver « Allow new users to sign up »**.
-   Activer l'e-mail (mot de passe et lien magique). Durée de vie courte des
-   liens. URL de redirection autorisée : `https://<domaine>/auth/callback`.
-4. Récupérer : URL du projet, clé publiable (`sb_publishable_…`), clé secrète
-   (`sb_secret_…`).
+1. Utiliser **uniquement le projet existant `akori`** (référence `zwfyuhgnbdrjhetkyanj`, région Montréal). Aucun projet `bib-staging` ou `bib-production` supplémentaire n'est requis.
+2. **Preview et Production partagent les mêmes tables et Storage.** Un test qui écrit en Preview peut modifier les données publiées. Utiliser des comptes, médias et listes de test, sans purge, migration de test destructive ni restauration générale.
+3. Les 13 migrations (0001–0013) sont enregistrées sur ce projet : **ne pas les rejouer** ni les modifier.
+4. Auth > Sign In / Providers : inscriptions publiques désactivées ; e-mail et liens d'invitation activés. Ajouter les URL de callback des déploiements réellement utilisés.
+5. Récupérer l'URL, la clé publiable et la clé secrète depuis ce projet, sans les exposer dans le dépôt.
 
 ## 2. Migrations
 
 ```bash
-# Supabase CLI, depuis la racine du dépôt — APRÈS autorisation explicite
+# Supabase CLI, depuis la racine du dépôt — seulement en cas de future migration autorisée
 psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/ops/00_preflight_bib.sql   # conflits de noms → arrêt
-supabase link --project-ref <ref-staging>
+supabase link --project-ref zwfyuhgnbdrjhetkyanj
 supabase db push --dry-run  # diff à présenter avant toute application
-supabase db push            # applique supabase/migrations/*.sql (0001 → 0013 ; 0010 est un script d'exploitation à part)
+# Ne pas relancer db push sur akori : les migrations 0001–0013 y sont déjà appliquées.
 ```
 
 Projet existant contenant un ancien schéma (cas d'`akori`) : suivre
@@ -58,10 +55,12 @@ Supprimer les anciennes variables devenues inutiles : `BETTER_AUTH_*`,
 `GOOGLE_CLIENT_*`, `SUPABASE_DATABASE_URL`, `STRIPE_*`, `NEXT_PUBLIC_SANITY_*`,
 `SANITY_API_TOKEN`, `BREVO_LIST_ID` (remplacée par `BREVO_LIST_ID_FR/EN`).
 
-**Prévisualisations Vercel.** Chaque push de branche déclenche un build de
-prévisualisation. Le build n'envoie aucun e-mail, n'appelle aucune IA et
-n'applique aucune migration. Les prévisualisations doivent pointer vers
-**staging**, jamais vers la production.
+**Prévisualisations Vercel.** Chaque push de branche peut déclencher un build
+Preview. Le build n'envoie aucun e-mail, n'appelle aucune IA et n'applique
+aucune migration. **Par décision du propriétaire, Preview et Production
+pointent tous deux vers l'unique base Supabase `akori`.** Les secrets CRON
+et les listes de test Brevo peuvent être distincts ; ne jamais exécuter de
+scénario destructif ou de nettoyage de données réelles en Preview.
 
 ## 4. Sanity (retrait)
 
@@ -140,7 +139,7 @@ Variables de dépôt (Settings > Secrets and variables > Actions) :
 | Nom | Type | Usage |
 | --- | --- | --- |
 | `BIB_SCHEDULES_ENABLED` | variable | `true` active les quatre workflows planifiés (le déclenchement manuel reste possible sans elle) |
-| `BIB_SITE_URL` | variable | URL du site appelé (staging puis production) |
+| `BIB_SITE_URL` | variable | URL canonique du site ; même projet Supabase en Preview et Production |
 | `BIB_CRON_SECRET` | secret | identique à `CRON_SECRET` côté Vercel |
 | `SOB_SUPABASE_SYNC` | variable | `true` autorise le pipeline State of BIB à écrire ; sans elle, le workflow échoue explicitement |
 | `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | secrets | projet BIB (pipeline) |
@@ -253,6 +252,9 @@ Contrôle d'identité avant migration : la référence dans `NEXT_PUBLIC_SUPABAS
 
 La V2 (Luma source de vérité des événements, State of BIB publié automatiquement depuis Supabase, modes auto/review/paused, édition humaine de la newsletter, migrations 0011 à 0013) est décrite dans [`V2_ARCHITECTURE_CIBLE.md`](V2_ARCHITECTURE_CIBLE.md) et [`SOB_AUTOMATION.md`](SOB_AUTOMATION.md). En cas de divergence avec une section plus ancienne de ce document, ces deux guides font foi.
 
-## Staging — déclenchement manuel Luma
+## Déclenchements manuels — Luma, veille et newsletter
 
-Le `workflow_dispatch` de `events-sync.yml` utilise désormais les variables GitHub `BIB_STAGING_SITE_URL` (URL HTTPS de Preview) et le secret `BIB_STAGING_CRON_SECRET`, associés au `CRON_SECRET` de Vercel Preview. La vérification de l'URL distincte de `BIB_SITE_URL` ne remplace **pas** la validation que le projet Supabase et les clés de la Preview sont réellement isolés de la production. Aucune synchronisation réelle n'est autorisée sans cette vérification préalable. Les planifications ne deviennent actives qu'une fois fusionnées sur la branche par défaut et avec `BIB_SCHEDULES_ENABLED=true` ; vérifier d'abord les limites du plan GitHub Actions et du fournisseur Luma.
+- Luma : si `BIB_STAGING_SITE_URL` est défini, utiliser cette URL et le secret correspondant `BIB_STAGING_CRON_SECRET` ; sinon, utiliser la paire canonique `BIB_SITE_URL` et `BIB_CRON_SECRET`.
+- Veille/newsletter : en déclenchement manuel, exiger explicitement `BIB_STAGING_SITE_URL` et `BIB_STAGING_CRON_SECRET`, sinon la tâche échoue au lieu d'appeler silencieusement la production.
+- **Un seul projet Supabase** : la Preview et la production utilisent `akori`. Même si les URLs diffèrent, les écritures concernent la même base ; utiliser uniquement des données et destinataires de test pour les recettes.
+- Les tâches planifiées ne démarrent qu'après fusion des nouveaux workflows sur `main` et configuration de `BIB_SCHEDULES_ENABLED=true`, `SOB_SUPABASE_SYNC=true` et des secrets requis. La publication State of BIB reste `auto` en base et n'attend aucune revue humaine.

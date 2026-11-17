@@ -164,7 +164,8 @@ describe("normalisation et empreinte", () => {
   })
 
   it("URL du flux : hôtes Luma uniquement, candidate signalée", () => {
-    expect(lumaFeedUrl(undefined, "cal-aqEzCpUP5LXSBcL")).toEqual({ url: "https://api.lu.ma/ics/get?entity=calendar&id=cal-aqEzCpUP5LXSBcL", candidate: true })
+    expect(lumaFeedUrl(undefined, "cal-aqEzCpUP5LXSBcL")).toEqual({ url: "https://api.lu.ma/ics/get?entity=calendar&id=cal-aqEzCpUP5LXSBcL", candidate: false })
+    expect(lumaFeedUrl(undefined, "cal-OtherVerifiedId123").candidate).toBe(true)
     expect(lumaFeedUrl("https://api.lu.ma/ics/get?x=1", "cal-aqEzCpUP5LXSBcL").candidate).toBe(false)
     expect(() => assertLumaFeedUrl("https://evil.example/ics")).toThrow(/non autorisé/)
     expect(() => assertLumaFeedUrl("http://lu.ma/ics")).toThrow(/non autorisé/)
@@ -209,11 +210,11 @@ describe("orchestration de la synchronisation", () => {
   it("import complet : RPC appelée avec le flux entier, journal réussi", async () => {
     const { admin, calls } = fakeAdmin()
     const r = await runLumaSync({ trigger: "schedule", now: new Date(NOW) }, { admin, fetchFn: feedOk })
-    expect(r).toMatchObject({ ok: true, runId: "run-1", feedEvents: 6, candidateUrl: true })
+    expect(r).toMatchObject({ ok: true, runId: "run-1", feedEvents: 6, candidateUrl: false })
     expect(calls.rpc[0]).toMatchObject({ name: "sync_luma_events", p_run_id: "run-1", p_complete: true })
     expect((calls.rpc[0].p_events as unknown[]).length).toBe(6)
     expect(calls.runs().find((x) => x.id === "run-1")!.status).toBe("succeeded")
-    expect(r.warnings.some((w) => w.includes("LUMA_ICAL_URL"))).toBe(true)
+    expect(r.warnings.some((w) => w.includes("LUMA_ICAL_URL"))).toBe(false)
   })
 
   it("import manuel d'un fichier .ics : jamais « complet » (aucun événement marqué absent)", async () => {
