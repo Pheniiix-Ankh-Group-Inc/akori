@@ -74,31 +74,19 @@ export async function runLumaSync(
   // Verrou ATOMIQUE côté PostgreSQL (migration 0012) : la clôture des
   // exécutions interrompues, le contrôle « déjà en cours » et l'ouverture se
   // font dans une seule fonction, protégée par un index unique partiel.
-  let runId: string
-  const begin = await admin.rpc("begin_event_sync_run", { p_trigger: opts.trigger, p_requested_by: opts.requestedBy ?? null, p_stale_minutes: Math.round(STALE_RUN_MS / 60000) })
-  let legacyLock = false
-  if (begin.error && /PGRST202|42883|could not find/i.test(`${begin.error.code ?? ""} ${begin.error.message ?? ""}`)) {
-    // Base antérieure à la migration 0012 : ancien contrôle (non atomique),
-    // signalé dans le journal jusqu'à l'application de la migration.
-    legacyLock = true
-    const staleBefore = new Date(now.getTime() - STALE_RUN_MS).toISOString()
-    await admin.from("event_sync_runs").update({ status: "failed", finished_at: now.toISOString(), error: "exécution interrompue (délai dépassé)" }).eq("status", "running").lt("started_at", staleBefore)
-    const { data: running } = await admin.from("event_sync_runs").select("id").eq("status", "running").limit(1)
-    if (running && running.length) return { ok: true, runId: (running[0] as { id: string }).id, skipped: "running", warnings: [] }
-    const { data: run, error: runError } = await admin
-      .from("event_sync_runs")
-      .insert({ trigger: opts.trigger, requested_by: opts.requestedBy ?? null, status: "running" })
-      .select("id")
-      .single()
-    if (runError || !run) throw new Error(`journal de synchronisation indisponible : ${runError?.message ?? "inconnu"}`)
-    runId = (run as { id: string }).id
-  } else if (begin.error) {
-    throw new Error(`journal de synchronisation indisponible : ${begin.error.message ?? "inconnu"}`)
-  } else if (!begin.data) {
-    return { ok: true, runId: null, skipped: "running", warnings: [] }
-  } else {
-    runId = String(begin.data)
+  // Fail closed if the atomic lock introduced in migration 0012 is missing.
+  const begin = await admin.rpc("begin_event_sync_run", {
+    p_trigger: opts.trigger, p_requested_by: opts.requestedBy ?? null,
+    p_stale_minutes: Math.round(STALE_RUN_MS / 60000),
+  })
+  if (begin.error) return {
+    ok: false, runId: null, warnings: [],
+    error: /PGRST202|42883|could not find/i.test(`${begin.error.code ?? ""} ${begin.error.message ?? ""}`)
+      ? "migration 0012 manquante : verrou atomique Luma indisponible"
+      : "verrou transactionnel Luma indisponible",
   }
+  if (!begin.data) return { ok: true, runId: null, skipped: "running", warnings: [] }
+  const runId = String(begin.data)
 
   let candidateUrl = false
   let host: string | null = null
@@ -119,7 +107,7 @@ export async function runLumaSync(
     const payload: SyncEventPayload[] = cal.events.map((e) => normalizeEvent(e, fallbackTz))
     const warnings = [...cal.warnings]
     if (candidateUrl) warnings.push("URL iCal construite automatiquement : configurer LUMA_ICAL_URL avec l'adresse copiée depuis Luma.")
-    if (legacyLock) warnings.push("Verrou non atomique : appliquer la migration 0012 (begin_event_sync_run).")
+    if (payload.length === 0) throw new Error("flux iCal vide ou sans événement exploitable : aucune écriture effectuée")
 
     // Contrôle de complétude : un flux qui perd plus de la moitié de ses
     // événements par rapport à la dernière synchronisation complète réussie

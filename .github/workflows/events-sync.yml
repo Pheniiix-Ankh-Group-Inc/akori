@@ -1,34 +1,38 @@
 name: Événements Luma — synchronisation
-
-# Luma → flux iCal → Supabase → site. Toutes les 3 heures, plus à la demande.
-# Désactivé par défaut : nécessite BIB_SCHEDULES_ENABLED=true (variable de
-# dépôt) et FEATURE_LUMA_SYNC=true côté application. Idempotent : relancer
-# une synchronisation ne crée ni doublon ni suppression.
-
+# Schedule runs on the default branch only; manual calls must use staging.
 on:
   schedule:
-    - cron: "17 */3 * * *"
+    - cron: "7,17,27,37,47,57 * * * *"
   workflow_dispatch: {}
-
 permissions:
   contents: read
-
 concurrency:
   group: events-sync
   cancel-in-progress: false
-
 jobs:
   sync:
-    # Planification désactivable ; le déclenchement manuel reste toujours possible.
-    if: github.event_name == 'workflow_dispatch' || vars.BIB_SCHEDULES_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' || (github.ref == 'refs/heads/main' && vars.BIB_SCHEDULES_ENABLED == 'true')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
     steps:
-      - name: Call the site
+      - name: Call Luma securely
         env:
-          SITE_URL: ${{ vars.BIB_SITE_URL }}
-          CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+          SITE_URL: ${{ github.event_name == 'workflow_dispatch' && vars.BIB_STAGING_SITE_URL || vars.BIB_SITE_URL }}
+          CRON_SECRET: ${{ github.event_name == 'workflow_dispatch' && secrets.BIB_STAGING_CRON_SECRET || secrets.BIB_CRON_SECRET }}
+          PROD_URL: ${{ vars.BIB_SITE_URL }}
+          TRIGGER: ${{ github.event_name }}
         run: |
-          test -n "$SITE_URL" || { echo "BIB_SITE_URL manquant"; exit 1; }
-          test -n "$CRON_SECRET" || { echo "BIB_CRON_SECRET manquant"; exit 1; }
-          curl --fail-with-body -sS --retry 2 --retry-delay 20 -X POST -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/luma-sync"
+          set -euo pipefail
+          test -n "$SITE_URL" || { echo "::error::SITE_URL missing"; exit 78; }
+          test -n "$CRON_SECRET" || { echo "::error::CRON_SECRET missing"; exit 78; }
+          case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
+          if [ "$TRIGGER" = "workflow_dispatch" ]; then
+            test -n "$PROD_URL" || { echo "::error::Production URL required to validate staging isolation"; exit 78; }
+            if [ "${SITE_URL%/}" = "${PROD_URL%/}" ]; then
+              echo "::error::Manual dispatch must not target production"
+              exit 78
+            fi
+          fi
+          curl --fail-with-body --silent --show-error --retry 2 --retry-delay 20 \
+            --max-time 110 -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${SITE_URL%/}/api/cron/luma-sync"

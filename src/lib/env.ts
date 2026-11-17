@@ -94,7 +94,6 @@ export const env = {
     // Supabase est la source principale de State of BIB : lecture activée
     // par défaut, désactivable explicitement ("false") en cas d'incident.
     sobReadFromSupabase: process.env.FEATURE_SOB_READ_FROM_SUPABASE?.trim() !== "false",
-    lumaSync: flag("FEATURE_LUMA_SYNC"),
     // Contenus non sourcés masqués par défaut ; "true" pour les réafficher.
     homeShowUnverifiedSections: process.env.HOME_SHOW_UNVERIFIED_SECTIONS?.trim() === "true",
   },

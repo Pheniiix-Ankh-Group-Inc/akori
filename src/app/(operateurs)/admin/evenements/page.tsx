@@ -107,7 +107,7 @@ export default async function AdminEventsPage({ searchParams }: Props) {
         <h2 id="h-sync">Synchronisation Luma</h2>
         <dl className="adm-dl">
           <dt>Synchronisation planifiée</dt>
-          <dd>{env.flags.lumaSync ? "Activée (toutes les 3 h, si BIB_SCHEDULES_ENABLED)" : "Désactivée (FEATURE_LUMA_SYNC)"}</dd>
+          <dd>Planifiée toutes les 10 min après activation sur main avec BIB_SCHEDULES_ENABLED=true ; statut réel à vérifier dans GitHub Actions</dd>
           <dt>Flux iCal</dt>
           <dd>{env.luma.icalUrl ? "URL configurée (LUMA_ICAL_URL)" : "URL candidate construite depuis l'identifiant du calendrier — à confirmer par une première synchronisation réussie"}</dd>
           <dt>Dernière exécution</dt>

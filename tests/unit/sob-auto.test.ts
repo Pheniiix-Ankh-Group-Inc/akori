@@ -10,10 +10,10 @@ import { buildSobFixture } from "../helpers/sob-fixture.mjs"
 
 const NAMES = ["meta.json", "headline.json", "country_map.json", "top_cities.json", "ecosystem_mix.json", "tenure_cohort.json"] as const
 type Artifact = { name: string; storage_path: string; sha256: string }
-const backend = { version: null as null | { provider_version: string; published_at: string; dataset_artifacts: Artifact[] }, objects: new Map<string, string>(), reads: 0 }
+const backend = { version: null as null | { provider_version: string; published_at: string; dataset_artifacts: Artifact[] }, objects: new Map<string, string>(), reads: 0, rpcError: false }
 
 // Cache applicatif simulé : mémorise jusqu'à l'invalidation de l'étiquette.
-const cache = { store: new Map<string, unknown>(), tags: [] as string[], paths: [] as string[] }
+const cache = { store: new Map<string, unknown>(), tags: [] as string[], paths: [] as string[], keepStale: false }
 vi.mock("server-only", () => ({}))
 vi.mock("next/cache", () => ({
   unstable_cache: <A extends unknown[], R>(fn: (...a: A) => Promise<R>, keys: string[]) => async (...args: A) => {
@@ -23,7 +23,7 @@ vi.mock("next/cache", () => ({
   },
   revalidateTag: (tag: string) => {
     cache.tags.push(tag)
-    cache.store.clear()
+    if (!cache.keepStale) cache.store.clear()
   },
   revalidatePath: (p: string) => void cache.paths.push(p),
 }))
@@ -34,6 +34,7 @@ vi.mock("@/lib/ops/incidents", () => ({ recordIncident: async (i: { kind: string
 vi.mock("@/lib/sob/insights", () => ({ runSobInsightsCycle: vi.fn() }))
 vi.mock("@/lib/supabase/admin", () => ({
   getAdminClient: () => ({
+    rpc: async () => backend.rpcError ? { data: null, error: { code: "08006" } } : { data: backend.version ? { ok: true, version: backend.version.provider_version, version_id: "fake-id" } : { ok: false, version: null, problems: ["aucune version courante"] }, error: null },
     from: () => {
       const q = { select: () => q, eq: () => q, in: () => q, order: () => q, limit: () => q, maybeSingle: async () => (backend.reads++, { data: backend.version, error: null }) }
       return q
@@ -64,6 +65,8 @@ beforeEach(() => {
   backend.version = null
   backend.objects.clear()
   backend.reads = 0
+  backend.rpcError = false
+  cache.keepStale = false
   cache.store.clear()
   cache.tags.length = 0
   cache.paths.length = 0
@@ -86,7 +89,8 @@ describe("Scénario G — actualisation automatique du site", () => {
 
     const report = await refreshSob("v2")
     expect(report.ok).toBe(true)
-    expect(report.served).toMatchObject({ origin: "supabase", version: "v2" })
+    expect(report.snapshot).toMatchObject({ origin: "supabase", version: "v2" })
+    expect(report.cache.publicVersionVerified).toBe(false)
     expect(cache.tags).toContain("state-of-bib")
     // Accueil, State of BIB et page légale, dans chaque langue.
     expect(cache.paths).toEqual(expect.arrayContaining(["/en", "/fr/state_of_bib", "/es/data-sources"]))
@@ -102,14 +106,44 @@ describe("Scénario G — actualisation automatique du site", () => {
     await publish("v1")
     const report = await refreshSob("v2")
     expect(report.ok).toBe(false)
-    expect(report.served.version).toBe("v1")
-    expect(incidents.map((i) => i.kind)).toEqual(["sob.site_not_updated"])
+    expect(report.snapshot.version).toBe("v1")
+    expect(incidents.map((i) => i.kind)).toEqual(["sob.verification_failed"])
   })
 
   it("aucune version publiée : état d'indisponibilité, rien d'inventé", async () => {
     const report = await refreshSob(null)
     expect(report.ok).toBe(false)
-    expect(report.served).toMatchObject({ origin: "unavailable", version: null })
+    expect(report.snapshot).toMatchObject({ origin: "unavailable", version: null })
+  })
+
+  it("stale-while-revalidate cannot cause a false 409", async () => {
+    await publish("v1")
+    await loadSobState()
+    cache.keepStale = true
+    await publish("v2")
+    const report = await refreshSob("v2")
+    expect(report.ok).toBe(true)
+    expect(report.snapshot.version).toBe("v2")
+    expect(report.cache.publicVersionVerified).toBe(false)
+    const stillStale = await loadSobState()
+    expect(isSobAvailable(stillStale) && stillStale.version).toBe("v1")
+  })
+
+  it("RPC unavailable: report 503 without false success", async () => {
+    await publish("v2")
+    backend.rpcError = true
+    const report = await refreshSob("v2")
+    expect(report.ok).toBe(false)
+    expect(report.statusCode).toBe(503)
+  })
+
+  it("corrupted Storage artifact is refused after direct validation", async () => {
+    await publish("v2")
+    const path = backend.version!.dataset_artifacts.find((a) => a.name === "headline.json")!.storage_path
+    backend.objects.set(path, '{"tampered":true}')
+    const report = await refreshSob("v2")
+    expect(report.ok).toBe(false)
+    expect(report.statusCode).toBe(409)
   })
 
   it("moteur IA non configuré : les statistiques sont actualisées, seule l'analyse est différée", async () => {

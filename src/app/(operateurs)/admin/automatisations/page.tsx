@@ -2,7 +2,6 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { requireEditor } from "@/lib/auth/editor"
 import { createClient } from "@/lib/supabase/server"
-import { env } from "@/lib/env"
 import { AUTOMATION_MODULES, readModes } from "@/lib/admin/automation"
 import { ModeSwitch } from "@/components/admin/ModeSwitch"
 import { Notice, RunBadge } from "@/components/admin/Notice"
@@ -43,7 +42,7 @@ export default async function AutomationsPage({ searchParams }: { searchParams: 
           <p className="adm-crumb">Administration</p>
           <h1>Automatisations</h1>
           <p className="adm-muted">
-            Tâches planifiées : {env.flags.lumaSync ? "synchronisation Luma activée" : "synchronisation Luma désactivée"} · les workflows GitHub ne s&apos;exécutent que si BIB_SCHEDULES_ENABLED = true.
+            Synchronisation Luma : planification préparée toutes les 10 minutes, uniquement après activation du workflow GitHub sur main avec BIB_SCHEDULES_ENABLED = true. État réel : voir les dernières exécutions.
           </p>
         </div>
       </div>

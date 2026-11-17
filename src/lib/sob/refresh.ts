@@ -1,66 +1,90 @@
 import "server-only"
 import { revalidatePath, revalidateTag } from "next/cache"
 import { isAiConfigured } from "@/lib/env"
-import { isSobAvailable, loadSobState, SOB_TAG } from "@/lib/sob/load"
+import { isSobAvailable, loadSobStateUncached, SOB_TAG } from "@/lib/sob/load"
 import { runSobInsightsCycle, type InsightCycleReport } from "@/lib/sob/insights"
+import { getAdminClient } from "@/lib/supabase/admin"
 import { recordIncident } from "@/lib/ops/incidents"
 import { routing } from "@/i18n/routing"
 
-export interface SobRefreshReport {
-  ok: boolean
-  /** Version réellement servie par le site après invalidation des caches. */
-  served: { origin: string; version: string | null; snapshotDate: string | null; reason?: string }
-  expected: string | null
-  insights: InsightCycleReport | { skipped: string }
-}
-
-/** Pages publiques qui affichent des données State of BIB. */
+const SOURCE_ID = "electric-capital-osdd"
 const PATHS = ["", "/state_of_bib", "/data-sources"]
 
+export interface SobRefreshReport {
+  ok: boolean
+  /** Direct RPC verification, not a cached page read. */
+  verification: { ok: boolean; version: string | null; versionId: string | null; reason?: string }
+  /** Uncached SHA-256-verified private snapshot, not browser-visible state. */
+  snapshot: { origin: string; version: string | null; snapshotDate: string | null; reason?: string }
+  cache: { invalidationRequested: true; publicVersionVerified: false }
+  expected: string | null
+  insights: InsightCycleReport | { skipped: string }
+  statusCode: 200 | 409 | 503
+}
+
 function invalidate() {
-  // Données (cache applicatif) puis pages rendues : la prochaine visite voit
-  // la nouvelle version, sans redéploiement ni purge manuelle.
+  // max = stale-while-revalidate, not immediate client-side visibility.
   revalidateTag(SOB_TAG, "max")
   for (const locale of routing.locales) for (const p of PATHS) revalidatePath(`/${locale}${p}`)
 }
 
-/**
- * Actualisation automatique du site après une publication State of BIB :
- * invalide les caches, relit la version courante (artefacts vérifiés), puis
- * lance le cycle des analyses IA. `expected` (version publiée par le pipeline)
- * permet de VÉRIFIER que le site sert bien la nouvelle version.
- * Un échec des analyses n'empêche jamais l'actualisation des statistiques.
+/** Revalidation + direct PostgreSQL/Storage checks. HTTP 200 does not certify
+ * visibility of this version via a cached public page or client router.
  */
 export async function refreshSob(expected: string | null = null): Promise<SobRefreshReport> {
   invalidate()
-  const state = await loadSobState()
-  const served = isSobAvailable(state)
+  let verification: SobRefreshReport["verification"]
+  let databaseUnavailable = false
+  try {
+    const { data, error } = await getAdminClient().rpc("verify_current_dataset", { p_source_id: SOURCE_ID })
+    if (error) {
+      databaseUnavailable = true
+      verification = { ok: false, version: null, versionId: null, reason: "database_verification_failed" }
+    } else {
+      const v = data as { ok?: boolean; version?: string | null; version_id?: string | null; problems?: string[] } | null
+      verification = {
+        ok: v?.ok === true && typeof v.version === "string",
+        version: typeof v?.version === "string" ? v.version : null,
+        versionId: typeof v?.version_id === "string" ? v.version_id : null,
+        ...(v?.ok === true ? {} : { reason: Array.isArray(v?.problems) ? v.problems.slice(0, 3).join("; ") : "publication_not_verified" }),
+      }
+    }
+  } catch {
+    databaseUnavailable = true
+    verification = { ok: false, version: null, versionId: null, reason: "database_unreachable" }
+  }
+  // Do not read loadSobState() here: "max" permits stale cache values.
+  const state = verification.ok ? await loadSobStateUncached() : null
+  const snapshot: SobRefreshReport["snapshot"] = state && isSobAvailable(state)
     ? { origin: state.origin, version: state.version, snapshotDate: state.headline.snapshot_date }
-    : { origin: state.origin, version: null, snapshotDate: null, reason: state.reason }
-  const servedOk = isSobAvailable(state) && state.origin === "supabase" && (!expected || state.version === expected)
+    : { origin: state?.origin ?? "unavailable", version: null, snapshotDate: null, reason: state?.reason ?? verification.reason }
 
-  let insights: SobRefreshReport["insights"]
-  if (!isAiConfigured()) {
+  const ok = verification.ok && snapshot.origin === "supabase"
+    && snapshot.version === verification.version && (!expected || expected === verification.version)
+  const statusCode: SobRefreshReport["statusCode"] = ok ? 200 : databaseUnavailable ? 503 : 409
+
+  let insights: SobRefreshReport["insights"] = { skipped: "vérification des données incomplète" }
+  if (ok && !isAiConfigured()) {
     insights = { skipped: "moteur IA non configuré : analyses différées" }
-  } else {
+  } else if (ok) {
     try {
       insights = await runSobInsightsCycle()
       if (insights.published.length) invalidate()
-    } catch (e) {
-      insights = { skipped: `cycle des analyses en échec : ${(e as Error).message.slice(0, 160)}` }
-      try {
-        await recordIncident({ kind: "sob.insights_failed", severity: "warning", message: "Cycle des analyses State of BIB en échec (les statistiques restent publiées)", details: { error: (e as Error).message.slice(0, 300) } })
-      } catch {
-        /* journalisation indisponible */
-      }
-    }
-  }
-  if (!servedOk) {
-    try {
-      await recordIncident({ kind: "sob.site_not_updated", severity: "warning", message: `Le site ne sert pas la version attendue (${expected ?? "version courante"})`, details: { served, expected } })
     } catch {
-      /* journalisation indisponible */
+      insights = { skipped: "cycle des analyses en échec ; statistiques conservées" }
+      try {
+        await recordIncident({ kind: "sob.insights_failed", severity: "warning", message: "Cycle IA State of BIB en échec (statistiques conservées)" })
+      } catch { /* incident service unavailable */ }
     }
   }
-  return { ok: servedOk, served, expected, insights }
+  if (!ok) {
+    try {
+      await recordIncident({ kind: "sob.verification_failed", severity: "warning",
+        message: "La version courante State of BIB n'a pas été confirmée hors cache",
+        details: { expected, verification, snapshot, statusCode } })
+    } catch { /* incident service unavailable */ }
+  }
+  return { ok, verification, snapshot,
+    cache: { invalidationRequested: true, publicVersionVerified: false },
+    expected, insights, statusCode }
 }

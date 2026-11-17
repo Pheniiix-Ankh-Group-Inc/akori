@@ -1,168 +1,89 @@
 # Changelog
 
-All notable changes to this project are documented in this file.
+All notable changes to this project are documented here.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html) conventions. Historical release numbers and duplicate legacy entries are preserved as originally recorded.
 
 ## [Unreleased]
 
-Architecture cible de la plateforme Black in Blockchain. Ces changements sont
-livrés dans le code et testés localement et en CI ; ils ne sont **ni déployés
-ni validés en production**. Les services externes restent désactivés tant que
-leurs drapeaux et leur configuration ne sont pas en place (voir le README,
-« État des modules »).
+> **Release status:** The platform architecture and pre-production corrections have been implemented and verified by offline CI. They have **not** been fully validated with live Luma, Brevo, an AI provider, production State of BIB data, or an isolated staging environment. No production release is authorized by these changes. See the [README](README.md#implementation-and-release-status) and [pre-production report](docs/audits/BIB_PREPROD_READINESS.md).
 
-### Added
+### Fixed — pre-production hardening (PR #33)
 
-- **Événements — Luma.** Synchronisation du flux iCal de Luma vers Supabase :
-  parseur RFC 5545 (fuseaux, journées entières, `RRULE`, `RDATE`, `EXDATE`,
-  `RECURRENCE-ID`), enregistrement idempotent par identifiant d'événement,
-  verrou atomique en base, reprise des exécutions interrompues, refus d'un
-  flux vide et protection contre une chute anormale du nombre d'événements.
-  Les annulations sont conservées et affichées ; un événement absent du flux
-  est marqué, jamais supprimé. Import d'un fichier `.ics` pour l'historique.
-- **Événements — site.** Pages `/evenements` et `/evenements/[slug]` :
-  calendrier Luma embarqué, vues liste et mois, filtres, historique paginé,
-  lien vers la rétrospective.
-- **BIB en action.** Rétrospectives, galerie, vidéo et témoignages avec
-  référence de consentement (`/en-action`, `/en-action/[slug]`) ; médias
-  privés jusqu'à la publication et l'approbation des droits.
-- **State of BIB — observatoire.** Filtres partagés dans une URL (région,
-  métrique, pays, comparaison, écosystème, période), carte avec zoom et
-  comparaison, courbes temporelles avec curseur, classement triable, cohortes
-  en effectifs ou en parts ; clavier, tactile, mouvement réduit, FR/EN/ES.
-- **State of BIB — pipeline.** Lecture du manifeste de la source, détection
-  d'une nouvelle version ou d'une correction publiée sous le même numéro,
-  calcul Python/DuckDB avec recalcul indépendant des totaux, validation du lot
-  (format, périmètre, doublons, cohérence entre fichiers, provenance),
-  historisation des versions et des observations dans Supabase.
-- **State of BIB — publication automatique.** Publication sans approbation
-  humaine en mode `auto` : contrôles renforcés automatiques en cas de forte
-  variation, bascule transactionnelle protégée contre les exécutions
-  simultanées, vérification après publication avec retour automatique à la
-  version précédente, quarantaine et reprise bornée, réconciliation entre
-  PostgreSQL, Storage et la copie du dépôt, incidents journalisés.
-- **State of BIB — site.** Lecture côté serveur de la version courante avec
-  contrôle d'intégrité, état d'indisponibilité quand aucune version valide
-  n'existe, actualisation des caches après publication
-  (`/api/cron/sob-refresh`), page légale `/data-sources` (sources, licences,
-  méthodologie, FR/EN/ES).
-- **Analyses IA.** Moteur commun à fournisseur configurable (`anthropic`,
-  `openai`, `mistral`, `openai-compatible`, `mock`) avec budgets d'appels et
-  de jetons ; analyses State of BIB par version et par langue, chiffres
-  insérés par marqueurs, contrôles hors IA de tendance et de périmètre,
-  tentatives bornées ; diagnostic `/api/ops/ai-status`.
-- **Newsletter.** Inscription FR/EN en double opt-in Brevo avec preuve de
-  consentement ; veille de sources RSS/Atom ajoutées et activées par l'équipe ;
-  rédaction automatique FR/EN en quatre rubriques ; contrôles hors IA ;
-  édition humaine facultative ; envoi autonome ou manuel ; protections contre
-  le double envoi (verrou de statut, clé d'idempotence, réconciliation Brevo).
-- **Modes d'automatisation** `auto`, `review` et `paused` pour State of BIB,
-  ses analyses et la newsletter, modifiables par un administrateur et
-  journalisés.
-- **Administration** `/admin`, sur invitation : événements, BIB en action,
-  médias et droits, témoignages, State of BIB, newsletter et sources
-  d'actualité, automatisations, incidents et journal d'audit ; connexion des
-  opérateurs par Supabase Auth, sans inscription publique.
-- **Supabase.** Treize migrations versionnées (0001 à 0013) : habilitations,
-  audit, événements, médias, State of BIB, newsletter, incidents ; RLS sur
-  toutes les tables ; fonctions transactionnelles (`sync_luma_events`,
-  `begin_event_sync_run`, `publish_dataset_candidate`,
-  `verify_current_dataset`) ; buckets Storage ; scripts d'exploitation et
-  procédure de création du premier administrateur.
-- **Automatisation.** Workflows `events-sync.yml` (toutes les 3 h),
-  `news-ingest.yml` (quotidien) et `newsletter.yml` (lundi, mardi, mercredi),
-  inactifs tant que `BIB_SCHEDULES_ENABLED` n'est pas `true` et déclenchables
-  manuellement ; relance des workflows depuis l'administration.
-- **Observabilité.** Journaux structurés masquant e-mails, jetons et clés,
-  table d'incidents, journaux d'exécution, alertes e-mail internes
-  facultatives.
-- **Tests et CI.** Tests unitaires et de sécurité (Vitest), tests du pipeline
-  (unittest), tests SQL, RLS et de concurrence sur base jetable, tests
-  navigateur (Playwright) ; workflow `ci.yml` (jobs `web`, `data`, `sql`) avec
-  audit des dépendances, contrôle des en-têtes servis et de l'absence de clé
-  serveur dans le bundle client.
-- **Documentation.** Guides d'architecture, de modèle de données, de
-  déploiement, d'automatisation State of BIB, de sécurité, de tests,
-  d'exploitation et de procédures éditoriales ; inventaire des pages en
-  préparation ; `.env.example` commenté.
+- **State of BIB cache correctness.** Publication verification now calls the `verify_current_dataset` RPC directly and rereads all six private artifacts without the Next.js `unstable_cache` layer, checking SHA-256 integrity. `revalidateTag(..., "max")` can still serve stale public content; the refresh response now explicitly distinguishes **database/Storage verification** from **unverified public visibility**.
+- **State of BIB refresh responses.** The cron endpoint rejects invalid version query parameters, reports a database verification outage as HTTP 503 and an integrity/version mismatch as HTTP 409, and does not falsely claim that client-side caches have refreshed.
+- **Luma false-positive success.** Removed the redundant `FEATURE_LUMA_SYNC` application flag. The cron endpoint no longer reports a skipped synchronization as successful; it returns HTTP 409 for an already-running job, a non-2xx response on processing errors, and an explicit failure for an empty iCalendar feed.
+- **Luma concurrency safety.** Removed the legacy non-atomic locking fallback. When migration 0012's `begin_event_sync_run` RPC is missing, synchronization fails closed instead of risking overlapping writes.
+- **Luma scheduling and staging.** Prepared `events-sync.yml` for a ten-minute schedule on the default branch, gated by `BIB_SCHEDULES_ENABLED`. Manual workflow runs use dedicated `BIB_STAGING_SITE_URL` and `BIB_STAGING_CRON_SECRET` settings and refuse an identical production/staging URL. Independent Supabase-project isolation must still be verified separately.
+- **Administration.** Updated the events and automation pages to remove references to `FEATURE_LUMA_SYNC` and to describe the planned ten-minute schedule without presenting it as already active.
+- **Regression coverage.** Added cases for stale-while-revalidate caching, unavailable publication verification, altered private artifacts, an empty Luma feed, and a missing atomic-lock migration.
+- **Documentation.** Updated the README, deployment/automation guides, environment examples, and pre-production audit; translated the README and changelog to English while retaining their technical scope and historical records.
 
-### Changed
+### Validation — latest verified CI
 
-- **Charte et navigation.** Nouvelle charte claire (ivoire, encre, or ;
-  Fraunces et Inter), en-tête avec menu mobile accessible, sélecteur de langue
-  qui conserve la page, cibles tactiles de 44 px, contraste AA ; accueil,
-  À propos, Événements, BIB en action et State of BIB redessinés ; pied de
-  page limité aux pages existantes.
-- **Événements.** Luma devient la source de vérité : la création manuelle
-  d'événements est retirée de l'administration, qui ne gère plus que des
-  compléments éditoriaux.
-- **State of BIB.** Supabase devient la source des données affichées ; les
-  fichiers JSON du dépôt ne sont plus qu'une copie technique interne
-  (`data/state-of-bib/`), utilisée en repli seulement si elle est valide et
-  récente. Le calcul attribue un seul pays à chaque développeur et dérive les
-  totaux de la table par pays.
-- **Pipeline de données.** `refresh-data.yml` passe d'une reconstruction
-  hebdomadaire poussée sur `main` à une vérification horaire qui ne
-  reconstruit qu'en cas de changement et ne pousse jamais sur `main`. Une
-  configuration incomplète fait échouer le workflow au lieu de réussir sans
-  rien écrire.
-- **Pages en préparation.** `/about`, `/mission`, `/membership`, `/resources`,
-  `/press` et `/contact` affichent un gabarit commun et sont exclues de
-  l'indexation.
-- `/register` indique que l'inscription est fermée ; `/dashboard` redirige
-  vers `/admin`.
-- **Dépendances.** Next.js 16.4, next-intl 4.15, zod 4.6, supabase-js 2.119.
+- [GitHub Actions run 44008551701](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44008551701): all three jobs passed (`web`, `data`, `sql`).
+- **245/245 Vitest tests** across 21 test files; **63/63 Python tests**.
+- ESLint, TypeScript, Next.js production build, SQL migrations/RLS/concurrency on disposable PostgreSQL, security-header checks, and server-secret checks in the client bundle passed.
+- `pnpm audit --prod --audit-level=high` reported **no known vulnerabilities**.
+- No real Supabase writes, Luma sync, Brevo email delivery, AI calls, production deployment, or live E2E acceptance test was performed for these corrections.
 
-### Removed
+### Added — platform architecture (PR #32)
 
-- Sanity (Studio, schémas, client), better-auth, Stripe, `pg`,
-  `styled-components` et l'espace membres ; `package-lock.json` (pnpm seul).
-- Fichiers JSON State of BIB servis depuis `public/data/` et tout
-  téléchargement public des données.
-- Mentions des fournisseurs de données et des licences en dehors de la page
-  légale `/data-sources`.
-- Sections décoratives de l'ancien thème sombre de l'accueil et contenus
-  factuels non sourcés.
-- Objets de base de données hérités d'un autre produit dans le projet
-  Supabase `akori`.
+- **Luma event synchronization.** Ingests Luma iCalendar feeds into Supabase using an RFC 5545-aware parser (time zones, all-day events, `RRULE`, `RDATE`, `EXDATE`, `RECURRENCE-ID`). Upserts are idempotent by event identity; a database-level lock prevents concurrent runs. Interrupted runs can recover, empty feeds are rejected, and significant feed-size drops do not silently remove events. Cancellations and missing events remain in history. Optional `.ics` import fills historical gaps.
+- **Public event experience.** Added `/evenements` and `/evenements/[slug]` with the embedded Luma calendar, list/month views, filters, paginated history, and links to event recaps.
+- **BIB in Action.** Added recaps, photo/video galleries, and testimonials with consent references at `/en-action` and `/en-action/[slug]`. Media stays private until publication and rights approval.
+- **State of BIB observatory.** Added URL-shareable geographic/metric/period filters, zoomable maps and comparisons, interactive trends, sortable rankings, cohorts, keyboard/touch support, reduced-motion support, and EN/FR/ES localization.
+- **State of BIB data pipeline.** Added manifest-driven source checks, detection of new versions or updated resources under the same version, independent Python/DuckDB aggregation, validations for format/coverage/duplicates/provenance, and historical versions/observations in Supabase.
+- **Automated State of BIB publication.** Added `auto` mode with strengthened checks for large changes, atomic version switching, concurrency and version-order protection, verification and automatic rollback, quarantining and bounded retries, PostgreSQL/Storage/repository reconciliation, and operational incidents.
+- **State of BIB server rendering.** Added integrity-checked reads of the current published version, an explicit unavailable state when no valid snapshot exists, cache invalidation after publication, and localized legal disclosures at `/data-sources`.
+- **AI insights.** Added a shared configurable provider engine (`anthropic`, `openai`, `mistral`, `openai-compatible`, `mock`) with budgets and timeouts; localized State of BIB analyses per dataset version; deterministic numeric placeholders, scope/direction checks, bounded retries, and `/api/ops/ai-status`.
+- **Brevo newsletter.** Added FR/EN double opt-in with consent evidence, controlled RSS/Atom source ingestion, four-section automated FR/EN drafting, deterministic validation, optional editorial review, manual or autonomous delivery, and protection against duplicate sends (status locking, idempotency keys, Brevo reconciliation).
+- **Automation settings.** Added audited `auto`, `review`, and `paused` modes for State of BIB, its insights, and the newsletter.
+- **Private administration.** Added `/admin` for events, recaps, media rights, testimonials, State of BIB, news sources, newsletter editions, automations, incidents, and audit history; Supabase Auth is invitation-only, with public sign-up closed.
+- **Supabase schema.** Added 13 numbered migrations (0001–0013) covering permissions, auditing, events, media, datasets, newsletter, and incidents; RLS for all tables; transactional RPCs including `sync_luma_events`, `begin_event_sync_run`, `publish_dataset_candidate`, and `verify_current_dataset`; private Storage and initial-admin operational scripts.
+- **Automation and monitoring.** Added `events-sync.yml`, `news-ingest.yml`, and `newsletter.yml`, with scheduling disabled until explicitly activated; structured redacted logging, execution history, incidents, and optional internal alerts.
+- **Quality gates.** Added Vitest unit/security tests, Python pipeline tests, disposable-PostgreSQL SQL/RLS/concurrency tests, Playwright suites, and `ci.yml` jobs (`web`, `data`, `sql`) covering dependencies, security headers, bundle secrets, and production build.
+- **Documentation.** Added architecture, data model, deployment, State of BIB automation, security, testing, operational, and editorial guides; pages-in-progress inventory; and an annotated `.env.example`.
 
-### Fixed
+### Changed — platform architecture (PR #32)
 
-- `/login`, `/register` et `/dashboard` n'étaient plus atteignables (404).
-- Jour d'envoi de la newsletter : mercredi 9 h, heure de Toronto, été comme
-  hiver.
-- Publications éditoriales partielles : fiche, traductions et audit sont
-  écrits dans une seule transaction, avec verrou optimiste.
-- Erreurs ESLint et imports inutilisés des composants State of BIB.
+- **Visual system and navigation.** Replaced the previous dark homepage styling with an ivory/ink/gold editorial theme (Fraunces + Inter), accessible mobile navigation, persistent-page language switching, 44 px touch targets, AA contrast targets, and redesigned Home, About, Events, BIB in Action, and State of BIB pages.
+- **Events.** Made Luma the source of truth; removed manual event creation from the administration UI and limited local editing to BIB editorial additions.
+- **State of BIB.** Moved the public dataset source to Supabase. JSON files under `data/state-of-bib/` are technical copies only, eligible for fallback solely when valid and recent. Aggregation now assigns one country per developer and derives totals from the country-level dataset.
+- **Data workflow.** Reworked `refresh-data.yml` from a weekly process that wrote directly to `main` into an hourly manifest check with conditional rebuilds and no direct push to `main`. Missing required configuration now fails explicitly rather than silently succeeding.
+- **Pages in progress.** `/about`, `/mission`, `/membership`, `/resources`, `/press`, and `/contact` now show a shared non-indexed placeholder.
+- **Authentication routes.** `/register` indicates registration is closed; `/dashboard` redirects to `/admin`.
+- **Dependencies.** Upgraded to Next.js 16.4, next-intl 4.15, Zod 4.6, and supabase-js 2.119.
 
-### Security
+### Removed — platform architecture (PR #32)
 
-- Suppression de la route publique `/api/emails/welcome`, qui permettait un
-  envoi d'e-mail arbitraire ; fin de la journalisation du préfixe de la clé
-  Brevo.
-- En-têtes : CSP dérivée du projet Supabase configuré, sans joker ;
-  `object-src 'none'`, `base-uri`, `form-action`, `frame-ancestors` ; HSTS ;
-  `Referrer-Policy` et `Cross-Origin-Opener-Policy`.
-- Plus d'insertion HTML de données dans la carte et les cohortes State of BIB.
-- Formulaire d'inscription : même origine, champ piège, limiteur de débit en
-  échec fermé, réponse uniforme.
-- Veille protégée contre la SSRF (DNS, redirections, taille, type, entités
-  XML) ; données externes isolées dans les prompts IA.
-- Médias : signature binaire vérifiée à l'import ; fichiers privés jusqu'à la
-  publication.
-- Supabase : vues en `SECURITY INVOKER`, droits par colonne pour le rôle
-  anonyme, fonctions `SECURITY DEFINER` à `search_path` vide, buckets
-  State of BIB privés et lecture anonyme des tables de données retirée.
-- Vulnérabilités de dépendances de production : 234 → 0 (`pnpm audit`).
+- Sanity Studio/schema/client, better-auth, Stripe, `pg`, `styled-components`, the member area, and `package-lock.json` in favor of pnpm.
+- Public State of BIB JSON files previously served from `public/data/`, along with public dataset downloads.
+- Provider/license references outside the designated legal `/data-sources` page.
+- Unsupported statistical claims and decorative sections from the previous dark-themed homepage.
+- Database objects from an unrelated legacy product in the dedicated Supabase `akori` project.
 
-## Versions antérieures
+### Fixed — platform architecture (PR #32)
 
-Les entrées ci-dessous reprennent le journal d'origine ; seuls les intitulés
-de catégories ont été normalisés. Aucun tag Git ne leur correspond et
-`package.json` indique `0.3.0` : les numéros et les dates sont ceux du journal
-d'origine.
+- Restored previously broken `/login`, `/register`, and `/dashboard` routes.
+- Corrected the Wednesday 09:00 Toronto newsletter time across daylight-saving and standard time.
+- Made editorial records, translations, and audit changes transactional with optimistic concurrency control.
+- Resolved ESLint errors and unused imports in State of BIB components.
+
+### Security — platform architecture (PR #32)
+
+- Removed the publicly exposed `/api/emails/welcome` route that allowed arbitrary email sending; stopped logging Brevo key prefixes.
+- Added restrictive CSP based on configured Supabase origins, `object-src 'none'`, `base-uri`, `form-action`, `frame-ancestors`, HSTS, `Referrer-Policy`, and `Cross-Origin-Opener-Policy`.
+- Removed external HTML insertion from State of BIB map/cohort renderers.
+- Hardened subscriptions with same-origin checks, honeypots, fail-closed rate limiting, and uniform error responses.
+- Added SSRF protections for news ingestion (DNS, redirects, size, content type, XML entities) and isolated untrusted content in AI prompts.
+- Added binary media signature inspection and private-until-approved publication rules.
+- Hardened Supabase with `SECURITY INVOKER` views, limited anonymous column privileges, `SECURITY DEFINER` functions with restricted search paths, private State of BIB Storage, and restricted anonymous dataset access.
+- Reduced reported production dependency vulnerabilities from 234 to zero at the time of that audit; the later PR #33 audit also reported no known vulnerabilities.
+
+## Earlier versions
+
+The entries below preserve the original project changelog, including repeated version numbers and dates. They do **not** correspond to verified Git tags; `package.json` currently identifies the application as `0.3.0`.
 
 ## [0.13.0] — 2026-05-18
 

@@ -145,7 +145,7 @@ Variables de dépôt (Settings > Secrets and variables > Actions) :
 | `SOB_SUPABASE_SYNC` | variable | `true` autorise le pipeline State of BIB à écrire ; sans elle, le workflow échoue explicitement |
 | `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | secrets | projet BIB (pipeline) |
 
-Horaires : synchronisation Luma toutes les 3 heures (minute 17) ; State of BIB
+Horaires : synchronisation Luma toutes les 10 minutes (minutes 7,17,27,37,47,57) ; State of BIB
 toutes les heures (minute 7) ; veille 10:41 UTC ; newsletter lundi et
 mardi 13:11 UTC, mercredi 13:02 et 14:02 UTC (l'application ne retient que
 la fenêtre 09:00–09:59 heure de Toronto, été comme hiver).
@@ -238,7 +238,7 @@ appliquée si la variable est absente.
 | `FEATURE_NEWSLETTER_AUTOSEND` | Envoi réel | prod (sur décision) | non | non | `false` | envoi |
 | `FEATURE_AI`, `FEATURE_NEWS_INGEST`, `FEATURE_OPS_ALERTS` | Activations | tous | non | non | `false` | IA, veille, alertes |
 | `FEATURE_SOB_READ_FROM_SUPABASE` | Lecture State of BIB en base | tous | non | non | `true` (`false` : copie du dépôt si valide, sinon indisponibilité) | State of BIB |
-| `FEATURE_LUMA_SYNC`, `LUMA_ICAL_URL`, `NEXT_PUBLIC_LUMA_CALENDAR_ID` | Synchronisation et calendrier Luma | tous | non | non | synchronisation désactivée | événements |
+| `LUMA_ICAL_URL`, `NEXT_PUBLIC_LUMA_CALENDAR_ID` | Synchronisation et calendrier Luma | tous | non | non | synchronisation désactivée | événements |
 | `HOME_SHOW_UNVERIFIED_SECTIONS` | Contenus non sourcés | tous | non | non | masqués | accueil |
 | GitHub `BIB_SCHEDULES_ENABLED` | Tâches planifiées | dépôt | non | non | désactivées | cron |
 | GitHub `SOB_SUPABASE_SYNC` | Écritures State of BIB | dépôt | non | pour le pipeline | échec explicite du workflow | pipeline |
@@ -252,3 +252,7 @@ Contrôle d'identité avant migration : la référence dans `NEXT_PUBLIC_SUPABAS
 ## V2 — architecture cible
 
 La V2 (Luma source de vérité des événements, State of BIB publié automatiquement depuis Supabase, modes auto/review/paused, édition humaine de la newsletter, migrations 0011 à 0013) est décrite dans [`V2_ARCHITECTURE_CIBLE.md`](V2_ARCHITECTURE_CIBLE.md) et [`SOB_AUTOMATION.md`](SOB_AUTOMATION.md). En cas de divergence avec une section plus ancienne de ce document, ces deux guides font foi.
+
+## Staging — déclenchement manuel Luma
+
+Le `workflow_dispatch` de `events-sync.yml` utilise désormais les variables GitHub `BIB_STAGING_SITE_URL` (URL HTTPS de Preview) et le secret `BIB_STAGING_CRON_SECRET`, associés au `CRON_SECRET` de Vercel Preview. La vérification de l'URL distincte de `BIB_SITE_URL` ne remplace **pas** la validation que le projet Supabase et les clés de la Preview sont réellement isolés de la production. Aucune synchronisation réelle n'est autorisée sans cette vérification préalable. Les planifications ne deviennent actives qu'une fois fusionnées sur la branche par défaut et avec `BIB_SCHEDULES_ENABLED=true` ; vérifier d'abord les limites du plan GitHub Actions et du fournisseur Luma.
