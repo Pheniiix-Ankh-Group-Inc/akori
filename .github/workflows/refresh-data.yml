@@ -276,11 +276,20 @@ jobs:
           git add data/state-of-bib
           if git diff --cached --quiet; then echo "Rien à synchroniser."; exit 0; fi
           git commit -m "data(state-of-bib): copie technique de la version ${VERSION}"
+          # Fetch the existing bot branch before force-with-lease; shallow checkout
+          # only fetches main, so the lease otherwise rejects with "stale info".
+          if git ls-remote --exit-code --heads origin data/state-of-bib-sync >/dev/null 2>&1; then
+            git fetch origin "+refs/heads/data/state-of-bib-sync:refs/remotes/origin/data/state-of-bib-sync"
+          fi
           git push --force-with-lease origin data/state-of-bib-sync
-          gh pr view data/state-of-bib-sync --json number >/dev/null 2>&1 || gh pr create \
+          if gh pr view data/state-of-bib-sync --json number >/dev/null 2>&1; then
+            echo "::notice title=State of BIB::technical snapshot PR already exists."
+          elif gh pr create \
             --head data/state-of-bib-sync --base "${{ github.event.repository.default_branch }}" \
             --title "State of BIB — copie technique ${VERSION}" \
-            --body "Synchronisation automatique de data/state-of-bib/current avec la version **${VERSION}** déjà publiée dans Supabase (artefacts vérifiés par SHA-256). Le site ne dépend pas de cette PR : elle met seulement à jour la copie de reprise du dépôt."
-          # Updating the technical repository copy is separate from automated
-          # publication to Supabase. Never auto-merge into protected main.
-          echo "::notice title=State of BIB::technical snapshot PR opened; Supabase publication is already complete."
+            --body "Synchronisation automatique de data/state-of-bib/current avec la version **${VERSION}** déjà publiée dans Supabase (artefacts vérifiés par SHA-256). Le site ne dépend pas de cette PR : elle met seulement à jour la copie de reprise du dépôt."; then
+            echo "::notice title=State of BIB::technical snapshot PR opened."
+          else
+            echo "::warning title=State of BIB::snapshot branch pushed, but GitHub Actions cannot create a PR. Enable 'Allow GitHub Actions to create and approve pull requests' in repository Actions settings, or create the PR manually."
+          fi
+          # Never auto-merge into protected main; Supabase remains independent.
