@@ -40,6 +40,33 @@ class HistoricalBackfillTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "different contents"):
             bh.snapshot_versions(self.hist, self.current)
 
+    def test_rebuild_deltas_when_historical_version_arrives_after_current(self):
+        from fake_supabase import FakeSupabase
+        sb = FakeSupabase()
+        old = sb.insert("dataset_versions", {
+            "source_id": "electric-capital-osdd", "provider_version": "old",
+            "status": "superseded", "as_of_date": "2026-04-18",
+        })[0]
+        current = sb.insert("dataset_versions", {
+            "source_id": "electric-capital-osdd", "provider_version": "new",
+            "status": "published", "is_current": True, "as_of_date": "2026-11-09",
+        })[0]
+        for version, value, date in [(old, 100, "2026-04-18"), (current, 160, "2026-11-09")]:
+            sb.insert("metric_observations", {
+                "dataset_version_id": version["id"], "metric_key": "devs_active_28d",
+                "dimension_type": "total", "dimension_value": "", "period_start": None,
+                "as_of_date": date, "value": value,
+            })
+        self.assertEqual(bh.rebuild_deltas(sb), 1)
+        rows = sb.t["dataset_version_deltas"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["previous_value"], 100)
+        self.assertEqual(rows[0]["current_value"], 160)
+        self.assertEqual(rows[0]["delta"], 60)
+        self.assertEqual(bh.rebuild_deltas(sb), 1)
+        self.assertEqual(len(sb.t["dataset_version_deltas"]), 1)
+        self.assertTrue(sb.current()["is_current"])
+
     def test_default_command_is_preview_only(self):
         original = bh.snapshot_versions
         try:

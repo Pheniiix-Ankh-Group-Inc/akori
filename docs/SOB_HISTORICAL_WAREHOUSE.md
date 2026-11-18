@@ -39,3 +39,9 @@ Les snapshots historiques du dépôt sont des **données transformées** par une
 Le workflow `refresh-data.yml` propose désormais l'entrée manuelle `backfill_history=true`. Il importe les archives d'abord, puis vérifie si la source externe a une nouvelle version. Pour une release initiale automatisée, le message du commit arrivant sur `main` peut contenir `[sob-bootstrap]` afin d'activer une seule fois ce mécanisme. Les autres pushs sur `main` ne déclenchent pas le backfill et respectent le cycle d'ingestion ordinaire.
 
 L'environnement GitHub `production` peut imposer une approbation humaine : ne jamais désactiver cette protection pour contourner une attente. La clé Supabase ne doit jamais être affichée dans les logs.
+
+## Comparaisons reconstituées après import
+
+Après une ingestion historique, `backfill_history.py --apply` recalcule désormais les différences de versions dans `dataset_version_deltas`, même si la version courante avait été publiée avant l'archive. Cette opération est idempotente, ne modifie ni les six JSON originaux, ni les observations SQL, ni le pointeur `is_current`.
+
+**Attention :** un changement d'ancienne à nouvelle version peut refléter une modification de méthodologie ou de périmètre. Les écarts ne doivent pas être interprétés automatiquement comme une croissance réelle sans contrôle de comparabilité.
