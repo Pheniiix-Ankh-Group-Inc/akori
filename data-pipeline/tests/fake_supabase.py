@@ -78,6 +78,9 @@ class FakeSupabase:
 
     # ── écriture ───────────────────────────────────────────────────────
     def insert(self, table: str, rows, *, on_conflict: str | None = None, ignore_duplicates: bool = False, returning: bool = True):
+        # Model PostgREST PGRST102: all bulk objects must share an identical key set.
+        if isinstance(rows, list) and rows and any(set(row) != set(rows[0]) for row in rows[1:]):
+            raise SupabaseError("PGRST102: All object keys must match")
         out = []
         for row in rows if isinstance(rows, list) else [rows]:
             if on_conflict:
