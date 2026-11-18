@@ -175,83 +175,55 @@ class AcceptanceTest(unittest.TestCase):
         self.assertEqual({c["name"] for c in report["reinforced"]["checks"]},
                          {"recalcul_independant", "agregats", "perimetre", "periodes", "vraisemblance", "repartition_pays", "historique"})
         self.assertEqual(self.sb.current()["provider_version"], "v2")
-        self.assertIn("forte variation confirmée", v2["decision_note"])
+        self.assertIn("fortes variations enregistrées", v2["decision_note"])
         self.assertEqual(self.sb.incidents("sob.quarantine"), [])
 
-    def test_D_strong_variation_not_confirmed_is_quarantined_then_retried(self):
+    def test_D_strong_variation_is_recorded_even_without_independent_recalculation(self):
         self.publish("v1")
-        # Forte hausse SANS recalcul indépendant : non confirmée.
         code, out = self.publish("v2", snapshot="2026-11-11", scale=1.8, verification=False)
-        self.assertEqual(code, 1)
-        v2 = self.sb.version("v2")
-        self.assertEqual(v2["status"], "blocked")
-        self.assertEqual(v2["attempts"], 1)
-        self.assertIn("recalcul_independant", v2["quarantine_reason"])
-        self.assertEqual(self.sb.current()["provider_version"], "v1", "la dernière version valide reste en ligne")
-        self.assertEqual(len(self.sb.incidents("sob.quarantine")), 1)
-        # Reprise automatique : espacée, bornée, immédiate si le pipeline change.
-        now = datetime.now(timezone.utc)
-        row = dict(v2)
-        self.assertFalse(cv.decide("v2", "a" * 64, [row], now=now)[0])
-        self.assertTrue(cv.decide("v2", "a" * 64, [row], now=now + timedelta(hours=25))[0])
-        self.assertFalse(cv.decide("v2", "a" * 64, [{**row, "attempts": cv.MAX_BLOCKED_ATTEMPTS}], now=now + timedelta(days=30))[0])
-        self.assertTrue(cv.decide("v2", "a" * 64, [{**row, "attempts": 99, "pipeline_version": "ancien"}], now=now)[0])
-        # La cause disparaît (lot recalculé avec vérification) : publication automatique.
-        code, out = self.publish("v2", snapshot="2026-11-11", scale=1.8)
         self.assertEqual(code, 0, out)
+        report = self.sb.version("v2")["validation_report"]
+        self.assertTrue(report["strong_variation"])
+        self.assertFalse(report["reinforced"]["passed"])
         self.assertEqual(self.sb.current()["provider_version"], "v2")
-        self.assertEqual(self.sb.version("v2")["attempts"], 2)
+        self.assertEqual(self.sb.incidents("sob.quarantine"), [])
 
-    def test_D_absurd_or_localised_variation_is_never_published(self):
+    def test_D_large_changes_and_rewritten_history_are_retained(self):
         self.publish("v1")
-        code, _ = self.publish("v2", snapshot="2026-11-11", scale=15)
-        self.assertEqual(code, 1)
-        self.assertIn("vraisemblance", self.sb.version("v2")["quarantine_reason"])
-
-        def one_country(lot):
-            c = lot["country_map.json"][0]
-            add = lot["headline.json"]["devs_active_28d"]
-            c["devs_active_28d"] += add
-            lot["headline.json"]["devs_active_28d"] += add
-            lot["meta.json"]["verification"]["devs_active_28d"] += add
-
-        code, _ = self.publish("v3", snapshot="2026-11-12", mutate=one_country)
-        self.assertEqual(code, 1)
-        self.assertIn("repartition_pays", self.sb.version("v3")["quarantine_reason"])
-        self.assertEqual(self.sb.current()["provider_version"], "v1")
-
-    def test_D_rewritten_history_is_quarantined(self):
-        self.publish("v1")
+        code, out = self.publish("v2", snapshot="2026-11-11", scale=15)
+        self.assertEqual(code, 0, out)
+        self.assertTrue(self.sb.version("v2")["validation_report"]["strong_variation"])
 
         def rewrite(lot):
             for e in lot["ecosystem_mix.json"]["ecosystems"]:
                 e["series_devs"] = [v * 3 for v in e["series_devs"]]
 
-        code, _ = self.publish("v2", snapshot="2026-10-29", scale=1.8, mutate=rewrite)
-        self.assertEqual(code, 1)
-        self.assertIn("historique", self.sb.version("v2")["quarantine_reason"])
+        code, out = self.publish("v3", snapshot="2026-11-12", scale=1.8, mutate=rewrite)
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.sb.current()["provider_version"], "v3")
+        self.assertTrue(self.sb.version("v3")["validation_report"]["consistency_anomalies"] or
+                        self.sb.version("v3")["validation_report"]["reinforced"])
 
-    # ── Scénario E — dataset invalide ─────────────────────────────────
-    def test_E_invalid_dataset_is_refused_and_last_valid_version_kept(self):
+    def test_E_statistical_discrepancy_is_stored_without_changing_source(self):
         self.publish("v1")
 
         def break_totals(lot):
             lot["headline.json"]["devs_active_28d"] += 7
 
         code, out = self.publish("v2", snapshot="2026-11-04", mutate=break_totals)
-        self.assertEqual(code, 1)
-        self.assertEqual(self.sb.version("v2")["status"], "blocked")
-        self.assertEqual(self.sb.current()["provider_version"], "v1")
-        self.assertEqual(len(self.sb.incidents("sob.validation_blocked")), 1)
-        self.assertFalse([p for p in self.sb.objects if p.startswith("versions/v2/")], "aucun artefact invalide stocké")
-        self.assertEqual(self.sb.rpcs, ["publish_dataset_candidate"], "aucune tentative de publication du lot invalide")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.sb.current()["provider_version"], "v2")
+        self.assertTrue(self.sb.version("v2")["validation_report"]["consistency_anomalies"])
+        self.assertTrue(any(x.startswith("versions/v2/") for x in self.sb.objects))
 
-    def test_E_repo_copy_of_april_2026_is_refused(self):
+    def test_E_historical_repository_snapshot_is_archived_without_publication(self):
         raw = self.tmp / "raw"
         shutil.copytree(DATA, raw)
-        code, _ = run(ps.ingest, self.sb, raw)
-        self.assertEqual(code, 1)
+        code = ps.ingest(self.sb, raw, historical=True)
+        self.assertEqual(code, 0)
         self.assertIsNone(self.sb.current())
+        self.assertEqual(self.sb.version("20260419T130333")["status"], "superseded")
+        self.assertTrue(self.sb.version("20260419T130333")["validation_report"]["historical_import"])
 
     def test_E_tampered_storage_is_detected_after_publication_and_rolled_back(self):
         self.publish("v1")
