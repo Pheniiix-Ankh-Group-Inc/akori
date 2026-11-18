@@ -54,7 +54,7 @@ class FakeSupabase:
     def select(self, table: str, params: dict) -> list[dict]:
         rows = self.t[table]
         for key, cond in params.items():
-            if key in ("select", "order", "limit"):
+            if key in ("select", "order", "limit", "offset"):
                 continue
             if key == "or":
                 parts = cond.strip("()").split(",")
@@ -66,6 +66,8 @@ class FakeSupabase:
             for spec in reversed(params["order"].split(",")):
                 col, _, direction = spec.partition(".")
                 rows = sorted(rows, key=lambda r: (r.get(col) is None, r.get(col) or ""), reverse=direction == "desc")
+        if "offset" in params:
+            rows = rows[int(params["offset"]):]
         if "limit" in params:
             rows = rows[: int(params["limit"])]
         out = [dict(r) for r in rows]
