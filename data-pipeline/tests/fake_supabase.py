@@ -21,7 +21,7 @@ def _now() -> str:
 class FakeSupabase:
     def __init__(self, mode: str | None = "auto"):
         self.t: dict[str, list[dict]] = {k: [] for k in (
-            "dataset_versions", "dataset_artifacts", "metric_observations", "ingestion_runs", "ops_incidents", "automation_settings")}
+            "dataset_versions", "dataset_artifacts", "metric_observations", "dataset_version_deltas", "ingestion_runs", "ops_incidents", "automation_settings")}
         if mode is not None:
             self.t["automation_settings"].append({"module": "sob", "mode": mode})
         self.objects: dict[str, bytes] = {}
@@ -42,6 +42,10 @@ class FakeSupabase:
             return str(value) in cond[4:-1].split(",")
         if cond.startswith("lt."):
             return value is not None and str(value) < cond[3:]
+        if cond.startswith("lte."):
+            return value is not None and str(value) <= cond[4:]
+        if cond.startswith("neq."):
+            return str(value) != cond[4:]
         if cond.startswith("like."):
             prefix = cond[5:].rstrip("*")
             return str(value).startswith(prefix)
