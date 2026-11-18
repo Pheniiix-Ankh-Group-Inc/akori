@@ -68,9 +68,9 @@ describe("chargement State of BIB", () => {
     expect(!isSobAvailable(s) && s.reason).toMatch(/SHA-256/)
   })
 
-  it("version courante incohérente ou d'une autre version : refusée", async () => {
+  it("écarts statistiques conservés, mais identifiant de version erroné refusé", async () => {
     await publish("v-test", (f) => { (f["headline.json"] as { devs_active_28d: number }).devs_active_28d += 5 })
-    expect((await loadSobState()).origin).toBe("unavailable")
+    expect((await loadSobState()).origin).toBe("supabase")
     await publish("v-test", (f) => { (f["meta.json"] as { dataset_version: string }).dataset_version = "autre" })
     const s = await loadSobState()
     expect(!isSobAvailable(s) && s.reason).toMatch(/autre version/)

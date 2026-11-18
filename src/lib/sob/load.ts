@@ -12,7 +12,7 @@ import type {
   SobMeta,
 } from "@/components/state-of-bib/types"
 
-import { fallbackProblems, snapshotProblems, type SobFiles } from "@/lib/sob/validity"
+import { fallbackProblems, snapshotProblems, snapshotTechnicalProblems, type SobFiles } from "@/lib/sob/validity"
 
 // Copie technique interne (hors de public/, jamais servie telle quelle).
 import metaData from "../../../data/state-of-bib/current/meta.json"
@@ -83,6 +83,9 @@ async function fixtureCopy(): Promise<SobFiles | null> {
  * chiffre non fiable n'est affiché et l'erreur n'est pas masquée.
  */
 async function fallback(reason: string): Promise<SobState> {
+  if (process.env.NODE_ENV === "production") {
+    return { origin: "unavailable", reason, problems: [] }
+  }
   let files = repoCopy
   try {
     files = (await fixtureCopy()) ?? repoCopy
@@ -144,8 +147,11 @@ export async function loadSobStateUncached(): Promise<SobState> {
       if (String((meta as { dataset_version?: unknown }).dataset_version ?? "") !== row.provider_version) {
         return fallback("artefacts d'une autre version que la version courante")
       }
+      // Variations statistiques conservées telles quelles, sans recalcul ni rejet.
+      const technical = snapshotTechnicalProblems(files)
+      if (technical.length) return fallback(`artefacts techniquement invalides (${technical[0]})`)
       const problems = snapshotProblems(files)
-      if (problems.length) return fallback(`version courante incohérente (${problems[0]})`)
+      if (problems.length) console.warn("[state-of-bib] observations statistiques :", problems.slice(0, 5))
       return { ...files, origin: "supabase", version: row.provider_version, publishedAt: row.published_at }
     } catch (e) {
       return fallback(`lecture Supabase impossible (${(e as Error).message})`)
@@ -164,6 +170,7 @@ export const loadSobState = unstable_cache(
 export interface SobTrendPoint {
   as_of_date: string
   value: number
+  version: string
 }
 
 /** Série historique d'un indicateur total (versions publiées uniquement). */
@@ -174,16 +181,18 @@ export const loadSobTrend = unstable_cache(
     // Lecture serveur, versions publiées uniquement (jamais une candidate).
     const { data } = await getAdminClient()
       .from("metric_observations")
-      .select("as_of_date, value, dataset_versions!inner(status)")
+      .select("as_of_date, value, dataset_versions!inner(provider_version,status)")
       .in("dataset_versions.status", ["published", "superseded"])
       .eq("metric_key", metricKey)
       .eq("dimension_type", "total")
       .order("as_of_date", { ascending: true })
       .limit(1000)
-    // Une observation par date de référence : jamais de points dupliqués.
-    const byDate = new Map<string, number>()
-    for (const r of (data ?? []) as SobTrendPoint[]) byDate.set(r.as_of_date, Number(r.value))
-    return [...byDate.entries()].map(([as_of_date, value]) => ({ as_of_date, value }))
+    return ((data ?? []) as unknown as Array<{ as_of_date: string; value: number; dataset_versions: { provider_version: string } | { provider_version: string }[] }>).map(r => ({
+      as_of_date: r.as_of_date,
+      value: Number(r.value),
+      version: Array.isArray(r.dataset_versions) ? (r.dataset_versions[0]?.provider_version ?? "") : r.dataset_versions.provider_version,
+    }))
+
   },
   ["sob-trend-v1"],
   { tags: [SOB_TAG], revalidate: 900 },
