@@ -277,6 +277,14 @@ class AcceptanceTest(unittest.TestCase):
         self.assertIsNone(self.sb.current())
 
     # ── Candidate laissée en attente (ancien mode review) ─────────────
+    def test_pending_selection_uses_existing_detection_timestamp_column(self):
+        # Dataset versions use detected_at, not created_at. A false in-memory
+        # column would be tolerated by the FakeSupabase but rejected by PostgREST.
+        from pathlib import Path
+        source = (Path(__file__).resolve().parent.parent / "publish_supabase.py").read_text()
+        self.assertIn("as_of_date.desc,detected_at.desc", source)
+        self.assertNotIn("as_of_date.desc,created_at.desc", source)
+
     def test_pending_candidate_from_review_mode_is_published_once_auto_is_enabled(self):
         self.sb.t["automation_settings"][0]["mode"] = "review"
         code, out = self.publish("v1")

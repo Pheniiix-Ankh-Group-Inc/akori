@@ -554,7 +554,7 @@ def publish_pending(sb: SupabaseRest) -> int:
     cur = current_version(sb)
     rows = sb.select("dataset_versions", {"select": "id,provider_version,as_of_date,validation_report",
                                           "source_id": f"eq.{SOURCE_ID}", "status": "eq.validated",
-                                          "order": "as_of_date.desc,created_at.desc", "limit": "1"})
+                                          "order": "as_of_date.desc,detected_at.desc", "limit": "1"})
     if not rows:
         print("Aucune candidate validée en attente.")
         _emit(published="false")
