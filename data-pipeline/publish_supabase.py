@@ -128,6 +128,11 @@ def observations(version_id: str, as_of: str, headline: dict, countries: list, c
                 rows.append({"dataset_version_id": version_id, "metric_key": "cohort_devs",
                              "dimension_type": "cohort", "dimension_value": key,
                              "period_start": f"{month}-01", "as_of_date": as_of, "value": value})
+    # PostgREST requires identical object keys for a bulk JSON insert.
+    # Month-based observations set period_start; non-monthly ones use SQL NULL.
+    # Normalise before batching, preserving the original metrics and dates.
+    for observation in rows:
+        observation.setdefault("period_start", None)
     return rows
 
 
