@@ -5,6 +5,31 @@ import { describe, expect, it } from "vitest"
 const workflow = (name: string) => readFileSync(join(process.cwd(), ".github", "workflows", name), "utf8")
 
 describe("BIB automation workflow contracts", () => {
+  it("uses the production GitHub Environment for all operational jobs", () => {
+    for (const [name, expected] of [
+      ["events-sync.yml", 1],
+      ["refresh-data.yml", 4],
+      ["news-ingest.yml", 1],
+      ["newsletter.yml", 1],
+    ] as const) {
+      const y = workflow(name)
+      expect(y.match(/^    environment: production$/gm)?.length).toBe(expected)
+      expect(y).toContain('BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}')
+      expect(y).not.toContain("|| vars.BIB_SCHEDULES_ENABLED == 'true'")
+    }
+    expect(workflow("ci.yml")).not.toContain("environment: production")
+  })
+
+  it("resolves all Supabase credentials inside environment-aware steps, not workflow scope", () => {
+    const y = workflow("refresh-data.yml")
+    const global = y.split("jobs:")[0]
+    expect(global).not.toContain("SUPABASE_SECRET_KEY")
+    expect(global).not.toContain("SOB_SUPABASE_SYNC:")
+    expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}').length - 1).toBe(6)
+    expect(y.split('SUPABASE_URL: ${{ secrets.SUPABASE_URL }}').length - 1).toBe(6)
+    expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(6)
+  })
+
   it("preserves Vercel's server-only existing Supabase credential during rollout", () => {
     const code = readFileSync(join(process.cwd(), "src/lib/env.ts"), "utf8")
     expect(code).toContain('str("SUPABASE_SECRET_KEY") ?? str("SUPABASE_SERVICE_ROLE_KEY")')
@@ -30,7 +55,7 @@ describe("BIB automation workflow contracts", () => {
     expect(y).toContain('report.get("ok") is not True')
     expect(y).toContain("github.ref == 'refs/heads/main'")
     expect(y).toContain('BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}')
-    expect(y).toContain('Repository Actions variable BIB_SCHEDULES_ENABLED')
+    expect(y).toContain('BIB_SCHEDULES_ENABLED must be exactly true in GitHub Environment production or Repository variables.')
     expect(y).toContain('SITE_URL="$MANUAL_SITE_URL"')
     expect(y).toContain('CRON_SECRET="$MANUAL_CRON_SECRET"')
     expect(y).toContain('SITE_URL="$PROD_SITE_URL"')
@@ -50,7 +75,7 @@ describe("BIB automation workflow contracts", () => {
     expect(y).toContain('cron: "7 * * * *"')
     expect(y).toContain("branches: [main]")
     expect(y).toContain('BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}')
-    expect(y).toContain('Repository Actions variable BIB_SCHEDULES_ENABLED')
+    expect(y).toContain('BIB_SCHEDULES_ENABLED must be exactly true in GitHub Environment production or Repository variables.')
     expect(y).toContain("python publish_supabase.py ingest")
     expect(y).toContain("python publish_supabase.py publish-pending")
     expect(y).not.toContain("gh pr merge")

@@ -18,6 +18,8 @@ concurrency:
 
 jobs:
   sync:
+    # Resolve variables and secrets from the GitHub production Environment.
+    environment: production
     if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 8
@@ -27,7 +29,7 @@ jobs:
         env:
           BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}
         run: |
-          [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::Repository Actions variable BIB_SCHEDULES_ENABLED must be exactly true (environment-scoped variables are not inherited)."; exit 78; }
+          [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::BIB_SCHEDULES_ENABLED must be exactly true in GitHub Environment production or Repository variables."; exit 78; }
       - name: Call Luma synchronization
         env:
           PROD_SITE_URL: ${{ vars.BIB_SITE_URL }}
