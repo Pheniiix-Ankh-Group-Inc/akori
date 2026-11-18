@@ -12,10 +12,11 @@ import { Link } from "@/i18n/navigation"
 import { isSobAvailable, loadSobState, loadSobTrend } from "@/lib/sob/load"
 import { SobTrend } from "@/components/state-of-bib/SobTrend"
 import { getPublishedInsight } from "@/lib/sob/insights"
+import { listSobVersions, loadSobVersion } from "@/lib/sob/history"
 
 export const revalidate = 900
 
-type Props = { params: Promise<{ locale: string }> }
+type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ version?: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -38,12 +39,17 @@ const movementNum = (raw: string) => raw.replace(/\s{2,}/, " · ")
  * valide, la page affiche un état d'indisponibilité (jamais de chiffres non
  * contrôlés). Fournisseurs et licences : page légale /data-sources uniquement.
  */
-export default async function StateOfBibPage({ params }: Props) {
+export default async function StateOfBibPage({ params, searchParams }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "StateOfBib" })
   const s = await getTranslations({ locale, namespace: "Site.sob" })
-  const [snapshot, trend] = await Promise.all([loadSobState(), loadSobTrend("devs_active_28d")])
+  const selectedVersion = (await searchParams).version
+  const [snapshot, trend, versions] = await Promise.all([
+    selectedVersion ? loadSobVersion(selectedVersion) : loadSobState(),
+    loadSobTrend("devs_active_28d"),
+    listSobVersions(),
+  ])
   if (!isSobAvailable(snapshot)) {
     return (
       <main>
@@ -80,6 +86,14 @@ export default async function StateOfBibPage({ params }: Props) {
             {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
           </h1>
           <p className="ed-lede">{s("lede")}</p>
+          <form method="get" className="ed-stack" style={{ gap: "0.5rem", maxWidth: "24rem" }}>
+            <label htmlFor="sob-version">{s("facts.version")}</label>
+            <select id="sob-version" name="version" defaultValue={selectedVersion ?? ""} className="ed-input">
+              <option value="">Latest published version</option>
+              {versions.map(v => <option key={v.provider_version} value={v.provider_version}>{v.provider_version}{v.as_of_date ? ` — ${v.as_of_date}` : ""}</option>)}
+            </select>
+            <button type="submit" className="ed-link">View selected version</button>
+          </form>
           <dl className="sob-facts">
             <div><dt>{s("facts.asOf")}</dt><dd>{asOf}</dd></div>
             <div><dt>{s("facts.scope")}</dt><dd>{s("facts.scopeVal", { n: meta.scope.countries_in_scope })}</dd></div>
