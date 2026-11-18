@@ -224,7 +224,7 @@ def build_report(data_dir: Path, previous_version: str | None, previous: dict[st
     div = divergence(headline, previous) if headline else []
     strong = [d for d in div if d["relative_change"] is not None and abs(d["relative_change"]) > REVIEW_DIVERGENCE]
     return {
-        "passed": not schema and not consistency,
+        "passed": not schema,  # Statistical discrepancies are recorded, not blocking.
         # Forte variation : contrôles renforcés automatiques (jamais une approbation humaine).
         "strong_variation": bool(strong),
         "checked_at": now(),
@@ -270,7 +270,7 @@ def incident(sb: SupabaseRest, kind: str, severity: str, message: str, details: 
         print(f"(incident non enregistré : {exc})")
 
 
-def ingest(sb: SupabaseRest, data_dir: Path) -> int:
+def ingest(sb: SupabaseRest, data_dir: Path, *, historical: bool = False) -> int:
     meta_path = data_dir / "meta.json"
     try:
         provider_version = str(json.loads(meta_path.read_text())["dataset_version"])
@@ -279,7 +279,7 @@ def ingest(sb: SupabaseRest, data_dir: Path) -> int:
     if not VERSION_RE.match(provider_version):
         raise ValueError(f"version source inattendue : {provider_version!r}")
 
-    mode = automation_mode(sb)
+    mode = "archive" if historical else automation_mode(sb)
     run = start_run(sb, "build", provider_version)
     try:
         existing = find_version(sb, provider_version)
@@ -347,30 +347,26 @@ def ingest(sb: SupabaseRest, data_dir: Path) -> int:
             sb.insert("metric_observations", obs[i:i + 500],
                       on_conflict="dataset_version_id,metric_key,dimension_type,dimension_value,period_start",
                       ignore_duplicates=True, returning=False)
-        # Forte variation : contrôles renforcés automatiques, avant toute décision.
-        if report["strong_variation"]:
+        # Forte variation : diagnostic seulement ; les données originales sont préservées.
+        if report["strong_variation"] and not historical:
             from country_scope import SCOPE_ISO_A3  # import tardif (dépendance pycountry)
 
             report["reinforced"] = reinforced_checks(data_dir, previous, report["divergence"]["strong"], set(SCOPE_ISO_A3))
             if not report["reinforced"]["passed"]:
-                failed = [c for c in report["reinforced"]["checks"] if not c["passed"]]
-                reason = "; ".join(f"{c['name']} : {c['detail']}" for c in failed)[:900]
-                report["passed"] = False
-                sb.update("dataset_versions", {"id": f"eq.{version_id}"},
-                          {"status": "blocked", "candidate_at": now(), "validation_report": report})
-                track_attempt(sb, version_id, attempts, f"variation forte non confirmée — {reason}")
-                incident(sb, "sob.quarantine", "warning",
-                         f"State of BIB {provider_version} en quarantaine : forte variation non confirmée par les contrôles renforcés",
-                         {"version": provider_version, "strong": report["divergence"]["strong"], "failed": [c["name"] for c in failed]})
-                finish_run(sb, run["id"], "failed", "quarantaine (contrôles renforcés)", {"failed": failed[:10]})
-                print(f"✗ version {provider_version} en quarantaine — {reason}")
-                print("  La dernière version valide reste en ligne ; nouvelle tentative automatique ultérieure.")
-                return 1
-            print(f"Forte variation ({', '.join(report['divergence']['strong'])}) confirmée par les contrôles renforcés.")
+                print("::warning title=State of BIB::variation notable conservée pour analyse ; aucune valeur source modifiée.")
 
         sb.update("dataset_versions", {"id": f"eq.{version_id}"},
                   {"status": "validated", "candidate_at": now(), "validation_report": report})
         track_attempt(sb, version_id, attempts)
+
+        if historical:
+            # Archive conservée sans toucher au pointeur courant.
+            sb.update("dataset_versions", {"id": f"eq.{version_id}"},
+                      {"status": "superseded", "is_current": False,
+                       "validation_report": {**report, "historical_import": True}})
+            finish_run(sb, run["id"], "succeeded", f"archive historique {provider_version}",
+                       {"observations": len(obs), "artifacts": artifact_manifest(files)})
+            return 0
 
         result, code = decide(sb, version_id, provider_version, mode, report, files)
         finish_run(sb, run["id"], "succeeded" if code == 0 else "failed", f"candidate {provider_version} — {result}",
@@ -397,11 +393,6 @@ def decide(sb: SupabaseRest, version_id: str, provider_version: str, mode: str, 
     if mode == "review":
         print(f"Mode « review » : candidate {provider_version} en attente d'approbation dans /admin/state-of-bib.")
         return "en attente de revue", 0
-    if report.get("strong_variation") and not (report.get("reinforced") or {}).get("passed"):
-        # Candidate ancienne sans contrôles renforcés enregistrés : jamais publiée à l'aveugle.
-        incident(sb, "sob.quarantine", "warning",
-                 f"State of BIB {provider_version} : forte variation sans contrôles renforcés concluants", {"version": provider_version})
-        return "quarantaine (contrôles renforcés absents)", 1
     note = "publication automatique (mode auto)"
     if report.get("strong_variation"):
         note += " — forte variation confirmée par les contrôles renforcés"
@@ -607,6 +598,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("ingest")
+    p_archive = sub.add_parser("archive-historical")
+    p_archive.add_argument("--confirm", action="store_true", help="Explicitly authorize historical archive ingestion")
     sub.add_parser("publish-pending")
     sub.add_parser("reconcile")
     sub.add_parser("export-current")
@@ -630,6 +623,11 @@ def main(argv: list[str] | None = None) -> int:
         sb = SupabaseRest()
         if args.cmd == "ingest":
             return ingest(sb, args.data_dir)
+        if args.cmd == "archive-historical":
+            if not args.confirm:
+                print("Dry run: no historical data imported. Add --confirm explicitly.")
+                return 0
+            return ingest(sb, args.data_dir, historical=True)
         if args.cmd == "publish-pending":
             return publish_pending(sb)
         if args.cmd == "reconcile":

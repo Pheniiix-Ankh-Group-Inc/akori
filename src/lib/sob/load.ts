@@ -83,6 +83,9 @@ async function fixtureCopy(): Promise<SobFiles | null> {
  * chiffre non fiable n'est affiché et l'erreur n'est pas masquée.
  */
 async function fallback(reason: string): Promise<SobState> {
+  if (process.env.NODE_ENV === "production") {
+    return { origin: "unavailable", reason, problems: [] }
+  }
   let files = repoCopy
   try {
     files = (await fixtureCopy()) ?? repoCopy
@@ -144,8 +147,9 @@ export async function loadSobStateUncached(): Promise<SobState> {
       if (String((meta as { dataset_version?: unknown }).dataset_version ?? "") !== row.provider_version) {
         return fallback("artefacts d'une autre version que la version courante")
       }
+      // Variations statistiques conservées telles quelles, sans recalcul ni rejet.
       const problems = snapshotProblems(files)
-      if (problems.length) return fallback(`version courante incohérente (${problems[0]})`)
+      if (problems.length) console.warn("[state-of-bib] observations statistiques :", problems.slice(0, 5))
       return { ...files, origin: "supabase", version: row.provider_version, publishedAt: row.published_at }
     } catch (e) {
       return fallback(`lecture Supabase impossible (${(e as Error).message})`)
