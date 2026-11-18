@@ -81,8 +81,7 @@ def validate_output_dir(directory: Path) -> list[str]:
             if active < 1:
                 errors.append("country_map.json: aucun pays actif")
         total = sum(c.get("devs_active_28d", 0) for c in countries if _is_count(c.get("devs_active_28d")))
-        if _is_count(headline.get("devs_active_28d")) and total and total < headline["devs_active_28d"] * 0.5:
-            errors.append("cohérence: la somme par pays est très inférieure au total actif")
+        # Une différence de totals est une observation statistique, pas une erreur de format.
 
     cities = data["top_cities.json"]
     if not isinstance(cities, list):

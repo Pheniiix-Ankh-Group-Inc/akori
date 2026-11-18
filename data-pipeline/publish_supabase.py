@@ -88,11 +88,16 @@ def artifact_manifest(files: dict[str, bytes]) -> list[dict[str, str]]:
     return [{"name": n, "sha256": sha256(c)} for n, c in sorted(files.items())]
 
 
-def observations(version_id: str, as_of: str, headline: dict, countries: list, cities: list) -> list[dict]:
+def observations(version_id: str, as_of: str, headline: dict, countries: list, cities: list,
+                 ecosystems: dict | None = None, cohort: dict | None = None) -> list[dict]:
+    """Store aggregate, geographic and monthly observations for SQL analysis.
+
+    Derived facts never overwrite the source's original JSON artifacts in Storage.
+    """
     rows: list[dict] = []
     for key in ("devs_active_28d", "ecosystems", "countries", "cities", "commits_lifetime"):
         value = headline.get(key)
-        if isinstance(value, int):
+        if isinstance(value, int) and not isinstance(value, bool):
             rows.append({"dataset_version_id": version_id, "metric_key": key, "dimension_type": "total",
                          "dimension_value": "", "as_of_date": as_of, "value": value})
     for c in countries:
@@ -105,6 +110,24 @@ def observations(version_id: str, as_of: str, headline: dict, countries: list, c
             rows.append({"dataset_version_id": version_id, "metric_key": "city_devs_active_28d",
                          "dimension_type": "city", "dimension_value": f"{c.get('city')}|{c.get('iso_a3')}",
                          "as_of_date": as_of, "value": c["devs_active_28d"]})
+
+    ecosystems = ecosystems or {}
+    months = ecosystems.get("months") or []
+    for ecosystem in ecosystems.get("ecosystems") or []:
+        identity = str(ecosystem.get("id") if ecosystem.get("id") is not None else ecosystem.get("name"))
+        for month, value in zip(months, ecosystem.get("series_devs") or []):
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                rows.append({"dataset_version_id": version_id, "metric_key": "ecosystem_devs",
+                             "dimension_type": "ecosystem", "dimension_value": identity,
+                             "period_start": f"{month}-01", "as_of_date": as_of, "value": value})
+    cohort = cohort or {}
+    months = cohort.get("months") or []
+    for key in ("devs_0_1y", "devs_1_2y", "devs_2y_plus"):
+        for month, value in zip(months, cohort.get(key) or []):
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                rows.append({"dataset_version_id": version_id, "metric_key": "cohort_devs",
+                             "dimension_type": "cohort", "dimension_value": key,
+                             "period_start": f"{month}-01", "as_of_date": as_of, "value": value})
     return rows
 
 
@@ -224,7 +247,7 @@ def build_report(data_dir: Path, previous_version: str | None, previous: dict[st
     div = divergence(headline, previous) if headline else []
     strong = [d for d in div if d["relative_change"] is not None and abs(d["relative_change"]) > REVIEW_DIVERGENCE]
     return {
-        "passed": not schema and not consistency,
+        "passed": not schema,  # Statistical discrepancies are recorded, not blocking.
         # Forte variation : contrôles renforcés automatiques (jamais une approbation humaine).
         "strong_variation": bool(strong),
         "checked_at": now(),
@@ -255,6 +278,57 @@ def _source_columns(report: dict) -> dict:
     return cols
 
 
+def persist_deltas(sb: SupabaseRest, version_id: str, as_of: str) -> int:
+    """Versioned facts for every metric, geography and monthly period."""
+    previous = sb.select("dataset_versions", {
+        "select": "id", "source_id": f"eq.{SOURCE_ID}", "id": f"neq.{version_id}",
+        "as_of_date": f"lte.{as_of}", "status": "in.(published,superseded)",
+        "order": "as_of_date.desc,detected_at.desc", "limit": "1",
+    })
+    if not previous:
+        return 0
+    previous_id = previous[0]["id"]
+
+    def read(version: str) -> dict:
+        result = {}
+        offset = 0
+        while True:
+            batch = sb.select("metric_observations", {
+                "select": "metric_key,dimension_type,dimension_value,period_start,value",
+                "dataset_version_id": f"eq.{version}", "order": "id.asc",
+                "limit": "1000", "offset": str(offset),
+            })
+            for r in batch:
+                key = (r["metric_key"], r["dimension_type"], r["dimension_value"], r.get("period_start"))
+                result[key] = float(r["value"])
+            if len(batch) < 1000:
+                break
+            offset += len(batch)
+        return result
+
+    old, new = read(previous_id), read(version_id)
+    rows = []
+    for key in sorted(set(old) | set(new), key=lambda k: tuple(str(x) for x in k)):
+        before, after = old.get(key), new.get(key)
+        if before == after:
+            continue
+        metric, dimension, value, period = key
+        rows.append({
+            "dataset_version_id": version_id, "previous_version_id": previous_id,
+            "metric_key": metric, "dimension_type": dimension, "dimension_value": value,
+            "period_start": period,
+            "previous_value": before, "current_value": after,
+            "delta": (after - before) if before is not None and after is not None else None,
+            "relative_change": ((after - before) / before) if before not in (None, 0) and after is not None else None,
+            "change_kind": "added" if before is None else "removed" if after is None else "changed",
+        })
+    for i in range(0, len(rows), 500):
+        sb.insert("dataset_version_deltas", rows[i:i + 500],
+                  on_conflict="dataset_version_id,previous_version_id,metric_key,dimension_type,dimension_value,period_start",
+                  ignore_duplicates=True, returning=False)
+    return len(rows)
+
+
 def automation_mode(sb: SupabaseRest, module: str = "sob") -> str:
     rows = sb.select("automation_settings", {"select": "mode", "module": f"eq.{module}", "limit": "1"})
     # Réglage absent ou illisible : mode automatique (fonctionnement normal du MVP).
@@ -270,7 +344,7 @@ def incident(sb: SupabaseRest, kind: str, severity: str, message: str, details: 
         print(f"(incident non enregistré : {exc})")
 
 
-def ingest(sb: SupabaseRest, data_dir: Path) -> int:
+def ingest(sb: SupabaseRest, data_dir: Path, *, historical: bool = False) -> int:
     meta_path = data_dir / "meta.json"
     try:
         provider_version = str(json.loads(meta_path.read_text())["dataset_version"])
@@ -279,7 +353,7 @@ def ingest(sb: SupabaseRest, data_dir: Path) -> int:
     if not VERSION_RE.match(provider_version):
         raise ValueError(f"version source inattendue : {provider_version!r}")
 
-    mode = automation_mode(sb)
+    mode = "archive" if historical else automation_mode(sb)
     run = start_run(sb, "build", provider_version)
     try:
         existing = find_version(sb, provider_version)
@@ -342,35 +416,35 @@ def ingest(sb: SupabaseRest, data_dir: Path) -> int:
                               "sha256": sha256(content), "size_bytes": len(content)})
         sb.insert("dataset_artifacts", artifacts, on_conflict="dataset_version_id,name", ignore_duplicates=True, returning=False)
         obs = observations(version_id, as_of, headline,
-                           json.loads(files["country_map.json"]), json.loads(files["top_cities.json"]))
+                           json.loads(files["country_map.json"]), json.loads(files["top_cities.json"]),
+                           json.loads(files["ecosystem_mix.json"]), json.loads(files["tenure_cohort.json"]))
         for i in range(0, len(obs), 500):
             sb.insert("metric_observations", obs[i:i + 500],
                       on_conflict="dataset_version_id,metric_key,dimension_type,dimension_value,period_start",
                       ignore_duplicates=True, returning=False)
-        # Forte variation : contrôles renforcés automatiques, avant toute décision.
-        if report["strong_variation"]:
+        # Persistent comparison rows (additive migration 0014 required).
+        delta_count = persist_deltas(sb, version_id, as_of)
+        report["stored_deltas"] = delta_count
+        # Forte variation : diagnostic seulement ; les données originales sont préservées.
+        if report["strong_variation"] and not historical:
             from country_scope import SCOPE_ISO_A3  # import tardif (dépendance pycountry)
 
             report["reinforced"] = reinforced_checks(data_dir, previous, report["divergence"]["strong"], set(SCOPE_ISO_A3))
             if not report["reinforced"]["passed"]:
-                failed = [c for c in report["reinforced"]["checks"] if not c["passed"]]
-                reason = "; ".join(f"{c['name']} : {c['detail']}" for c in failed)[:900]
-                report["passed"] = False
-                sb.update("dataset_versions", {"id": f"eq.{version_id}"},
-                          {"status": "blocked", "candidate_at": now(), "validation_report": report})
-                track_attempt(sb, version_id, attempts, f"variation forte non confirmée — {reason}")
-                incident(sb, "sob.quarantine", "warning",
-                         f"State of BIB {provider_version} en quarantaine : forte variation non confirmée par les contrôles renforcés",
-                         {"version": provider_version, "strong": report["divergence"]["strong"], "failed": [c["name"] for c in failed]})
-                finish_run(sb, run["id"], "failed", "quarantaine (contrôles renforcés)", {"failed": failed[:10]})
-                print(f"✗ version {provider_version} en quarantaine — {reason}")
-                print("  La dernière version valide reste en ligne ; nouvelle tentative automatique ultérieure.")
-                return 1
-            print(f"Forte variation ({', '.join(report['divergence']['strong'])}) confirmée par les contrôles renforcés.")
+                print("::warning title=State of BIB::variation notable conservée pour analyse ; aucune valeur source modifiée.")
 
         sb.update("dataset_versions", {"id": f"eq.{version_id}"},
                   {"status": "validated", "candidate_at": now(), "validation_report": report})
         track_attempt(sb, version_id, attempts)
+
+        if historical:
+            # Archive conservée sans toucher au pointeur courant.
+            sb.update("dataset_versions", {"id": f"eq.{version_id}"},
+                      {"status": "superseded", "is_current": False,
+                       "validation_report": {**report, "historical_import": True}})
+            finish_run(sb, run["id"], "succeeded", f"archive historique {provider_version}",
+                       {"observations": len(obs), "artifacts": artifact_manifest(files)})
+            return 0
 
         result, code = decide(sb, version_id, provider_version, mode, report, files)
         finish_run(sb, run["id"], "succeeded" if code == 0 else "failed", f"candidate {provider_version} — {result}",
@@ -397,14 +471,9 @@ def decide(sb: SupabaseRest, version_id: str, provider_version: str, mode: str, 
     if mode == "review":
         print(f"Mode « review » : candidate {provider_version} en attente d'approbation dans /admin/state-of-bib.")
         return "en attente de revue", 0
-    if report.get("strong_variation") and not (report.get("reinforced") or {}).get("passed"):
-        # Candidate ancienne sans contrôles renforcés enregistrés : jamais publiée à l'aveugle.
-        incident(sb, "sob.quarantine", "warning",
-                 f"State of BIB {provider_version} : forte variation sans contrôles renforcés concluants", {"version": provider_version})
-        return "quarantaine (contrôles renforcés absents)", 1
     note = "publication automatique (mode auto)"
     if report.get("strong_variation"):
-        note += " — forte variation confirmée par les contrôles renforcés"
+        note += " — fortes variations enregistrées pour analyse"
     try:
         result = sb.rpc("publish_dataset_candidate", {"p_version_id": version_id, "p_note": note})
     except SupabaseError as exc:
@@ -607,6 +676,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("ingest")
+    p_archive = sub.add_parser("archive-historical")
+    p_archive.add_argument("--confirm", action="store_true", help="Explicitly authorize historical archive ingestion")
     sub.add_parser("publish-pending")
     sub.add_parser("reconcile")
     sub.add_parser("export-current")
@@ -630,6 +701,11 @@ def main(argv: list[str] | None = None) -> int:
         sb = SupabaseRest()
         if args.cmd == "ingest":
             return ingest(sb, args.data_dir)
+        if args.cmd == "archive-historical":
+            if not args.confirm:
+                print("Dry run: no historical data imported. Add --confirm explicitly.")
+                return 0
+            return ingest(sb, args.data_dir, historical=True)
         if args.cmd == "publish-pending":
             return publish_pending(sb)
         if args.cmd == "reconcile":

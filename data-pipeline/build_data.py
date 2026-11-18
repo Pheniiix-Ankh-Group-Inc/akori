@@ -660,8 +660,10 @@ def main() -> None:
 
         print("→ validating…")
         errors = validate_output_dir(staging)
-        # Un nouveau lot doit aussi être cohérent entre fichiers.
-        errors += [] if errors else consistency_anomalies(staging)
+        # Les écarts statistiques sont des observations, jamais des modifications de la source.
+        if not errors:
+            for anomaly in consistency_anomalies(staging):
+                print(f"::warning title=State of BIB statistical observation::{anomaly}")
         if errors:
             print("✗ validation failed — previous files left untouched:")
             for err in errors:

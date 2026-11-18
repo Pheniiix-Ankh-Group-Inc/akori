@@ -1,3 +1,11 @@
+## State of BIB — Historical warehouse (2026-11-18)
+
+- Toutes les archives disponibles importables dans Supabase via GitHub Actions, avec validation technique et contrôle d'intégrité.
+- Versions historiques et écarts statistiques conservés sans réécriture des données source.
+- Stockage des observations pays, villes, écosystèmes et cohortes mensuelles ; comparaison des versions dans PostgreSQL.
+- Vue historique State of BIB alimentée uniquement par Supabase en production.
+- Migration `20261118051801_sob_historical_deltas.sql` déjà appliquée et enregistrée sur Supabase `akori`.
+
 # Changelog
 
 All notable changes to this project are documented here.

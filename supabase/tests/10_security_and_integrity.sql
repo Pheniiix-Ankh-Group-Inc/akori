@@ -79,8 +79,8 @@ values
 -- =============================================================================
 select tests.assert(
   (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
-   where n.nspname = 'public' and c.relkind = 'r') = 28,
-  '28 tables BIB dans public (26 + automation_settings, event_sync_runs)');
+   where n.nspname = 'public' and c.relkind = 'r') = 29,
+  '29 tables BIB dans public (historical State of BIB deltas included)');
 select tests.assert(
   not exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
               where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity),
@@ -117,6 +117,7 @@ select tests.act_as(null);
 select tests.assert(tests.try($$insert into public.events (slug, starts_at, created_by) values ('anon-test', now(), null)$$) = '42501',
   'anon : insertion d''événement refusée');
 select tests.assert(tests.try($$select * from public.media_assets$$) = '42501', 'anon : media_assets illisible');
+select tests.assert(tests.try($$select * from public.dataset_version_deltas$$) = '42501', 'anon : deltas privés illisibles');
 select tests.assert(tests.try($$select * from public.newsletter_consents$$) = '42501', 'anon : consentements illisibles');
 select tests.assert(tests.try($$select * from public.testimonials$$) = '42501', 'anon : témoignages bruts illisibles');
 select tests.assert(tests.visible($$select * from public.editors$$) in (0, -1),
