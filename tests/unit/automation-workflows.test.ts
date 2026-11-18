@@ -5,6 +5,15 @@ import { describe, expect, it } from "vitest"
 const workflow = (name: string) => readFileSync(join(process.cwd(), ".github", "workflows", name), "utf8")
 
 describe("BIB automation workflow contracts", () => {
+  it("does not pass the PostgreSQL DATABASE_URL to the Supabase REST API", () => {
+    const y = workflow("refresh-data.yml")
+    expect(y).not.toContain("secrets.SUPABASE_DATABASE_URL")
+    expect(y).not.toContain("vars.SUPABASE_DATABASE_URL")
+    expect(y).toContain("secrets.SUPABASE_SERVICE_ROLE_KEY")
+    expect(y).toContain("https://zwfyuhgnbdrjhetkyanj.supabase.co")
+    expect(y).toContain("secrets.BIB_CRON_SECRET")
+  })
+
   it("uses the production GitHub Environment for all operational jobs", () => {
     for (const [name, expected] of [
       ["events-sync.yml", 1],
@@ -25,8 +34,8 @@ describe("BIB automation workflow contracts", () => {
     const global = y.split("jobs:")[0]
     expect(global).not.toContain("SUPABASE_SECRET_KEY")
     expect(global).not.toContain("SOB_SUPABASE_SYNC:")
-    expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}').length - 1).toBe(6)
-    expect(y.split('SUPABASE_URL: ${{ secrets.SUPABASE_URL }}').length - 1).toBe(6)
+    expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}').length - 1).toBe(6)
+    expect(y.split("SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}").length - 1).toBe(6)
     expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(6)
   })
 

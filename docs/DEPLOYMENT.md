@@ -50,6 +50,17 @@ Les déclenchements manuels de la newsletter et de la veille conservent leurs `B
 
 **Autonomie :** si l'environnement `production` est protégé par des approbations obligatoires, ces jobs attendront un réviseur avant de s'exécuter. Les règles de protection de cet environnement doivent donc être compatibles avec des crons entièrement automatiques.
 
+### Compatibilité des secrets Supabase GitHub Actions (17 novembre 2026)
+
+L'environnement GitHub `Production` contient historiquement `SUPABASE_DATABASE_URL` (connexion PostgreSQL) et `SUPABASE_SERVICE_ROLE_KEY` (clé API serveur héritée). **Ne jamais substituer `SUPABASE_DATABASE_URL` à `SUPABASE_URL` : la première est une chaîne PostgreSQL confidentielle, la seconde une URL HTTPS pour PostgREST/Storage.**
+
+La tâche `State of BIB` accepte désormais ces noms sans duplication de clé :
+- `SUPABASE_URL` = le secret `SUPABASE_URL`, sinon la variable `SUPABASE_URL`, sinon l'URL HTTPS **publique et vérifiée** de l'unique projet BIB `https://zwfyuhgnbdrjhetkyanj.supabase.co`.
+- `SUPABASE_SECRET_KEY` = le secret `SUPABASE_SECRET_KEY` (clé `sb_secret_` recommandée), sinon le secret existant `SUPABASE_SERVICE_ROLE_KEY` (legacy, serveur uniquement).
+- `SUPABASE_DATABASE_URL` n'est utilisé dans aucun appel du pipeline REST.
+
+**Luma et le rafraîchissement State of BIB exigent toujours** le secret GitHub `BIB_CRON_SECRET` (dans `Production` ou les Repository secrets) : sa **valeur doit être exactement celle de `CRON_SECRET` sur Vercel Production**, sans la publier dans Git ni dans le chat. Les secrets Vercel ne sont **pas automatiquement accessibles** par GitHub Actions. L'ancien `SUPABASE_SERVICE_ROLE_KEY` doit être migré vers `SUPABASE_SECRET_KEY` avant sa dépréciation fin 2026.
+
 ## 3. Variables Vercel
 
 Par environnement (Preview → staging, Production → production) :
