@@ -6,6 +6,13 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Fixed — reuse existing GitHub Supabase secrets without confusing PostgreSQL and REST URLs
+
+- Map `SUPABASE_SERVICE_ROLE_KEY` to the canonical `SUPABASE_SECRET_KEY` variable in State of BIB jobs when a newer `SUPABASE_SECRET_KEY` is not available. Keep the legacy key server-only and document migration before its end-2026 deprecation.
+- Resolve the REST `SUPABASE_URL` from configured secret, repository/environment variable, or the known public HTTPS endpoint for the sole BIB Supabase project. **Never pass `SUPABASE_DATABASE_URL`**, a confidential PostgreSQL DSN, to the HTTPS REST client.
+- Document the separate missing `BIB_CRON_SECRET` required in GitHub to call the authenticated Vercel `CRON_SECRET` routes. A deployment cannot transfer that secret across services automatically.
+
+
 ### Fixed — GitHub Actions Environment scoping for BIB production
 
 - Bind all operational jobs (Luma, State of BIB, news ingestion and newsletter) to GitHub's `production` Environment so environment-scoped vars and secrets are available.
