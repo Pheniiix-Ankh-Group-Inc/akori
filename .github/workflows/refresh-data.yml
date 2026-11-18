@@ -261,7 +261,10 @@ jobs:
         run: |
           python history.py
           python publish_supabase.py export-current
-          python validate.py --consistency
+          # La structure invalide bloque, mais les écarts statistiques sont des observations.
+          # Le code 3 signifie uniquement des écarts enregistrés : ne pas bloquer la copie.
+          python validate.py
+          python validate.py --consistency || { rc=$?; [ "$rc" -eq 3 ] || exit "$rc"; echo "::warning title=State of BIB::écarts statistiques conservés sans altérer les fichiers source"; }
       - name: Propose the technical copy (automatic PR, no merge)
         env:
           GH_TOKEN: ${{ github.token }}

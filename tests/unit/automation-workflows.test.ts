@@ -90,6 +90,7 @@ describe("BIB automation workflow contracts", () => {
     expect(y).toContain("python backfill_history.py --apply")
     expect(y).toContain("contains(github.event.head_commit.message, '[sob-bootstrap]')")
     expect(y).toContain("python publish_supabase.py publish-pending")
+    expect(y).toContain("python validate.py --consistency || { rc=$?; [ \"$rc\" -eq 3 ] || exit \"$rc\";")
     expect(y).not.toContain("gh pr merge")
     const beforeBuild = y.split("  build:")[0]
     expect(beforeBuild).not.toContain('missing="$missing BIB_SITE_URL"')
