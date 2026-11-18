@@ -44,6 +44,35 @@ def validate_archive(folder: Path) -> dict:
     return {name: hashlib.sha256((folder / name).read_bytes()).hexdigest() for name in REQUIRED}
 
 
+def rebuild_deltas(sb) -> int:
+    """Reconcile version comparisons after archives arrive out of chronological order.
+
+    This is idempotent: persist_deltas uses a unique constraint and ignores
+    previously stored comparison rows; source snapshots and observations stay
+    untouched. It never changes dataset_versions.is_current.
+    """
+    from publish_supabase import SOURCE_ID, persist_deltas
+
+    count = 0
+    offset = 0
+    while True:
+        rows = sb.select("dataset_versions", {
+            "select": "id,as_of_date,provider_version",
+            "source_id": f"eq.{SOURCE_ID}",
+            "status": "in.(published,superseded)",
+            "order": "as_of_date.asc,detected_at.asc",
+            "limit": "500",
+            "offset": str(offset),
+        })
+        for row in rows:
+            if row.get("as_of_date"):
+                count += persist_deltas(sb, row["id"], str(row["as_of_date"]))
+        if len(rows) < 500:
+            break
+        offset += len(rows)
+    return count
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apply", action="store_true", help="Explicitly write historical versions to Supabase")
@@ -65,7 +94,9 @@ def main(argv=None):
         if ingest(sb, folder, historical=True) != 0:
             print(f"Archive import failed at {version}; other versions remain untouched.")
             return 1
-    print("All available historical snapshots imported. Current version pointer unchanged.")
+    comparisons = rebuild_deltas(sb)
+    print(f"All available historical snapshots imported; {comparisons} version differences identified.")
+    print("Current version pointer unchanged.")
     return 0
 
 

@@ -1,10 +1,10 @@
-## State of BIB — entrepôt historique (PR en cours, non déployée)
+## State of BIB — Historical warehouse (2026-11-18)
 
-- Import manuel idempotent de toutes les versions historiques disponibles ; mode aperçu sans écriture par défaut.
-- Conservation des écarts statistiques dans le rapport de validation sans modification des valeurs sources.
-- Nouvelle migration additive 0014 : deltas de métriques historisées, privés et versionnés.
-- Lecture production depuis Supabase uniquement, sélection des versions archivées et comparaison avec la version précédente.
-- Maintien des contrôles de schéma, de provenance, des empreintes SHA-256 et des tests de non-régression.
+- Toutes les archives disponibles importables dans Supabase via GitHub Actions, avec validation technique et contrôle d'intégrité.
+- Versions historiques et écarts statistiques conservés sans réécriture des données source.
+- Stockage des observations pays, villes, écosystèmes et cohortes mensuelles ; comparaison des versions dans PostgreSQL.
+- Vue historique State of BIB alimentée uniquement par Supabase en production.
+- Migration `20261118051801_sob_historical_deltas.sql` déjà appliquée et enregistrée sur Supabase `akori`.
 
 # Changelog
 
