@@ -36,6 +36,10 @@ on:
         description: "Forcer la reconstruction même sans nouvelle version"
         type: boolean
         default: false
+      backfill_history:
+        description: "Importer toutes les archives locales dans Supabase AVANT de vérifier la source (idempotent)"
+        type: boolean
+        default: false
 
 # Une seule exécution à la fois ; les suivantes attendent (jamais annulées en cours).
 concurrency:
@@ -86,6 +90,19 @@ jobs:
             echo "::error title=State of BIB::configuration manquante :$missing — le pipeline automatique ne peut pas fonctionner."
             exit 78
           fi
+
+      # Bootstrap one time on an explicitly marked release, or on manual demand.
+      # Import is idempotent; no published/current pointer is changed.
+      # This must run BEFORE check_version, or previously known source versions
+      # could be skipped without their old snapshots being archived.
+      - name: Import historical State of BIB snapshots (explicit bootstrap)
+        if: (github.event_name == 'push' && contains(github.event.head_commit.message, '[sob-bootstrap]')) || (github.event_name == 'workflow_dispatch' && inputs.backfill_history)
+        working-directory: data-pipeline
+        env:
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python backfill_history.py --apply
 
       - id: check
         working-directory: data-pipeline
