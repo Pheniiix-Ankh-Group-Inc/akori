@@ -6,6 +6,14 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Fixed — GitHub Actions Environment scoping for BIB production
+
+- Bind all operational jobs (Luma, State of BIB, news ingestion and newsletter) to GitHub's `production` Environment so environment-scoped vars and secrets are available.
+- Resolve Supabase credentials and State of BIB enablement at the consuming job steps rather than workflow-global scope, including export and reconcile jobs.
+- Move newsletter and news schedule flags from job-level `if` to a visible failing preflight step, preserving manual staging-only routing for those two editorial workflows.
+- Add regression tests for job environment bindings and CI isolation.
+
+
 ### Fixed — production Vercel Supabase credential migration compatibility
 
 - Accept the server-only pre-existing Vercel secret `SUPABASE_SERVICE_ROLE_KEY` as a transitional fallback when `SUPABASE_SECRET_KEY` is not yet configured, so production can read/write the single `akori` Supabase project without revealing or copying credentials. Prefer the new secret name when present and migrate it separately when validated.

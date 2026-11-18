@@ -38,11 +38,20 @@ concurrency:
 
 jobs:
   trigger:
+    # Resolve variables and secrets from the GitHub production Environment.
+    environment: production
     # Planification désactivable ; le déclenchement manuel reste toujours possible.
-    if: github.event_name == 'workflow_dispatch' || vars.BIB_SCHEDULES_ENABLED == 'true'
+    # Do not access environment-level vars in job.if: it is evaluated before environment attachment.
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Verify BIB scheduling flag in selected environment
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}
+        run: |
+          [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::BIB_SCHEDULES_ENABLED must equal true in GitHub Environment production or Repository variables."; exit 78; }
       - name: Determine step
         id: step
         run: |

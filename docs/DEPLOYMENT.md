@@ -36,6 +36,20 @@ buckets `bib-media-drafts`, `bib-media-public`, `bib-consents`,
 `media_public` et `testimonials_public` sont attendus (vues filtrantes
 volontaires).
 
+## 2 bis. GitHub Environments — portée des variables
+
+Les workflows opérationnels de production ciblent explicitement **Settings → Environments → production**. Sans `environment: production` dans un job, GitHub ne met pas les variables et secrets de cet environnement à sa disposition.
+
+Dans l'environnement `production` (ou au niveau des variables/secrets du dépôt), renseigner :
+- Variables : `BIB_SCHEDULES_ENABLED=true`, `SOB_SUPABASE_SYNC=true`, `BIB_SITE_URL=https://anbachain.org`.
+- Secrets : `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `BIB_CRON_SECRET`.
+
+Les valeurs Supabase sont maintenant référencées **au niveau de chaque étape** `check`, `build`, `finalize`, `repo-sync`, et non au niveau global du workflow, où les variables d'environnement risquaient d'être résolues trop tôt. Le contrôle de planification des newsletters et de la veille s'exécute également dans une étape, jamais dans `jobs.if`.
+
+Les déclenchements manuels de la newsletter et de la veille conservent leurs `BIB_STAGING_SITE_URL` / `BIB_STAGING_CRON_SECRET` : ils refusent de viser la production quand le staging manque. Le comportement Luma (staging si configuré, sinon production) reste inchangé.
+
+**Autonomie :** si l'environnement `production` est protégé par des approbations obligatoires, ces jobs attendront un réviseur avant de s'exécuter. Les règles de protection de cet environnement doivent donc être compatibles avec des crons entièrement automatiques.
+
 ## 3. Variables Vercel
 
 Par environnement (Preview → staging, Production → production) :

@@ -45,13 +45,10 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-  SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
-
 jobs:
   check:
+    # Resolve variables and secrets from the GitHub production Environment.
+    environment: production
     if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -66,7 +63,7 @@ jobs:
         env:
           BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}
         run: |
-          [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::Repository Actions variable BIB_SCHEDULES_ENABLED must be exactly true (environment-scoped variables are not inherited)."; exit 78; }
+          [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::BIB_SCHEDULES_ENABLED must be exactly true in GitHub Environment production or Repository variables."; exit 78; }
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -76,8 +73,9 @@ jobs:
 
       - name: Preflight — configuration requise
         env:
-          SITE_URL: ${{ vars.BIB_SITE_URL }}
-          CRON_SECRET: ${{ secrets.BIB_CRON_SECRET }}
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: |
           missing=""
           [ "$SOB_SUPABASE_SYNC" = "true" ] || missing="$missing SOB_SUPABASE_SYNC(=true)"
@@ -93,6 +91,9 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_FORCE_BUILD: ${{ inputs.force_build && 'true' || 'false' }}
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           SOB_CHECK_INTERVAL_HOURS: ${{ vars.SOB_CHECK_INTERVAL_HOURS }}
           SOB_MAX_FAILED_ATTEMPTS: ${{ vars.SOB_MAX_FAILED_ATTEMPTS }}
           SOB_MAX_BLOCKED_ATTEMPTS: ${{ vars.SOB_MAX_BLOCKED_ATTEMPTS }}
@@ -108,6 +109,8 @@ jobs:
           exit 1
 
   build:
+    # Resolve variables and secrets from the GitHub production Environment.
+    environment: production
     needs: check
     if: needs.check.outputs.needs_build == 'true'
     runs-on: ubuntu-latest
@@ -136,11 +139,16 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_STRONG_VARIATION: ${{ vars.SOB_STRONG_VARIATION }}
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: python publish_supabase.py ingest
 
   # Toujours exécuté après une vérification réussie, que des données aient été
   # traitées ou non : rattrape tout ce qui serait resté en attente.
   finalize:
+    # Resolve variables and secrets from the GitHub production Environment.
+    environment: production
     needs: [check, build]
     if: always() && needs.check.result == 'success' && needs.check.outputs.checked != 'false'
     runs-on: ubuntu-latest
@@ -159,11 +167,19 @@ jobs:
       # exécution interrompue) : publiée automatiquement en mode auto.
       - name: Publish any pending validated candidate
         working-directory: data-pipeline
+        env:
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: python publish_supabase.py publish-pending
 
       - id: reconcile
         name: Reconcile PostgreSQL / Storage / repository
         working-directory: data-pipeline
+        env:
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: |
           set +e
           python publish_supabase.py reconcile
@@ -204,6 +220,8 @@ jobs:
 
   # Copie technique du dépôt : secondaire, n'influence jamais le site.
   repo-sync:
+    # Resolve variables and secrets from the GitHub production Environment.
+    environment: production
     needs: finalize
     if: always() && needs.finalize.outputs.repo_sync_needed == 'true'
     runs-on: ubuntu-latest
@@ -219,6 +237,10 @@ jobs:
       - run: pip install "requests>=2.31,<3"
       - name: Export the current version (verified)
         working-directory: data-pipeline
+        env:
+          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
         run: |
           python history.py
           python publish_supabase.py export-current
