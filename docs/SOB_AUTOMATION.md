@@ -152,3 +152,9 @@ Le test réseau réel GitHub Actions [run #44194922073](https://github.com/Pheni
 - PostgreSQL, Storage et le dépôt ne forment pas une transaction unique : la
   bascule est atomique dans PostgreSQL, les écarts avec les autres supports
   sont détectés puis réconciliés.
+
+### Compatibilité des secrets existants (17 novembre 2026)
+
+Le workflow `refresh-data.yml` prend maintenant en charge `SUPABASE_SERVICE_ROLE_KEY` lorsqu'aucune clé `SUPABASE_SECRET_KEY` n'est déclarée. La véritable URL de l'API REST Supabase provient de `SUPABASE_URL` ou, si absent, de l'URL HTTPS du projet BIB unique. La chaîne PostgreSQL `SUPABASE_DATABASE_URL` n'est **jamais** substituée à cette URL.
+
+Le rafraîchissement web exige toujours `BIB_CRON_SECRET` : configurer ce GitHub Environment secret avec la même valeur que le `CRON_SECRET` de Vercel Production.
