@@ -12,7 +12,7 @@ import { Link } from "@/i18n/navigation"
 import { isSobAvailable, loadSobState, loadSobTrend } from "@/lib/sob/load"
 import { SobTrend } from "@/components/state-of-bib/SobTrend"
 import { getPublishedInsight } from "@/lib/sob/insights"
-import { listSobVersions, loadSobVersion } from "@/lib/sob/history"
+import { listSobVersions, loadSobVersion, loadSobDeltas } from "@/lib/sob/history"
 
 export const revalidate = 900
 
@@ -70,6 +70,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
     )
   }
   const { meta, headline, countryMap, topCities, ecoMix, cohort, origin } = snapshot
+  const deltas = await loadSobDeltas(snapshot.version)
   // Analyse IA : affichée uniquement si elle a été publiée par un administrateur.
   const insight = await getPublishedInsight(locale)
   const loc = intlLocale(locale)
@@ -89,10 +90,10 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
           <form method="get" className="ed-stack" style={{ gap: "0.5rem", maxWidth: "24rem" }}>
             <label htmlFor="sob-version">{s("facts.version")}</label>
             <select id="sob-version" name="version" defaultValue={selectedVersion ?? ""} className="ed-input">
-              <option value="">Latest published version</option>
+              <option value="">{locale === "fr" ? "Dernière version publiée" : locale === "es" ? "Última versión publicada" : "Latest published version"}</option>
               {versions.map(v => <option key={v.provider_version} value={v.provider_version}>{v.provider_version}{v.as_of_date ? ` — ${v.as_of_date}` : ""}</option>)}
             </select>
-            <button type="submit" className="ed-link">View selected version</button>
+            <button type="submit" className="ed-link">{locale === "fr" ? "Consulter cette version" : locale === "es" ? "Ver esta versión" : "View this version"}</button>
           </form>
           <dl className="sob-facts">
             <div><dt>{s("facts.asOf")}</dt><dd>{asOf}</dd></div>
@@ -119,6 +120,25 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
             <div className="ed-stat"><strong>{nf.format(headline.ecosystems)}</strong><span>{t("hero.stat3Sub")}</span></div>
           </div>
           <p className="ed-muted">{s("updated")}</p>
+          {deltas.length > 0 && (
+            <div className="ed-stack" style={{ gap: "0.75rem" }}>
+              <h3 className="ed-h3">{locale === "fr" ? "Évolution depuis la version précédente" : locale === "es" ? "Cambios desde la versión anterior" : "Changes since previous version"}</h3>
+              <table className="sob-trend-table">
+                <thead><tr>
+                  <th>{locale === "fr" ? "Indicateur" : locale === "es" ? "Indicador" : "Metric"}</th>
+                  <th>{locale === "fr" ? "Avant" : locale === "es" ? "Antes" : "Previous"}</th>
+                  <th>{locale === "fr" ? "Actuel" : locale === "es" ? "Actual" : "Current"}</th>
+                  <th>{locale === "fr" ? "Écart" : locale === "es" ? "Diferencia" : "Difference"}</th>
+                </tr></thead>
+                <tbody>{deltas.map(d => <tr key={d.metric_key}>
+                  <td>{d.metric_key.replaceAll("_", " ")}</td>
+                  <td>{d.previous_value == null ? "—" : nf.format(d.previous_value)}</td>
+                  <td>{d.current_value == null ? "—" : nf.format(d.current_value)}</td>
+                  <td>{d.delta == null ? d.change_kind : nf.format(d.delta)}</td>
+                </tr>)}</tbody>
+              </table>
+            </div>
+          )}
           <div className="ed-stack" style={{ gap: "1rem" }}>
             <h3 className="ed-h3">{s("trendTitle")}</h3>
             <SobTrend points={trend} locale={loc} label={s("trendLabel")} emptyNote={s("trendEmpty")} />

@@ -440,7 +440,7 @@ def decide(sb: SupabaseRest, version_id: str, provider_version: str, mode: str, 
         return "en attente de revue", 0
     note = "publication automatique (mode auto)"
     if report.get("strong_variation"):
-        note += " — forte variation confirmée par les contrôles renforcés"
+        note += " — fortes variations enregistrées pour analyse"
     try:
         result = sb.rpc("publish_dataset_candidate", {"p_version_id": version_id, "p_note": note})
     except SupabaseError as exc:

@@ -76,3 +76,17 @@ export function fallbackProblems(f: SobFiles, now: Date = new Date(), maxAgeDays
   }
   return out
 }
+
+// Blocking validation of the structure only. Changes in published aggregate values
+// must never override provider figures or suppress an otherwise intact archive.
+export function snapshotTechnicalProblems(f: SobFiles): string[] {
+  if (!f || !f.meta || !f.headline || !Array.isArray(f.countryMap) ||
+      !Array.isArray(f.topCities) || !f.ecoMix || !f.cohort) return ["missing required dataset sections"]
+  if (typeof f.meta.dataset_version !== "string" || !f.meta.dataset_version) return ["missing version"]
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(f.headline.snapshot_date ?? ""))) return ["invalid reference date"]
+  for (const key of ["devs_active_28d", "ecosystems", "countries", "commits_lifetime"] as const) {
+    if (!isCount(f.headline[key])) return [`invalid value: ${key}`]
+  }
+  if (!Array.isArray(f.ecoMix.months) || !Array.isArray(f.cohort.months)) return ["invalid series"]
+  return []
+}

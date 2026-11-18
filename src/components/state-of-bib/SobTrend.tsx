@@ -39,8 +39,8 @@ export function SobTrend({ points, locale, label, emptyNote }: { points: SobTren
           ))}
           <path d={path} className="sob-trend-line" />
           {points.map((p) => (
-            <circle key={p.as_of_date} cx={x(p.as_of_date)} cy={y(p.value)} r={4} className="sob-trend-dot">
-              <title>{`${fmtDate(p.as_of_date)} : ${nf.format(p.value)}`}</title>
+            <circle key={`${p.version}-${p.as_of_date}`} cx={x(p.as_of_date)} cy={y(p.value)} r={4} className="sob-trend-dot">
+              <title>{`${p.version} — ${fmtDate(p.as_of_date)} : ${nf.format(p.value)}`}</title>
             </circle>
           ))}
           <text x={P.l} y={H - 8} className="sob-trend-tick">{fmtDate(points[0].as_of_date)}</text>
@@ -50,9 +50,9 @@ export function SobTrend({ points, locale, label, emptyNote }: { points: SobTren
       {points.length < 2 && <p className="ed-note">{emptyNote}</p>}
       <table className="sob-trend-table">
         <caption className="sr-only">{label}</caption>
-        <thead><tr><th scope="col">Date</th><th scope="col">{label}</th></tr></thead>
+        <thead><tr><th scope="col">Date / Version</th><th scope="col">{label}</th></tr></thead>
         <tbody>
-          {points.map((p) => <tr key={p.as_of_date}><td>{fmtDate(p.as_of_date)}</td><td>{nf.format(p.value)}</td></tr>)}
+          {points.map((p) => <tr key={`${p.version}-${p.as_of_date}`}><td>{fmtDate(p.as_of_date)} — {p.version}</td><td>{nf.format(p.value)}</td></tr>)}
         </tbody>
       </table>
     </figure>

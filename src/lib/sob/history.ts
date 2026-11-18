@@ -70,3 +70,32 @@ export async function loadSobVersion(version: string): Promise<SobState> {
     return unavailable("historical dataset integrity check failed")
   }
 }
+
+export interface SobDelta {
+  metric_key: string
+  previous_value: number | null
+  current_value: number | null
+  delta: number | null
+  relative_change: number | null
+  change_kind: "added" | "removed" | "changed"
+}
+
+/** Stored comparisons of the selected version against its predecessor. */
+export async function loadSobDeltas(version: string): Promise<SobDelta[]> {
+  if (!VERSION_PATTERN.test(version) || !env.flags.sobReadFromSupabase || !isSupabaseAdminConfigured()) return []
+  const admin = getAdminClient()
+  const { data: row, error } = await admin.from("dataset_versions")
+    .select("id")
+    .eq("source_id", SOURCE_ID)
+    .eq("provider_version", version)
+    .in("status", ["published", "superseded"])
+    .maybeSingle()
+  if (error || !row) return []
+  const { data, error: deltaError } = await admin.from("dataset_version_deltas")
+    .select("metric_key,previous_value,current_value,delta,relative_change,change_kind")
+    .eq("dataset_version_id", row.id)
+    .eq("dimension_type", "total")
+    .order("metric_key")
+  if (deltaError) return []
+  return (data ?? []) as SobDelta[]
+}
