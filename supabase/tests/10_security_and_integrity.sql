@@ -116,8 +116,8 @@ set role anon;
 select tests.act_as(null);
 select tests.assert(tests.try($$insert into public.events (slug, starts_at, created_by) values ('anon-test', now(), null)$$) = '42501',
   'anon : insertion d''événement refusée');
-select tests.assert(tests.try($select * from public.media_assets$) = '42501', 'anon : media_assets illisible');
-select tests.assert(tests.try($select * from public.dataset_version_deltas$) = '42501', 'anon : deltas privés illisibles');
+select tests.assert(tests.try($$select * from public.media_assets$$) = '42501', 'anon : media_assets illisible');
+select tests.assert(tests.try($$select * from public.dataset_version_deltas$$) = '42501', 'anon : deltas privés illisibles');
 select tests.assert(tests.try($$select * from public.newsletter_consents$$) = '42501', 'anon : consentements illisibles');
 select tests.assert(tests.try($$select * from public.testimonials$$) = '42501', 'anon : témoignages bruts illisibles');
 select tests.assert(tests.visible($$select * from public.editors$$) in (0, -1),
