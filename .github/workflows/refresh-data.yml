@@ -74,8 +74,8 @@ jobs:
       - name: Preflight — configuration requise
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           missing=""
           [ "$SOB_SUPABASE_SYNC" = "true" ] || missing="$missing SOB_SUPABASE_SYNC(=true)"
@@ -92,8 +92,8 @@ jobs:
         env:
           SOB_FORCE_BUILD: ${{ inputs.force_build && 'true' || 'false' }}
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SOB_CHECK_INTERVAL_HOURS: ${{ vars.SOB_CHECK_INTERVAL_HOURS }}
           SOB_MAX_FAILED_ATTEMPTS: ${{ vars.SOB_MAX_FAILED_ATTEMPTS }}
           SOB_MAX_BLOCKED_ATTEMPTS: ${{ vars.SOB_MAX_BLOCKED_ATTEMPTS }}
@@ -140,8 +140,8 @@ jobs:
         env:
           SOB_STRONG_VARIATION: ${{ vars.SOB_STRONG_VARIATION }}
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python publish_supabase.py ingest
 
   # Toujours exécuté après une vérification réussie, que des données aient été
@@ -169,8 +169,8 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python publish_supabase.py publish-pending
 
       - id: reconcile
@@ -178,8 +178,8 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           set +e
           python publish_supabase.py reconcile
@@ -239,8 +239,8 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           python history.py
           python publish_supabase.py export-current
