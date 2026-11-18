@@ -1,3 +1,11 @@
+## State of BIB — entrepôt historique (PR en cours, non déployée)
+
+- Import manuel idempotent de toutes les versions historiques disponibles ; mode aperçu sans écriture par défaut.
+- Conservation des écarts statistiques dans le rapport de validation sans modification des valeurs sources.
+- Nouvelle migration additive 0014 : deltas de métriques historisées, privés et versionnés.
+- Lecture production depuis Supabase uniquement, sélection des versions archivées et comparaison avec la version précédente.
+- Maintien des contrôles de schéma, de provenance, des empreintes SHA-256 et des tests de non-régression.
+
 # Changelog
 
 All notable changes to this project are documented here.
