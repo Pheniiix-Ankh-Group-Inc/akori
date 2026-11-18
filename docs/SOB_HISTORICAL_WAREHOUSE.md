@@ -10,7 +10,7 @@
 
 ## Schéma (migration 0014, non appliquée automatiquement)
 
-`dataset_versions` référence chaque version, `dataset_artifacts` les six JSON exacts dans Storage privé, `metric_observations` les métriques exploitables et `ingestion_runs` les opérations. La migration `20261117001400_sob_historical_deltas.sql` ajoute `dataset_version_deltas` (version actuelle, version antérieure, dimension, avant/après, écart, type de changement). Toutes les tables privées conservent RLS activée ; le rôle de service uniquement écrit les deltas. Les diagnostics au sein d'un lot sont également stockés dans `dataset_versions.validation_report.consistency_anomalies`.
+`dataset_versions` référence chaque version, `dataset_artifacts` les six JSON exacts dans Storage privé, `metric_observations` les métriques exploitables et `ingestion_runs` les opérations. La migration `20261118051801_sob_historical_deltas.sql` ajoute `dataset_version_deltas` (version actuelle, version antérieure, dimension, avant/après, écart, type de changement). Toutes les tables privées conservent RLS activée ; le rôle de service uniquement écrit les deltas. Les diagnostics au sein d'un lot sont également stockés dans `dataset_versions.validation_report.consistency_anomalies`.
 
 ## Procédure de déploiement prudente
 
