@@ -187,10 +187,10 @@ export const loadSobTrend = unstable_cache(
       .eq("dimension_type", "total")
       .order("as_of_date", { ascending: true })
       .limit(1000)
-    return ((data ?? []) as Array<{ as_of_date: string; value: number; dataset_versions: { provider_version: string } }>).map(r => ({
+    return ((data ?? []) as unknown as Array<{ as_of_date: string; value: number; dataset_versions: { provider_version: string } | { provider_version: string }[] }>).map(r => ({
       as_of_date: r.as_of_date,
       value: Number(r.value),
-      version: r.dataset_versions.provider_version,
+      version: Array.isArray(r.dataset_versions) ? (r.dataset_versions[0]?.provider_version ?? "") : r.dataset_versions.provider_version,
     }))
 
   },

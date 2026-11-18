@@ -175,7 +175,7 @@ class AcceptanceTest(unittest.TestCase):
         self.assertEqual({c["name"] for c in report["reinforced"]["checks"]},
                          {"recalcul_independant", "agregats", "perimetre", "periodes", "vraisemblance", "repartition_pays", "historique"})
         self.assertEqual(self.sb.current()["provider_version"], "v2")
-        self.assertIn("forte variation confirmée", v2["decision_note"])
+        self.assertIn("fortes variations enregistrées", v2["decision_note"])
         self.assertEqual(self.sb.incidents("sob.quarantine"), [])
 
     def test_D_strong_variation_is_recorded_even_without_independent_recalculation(self):
