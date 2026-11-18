@@ -255,6 +255,48 @@ def _source_columns(report: dict) -> dict:
     return cols
 
 
+def persist_deltas(sb: SupabaseRest, version_id: str, as_of: str) -> int:
+    """Store comparisons by metric and dimension, without rewriting source observations.
+
+    A predecessor is selected by as_of_date, not by ingestion date. Importing an
+    old historical version can never shift the current published version.
+    """
+    previous = sb.select("dataset_versions", {
+        "select": "id", "source_id": f"eq.{SOURCE_ID}", "id": f"neq.{version_id}",
+        "as_of_date": f"lte.{as_of}", "status": "in.(published,superseded)",
+        "order": "as_of_date.desc,detected_at.desc", "limit": "1",
+    })
+    if not previous:
+        return 0
+    previous_id = previous[0]["id"]
+    def read(version: str) -> dict:
+        data = sb.select("metric_observations", {
+            "select": "metric_key,dimension_type,dimension_value,value",
+            "dataset_version_id": f"eq.{version}",
+        })
+        return {(r["metric_key"], r["dimension_type"], r["dimension_value"]): float(r["value"]) for r in data}
+    old, new = read(previous_id), read(version_id)
+    rows = []
+    for key in sorted(set(old) | set(new)):
+        before, after = old.get(key), new.get(key)
+        if before == after:
+            continue
+        metric, dimension, value = key
+        rows.append({
+            "dataset_version_id": version_id, "previous_version_id": previous_id,
+            "metric_key": metric, "dimension_type": dimension, "dimension_value": value,
+            "previous_value": before, "current_value": after,
+            "delta": (after - before) if before is not None and after is not None else None,
+            "relative_change": ((after - before) / before) if before not in (None, 0) and after is not None else None,
+            "change_kind": "added" if before is None else "removed" if after is None else "changed",
+        })
+    for i in range(0, len(rows), 500):
+        sb.insert("dataset_version_deltas", rows[i:i + 500],
+                  on_conflict="dataset_version_id,previous_version_id,metric_key,dimension_type,dimension_value",
+                  ignore_duplicates=True, returning=False)
+    return len(rows)
+
+
 def automation_mode(sb: SupabaseRest, module: str = "sob") -> str:
     rows = sb.select("automation_settings", {"select": "mode", "module": f"eq.{module}", "limit": "1"})
     # Réglage absent ou illisible : mode automatique (fonctionnement normal du MVP).
@@ -347,6 +389,9 @@ def ingest(sb: SupabaseRest, data_dir: Path, *, historical: bool = False) -> int
             sb.insert("metric_observations", obs[i:i + 500],
                       on_conflict="dataset_version_id,metric_key,dimension_type,dimension_value,period_start",
                       ignore_duplicates=True, returning=False)
+        # Persistent comparison rows (additive migration 0014 required).
+        delta_count = persist_deltas(sb, version_id, as_of)
+        report["stored_deltas"] = delta_count
         # Forte variation : diagnostic seulement ; les données originales sont préservées.
         if report["strong_variation"] and not historical:
             from country_scope import SCOPE_ISO_A3  # import tardif (dépendance pycountry)
