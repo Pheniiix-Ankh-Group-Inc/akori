@@ -34,9 +34,9 @@ describe("BIB automation workflow contracts", () => {
     const global = y.split("jobs:")[0]
     expect(global).not.toContain("SUPABASE_SECRET_KEY")
     expect(global).not.toContain("SOB_SUPABASE_SYNC:")
-    expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}').length - 1).toBe(6)
-    expect(y.split("SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}").length - 1).toBe(6)
-    expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(6)
+    expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}').length - 1).toBe(7)
+    expect(y.split("SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}").length - 1).toBe(7)
+    expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(7)
   })
 
   it("preserves Vercel's server-only existing Supabase credential during rollout", () => {
@@ -86,6 +86,9 @@ describe("BIB automation workflow contracts", () => {
     expect(y).toContain('BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}')
     expect(y).toContain('BIB_SCHEDULES_ENABLED must be exactly true in GitHub Environment production or Repository variables.')
     expect(y).toContain("python publish_supabase.py ingest")
+    expect(y).toContain("backfill_history:")
+    expect(y).toContain("python backfill_history.py --apply")
+    expect(y).toContain("contains(github.event.head_commit.message, '[sob-bootstrap]')")
     expect(y).toContain("python publish_supabase.py publish-pending")
     expect(y).not.toContain("gh pr merge")
     const beforeBuild = y.split("  build:")[0]
