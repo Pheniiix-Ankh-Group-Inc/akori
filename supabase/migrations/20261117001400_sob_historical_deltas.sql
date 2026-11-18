@@ -7,6 +7,7 @@ create table if not exists public.dataset_version_deltas (
   metric_key text not null references public.metric_definitions(key),
   dimension_type text not null,
   dimension_value text not null default '',
+  period_start date,
   previous_value numeric,
   current_value numeric,
   delta numeric,
@@ -14,8 +15,8 @@ create table if not exists public.dataset_version_deltas (
   change_kind text not null check (change_kind in ('added','removed','changed')),
   created_at timestamptz not null default now(),
   constraint dataset_version_deltas_distinct_versions check (dataset_version_id <> previous_version_id),
-  constraint dataset_version_deltas_unique unique (
-    dataset_version_id,previous_version_id,metric_key,dimension_type,dimension_value
+  constraint dataset_version_deltas_unique unique nulls not distinct (
+    dataset_version_id,previous_version_id,metric_key,dimension_type,dimension_value,period_start
   )
 );
 
@@ -29,3 +30,11 @@ grant usage, select on sequence public.dataset_version_deltas_id_seq to service_
 
 comment on table public.dataset_version_deltas is
   'Derived comparison facts between immutable published/archived snapshots; original observations retain their reported values.';
+
+-- Monthly facts can now be queried and compared without reading JSON from Storage.
+insert into public.metric_definitions (key,label_fr,label_en,label_es,unit,methodology) values
+  ('ecosystem_devs','Développeurs par écosystème et mois','Developers per ecosystem and month',
+   'Desarrolladores por ecosistema y mes','count','Provider-derived monthly developer series'),
+  ('cohort_devs','Développeurs par ancienneté et mois','Developers by tenure and month',
+   'Desarrolladores por antigüedad y mes','count','Provider-derived tenure cohorts by month')
+on conflict (key) do nothing;

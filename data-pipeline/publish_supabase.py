@@ -88,11 +88,16 @@ def artifact_manifest(files: dict[str, bytes]) -> list[dict[str, str]]:
     return [{"name": n, "sha256": sha256(c)} for n, c in sorted(files.items())]
 
 
-def observations(version_id: str, as_of: str, headline: dict, countries: list, cities: list) -> list[dict]:
+def observations(version_id: str, as_of: str, headline: dict, countries: list, cities: list,
+                 ecosystems: dict | None = None, cohort: dict | None = None) -> list[dict]:
+    """Store aggregate, geographic and monthly observations for SQL analysis.
+
+    Derived facts never overwrite the source's original JSON artifacts in Storage.
+    """
     rows: list[dict] = []
     for key in ("devs_active_28d", "ecosystems", "countries", "cities", "commits_lifetime"):
         value = headline.get(key)
-        if isinstance(value, int):
+        if isinstance(value, int) and not isinstance(value, bool):
             rows.append({"dataset_version_id": version_id, "metric_key": key, "dimension_type": "total",
                          "dimension_value": "", "as_of_date": as_of, "value": value})
     for c in countries:
@@ -105,6 +110,24 @@ def observations(version_id: str, as_of: str, headline: dict, countries: list, c
             rows.append({"dataset_version_id": version_id, "metric_key": "city_devs_active_28d",
                          "dimension_type": "city", "dimension_value": f"{c.get('city')}|{c.get('iso_a3')}",
                          "as_of_date": as_of, "value": c["devs_active_28d"]})
+
+    ecosystems = ecosystems or {}
+    months = ecosystems.get("months") or []
+    for ecosystem in ecosystems.get("ecosystems") or []:
+        identity = str(ecosystem.get("id") if ecosystem.get("id") is not None else ecosystem.get("name"))
+        for month, value in zip(months, ecosystem.get("series_devs") or []):
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                rows.append({"dataset_version_id": version_id, "metric_key": "ecosystem_devs",
+                             "dimension_type": "ecosystem", "dimension_value": identity,
+                             "period_start": f"{month}-01", "as_of_date": as_of, "value": value})
+    cohort = cohort or {}
+    months = cohort.get("months") or []
+    for key in ("devs_0_1y", "devs_1_2y", "devs_2y_plus"):
+        for month, value in zip(months, cohort.get(key) or []):
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                rows.append({"dataset_version_id": version_id, "metric_key": "cohort_devs",
+                             "dimension_type": "cohort", "dimension_value": key,
+                             "period_start": f"{month}-01", "as_of_date": as_of, "value": value})
     return rows
 
 
@@ -256,11 +279,7 @@ def _source_columns(report: dict) -> dict:
 
 
 def persist_deltas(sb: SupabaseRest, version_id: str, as_of: str) -> int:
-    """Store comparisons by metric and dimension, without rewriting source observations.
-
-    A predecessor is selected by as_of_date, not by ingestion date. Importing an
-    old historical version can never shift the current published version.
-    """
+    """Versioned facts for every metric, geography and monthly period."""
     previous = sb.select("dataset_versions", {
         "select": "id", "source_id": f"eq.{SOURCE_ID}", "id": f"neq.{version_id}",
         "as_of_date": f"lte.{as_of}", "status": "in.(published,superseded)",
@@ -269,22 +288,35 @@ def persist_deltas(sb: SupabaseRest, version_id: str, as_of: str) -> int:
     if not previous:
         return 0
     previous_id = previous[0]["id"]
+
     def read(version: str) -> dict:
-        data = sb.select("metric_observations", {
-            "select": "metric_key,dimension_type,dimension_value,value",
-            "dataset_version_id": f"eq.{version}",
-        })
-        return {(r["metric_key"], r["dimension_type"], r["dimension_value"]): float(r["value"]) for r in data}
+        result = {}
+        offset = 0
+        while True:
+            batch = sb.select("metric_observations", {
+                "select": "metric_key,dimension_type,dimension_value,period_start,value",
+                "dataset_version_id": f"eq.{version}", "order": "id.asc",
+                "limit": "1000", "offset": str(offset),
+            })
+            for r in batch:
+                key = (r["metric_key"], r["dimension_type"], r["dimension_value"], r.get("period_start"))
+                result[key] = float(r["value"])
+            if len(batch) < 1000:
+                break
+            offset += len(batch)
+        return result
+
     old, new = read(previous_id), read(version_id)
     rows = []
-    for key in sorted(set(old) | set(new)):
+    for key in sorted(set(old) | set(new), key=lambda k: tuple(str(x) for x in k)):
         before, after = old.get(key), new.get(key)
         if before == after:
             continue
-        metric, dimension, value = key
+        metric, dimension, value, period = key
         rows.append({
             "dataset_version_id": version_id, "previous_version_id": previous_id,
             "metric_key": metric, "dimension_type": dimension, "dimension_value": value,
+            "period_start": period,
             "previous_value": before, "current_value": after,
             "delta": (after - before) if before is not None and after is not None else None,
             "relative_change": ((after - before) / before) if before not in (None, 0) and after is not None else None,
@@ -292,7 +324,7 @@ def persist_deltas(sb: SupabaseRest, version_id: str, as_of: str) -> int:
         })
     for i in range(0, len(rows), 500):
         sb.insert("dataset_version_deltas", rows[i:i + 500],
-                  on_conflict="dataset_version_id,previous_version_id,metric_key,dimension_type,dimension_value",
+                  on_conflict="dataset_version_id,previous_version_id,metric_key,dimension_type,dimension_value,period_start",
                   ignore_duplicates=True, returning=False)
     return len(rows)
 
@@ -384,7 +416,8 @@ def ingest(sb: SupabaseRest, data_dir: Path, *, historical: bool = False) -> int
                               "sha256": sha256(content), "size_bytes": len(content)})
         sb.insert("dataset_artifacts", artifacts, on_conflict="dataset_version_id,name", ignore_duplicates=True, returning=False)
         obs = observations(version_id, as_of, headline,
-                           json.loads(files["country_map.json"]), json.loads(files["top_cities.json"]))
+                           json.loads(files["country_map.json"]), json.loads(files["top_cities.json"]),
+                           json.loads(files["ecosystem_mix.json"]), json.loads(files["tenure_cohort.json"]))
         for i in range(0, len(obs), 500):
             sb.insert("metric_observations", obs[i:i + 500],
                       on_conflict="dataset_version_id,metric_key,dimension_type,dimension_value,period_start",
