@@ -33,3 +33,9 @@ La PR ne déclenche **ni migration distante, ni backfill, ni ingestion en produc
 ## Limites actuelles
 
 Les snapshots historiques du dépôt sont des **données transformées** par une ancienne version du pipeline. Ils ne sont pas présentés comme les fichiers Parquet bruts originels. Les fichiers de la source externe restent gouvernés par leurs conditions d'accès/licences.
+
+## Déclenchement depuis GitHub Actions
+
+Le workflow `refresh-data.yml` propose désormais l'entrée manuelle `backfill_history=true`. Il importe les archives d'abord, puis vérifie si la source externe a une nouvelle version. Pour une release initiale automatisée, le message du commit arrivant sur `main` peut contenir `[sob-bootstrap]` afin d'activer une seule fois ce mécanisme. Les autres pushs sur `main` ne déclenchent pas le backfill et respectent le cycle d'ingestion ordinaire.
+
+L'environnement GitHub `production` peut imposer une approbation humaine : ne jamais désactiver cette protection pour contourner une attente. La clé Supabase ne doit jamais être affichée dans les logs.
