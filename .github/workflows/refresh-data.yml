@@ -171,7 +171,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
-      repo_sync_needed: ${{ steps.reconcile.outputs.repo_sync_needed }}
       current_version: ${{ steps.reconcile.outputs.current_version }}
     steps:
       - uses: actions/checkout@v4
@@ -201,8 +200,8 @@ jobs:
           set +e
           python publish_supabase.py reconcile
           rc=$?
-          # 0 : alignés ; 3 : dépôt en retard (job repo-sync) ; autre : échec réel.
-          if [ "$rc" -ne 0 ] && [ "$rc" -ne 3 ]; then exit "$rc"; fi
+          # The Git repository copy is optional; nonzero means a real failure.
+          if [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
       # Actualisation du site : caches invalidés, version servie VÉRIFIÉE,
       # analyses IA générées et publiées. Reprises bornées (déploiement en cours…).
@@ -235,61 +234,3 @@ jobs:
           echo "::error title=State of BIB::le site n'a pas confirmé la version ${VERSION:-courante} (HTTP $code)."
           exit 1
 
-  # Copie technique du dépôt : secondaire, n'influence jamais le site.
-  repo-sync:
-    # Resolve variables and secrets from the GitHub production Environment.
-    environment: production
-    needs: finalize
-    if: always() && needs.finalize.outputs.repo_sync_needed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: write        # branche dédiée data/state-of-bib-sync uniquement, jamais main
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install "requests>=2.31,<3"
-      - name: Export the current version (verified)
-        working-directory: data-pipeline
-        env:
-          SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
-          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          python history.py
-          python publish_supabase.py export-current
-          # La structure invalide bloque, mais les écarts statistiques sont des observations.
-          # Le code 3 signifie uniquement des écarts enregistrés : ne pas bloquer la copie.
-          python validate.py
-          python validate.py --consistency || { rc=$?; [ "$rc" -eq 3 ] || exit "$rc"; echo "::warning title=State of BIB::écarts statistiques conservés sans altérer les fichiers source"; }
-      - name: Propose the technical copy (automatic PR, no merge)
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ needs.finalize.outputs.current_version }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B data/state-of-bib-sync
-          git add data/state-of-bib
-          if git diff --cached --quiet; then echo "Rien à synchroniser."; exit 0; fi
-          git commit -m "data(state-of-bib): copie technique de la version ${VERSION}"
-          # Fetch the existing bot branch before force-with-lease; shallow checkout
-          # only fetches main, so the lease otherwise rejects with "stale info".
-          if git ls-remote --exit-code --heads origin data/state-of-bib-sync >/dev/null 2>&1; then
-            git fetch origin "+refs/heads/data/state-of-bib-sync:refs/remotes/origin/data/state-of-bib-sync"
-          fi
-          git push --force-with-lease origin data/state-of-bib-sync
-          if gh pr view data/state-of-bib-sync --json number >/dev/null 2>&1; then
-            echo "::notice title=State of BIB::technical snapshot PR already exists."
-          elif gh pr create \
-            --head data/state-of-bib-sync --base "${{ github.event.repository.default_branch }}" \
-            --title "State of BIB — copie technique ${VERSION}" \
-            --body "Synchronisation automatique de data/state-of-bib/current avec la version **${VERSION}** déjà publiée dans Supabase (artefacts vérifiés par SHA-256). Le site ne dépend pas de cette PR : elle met seulement à jour la copie de reprise du dépôt."; then
-            echo "::notice title=State of BIB::technical snapshot PR opened."
-          else
-            echo "::warning title=State of BIB::snapshot branch pushed, but GitHub Actions cannot create a PR. Enable 'Allow GitHub Actions to create and approve pull requests' in repository Actions settings, or create the PR manually."
-          fi
-          # Never auto-merge into protected main; Supabase remains independent.
