@@ -29,7 +29,7 @@ class HistoricalBackfillTest(unittest.TestCase):
     def test_identical_versions_are_deduplicated_without_writes(self):
         versions = bh.snapshot_versions(self.hist, self.current)
         self.assertEqual(len(versions), 1)
-        self.assertEqual(versions[0][0], "20260419T130333")
+        self.assertEqual(versions[0][0], json.loads((SOURCE / "meta.json").read_text())["dataset_version"])
         self.assertEqual(len(bh.validate_archive(versions[0][1])), 6)
 
     def test_divergent_same_version_is_refused(self):

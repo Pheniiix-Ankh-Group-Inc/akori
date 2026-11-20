@@ -234,7 +234,8 @@ class AcceptanceTest(unittest.TestCase):
 
     def test_E_historical_repository_snapshot_is_archived_without_publication(self):
         raw = self.tmp / "raw"
-        shutil.copytree(DATA, raw)
+        archived = HERE.parent.parent / "data" / "state-of-bib" / "history" / "20260419T130333"
+        shutil.copytree(archived, raw)
         code = ps.ingest(self.sb, raw, historical=True)
         self.assertEqual(code, 0)
         self.assertIsNone(self.sb.current())
@@ -256,7 +257,7 @@ class AcceptanceTest(unittest.TestCase):
         repo = self.tmp / "repo"
         shutil.copytree(DATA, repo)  # copie du dépôt : ancienne
         code, out = run(ps.reconcile, self.sb, repo)
-        self.assertEqual(code, 3, "dépôt en retard : signalé, pas une erreur de publication")
+        self.assertEqual(code, 0, "Storage valide : copie Git facultative")
         self.assertEqual(self.sb.current()["provider_version"], "v1", "la version publiée ne dépend pas du dépôt")
         code, _ = run(ps.export_current, self.sb, repo)
         self.assertEqual(code, 0)
@@ -264,7 +265,7 @@ class AcceptanceTest(unittest.TestCase):
         code, _ = run(ps.reconcile, self.sb, repo)
         self.assertEqual(code, 0)
         states = [r["details"]["state"] for r in self.sb.t["ingestion_runs"] if r["kind"] == "reconcile"]
-        self.assertEqual(states, ["repo_behind", "in_sync"])
+        self.assertEqual(states, ["storage_verified", "storage_verified"])
 
     # ── Scénario K — relance ──────────────────────────────────────────
     def test_K_rerunning_the_same_version_never_duplicates_or_republishes(self):
