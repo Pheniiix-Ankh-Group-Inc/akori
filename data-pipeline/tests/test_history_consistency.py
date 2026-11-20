@@ -18,6 +18,7 @@ import history  # noqa: E402
 from validate import consistency_anomalies, validate_output_dir  # noqa: E402
 
 DATA = HERE.parent.parent / "data" / "state-of-bib" / "current"
+HISTORICAL_FIXTURE = HERE.parent.parent / "data" / "state-of-bib" / "history" / "20260419T130333"
 
 
 def consistent_lot(directory: Path) -> None:
@@ -131,9 +132,9 @@ class ConsistencyTests(unittest.TestCase):
         self.assertTrue(any("au-delà" in a for a in out))
 
     def test_lot_publie_actuel_anomalies_connues(self):
-        """Documente les écarts du lot publié (20260419T130333), signalés au propriétaire."""
-        out = consistency_anomalies(DATA)
-        self.assertEqual(validate_output_dir(DATA), [])
+        """Stable fixture: reported anomalies in the April 2026 archived snapshot."""
+        out = consistency_anomalies(HISTORICAL_FIXTURE)
+        self.assertEqual(validate_output_dir(HISTORICAL_FIXTURE), [])
         self.assertTrue(any(a.startswith("headline.countries=38") for a in out))
         self.assertTrue(any(a.startswith("headline.devs_active_28d=4283") for a in out))
         self.assertTrue(any("pipeline_version" in a for a in out))

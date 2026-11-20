@@ -17,7 +17,7 @@ describe("BIB automation workflow contracts", () => {
   it("uses the production GitHub Environment for all operational jobs", () => {
     for (const [name, expected] of [
       ["events-sync.yml", 1],
-      ["refresh-data.yml", 4],
+      ["refresh-data.yml", 3],
       ["news-ingest.yml", 1],
       ["newsletter.yml", 1],
     ] as const) {
@@ -34,9 +34,9 @@ describe("BIB automation workflow contracts", () => {
     const global = y.split("jobs:")[0]
     expect(global).not.toContain("SUPABASE_SECRET_KEY")
     expect(global).not.toContain("SOB_SUPABASE_SYNC:")
-    expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}').length - 1).toBe(7)
-    expect(y.split("SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}").length - 1).toBe(7)
-    expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(7)
+    expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}').length - 1).toBe(6)
+    expect(y.split("SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}").length - 1).toBe(6)
+    expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(6)
   })
 
   it("preserves Vercel's server-only existing Supabase credential during rollout", () => {
@@ -101,10 +101,9 @@ describe("BIB automation workflow contracts", () => {
     expect(y).toContain("python backfill_history.py --apply")
     expect(y).toContain("contains(github.event.head_commit.message, '[sob-bootstrap]')")
     expect(y).toContain("python publish_supabase.py publish-pending")
-    expect(y).toContain("python validate.py --consistency || { rc=$?; [ \"$rc\" -eq 3 ] || exit \"$rc\";")
-    expect(y).toContain('git fetch origin "+refs/heads/data/state-of-bib-sync:refs/remotes/origin/data/state-of-bib-sync"')
-    expect(y).toContain("git push --force-with-lease origin data/state-of-bib-sync")
-    expect(y).toContain("snapshot branch pushed, but GitHub Actions cannot create a PR")
+    expect(y).not.toContain("  repo-sync:")
+    expect(y).not.toContain("git push --force-with-lease")
+    expect(y).not.toContain("gh pr create")
     expect(y).not.toContain("gh pr merge")
     const beforeBuild = y.split("  build:")[0]
     expect(beforeBuild).not.toContain('missing="$missing BIB_SITE_URL"')

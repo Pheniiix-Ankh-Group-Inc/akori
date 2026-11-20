@@ -586,8 +586,12 @@ def current_version(sb: SupabaseRest) -> dict | None:
 
 
 def reconcile(sb: SupabaseRest, data_dir: Path) -> int:
-    """État des trois supports. Code retour : 0 synchronisés, 3 dépôt en retard,
-    1 incohérence Storage (la version courante ne doit pas être servie ainsi)."""
+    """Verify PostgreSQL / private Storage; repository snapshots are optional.
+
+    The database+Storage are the canonical, versioned recovery copies.
+    Never require a PR or a Git update to consider a published dataset healthy.
+    Return 1 for Storage corruption and 0 when canonical data is valid.
+    """
     cur = current_version(sb)
     if not cur:
         print("Aucune version courante dans PostgreSQL : rien à réconcilier.")
@@ -608,7 +612,7 @@ def reconcile(sb: SupabaseRest, data_dir: Path) -> int:
         local = data_dir / name
         if not local.exists() or sha256(local.read_bytes()) != art["sha256"]:
             repo_diff.append(name)
-    state = "storage_mismatch" if storage_bad else "repo_behind" if repo_diff else "in_sync"
+    state = "storage_mismatch" if storage_bad else "storage_verified"
     details = {"version": cur["provider_version"], "state": state, "storage": storage_bad[:10], "repo": repo_diff}
     try:
         sb.insert("ingestion_runs", {
@@ -626,10 +630,8 @@ def reconcile(sb: SupabaseRest, data_dir: Path) -> int:
         _emit(repo_sync_needed="false", reconcile=state)
         return 1
     if repo_diff:
-        print(f"Dépôt en retard sur la version courante {cur['provider_version']} : {', '.join(repo_diff)}")
-        _emit(repo_sync_needed="true", reconcile=state, current_version=cur["provider_version"])
-        return 3
-    print(f"✓ PostgreSQL, Storage et dépôt alignés sur {cur['provider_version']}.")
+        print(f"(Information : la copie locale Git est facultative et plus ancienne que {cur['provider_version']}.)")
+    print(f"✓ PostgreSQL et Storage vérifiés sur {cur['provider_version']} (copie Git facultative).")
     _emit(repo_sync_needed="false", reconcile=state, current_version=cur["provider_version"])
     return 0
 

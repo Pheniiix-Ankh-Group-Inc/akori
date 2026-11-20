@@ -1,7 +1,7 @@
 export type SobMeta = {
   dataset_version: string
   generated_at: string
-  block_number: number
+  block_number: number | null
   source: { name: string; license: string }
   scope: { regions: string[]; countries_in_scope: number }
 }
