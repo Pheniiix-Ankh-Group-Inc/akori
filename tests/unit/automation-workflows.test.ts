@@ -79,6 +79,17 @@ describe("BIB automation workflow contracts", () => {
     expect(y).toContain("Manual workflow requires BIB_STAGING_SITE_URL")
   })
 
+  it("cron workflows require an application JSON contract rather than trusting redirects", () => {
+    for (const name of ["news-ingest.yml", "newsletter.yml"]) {
+      const y = workflow(name)
+      expect(y).toContain("python scripts/run_cron.py")
+      expect(y).toContain('export SITE_URL="${SITE_URL%/}" CRON_SECRET')
+      expect(y).not.toContain("curl --fail-with-body")
+    }
+    expect(workflow("news-ingest.yml")).toContain("--kind news")
+    expect(workflow("newsletter.yml")).toContain("--kind newsletter --step")
+  })
+
   it("State of BIB automatically ingests and publishes without merging to main", () => {
     const y = workflow("refresh-data.yml")
     expect(y).toContain('cron: "7 * * * *"')
