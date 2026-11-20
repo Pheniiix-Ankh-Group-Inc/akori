@@ -77,7 +77,7 @@ jobs:
           headers=$(curl -sI http://localhost:3123/)
           echo "$headers" | grep -qi '^content-security-policy:.*object-src .none.' || { echo "CSP absente ou incomplète"; exit 1; }
           echo "$headers" | grep -qi '^strict-transport-security:' || { echo "HSTS absent"; exit 1; }
-          echo "$headers" | grep -qi 'preload' && { echo "HSTS preload non autorisé"; exit 1; } || true
+          echo "$headers" | grep -i '^strict-transport-security:' | grep -qi 'preload' && { echo "HSTS preload non autorisé"; exit 1; } || true
           echo "$headers" | grep -qi '^x-content-type-options: nosniff' || { echo "nosniff absent"; exit 1; }
           echo "$headers" | grep -qi '^x-powered-by' && { echo "X-Powered-By exposé"; exit 1; } || true
 
