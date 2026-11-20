@@ -14,7 +14,9 @@ import { SobTrend } from "@/components/state-of-bib/SobTrend"
 import { getPublishedInsight } from "@/lib/sob/insights"
 import { listSobVersions, loadSobVersion, loadSobDeltas } from "@/lib/sob/history"
 
-export const revalidate = 900
+// A temporary read error must not be embedded in a 15-minute static page.
+// The expensive verified dataset itself remains cached (positive results only).
+export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ version?: string }> }
 

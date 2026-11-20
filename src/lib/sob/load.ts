@@ -158,14 +158,29 @@ export async function loadSobStateUncached(): Promise<SobState> {
     }
 }
 
-/** Public cache. Do not use to verify post-publication database state. */
-export const loadSobState = unstable_cache(
-  loadSobStateUncached,
-  ["sob-state-v3"],
-  // Invalidation explicite après chaque publication (/api/cron/sob-refresh) ;
-  // l'expiration de 15 minutes est un filet de sécurité si cet appel échoue.
+/** Cache only verified snapshots: transient Supabase/Storage failures must never
+ * become a cached, public "no data" page for 15 minutes. The last good
+ * snapshot remains immutable in Supabase and is never replaced by local data.
+ */
+const cachedSobSnapshot = unstable_cache(
+  async (): Promise<SobSnapshot> => {
+    const state = await loadSobStateUncached()
+    // Next.js does not cache a rejected unstable_cache computation.
+    if (!isSobAvailable(state)) throw new Error("sob_data_temporarily_unavailable")
+    return state
+  },
+  ["sob-state-v4"],
   { tags: [SOB_TAG], revalidate: 900 },
 )
+
+export async function loadSobState(): Promise<SobState> {
+  try {
+    return await cachedSobSnapshot()
+  } catch {
+    // Diagnostic remains server-side. A failed lookup cannot poison the cache.
+    return loadSobStateUncached()
+  }
+}
 
 export interface SobTrendPoint {
   as_of_date: string

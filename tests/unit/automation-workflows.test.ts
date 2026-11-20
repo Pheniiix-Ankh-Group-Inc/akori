@@ -96,6 +96,12 @@ describe("BIB automation workflow contracts", () => {
     expect(workflow("newsletter.yml")).toContain("--kind newsletter --step")
   })
 
+  it("checks public SSR figures after State of BIB publication", () => {
+    const y = workflow("refresh-data.yml")
+    expect(y).toContain("python scripts/verify_sob_public.py")
+    expect(y).toContain("Verify actual public State of BIB figures")
+  })
+
   it("State of BIB automatically ingests and publishes without merging to main", () => {
     const y = workflow("refresh-data.yml")
     expect(y).toContain('cron: "7 * * * *"')

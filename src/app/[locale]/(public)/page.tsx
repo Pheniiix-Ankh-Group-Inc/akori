@@ -10,7 +10,9 @@ import { isSobAvailable, loadSobState } from "@/lib/sob/load"
 import { EventCard } from "@/components/events/EventCard"
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm"
 
-export const revalidate = 300
+// Keep the homepage current during brief upstream outages and recoveries;
+// verified State of BIB data itself still uses its protected 15-minute cache.
+export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ locale: string }> }
 

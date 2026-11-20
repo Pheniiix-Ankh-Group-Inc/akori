@@ -103,6 +103,15 @@ describe("Scénario G — actualisation automatique du site", () => {
     expect(incidents).toEqual([])
   })
 
+  it("never caches a transient unavailable state after a successful publication", async () => {
+    const missing = await loadSobState()
+    expect(isSobAvailable(missing)).toBe(false)
+    await publish("v1")
+    const restored = await loadSobState()
+    expect(isSobAvailable(restored)).toBe(true)
+    expect(isSobAvailable(restored) && restored.version).toBe("v1")
+  })
+
   it("version attendue non servie : signalé (le workflow échoue), jamais un faux succès", async () => {
     await publish("v1")
     const report = await refreshSob("v2")
