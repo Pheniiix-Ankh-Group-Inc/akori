@@ -1,13 +1,79 @@
 {
-  "dataset_version": "20260419T130333",
-  "generated_at": "2026-04-19T06:00:00Z",
-  "block_number": 20441822,
+  "dataset_version": "20261118T130441",
+  "source_version": "20261118T130441",
+  "source_fingerprint": "2a50b5224a1d3891131b07256c29228066f2ceadeab25dd1f8a2ce383cf0b86a",
+  "source_resources": [
+    {
+      "table": "canonical_developer_locations",
+      "path": "/snapshots/20261118T130441/canonical_developer_locations.parquet",
+      "size_bytes": 73283617,
+      "b3sum": "fe37764482fecdfaeb915404798acf3640954f899d6248b6ed47dfa9055da70b"
+    },
+    {
+      "table": "canonical_developers",
+      "path": "/snapshots/20261118T130441/canonical_developers.parquet",
+      "size_bytes": 52083360,
+      "b3sum": "c4394f8e449966e6e4edc39278681621ae713e5bd16aef6fe6bc308a605f3aac"
+    },
+    {
+      "table": "developer_activities",
+      "path": "/snapshots/20261118T130441/developer_activities.parquet",
+      "size_bytes": 445797081,
+      "b3sum": "7800218cf481a51a3d6c49da6cfa217396d6b91d218621b1c28de12378eff1b9"
+    },
+    {
+      "table": "eco_developer_activities",
+      "path": "/snapshots/20261118T130441/eco_developer_activities.parquet",
+      "size_bytes": 3409055677,
+      "b3sum": "b4dccb4de7b7b6f5e8a13f5b5eb82d9e343c3408a1a1c3a9ceac3e79d53bd8be"
+    },
+    {
+      "table": "eco_mads",
+      "path": "/snapshots/20261118T130441/eco_mads.parquet",
+      "size_bytes": 77940294,
+      "b3sum": "ceea42af776f409098f5e42b4dbfbdeb5878c34ebf59ed9bb543bbd53eeaf0ef"
+    },
+    {
+      "table": "ecosystems",
+      "path": "/snapshots/20261118T130441/ecosystems.parquet",
+      "size_bytes": 353202,
+      "b3sum": "ce5c6cda7fc668d2ad922342a048f430ceadbda05ba9b90666bb2e27e6cdaa52"
+    }
+  ],
+  "pipeline_version": "2026.11.3",
+  "verification": {
+    "method": "direct recount (no per-country aggregate)",
+    "devs_active_28d": 1539,
+    "commits_lifetime": 2517727,
+    "countries": 71
+  },
+  "generated_at": "2026-11-18T16:26:01+00:00",
+  "block_number": null,
   "source": {
     "name": "Electric Capital Open Source Developer Data",
+    "url": "https://opendevdata.org",
     "license": "CC BY 4.0"
   },
   "scope": {
-    "regions": ["Africa", "Caribbean"],
-    "countries_in_scope": 76
+    "regions": [
+      "Africa",
+      "Caribbean"
+    ],
+    "countries_in_scope": 71,
+    "methodology_note": "Developers are included by inferred geographic location (from GitHub profile + commit metadata). Diaspora developers located outside the scoped regions are not counted: these figures are not a measure of the global diaspora \u2014 see methodology.",
+    "unresolved_country_names": [
+      "Brunei",
+      "Caribbean Netherlands",
+      "Falkland Islands (Islas Malvinas)",
+      "French Southern and Antarctic Lands",
+      "Kosovo",
+      "Micronesia",
+      "Myanmar (Burma)",
+      "Palestine",
+      "Russia",
+      "U.S. Virgin Islands",
+      "Vatican City",
+      "\u00c5land"
+    ]
   }
 }
