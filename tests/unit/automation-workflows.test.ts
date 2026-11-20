@@ -39,6 +39,12 @@ describe("BIB automation workflow contracts", () => {
     expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(6)
   })
 
+  it("pins Node.js to the same major version in Vercel and CI", () => {
+    const pkg = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"))
+    expect(pkg.engines.node).toBe("24.x")
+    expect(workflow("ci.yml")).toContain("node-version: 24")
+  })
+
   it("preserves Vercel's server-only existing Supabase credential during rollout", () => {
     const code = readFileSync(join(process.cwd(), "src/lib/env.ts"), "utf8")
     expect(code).toContain('str("SUPABASE_SECRET_KEY") ?? str("SUPABASE_SERVICE_ROLE_KEY")')
