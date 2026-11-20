@@ -28,6 +28,10 @@ jobs:
           BIB_ENABLED: ${{ vars.BIB_SCHEDULES_ENABLED }}
         run: |
           [ "$BIB_ENABLED" = "true" ] || { echo "::error title=BIB schedules::BIB_SCHEDULES_ENABLED must equal true in GitHub Environment production or Repository variables."; exit 78; }
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Call the site
         env:
           PROD_SITE_URL: ${{ vars.BIB_SITE_URL }}
@@ -48,4 +52,5 @@ jobs:
           case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
           test -n "$SITE_URL" || { echo "BIB_SITE_URL manquant"; exit 1; }
           test -n "$CRON_SECRET" || { echo "BIB_CRON_SECRET manquant"; exit 1; }
-          curl --fail-with-body -sS -X POST -H "Authorization: Bearer ${CRON_SECRET}" "${SITE_URL}/api/cron/news"
+          export SITE_URL="${SITE_URL%/}" CRON_SECRET
+          python scripts/run_cron.py --kind news
