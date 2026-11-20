@@ -175,14 +175,14 @@ class ReconcileTest(unittest.TestCase):
         sb = FakeStore(self.files)
         self.assertEqual(ps.reconcile(sb, self.tmp), 0)
         run = [r for t, r in sb.inserts if t == "ingestion_runs"][0]
-        self.assertEqual((run["kind"], run["status"], run["details"]["state"]), ("reconcile", "succeeded", "in_sync"))
+        self.assertEqual((run["kind"], run["status"], run["details"]["state"]), ("reconcile", "succeeded", "storage_verified"))
         self.assertFalse([t for t, _ in sb.inserts if t == "ops_incidents"])
 
     def test_repo_behind_is_detected_not_hidden(self):
         self.write_repo()
         (self.tmp / "headline.json").write_text("{}")
         sb = FakeStore(self.files)
-        self.assertEqual(ps.reconcile(sb, self.tmp), 3)
+        self.assertEqual(ps.reconcile(sb, self.tmp), 0, "Git is optional if DB and Storage are verified")
         self.assertEqual([r for t, r in sb.inserts if t == "ingestion_runs"][0]["details"]["repo"], ["headline.json"])
 
     def test_storage_mismatch_is_a_critical_incident(self):
