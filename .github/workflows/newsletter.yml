@@ -64,6 +64,10 @@ jobs:
               *) echo "step=send" >> "$GITHUB_OUTPUT" ;;
             esac
           fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Call the site
         if: steps.step.outputs.step != ''
         env:
@@ -85,6 +89,5 @@ jobs:
           case "$SITE_URL" in https://*) ;; *) echo "::error::HTTPS required"; exit 78 ;; esac
           test -n "$SITE_URL" || { echo "BIB_SITE_URL manquant"; exit 1; }
           test -n "$CRON_SECRET" || { echo "BIB_CRON_SECRET manquant"; exit 1; }
-          curl --fail-with-body -sS -X POST \
-            -H "Authorization: Bearer ${CRON_SECRET}" \
-            "${SITE_URL}/api/cron/newsletter?step=${{ steps.step.outputs.step }}"
+          export SITE_URL="${SITE_URL%/}" CRON_SECRET
+          python scripts/run_cron.py --kind newsletter --step "${{ steps.step.outputs.step }}"
