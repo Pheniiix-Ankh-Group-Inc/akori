@@ -234,3 +234,11 @@ jobs:
           echo "::error title=State of BIB::le site n'a pas confirmé la version ${VERSION:-courante} (HTTP $code)."
           exit 1
 
+      - name: Verify actual public State of BIB figures (EN + FR + homepage)
+        if: steps.reconcile.outputs.current_version != ''
+        env:
+          SITE_URL: ${{ vars.BIB_SITE_URL }}
+          VERSION: ${{ steps.reconcile.outputs.current_version }}
+        run: |
+          python scripts/verify_sob_public.py --site-url "${SITE_URL%/}" --version "$VERSION"
+

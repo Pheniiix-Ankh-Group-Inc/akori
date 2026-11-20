@@ -96,6 +96,18 @@ describe("BIB automation workflow contracts", () => {
     expect(workflow("newsletter.yml")).toContain("--kind newsletter --step")
   })
 
+  it("checks public SSR figures after State of BIB publication", () => {
+    const y = workflow("refresh-data.yml")
+    expect(y).toContain("python scripts/verify_sob_public.py")
+    expect(y).toContain("Verify actual public State of BIB figures")
+  })
+
+  it("HSTS preload verification must not match unrelated resource preload headers", () => {
+    const y = workflow("ci.yml")
+    expect(y).toContain("grep -i '^strict-transport-security:' | grep -qi 'preload'")
+    expect(y).not.toContain("echo \"$headers\" | grep -qi 'preload'")
+  })
+
   it("State of BIB automatically ingests and publishes without merging to main", () => {
     const y = workflow("refresh-data.yml")
     expect(y).toContain('cron: "7 * * * *"')
