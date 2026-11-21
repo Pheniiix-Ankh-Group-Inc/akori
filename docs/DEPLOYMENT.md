@@ -95,6 +95,31 @@ pointent tous deux vers l'unique base Supabase `akori`.** Les secrets CRON
 et les listes de test Brevo peuvent être distincts ; ne jamais exécuter de
 scénario destructif ou de nettoyage de données réelles en Preview.
 
+### Dossiers conservés dans GitHub mais exclus du déploiement Vercel
+
+Le fichier `.vercelignore` à la racine du dépôt exclut **uniquement**
+`docs/` et `supabase/` du déploiement de l'application. Le fichier
+`next.config.ts` répète l'exclusion dans `outputFileTracingExcludes`
+pour les traces des fonctions serveur Next.js et du serveur de production.
+
+- **Conservés dans GitHub** : documentation, migrations, bootstrap, scripts
+  d'exploitation et tests SQL. GitHub Actions continue à utiliser
+  `supabase/migrations/` et `supabase/tests/` dans le job SQL.
+- **Absents du package de production Vercel** : `docs/` et `supabase/`.
+  Ne pas déplacer ces répertoires dans `public/` ni les importer dans une route
+  de l'application ; ils ne doivent pas servir de dépendances d'exécution.
+- **Toujours disponibles pour le site** : `src/`, `public/`, le répertoire
+  `data/state-of-bib/` (repli local de diagnostic), et les API qui lisent
+  Supabase via les variables d'environnement.
+- **Règle de changement** : tester via les workflows GitHub
+  `feature/* → develop → main`, puis vérifier Vercel Production et les
+  chiffres State of BIB. Les migrations sont exécutées par le processus
+  GitHub/Supabase dédié, **jamais** comme étape implicite du build Vercel.
+
+Cette séparation concerne les fichiers de l'artefact déployé. Elle ne
+masque pas le contenu d'un dépôt Git public et ne désactive pas les
+autorisations Supabase ou les contrôles de sécurité applicatifs.
+
 ## 4. Sanity (retrait)
 
 Le code Sanity a été retiré ; les schémas sont archivés dans
