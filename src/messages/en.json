@@ -1347,7 +1347,7 @@
       "titleEm": "Spotlight",
       "tagline": "Founders. Their stories. Told in person.",
       "lede": "One startup at a time, Black in Blockchain tells the story of Black founders building with blockchain: where they come from, what they are solving, what they have already proven.",
-      "ctaFeatured": "Read the current portrait",
+      "ctaFeatured": "Our selection",
       "ctaLive": "Founder Story Live",
       "photoAlt": "Placeholder: photographic portrait of the featured founder or founders",
       "photoLabel": "[Full-frame photographic portrait, 4:5 — founder(s) of the current startup. Photo credit shown below the image.]",
@@ -1448,6 +1448,16 @@
       "title": "Follow the next Spotlights",
       "text": "Each new portrait is announced in the BIB newsletter, in the “BIB Highlights” section.",
       "cta": "Subscribe to the newsletter"
+    },
+    "status": {
+      "hero": "The first portrait is in preparation. Black in Blockchain will announce its selection after editorial review.",
+      "featured": "No startup has officially been featured in Startup Spotlight yet. BIB selects projects directly, without applications or fees. The first portrait will be published after the details are verified and the founders have approved publication.",
+      "stories": "No Founder Story has been published yet. The archive will appear once the first portraits have been released.",
+      "guests": "Featured startup: to be announced",
+      "pending": "To be confirmed",
+      "viewEvents": "View BIB events",
+      "eventDetails": "See the published event details and registration information.",
+      "noConfirmedEvent": "No Founder Story Live event is confirmed in the public calendar yet."
     }
   }
 }
