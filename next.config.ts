@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
 
+  // Source-only trees: preserve them in GitHub for CI, but never bundle them
+  // into Next.js server functions (even on Git-based Vercel deployments).
+  // Keep data/state-of-bib and public/data available to the application.
+  outputFileTracingExcludes: {
+    "/*": ["./docs/**/*", "./supabase/**/*"],
+    "next-server": ["./docs/**/*", "./supabase/**/*"],
+  },
+
   experimental: {
     // Import d'un export .ics Luma depuis l'admin (10 Mo max, vérifié dans l'action).
     serverActions: { bodySizeLimit: "11mb" },
