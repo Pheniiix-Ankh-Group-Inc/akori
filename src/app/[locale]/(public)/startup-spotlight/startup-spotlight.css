@@ -104,3 +104,8 @@
   .sp-story-photo { border-right: 0; border-bottom: 1px dashed var(--border-h); }
   .sp-featured { gap: 2rem; }
 }
+
+/* Real editorial empty states, until an approved founder portrait is published. */
+.sp-awaiting { background: var(--bg-2); border: 1px solid var(--border-h); border-radius: var(--r); color: var(--texte-2); display: flex; align-items: center; justify-content: center; padding: 2rem; line-height: 1.7; text-align: center; }
+.sp-empty { min-height: 200px; }
+.sp-empty .sp-body { max-width: 720px; }
