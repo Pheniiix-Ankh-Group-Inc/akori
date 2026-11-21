@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
+import { getPublishedEvents } from "@/lib/events/queries"
+import { eventText } from "@/lib/events/text"
 import "./startup-spotlight.css"
 
 type Props = { params: Promise<{ locale: string }> }
@@ -28,16 +30,12 @@ export default async function StartupSpotlightPage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "Spotlight" })
+  const { events } = await getPublishedEvents()
+  const spotlightEvent = events.find((e) => e.source_status !== "cancelled" && /startup spotlight|founder story/i.test(eventText(e, locale).title))
+  const eventDate = spotlightEvent ? new Intl.DateTimeFormat(locale, { dateStyle: "long", timeStyle: "short", timeZone: spotlightEvent.time_zone }).format(new Date(spotlightEvent.starts_at)) : null
 
   return (
     <main className="sp">
-      <div className="sp-fiction">
-        <div className="sp-fiction-inner">
-          <span className="sp-fict">{t("fiction.badge")}</span>
-          <span>{t("fiction.text")}</span>
-        </div>
-      </div>
-
       {/* A. Hero éditorial */}
       <section aria-labelledby="sp-hero">
         <div className="sp-hero">
@@ -58,43 +56,15 @@ export default async function StartupSpotlightPage({ params }: Props) {
               ))}
             </ul>
           </div>
-          <div role="img" aria-label={t("hero.photoAlt")} className="sp-photo sp-hero-photo">{t("hero.photoLabel")}</div>
+          <div role="status" className="sp-photo sp-hero-photo sp-awaiting">{t("status.hero")}</div>
         </div>
       </section>
 
       {/* B. Featured Startup */}
       <section id="featured" aria-labelledby="sp-featured" className="sp-band sp-band-white">
         <div className="sp-inner">
-          <div className="sp-head">
-            <div className="sp-head-text">
-              <p className="sp-eyebrow">{t("featured.eyebrow")}</p>
-              <h2 id="sp-featured" className="sp-h2">{t("featured.title")}</h2>
-            </div>
-            <span className="sp-fict">{t("featured.badge")}</span>
-          </div>
-          <article className="sp-featured">
-            <div className="sp-featured-photo">
-              <div role="img" aria-label={t("featured.photoAlt")} className="sp-photo sp-ratio-45">{t("featured.photoLabel")}</div>
-              <p className="sp-caption">{t("featured.caption")}</p>
-            </div>
-            <div className="sp-featured-body">
-              <div className="sp-brand">
-                <div role="img" aria-label={t("featured.logoAlt")} className="sp-photo sp-logo">{t("featured.logo")}</div>
-                <span className="sp-brand-name">{t("featured.name")}</span>
-              </div>
-              <dl className="sp-facts">
-                <div><dt>{t("featured.country")}</dt><dd>{t("featured.countryValue")}</dd></div>
-                <div><dt>{t("featured.sector")}</dt><dd>{t("featured.sectorValue")}</dd></div>
-                <div><dt>{t("featured.stage")}</dt><dd>{t("featured.stageValue")}</dd></div>
-              </dl>
-              <blockquote className="sp-quote">« <em>{t("featured.quote")}</em> »</blockquote>
-              <p className="sp-body">{t("featured.summary")}</p>
-              <div className="sp-cta-row sp-cta-center">
-                <a className="ed-btn ed-btn-dark" href="#featured">{t("featured.cta")}</a>
-                <span className="sp-small">{t("featured.meta")}</span>
-              </div>
-            </div>
-          </article>
+          <div className="sp-head"><div className="sp-head-text"><p className="sp-eyebrow">{t("featured.eyebrow")}</p><h2 id="sp-featured" className="sp-h2">{t("featured.title")}</h2></div></div>
+          <div className="sp-awaiting sp-empty" role="status"><p className="sp-body">{t("status.featured")}</p></div>
         </div>
       </section>
 
@@ -121,19 +91,8 @@ export default async function StartupSpotlightPage({ params }: Props) {
       {/* D. Founder Stories — un seul Spotlight publié */}
       <section aria-labelledby="sp-stories" className="sp-band sp-band-white">
         <div className="sp-inner sp-inner-tight">
-          <div className="sp-head">
-            <h2 id="sp-stories" className="sp-h2">{t("stories.title")}</h2>
-            <a className="ed-link" href="#featured">{t("stories.archives")}</a>
-          </div>
-          <a className="sp-story" href="#featured">
-            <div role="img" aria-label={t("stories.photoAlt")} className="sp-photo sp-story-photo">{t("stories.photoLabel")}</div>
-            <div className="sp-story-body">
-              <span className="sp-muted">{t("stories.meta")}</span>
-              <span className="sp-story-title">{t("stories.storyTitle")}</span>
-              <span className="sp-story-lede">{t("stories.lede")}</span>
-              <span className="sp-story-read">{t("stories.read")}</span>
-            </div>
-          </a>
+          <div className="sp-head"><h2 id="sp-stories" className="sp-h2">{t("stories.title")}</h2></div>
+          <p className="sp-body">{t("status.stories")}</p>
         </div>
       </section>
 
@@ -144,16 +103,16 @@ export default async function StartupSpotlightPage({ params }: Props) {
             <p className="sp-eyebrow sp-on-ink">{t("live.eyebrow")}</p>
             <h2 id="sp-live" className="sp-live-title">{t("live.title")} <em>{t("live.titleEm")}</em></h2>
             <p className="sp-live-text">{t("live.text")}</p>
-            <p className="sp-live-guests">{t("live.guests")}</p>
+            <p className="sp-live-guests">{spotlightEvent ? eventText(spotlightEvent, locale).title : t("status.guests")}</p>
           </div>
           <div className="sp-live-box">
             <dl>
-              <dt>{t("live.when")}</dt><dd>{t("live.whenValue")}</dd>
-              <dt>{t("live.city")}</dt><dd>{t("live.cityValue")}</dd>
-              <dt>{t("live.venue")}</dt><dd>{t("live.venueValue")}</dd>
+              <dt>{t("live.when")}</dt><dd>{eventDate ?? t("status.pending")}</dd>
+              <dt>{t("live.city")}</dt><dd>{spotlightEvent?.city ?? t("status.pending")}</dd>
+              <dt>{t("live.venue")}</dt><dd>{spotlightEvent?.source_location ?? t("status.pending")}</dd>
             </dl>
-            <Link href="/evenements" className="sp-live-btn">{t("live.cta")}</Link>
-            <p className="sp-live-note">{t("live.note")}</p>
+            {spotlightEvent ? <Link href={`/evenements/${spotlightEvent.slug}`} className="sp-live-btn">{t("live.cta")}</Link> : <Link href="/evenements" className="sp-live-btn">{t("status.viewEvents")}</Link>}
+            <p className="sp-live-note">{spotlightEvent ? t("status.eventDetails") : t("status.noConfirmedEvent")}</p>
           </div>
         </div>
       </section>
