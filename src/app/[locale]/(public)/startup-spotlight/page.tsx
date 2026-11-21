@@ -31,7 +31,7 @@ export default async function StartupSpotlightPage({ params }: Props) {
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "Spotlight" })
   const { events } = await getPublishedEvents()
-  const spotlightEvent = events.find((e) => e.source_status !== "cancelled" && /startup spotlight|founder story/i.test(eventText(e, locale).title))
+  const spotlightEvent = events.find((e) => e.source_status !== "cancelled" && new Date(e.starts_at).getTime() >= Date.now() && /startup spotlight|founder story/i.test(eventText(e, locale).title))
   const eventDate = spotlightEvent ? new Intl.DateTimeFormat(locale, { dateStyle: "long", timeStyle: "short", timeZone: spotlightEvent.time_zone }).format(new Date(spotlightEvent.starts_at)) : null
 
   return (
