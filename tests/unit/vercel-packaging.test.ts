@@ -33,6 +33,6 @@ describe("Vercel packaging: GitHub-only docs and database SQL", () => {
     expect(ci).toContain("bash supabase/tests/run.sh")
     expect(ci).toContain('glob.glob("supabase/migrations/*.sql")')
     expect(read("package.json")).toContain("bash supabase/tests/run.sh")
-    expect(read("docs/DEPLOYMENT.md")).toContain("dossiers conservés dans GitHub")
+    expect(read("docs/DEPLOYMENT.md")).toContain("Dossiers conservés dans GitHub")
   })
 })
