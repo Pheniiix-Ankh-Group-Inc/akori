@@ -97,7 +97,10 @@ scénario destructif ou de nettoyage de données réelles en Preview.
 
 ### Dossiers conservés dans GitHub mais exclus du déploiement Vercel
 
-Le fichier `.vercelignore` à la racine du dépôt exclut **uniquement**
+Le fichier `.vercelignore` à la racine du dépôt contient des chemins
+**ancrés à la racine** (`/docs/`, `/supabase/`). Cette précision évite
+d'exclure `src/lib/supabase/`, qui contient le client Supabase nécessaire à
+l'application. Il exclut **uniquement**
 `docs/` et `supabase/` du déploiement de l'application. Le fichier
 `next.config.ts` répète l'exclusion dans `outputFileTracingExcludes`
 pour les traces des fonctions serveur Next.js et du serveur de production.

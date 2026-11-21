@@ -11,7 +11,10 @@ describe("Vercel packaging: GitHub-only docs and database SQL", () => {
       .split(/\r?\n/)
       .map((s) => s.trim())
       .filter((s) => s && !s.startsWith("#"))
-    expect(lines).toEqual(["docs/", "supabase/"])
+    expect(lines).toEqual(["/docs/", "/supabase/"])
+    // Never exclude src/lib/supabase/, which contains runtime clients.
+    expect(lines).not.toContain("supabase/")
+    expect(lines).not.toContain("src/lib/supabase/")
     const gitignore = read(".gitignore")
     expect(gitignore).not.toMatch(/^\/?docs\/?$/m)
     expect(gitignore).not.toMatch(/^\/?supabase\/?$/m)

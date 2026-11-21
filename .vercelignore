@@ -1,5 +1,5 @@
 # BIB: keep developer documentation and database-as-code in GitHub,
 # but exclude both source trees from Vercel deployments.
 # GitHub Actions must still access supabase/migrations and supabase/tests.
-docs/
-supabase/
+/docs/
+/supabase/
