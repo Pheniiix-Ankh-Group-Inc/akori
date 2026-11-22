@@ -180,8 +180,9 @@ Total : 158 éléments — 148 masqués par défaut, 8 affichés (déclaratifs o
 
 ## Points à arbitrer (non modifiés)
 
-- Pages légales : la marque « AnbaChain / ANBACHAIN » apparaît dans les conditions
-  d'utilisation. Le nom de l'entité juridique responsable doit être confirmé avant
-  toute correction ; aucune validation juridique n'est revendiquée.
+- Pages légales : le nom de marque visible est désormais « Black in Blockchain ».
+  Le nom et la forme de l'entité juridique responsable restent à confirmer ;
+  aucune validation juridique n'est revendiquée. Le domaine et les adresses
+  de contact anbachain.org sont conservés sans changement technique.
 - Liens de navigation vers des sections masquées : l'ancre ne défile plus vers une
   section absente (aucune refonte de navigation effectuée).

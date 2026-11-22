@@ -14,6 +14,16 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Changed — uniform public Black in Blockchain branding (2026-11-22)
+
+- Replace legacy brand labels with **Black in Blockchain** in root page titles,
+  the publisher display label, and the legal page translations (FR/EN/ES).
+- Keep live `anbachain.org` DNS, `contact@anbachain.org`, Vercel project identifiers,
+  and historical release records intact; these require a separate migration, if desired.
+- Add a brand regression test; the actual legal entity and its registration details
+  still require confirmation before the legal notices can be considered finalized.
+
+
 ### Fixed — reuse existing GitHub Supabase secrets without confusing PostgreSQL and REST URLs
 
 - Map `SUPABASE_SERVICE_ROLE_KEY` to the canonical `SUPABASE_SECRET_KEY` variable in State of BIB jobs when a newer `SUPABASE_SECRET_KEY` is not available. Keep the legacy key server-only and document migration before its end-2026 deprecation.

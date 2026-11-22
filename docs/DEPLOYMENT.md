@@ -6,6 +6,15 @@ configurés, les workflows Luma et State of BIB s'exécutent automatiquement,
 sans validation éditoriale pour State of BIB. Les essais Preview doivent
 être non destructifs car ils utilisent la même base `akori`.
 
+
+**Cohérence de marque (22 novembre 2026).** Le nom affiché sur le site, dans
+les titres et les traductions légales est **Black in Blockchain**. L'identifiant
+du projet Vercel `anbachain`, les domaines `anbachain.org` et
+`www.anbachain.org`, ainsi que l'adresse `contact@anbachain.org`, sont
+conservés pour éviter une rupture des liens, DNS, e-mails et automatisations.
+Le nom et le statut de l'entité juridique des mentions légales doivent être
+confirmés séparément : un changement de marque ne vaut pas validation légale.
+
 ## 1. Base Supabase BIB unique — décision du propriétaire
 
 1. Utiliser **uniquement le projet existant `akori`** (référence `zwfyuhgnbdrjhetkyanj`, région Montréal). Aucun projet `bib-staging` ou `bib-production` supplémentaire n'est requis.
