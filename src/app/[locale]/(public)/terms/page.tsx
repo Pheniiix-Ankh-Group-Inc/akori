@@ -42,7 +42,7 @@ export default function TermsPage() {
               <strong className="legal-strong">
                 {t("sections.publisher.content.organization")}
               </strong>{" "}
-              ANBACHAIN
+              Black in Blockchain
               <br />
 
               <strong className="legal-strong">
