@@ -14,6 +14,14 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Security — private implementation for privileged Supabase RPCs (2026-11-22)
+
+- Applied migration `20261122205510_bib_harden_definer_rpc_exposure` directly to the shared `akori` Supabase database, then mirrored its SQL in Git.
+- Converted six exposed privileged RPC entrypoints to security-invoker wrappers, moved five privileged implementations to the non-exposed `private` schema, and kept existing admin/pipeline role checks.
+- Verified advisor lint: 6 prior SECURITY DEFINER exposure warnings removed. Three informational RLS notices remain unchanged.
+- Added regression coverage for API ACLs and RLS-based editor role lookup.
+
+
 ### Added — five completed institutional pages (2026-11-22)
 
 - Replace five public placeholders with localized About, Mission, Resources,

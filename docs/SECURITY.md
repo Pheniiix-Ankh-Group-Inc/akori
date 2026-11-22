@@ -203,3 +203,26 @@ Les captures Dependabot du propriétaire montrent 35 alertes ouvertes, dont 6 cr
 - Mise à jour ciblée de `minimatch` pour `@typescript-eslint/typescript-estree` : forcer une version corrigée `>=11.0.1` via un override pnpm auditable, actuellement résolu en `11.0.9`. Validation du lint et des tests nécessaire après l'upgrade majeur.
 - **`picomatch` reste dans l'outillage de développement**, et l'avis GHSA-fc5q-39xc-vjpf ne possède pas de version corrigée officielle à la date de ce rapport. Une **exception ciblée et temporaire**, approuvée le 17 novembre 2026 et détaillée ci-dessus, est autorisée pour permettre la fusion ; tout autre avis et tout chemin de production restent bloquants.
 - Le statut de remédiation doit être vérifié par `pnpm install --frozen-lockfile`, `pnpm test`, `pnpm build`, et les deux audits **bloquants** (hors l'exception GHSA unique documentée). Toute autre vulnérabilité qui dépasse le seuil d'audit bloque la release.
+
+## Séparation des RPC privilégiées (22 novembre 2026)
+
+La migration `20261122205510_bib_harden_definer_rpc_exposure.sql` a **déjà été
+appliquée** sur le projet partagé Supabase `akori` (référence
+`zwfyuhgnbdrjhetkyanj`). Ne pas rejouer la migration sur cette base.
+
+- `public.current_editor_role()` exécute sous l'identité du requérant et
+  respecte la politique RLS de `public.editors`.
+- Les cinq RPC sensibles gardent leurs noms et signatures publics, mais leurs
+  points d'entrée sont désormais `SECURITY INVOKER` avec contrôles explicites
+  de rôle. Les implémentations `SECURITY DEFINER` résident dans `private`,
+  schéma non exposé par l'API PostgREST.
+- Les rôles `authenticated` et `service_role` conservent les appels requis
+  par les actions d'administration et le pipeline automatisé. Le rôle `anon`
+  n'a aucun droit `EXECUTE` sur ces six points d'entrée.
+- L'audit Supabase après application ne rapporte **plus aucune** des six
+  alertes `authenticated_security_definer_function_executable`. Il conserve
+  trois alertes informatives `rls_enabled_no_policy`, sur des tables privées
+  accessibles uniquement côté service.
+
+Les fichiers SQL reflètent l'état déjà appliqué, ils ne doivent pas être
+exécutés manuellement une seconde fois sur le projet existant.
