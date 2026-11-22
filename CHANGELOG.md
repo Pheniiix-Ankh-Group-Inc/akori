@@ -14,6 +14,19 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Added — five completed institutional pages (2026-11-22)
+
+- Replace five public placeholders with localized About, Mission, Resources,
+  Press, and Contact content (FR/EN/ES) using existing BIB editorial styles.
+- Route the About navigation to /about, while preserving direct access to founders.
+- Provide genuine links to existing events, data, methodology and founder pages.
+- Route contact topics to the **existing** mail address `contact@anbachain.org`;
+  do not create a fake contact form or claim a configured messaging backend.
+- Keep Membership as a placeholder; leave domains, infrastructure, legal entity
+  claims and AI configuration unchanged.
+- Add page and language regression tests.
+
+
 ### Changed — uniform public Black in Blockchain branding (2026-11-22)
 
 - Replace legacy brand labels with **Black in Blockchain** in root page titles,

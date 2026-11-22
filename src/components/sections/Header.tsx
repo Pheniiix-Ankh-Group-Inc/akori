@@ -5,7 +5,7 @@ import { Link, usePathname } from "@/i18n/navigation"
 import { routing } from "@/i18n/routing"
 
 const NAV = [
-  { key: "about", href: "/fondateurs" },
+  { key: "about", href: "/about" },
   { key: "events", href: "/evenements" },
   { key: "inAction", href: "/en-action" },
   { key: "stateOfBib", href: "/state_of_bib" },
