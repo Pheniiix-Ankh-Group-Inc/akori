@@ -445,12 +445,61 @@ main section[id] { scroll-margin-top: 4.5rem; }
 [data-reveal="pending"] { opacity: 0; transform: translateY(12px); }
 [data-reveal="shown"] { opacity: 1; transform: none; transition: opacity 0.48s var(--ease), transform 0.48s var(--ease); }
 
+/* Accueil : sommaire numéroté sous l'en-tête. */
+.ed-toc { padding-bottom: 3rem; }
+.ed-toc ol { list-style: none; margin: 0; padding: 1.25rem 0 0; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 0.75rem 2.25rem; }
+.ed-toc a { display: inline-flex; gap: 0.6rem; align-items: baseline; font-size: 0.95rem; color: var(--texte-2); transition: color 0.2s; }
+.ed-toc a:hover, .ed-toc a:focus-visible { color: var(--accent-dk); }
+
+/* Bandeau défilant (texte décoratif, aria-hidden). Exception CSS : l'animation
+   en boucle n'est pas exprimable en utilitaires ; figée si mouvement réduit. */
+.ed-marquee { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.4rem 0; background: var(--bg); }
+.ed-marquee-track { display: flex; width: max-content; animation: ed-marquee 48s linear infinite; }
+.ed-marquee-group { display: flex; flex-shrink: 0; }
+.ed-marquee-item { font-family: var(--font-serif), Georgia, serif; font-weight: 300; font-style: italic; font-size: clamp(1.25rem, 2.2vw, 1.75rem); color: var(--texte-2); padding: 0 2.5rem; white-space: nowrap; }
+.ed-marquee-item::after { content: "·"; color: var(--accent); padding-left: 5rem; font-style: normal; }
+@keyframes ed-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Activités et engagements : colonnes à filet numérotées. */
+.ed-pillars { display: grid; gap: 2.5rem 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.ed-pillar { display: flex; flex-direction: column; gap: 0.9rem; padding-top: 1.5rem; border-top: 1px solid var(--blanc); }
+.ed-commitments { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); }
+.ed-commitments li { display: grid; grid-template-columns: 3rem minmax(0, 14rem) minmax(0, 1fr); gap: 1.5rem; align-items: baseline; padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
+.ed-method { display: flex; flex-direction: column; gap: 1rem; padding: 2rem; background: var(--bg); border-left: 2px solid var(--accent); }
+.ed-method p { color: var(--texte-2); line-height: 1.7; max-width: 44rem; }
+
+/* Témoignages publiés (BIB en action). */
+.ed-quotes { display: grid; gap: 2.5rem 3rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+.ed-quotes > .ed-eyebrow { grid-column: 1 / -1; }
+.ed-testimonial { margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+.ed-testimonial blockquote { margin: 0; font-family: var(--font-serif), Georgia, serif; font-weight: 300; font-size: 1.375rem; line-height: 1.45; color: var(--blanc); }
+.ed-testimonial figcaption { font-size: 0.9rem; color: var(--texte); }
+.ed-testimonial figcaption strong { color: var(--blanc); font-weight: 600; }
+
+/* Aperçu State of BIB : villes les plus actives. */
+.ed-cities ol { list-style: none; margin: 1.25rem 0 0; padding: 0; }
+.ed-city { display: grid; grid-template-columns: 2.5rem minmax(0, 12rem) minmax(0, 1fr) 9rem; gap: 1.25rem; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--texte-2); }
+.ed-city-name { font-family: var(--font-serif), Georgia, serif; font-size: 1.25rem; color: var(--bg); }
+.ed-city-name em { display: block; font-family: var(--font-sans), sans-serif; font-style: normal; font-size: 0.8rem; color: var(--ink-muted); }
+.ed-city-bar { height: 2px; background: var(--texte-2); }
+.ed-city-bar span { display: block; height: 100%; }
+.ed-city-count { text-align: right; font-size: 0.9rem; color: var(--border-h); }
+.ed-section-ink .ed-num { color: var(--accent-light); }
+.ed-section-ink .ed-city-bar span { background: var(--accent-light); }
+
+/* Bandeau de clôture. */
+.ed-closing .ed-grid-12 { align-items: end; }
+
 @media (max-width: 900px) {
   .ed-grid-12 > [class*="ed-col-"] { grid-column: 1 / -1; }
   .ed-hero { padding-top: 4.5rem; padding-bottom: 2.5rem; }
   .ed-hero-actions { justify-content: flex-start; }
   .ed-hero-media { padding-bottom: 4.5rem; }
   .ed-media-21x9, .ed-media-3x1 { aspect-ratio: 4 / 3; }
+  .ed-commitments li { grid-template-columns: 2.5rem minmax(0, 1fr); }
+  .ed-commitments li p { grid-column: 2; }
+  .ed-city { grid-template-columns: 2rem minmax(0, 1fr) auto; }
+  .ed-city-bar { display: none; }
 }
 @media (max-width: 520px) {
   .ed-event-row { grid-template-columns: 4rem minmax(0, 1fr); }
@@ -459,4 +508,5 @@ main section[id] { scroll-margin-top: 4.5rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .ed-marquee-track { animation: none; }
 }

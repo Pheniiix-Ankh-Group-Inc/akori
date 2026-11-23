@@ -48,21 +48,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function HomePage({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
-  const [t, hero, manifesto, tn, hb] = await Promise.all([
+  const [t, hero, manifesto, tn, hb, marquee, ti, tia] = await Promise.all([
     getTranslations({ locale, namespace: "Site.home" }),
     getTranslations({ locale, namespace: "Hero" }),
     getTranslations({ locale, namespace: "Manifesto" }),
     getTranslations({ locale, namespace: "Newsletter" }),
     getTranslations({ locale, namespace: "HomeBlocks" }),
+    getTranslations({ locale, namespace: "Marquee" }),
+    getTranslations({ locale, namespace: "Institutional" }),
+    getTranslations({ locale, namespace: "InAction" }),
   ])
-  const [{ events }, { stories, media }, sob] = await Promise.all([getPublishedEvents(), getPublishedStories(), loadSobState()])
+  const [{ events }, { stories, media, testimonials }, sob] = await Promise.all([getPublishedEvents(), getPublishedStories(), loadSobState()])
   const { upcoming, ongoing } = splitByTiming(events)
   const nextEvents = [...ongoing, ...upcoming].slice(0, 3)
   const views = toPublicMediaViews(media, locale)
   const latestStories = stories.slice(0, 3)
+  // Témoignages publiés (vue testimonials_public), dans la langue de la page uniquement.
+  const quotes = testimonials.filter((q) => q.locale === locale).slice(0, 2)
   const nf = new Intl.NumberFormat(intlLocale(locale))
   // Sans version State of BIB valide, aucun chiffre n'est affiché.
   const h = isSobAvailable(sob) ? sob.headline : null
+  const cities = isSobAvailable(sob) ? sob.topCities.slice(0, 5) : []
+  const cityMax = Math.max(1, ...cities.map((c) => c.devs_active_28d))
   const kpis = h
     ? ([
         { v: h.devs_active_28d, k: "devs" },
@@ -83,6 +90,22 @@ export default async function HomePage({ params }: Props) {
   const eventsVisual = hasVisual("events")
   const newsletterVisual = hasVisual("newsletter")
   const arrow = <span className="ed-arrow" aria-hidden="true">→</span>
+  const nav = await getTranslations({ locale, namespace: "Site.nav" })
+  const toc = [
+    { href: "/#a-propos", label: nav("about") },
+    { href: "/#ce-que-nous-faisons", label: ti("about.activitiesTitle") },
+    { href: "/#evenements", label: nav("events") },
+    { href: "/#en-action", label: nav("inAction") },
+    { href: "/#state-of-bib", label: nav("stateOfBib") },
+    { href: "/#newsletter", label: tn("title") },
+  ]
+  const marqueeItems = ["item1", "item2", "item3", "item4"].map((k) => marquee(k))
+  const activities = [
+    { k: "meet", href: "/evenements" },
+    { k: "learn", href: "/resources" },
+    { k: "observe", href: "/state_of_bib" },
+  ] as const
+  const pillars = ["connect", "share", "highlight"] as const
 
   return (
     <main>
@@ -105,6 +128,31 @@ export default async function HomePage({ params }: Props) {
           <EditorialImage name="home" locale={locale} ratio="21x9" sizes="(max-width: 1264px) 100vw, 1200px" priority />
         </div>
       )}
+      <nav className="ed-wrap ed-toc" aria-label={t("onThisPage")}>
+        <ol>
+          {toc.map((item, i) => (
+            <li key={item.href}>
+              <Link href={item.href}>
+                <span className="ed-num">{String(i + 1).padStart(2, "0")}</span>
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {/* Bandeau défilant : texte décoratif, masqué aux lecteurs d'écran, figé si mouvement réduit */}
+      <div className="ed-marquee" aria-hidden="true">
+        <div className="ed-marquee-track">
+          {[0, 1].map((copy) => (
+            <span key={copy} className="ed-marquee-group">
+              {marqueeItems.map((m) => (
+                <span key={m} className="ed-marquee-item">{m}</span>
+              ))}
+            </span>
+          ))}
+        </div>
+      </div>
 
       {/* À propos : prémisse et fondateurs */}
       <section id="a-propos" className="ed-section ed-section-white" aria-labelledby="home-about">
@@ -114,6 +162,7 @@ export default async function HomePage({ params }: Props) {
             <h2 id="home-about" className="ed-quote" dangerouslySetInnerHTML={{ __html: manifesto.raw("quote") as string }} />
             <div className="ed-prose" style={{ fontSize: "1.0625rem" }}>
               <p dangerouslySetInnerHTML={{ __html: manifesto.raw("body1") as string }} />
+              <p dangerouslySetInnerHTML={{ __html: manifesto.raw("body2") as string }} />
             </div>
             <Link href="/about" className="ed-link" style={{ alignSelf: "flex-start" }}>
               {ta("eyebrow")}&nbsp;{arrow}
@@ -137,6 +186,58 @@ export default async function HomePage({ params }: Props) {
                 </Link>
               </article>
             ))}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Ce que nous développons : les trois activités réelles du collectif */}
+      <section id="ce-que-nous-faisons" className="ed-section ed-section-sand" aria-labelledby="home-activities">
+        <div className="ed-wrap ed-grid-12" style={{ rowGap: "3.5rem" }}>
+          <p className="ed-eyebrow ed-col-3">{ti("about.eyebrow")}</p>
+          <div className="ed-col-from-4 ed-stack" style={{ gap: "1.25rem" }}>
+            <h2 id="home-activities" className="ed-h2">{ti("about.activitiesTitle")}</h2>
+            <p className="ed-lede" style={{ fontSize: "1.0625rem" }}>{ti("about.intro")}</p>
+          </div>
+          <Reveal className="ed-col-12 ed-pillars">
+            {activities.map((a, i) => (
+              <article key={a.k} className="ed-pillar">
+                <span className="ed-num">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="ed-h3">{ti(`about.${a.k}Title`)}</h3>
+                <p className="text-sm">{ti(`about.${a.k}Text`)}</p>
+                <Link href={a.href} className="ed-link" style={{ alignSelf: "flex-start", marginTop: "auto" }}>
+                  {ti(`about.${a.k}Link`)}&nbsp;{arrow}
+                </Link>
+              </article>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Notre cap : trois engagements et la méthode éditoriale */}
+      <section id="notre-cap" className="ed-section ed-section-white" aria-labelledby="home-mission">
+        <div className="ed-wrap ed-grid-12" style={{ rowGap: "3rem" }}>
+          <p className="ed-eyebrow ed-col-3">{ti("mission.eyebrow")}</p>
+          <div className="ed-col-from-4 ed-stack" style={{ gap: "1.25rem" }}>
+            <h2 id="home-mission" className="ed-h2">{ti("mission.pillarsTitle")}</h2>
+            <p className="ed-lede" style={{ fontSize: "1.0625rem" }}>{ti("mission.intro")}</p>
+          </div>
+          <Reveal className="ed-col-from-4">
+            <ol className="ed-commitments">
+              {pillars.map((p, i) => (
+                <li key={p}>
+                  <span className="ed-num">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="ed-h3">{ti(`mission.${p}Title`)}</h3>
+                  <p className="text-sm">{ti(`mission.${p}Text`)}</p>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+          <Reveal className="ed-col-from-4 ed-method">
+            <h3 className="ed-h3">{ti("mission.methodTitle")}</h3>
+            <p>{ti("mission.methodText")}</p>
+            <Link href="/mission" className="ed-link" style={{ alignSelf: "flex-start" }}>
+              {t("readMission")}&nbsp;{arrow}
+            </Link>
           </Reveal>
         </div>
       </section>
@@ -200,6 +301,20 @@ export default async function HomePage({ params }: Props) {
               })}
             </Reveal>
           )}
+          {quotes.length > 0 && (
+            <Reveal className="ed-quotes">
+              <h3 className="ed-eyebrow">{tia("testimonials")}</h3>
+              {quotes.map((q) => (
+                <figure key={q.id} className="ed-testimonial">
+                  <blockquote>{q.quote}</blockquote>
+                  <figcaption>
+                    <strong>{q.author_name}</strong>
+                    {q.author_role && <span> · {q.author_role}</span>}
+                  </figcaption>
+                </figure>
+              ))}
+            </Reveal>
+          )}
         </div>
       </section>
 
@@ -226,6 +341,23 @@ export default async function HomePage({ params }: Props) {
                   <span>{t(`kpi.${k.k}`)}</span>
                 </div>
               ))}
+            </Reveal>
+          )}
+          {cities.length > 0 && (
+            <Reveal className="ed-cities">
+              <h3 className="ed-eyebrow">{t("sobCitiesTitle")}</h3>
+              <ol>
+                {cities.map((c) => (
+                  <li key={c.city} className="ed-city">
+                    <span className="ed-num">{String(c.rank).padStart(2, "0")}</span>
+                    <span className="ed-city-name">{c.city}<em>{c.country}</em></span>
+                    <span className="ed-city-bar" aria-hidden="true">
+                      <span style={{ width: `${((c.devs_active_28d / cityMax) * 100).toFixed(1)}%` }} />
+                    </span>
+                    <span className="ed-city-count">{nf.format(c.devs_active_28d)} {t("sobCitiesUnit")}</span>
+                  </li>
+                ))}
+              </ol>
             </Reveal>
           )}
           {h ? (
@@ -262,6 +394,17 @@ export default async function HomePage({ params }: Props) {
             <NewsletterForm />
           </div>
         </div>
+      </section>
+
+      {/* Clôture : prochaine rencontre */}
+      <section className="ed-section ed-section-sand ed-closing" aria-labelledby="home-closing">
+        <Reveal className="ed-wrap ed-grid-12">
+          <h2 id="home-closing" className="ed-h1 ed-col-8">{ta("ctaTitle")}</h2>
+          <div className="ed-col-4 ed-hero-actions">
+            <Link href="/evenements" className="ed-btn ed-btn-dark">{ta("ctaEvents")}</Link>
+            <Link href="/mission" className="ed-link">{t("readMission")}&nbsp;{arrow}</Link>
+          </div>
+        </Reveal>
       </section>
     </main>
   )
