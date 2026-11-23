@@ -8,7 +8,7 @@ import { normalizeLumaUrl } from "@/lib/luma"
 
 /**
  * Carte d'événement (charte éditoriale).
- * - « compact » : bloc date + titre + horaire (accueil) ;
+ * - « compact » : ligne date + titre + horaire, format et lieu (accueil) ;
  * - « full » : idem + résumé, fiche et inscription Luma (page Événements).
  */
 export async function EventCard({ event, locale, variant = "compact" }: { event: EventRecord; locale: string; variant?: "compact" | "full" }) {
@@ -26,18 +26,24 @@ export async function EventCard({ event, locale, variant = "compact" }: { event:
   const href = `/evenements/${event.slug}`
 
   if (variant === "compact") {
+    // Ligne d'événement : la date respire, le titre domine, une seule ligne d'informations.
+    const meta = [formatEventDate(event.starts_at, event.time_zone, intlLocale(locale)), event.mode === "online" ? mode : [mode, place].filter(Boolean).join(" · ")]
+      .filter(Boolean)
+      .join(" · ")
     return (
-      <Link href={href} className="ed-card" style={{ flexDirection: "row", gap: "1.25rem", padding: "1.6rem" }}>
-        <div className="ed-date" aria-hidden="true">
+      <Link href={href} className="ed-event-row">
+        <span className="ed-event-row-date" aria-hidden="true">
           <span>{day.month}</span>
           <strong>{day.day}</strong>
-        </div>
-        <div className="ed-stack" style={{ gap: "0.45rem" }}>
-          <span className={cancelled ? "ed-pill ed-pill-danger" : timing === "ongoing" ? "ed-pill ed-pill-accent" : "ed-pill"}>{pill}</span>
-          <span className="ed-h3" style={{ fontSize: "1.35rem" }}>{tr.value.title}</span>
-          <span className="ed-muted" style={{ color: "var(--texte-2)" }}>{formatEventDate(event.starts_at, event.time_zone, intlLocale(locale))}</span>
-          {place && <span className="ed-muted" style={{ color: "var(--texte-2)" }}>{place}</span>}
-        </div>
+        </span>
+        <span className="ed-event-row-body">
+          {(cancelled || timing === "ongoing") && (
+            <span className={cancelled ? "ed-pill ed-pill-danger" : "ed-pill ed-pill-accent"}>{pill}</span>
+          )}
+          <span className="ed-event-row-title">{tr.value.title}</span>
+          <span className="ed-event-row-meta">{meta}</span>
+        </span>
+        <span className="ed-arrow" aria-hidden="true">→</span>
       </Link>
     )
   }

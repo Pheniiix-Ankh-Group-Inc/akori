@@ -9,6 +9,8 @@ import { intlLocale, pickTranslation } from "@/lib/content/locales"
 import { isSobAvailable, loadSobState } from "@/lib/sob/load"
 import { EventCard } from "@/components/events/EventCard"
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm"
+import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
+import { Reveal } from "@/components/ui/Reveal"
 
 // Keep the homepage current during brief upstream outages and recoveries;
 // verified State of BIB data itself still uses its protected 15-minute cache.
@@ -38,6 +40,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * Accueil (charte éditoriale). Uniquement des contenus réels : textes
  * validés, événements et rétrospectives publiés dans Supabase, chiffres du
  * dernier instantané State of BIB. Un bloc sans contenu n'est pas affiché.
+ * Direction artistique « Premium Minimalism » : typographie apaisée, filets,
+ * visuels éditoriaux (lieux, matières, paysages) affichés seulement une fois
+ * déposés en HD (voir src/lib/editorial/visuals.ts).
  */
 export default async function HomePage({ params }: Props) {
   const { locale } = await params
@@ -67,77 +72,97 @@ export default async function HomePage({ params }: Props) {
       ] as const)
     : []
 
+  const aboutLabel = (await getTranslations({ locale, namespace: "Site.nav" }))("about")
+  const eventsVisual = hasVisual("events")
+  const newsletterVisual = hasVisual("newsletter")
+
   return (
     <main>
-      {/* Hero */}
-      <section className="ed-wrap" style={{ paddingTop: "7rem", paddingBottom: "6rem" }}>
-        <div className="ed-stack" style={{ maxWidth: "56rem", gap: "1.75rem" }}>
+      {/* En-tête : texte à gauche, actions à droite, visuel pleine largeur dessous */}
+      <section className="ed-wrap ed-grid-12 ed-hero">
+        <div className="ed-col-8 ed-stack" style={{ gap: "1.75rem" }}>
           <p className="ed-eyebrow">{t("eyebrow")}</p>
           <h1 className="ed-display">
             Black <em>in</em> Blockchain
           </h1>
           <p className="ed-lede">{hero("lede")}</p>
-          <div className="ed-row" style={{ gap: "0.75rem" }}>
-            <Link href="/evenements" className="ed-btn ed-btn-dark">{t("ctaEvents")}</Link>
-            <Link href="/state_of_bib" className="ed-btn ed-btn-line">{t("ctaSob")}</Link>
-          </div>
+        </div>
+        <div className="ed-col-4 ed-hero-actions">
+          <Link href="/evenements" className="ed-btn ed-btn-dark">{t("ctaEvents")}</Link>
+          <Link href="/state_of_bib" className="ed-btn ed-btn-line">{t("ctaSob")}</Link>
         </div>
       </section>
+      {hasVisual("home") && (
+        <div className="ed-wrap ed-hero-media">
+          <EditorialImage name="home" locale={locale} ratio="21x9" sizes="(max-width: 1264px) 100vw, 1200px" priority />
+        </div>
+      )}
 
       {/* Prémisse */}
       <section className="ed-section ed-section-white" aria-labelledby="home-premise">
-        <div className="ed-wrap-narrow ed-stack" style={{ gap: "1.5rem" }}>
-          <h2 id="home-premise" className="ed-eyebrow">{t("premise")}</h2>
-          <p className="ed-quote" dangerouslySetInnerHTML={{ __html: manifesto.raw("quote") as string }} />
-          <Link href="/fondateurs" className="ed-link">{(await getTranslations({ locale, namespace: "Site.nav" }))("about")} →</Link>
+        <div className="ed-wrap ed-grid-12">
+          <h2 id="home-premise" className="ed-eyebrow ed-col-3">{t("premise")}</h2>
+          <Reveal className="ed-col-from-4 ed-stack" >
+            <p className="ed-quote" dangerouslySetInnerHTML={{ __html: manifesto.raw("quote") as string }} />
+            <Link href="/fondateurs" className="ed-link" style={{ alignSelf: "flex-start" }}>
+              {aboutLabel}&nbsp;<span className="ed-arrow" aria-hidden="true">→</span>
+            </Link>
+          </Reveal>
         </div>
       </section>
 
-      {/* Explorer BIB */}
+      {/* Explorer BIB : colonnes à filet */}
       <section className="ed-section" aria-labelledby="home-explore">
         <div className="ed-wrap">
-          <h2 id="home-explore" className="ed-h2" style={{ marginBottom: "2rem" }}>{t("exploreTitle")}</h2>
-          <div className="ed-grid-4">
-            {EXPLORE.map((x, i) => (
-              <Link key={x.key} href={x.href} className="ed-card">
-                <div className="ed-card-body">
-                  <span className="ed-num">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="ed-h3">{t(`explore.${x.key}.title`)}</span>
-                  <span className="text-sm">{t(`explore.${x.key}.desc`)}</span>
-                  <span className="ed-link" style={{ marginTop: "auto" }} aria-hidden="true">→</span>
-                </div>
+          <h2 id="home-explore" className="ed-h2" style={{ marginBottom: "3rem" }}>{t("exploreTitle")}</h2>
+          <Reveal className="ed-explore">
+            {EXPLORE.map((x) => (
+              <Link key={x.key} href={x.href}>
+                <span className="ed-explore-title">{t(`explore.${x.key}.title`)}</span>
+                <span className="text-sm">{t(`explore.${x.key}.desc`)}</span>
               </Link>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Événements à venir */}
       <section className="ed-section ed-section-white" aria-labelledby="home-events">
-        <div className="ed-wrap">
-          <div className="ed-head-row">
+        <div className="ed-wrap ed-grid-12">
+          <div className="ed-col-12 ed-head-row" style={{ marginBottom: "1rem" }}>
             <h2 id="home-events" className="ed-h2">{hb("eventsTitle")}</h2>
-            <Link href="/evenements" className="ed-link">{hb("eventsAll")} →</Link>
+            <Link href="/evenements" className="ed-link">
+              {hb("eventsAll")}&nbsp;<span className="ed-arrow" aria-hidden="true">→</span>
+            </Link>
           </div>
-          {nextEvents.length === 0 ? (
-            <p className="ed-note">{t("noEvents")}</p>
-          ) : (
-            <div className="ed-grid">
-              {nextEvents.map((e) => <EventCard key={e.id} event={e} locale={locale} />)}
-            </div>
+          {eventsVisual && (
+            <Reveal className="ed-col-5">
+              <EditorialImage name="events" locale={locale} ratio="4x5" sizes="(max-width: 900px) 100vw, 480px" />
+            </Reveal>
           )}
+          <Reveal className={eventsVisual ? "ed-col-from-7" : "ed-col-12"}>
+            {nextEvents.length === 0 ? (
+              <p className="ed-note">{t("noEvents")}</p>
+            ) : (
+              <div className="ed-event-list">
+                {nextEvents.map((e) => <EventCard key={e.id} event={e} locale={locale} />)}
+              </div>
+            )}
+          </Reveal>
         </div>
       </section>
 
-      {/* BIB en action — seulement s'il y a des rétrospectives publiées */}
+      {/* BIB en action — seulement s'il y a des rétrospectives publiées (vraies photos) */}
       {latestStories.length > 0 && (
         <section className="ed-section" aria-labelledby="home-in-action">
           <div className="ed-wrap">
             <div className="ed-head-row">
               <h2 id="home-in-action" className="ed-h2">{hb("inActionTitle")}</h2>
-              <Link href="/en-action" className="ed-link">{hb("inActionAll")} →</Link>
+              <Link href="/en-action" className="ed-link">
+                {hb("inActionAll")}&nbsp;<span className="ed-arrow" aria-hidden="true">→</span>
+              </Link>
             </div>
-            <div className="ed-grid">
+            <Reveal className="ed-grid">
               {latestStories.map((s) => {
                 const tr = pickTranslation(s.story_translations, locale)
                 const cover = s.cover_media_id ? views[s.cover_media_id] : undefined
@@ -154,28 +179,35 @@ export default async function HomePage({ params }: Props) {
                   </Link>
                 )
               })}
-            </div>
+            </Reveal>
           </div>
         </section>
       )}
 
-      {/* State of BIB — chiffres du dernier instantané */}
-      <section className="ed-section ed-section-white" aria-labelledby="home-sob">
-        <div className="ed-wrap">
-          <div className="ed-head-row">
+      {/* State of BIB — bandeau sur fond d'encre, chiffres du dernier instantané */}
+      <section className="ed-section ed-section-ink" aria-labelledby="home-sob">
+        <div className="ed-wrap ed-stack" style={{ gap: "3rem" }}>
+          {hasVisual("sob") && (
+            <Reveal>
+              <EditorialImage name="sob" locale={locale} ratio="3x1" sizes="(max-width: 1264px) 100vw, 1200px" />
+            </Reveal>
+          )}
+          <div className="ed-head-row" style={{ marginBottom: 0 }}>
             <h2 id="home-sob" className="ed-h2">{hb("sobTitle")}</h2>
-            <Link href="/state_of_bib" className="ed-link">{hb("sobLink")} →</Link>
+            <Link href="/state_of_bib" className="ed-btn ed-btn-line-inv">{hb("sobLink")}</Link>
           </div>
-          <div className="ed-stats">
-            {kpis.map((k) => (
-              <div key={k.k} className="ed-stat">
-                <strong>{nf.format(k.v)}</strong>
-                <span>{t(`kpi.${k.k}`)}</span>
-              </div>
-            ))}
-          </div>
+          {kpis.length > 0 && (
+            <Reveal className="ed-stats">
+              {kpis.map((k) => (
+                <div key={k.k} className="ed-stat">
+                  <strong>{nf.format(k.v)}</strong>
+                  <span>{t(`kpi.${k.k}`)}</span>
+                </div>
+              ))}
+            </Reveal>
+          )}
           {h ? (
-            <p className="ed-muted" style={{ marginTop: "1.5rem" }}>
+            <p className="ed-muted">
               {hb("sobNote", { date: h.snapshot_date })} · {t("sobScope")}
             </p>
           ) : (
@@ -186,20 +218,27 @@ export default async function HomePage({ params }: Props) {
 
       {/* Newsletter */}
       <section className="ed-section" id="newsletter" aria-labelledby="home-newsletter">
-        <div className="ed-wrap ed-split">
-          <div className="ed-stack" style={{ gap: "1.25rem" }}>
-            <h2 id="home-newsletter" className="ed-h2">{tn("title")}</h2>
-            <p className="ed-lede" style={{ fontSize: "1.1rem" }}>{tn("intro")}</p>
-            <ul className="ed-list-rows" style={{ marginTop: "0.5rem" }}>
-              {RUBRICS.map((r) => (
-                <li key={r} style={{ display: "block", padding: "0.9rem 0" }}>
-                  <strong style={{ color: "var(--blanc)", fontWeight: 600 }}>{tn(`rubrics.${r}.title`)}</strong>
-                  <span className="text-sm" style={{ display: "block" }}>{tn(`rubrics.${r}.desc`)}</span>
-                </li>
-              ))}
-            </ul>
+        <div className="ed-wrap ed-grid-12" style={{ alignItems: "center" }}>
+          {newsletterVisual && (
+            <Reveal className="ed-col-5">
+              <EditorialImage name="newsletter" locale={locale} ratio="4x5" sizes="(max-width: 900px) 100vw, 480px" />
+            </Reveal>
+          )}
+          <div className={newsletterVisual ? "ed-col-from-7 ed-stack" : "ed-col-12 ed-split"} style={{ gap: "2rem" }}>
+            <div className="ed-stack" style={{ gap: "1.25rem" }}>
+              <h2 id="home-newsletter" className="ed-h2">{tn("title")}</h2>
+              <p className="ed-lede" style={{ fontSize: "1.0625rem" }}>{tn("intro")}</p>
+              <ul className="ed-list-rows" style={{ marginTop: "0.5rem" }}>
+                {RUBRICS.map((r) => (
+                  <li key={r} style={{ display: "block", padding: "0.9rem 0" }}>
+                    <strong style={{ color: "var(--blanc)", fontWeight: 600 }}>{tn(`rubrics.${r}.title`)}</strong>
+                    <span className="text-sm" style={{ display: "block" }}>{tn(`rubrics.${r}.desc`)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <NewsletterForm />
           </div>
-          <NewsletterForm />
         </div>
       </section>
     </main>

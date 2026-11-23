@@ -9,6 +9,7 @@ import { SobExplorerProvider } from "@/components/state-of-bib/SobExplorer"
 import { SobPeriodBar } from "@/components/state-of-bib/SobPeriodBar"
 import { LazyMount } from "@/components/state-of-bib/LazyMount"
 import { Link } from "@/i18n/navigation"
+import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
 import { isSobAvailable, loadSobState, loadSobTrend } from "@/lib/sob/load"
 import { SobTrend } from "@/components/state-of-bib/SobTrend"
 import { getPublishedInsight } from "@/lib/sob/insights"
@@ -58,7 +59,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
         <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "6rem" }}>
           <div className="ed-stack" style={{ gap: "1.75rem", maxWidth: "46rem" }}>
             <p className="ed-eyebrow">{s("eyebrow")}</p>
-            <h1 className="ed-display" style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)" }}>
+            <h1 className="ed-h1">
               {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
             </h1>
             <div className="ed-note" role="status">
@@ -85,7 +86,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
       <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "4rem" }}>
         <div className="ed-stack" style={{ gap: "1.75rem" }}>
           <p className="ed-eyebrow">{s("eyebrow")}</p>
-          <h1 className="ed-display" style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)" }}>
+          <h1 className="ed-h1">
             {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
           </h1>
           <p className="ed-lede">{s("lede")}</p>
@@ -107,6 +108,11 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
           {origin === "fallback" && <p className="ed-note" role="note">{s("fallback")}</p>}
         </div>
       </section>
+      {hasVisual("sob") && (
+        <div className="ed-wrap ed-hero-media">
+          <EditorialImage name="sob" locale={locale} ratio="3x1" sizes="(max-width: 1264px) 100vw, 1200px" />
+        </div>
+      )}
 
       <section className="ed-section ed-section-white" aria-labelledby="sob-headline">
         <div className="ed-wrap ed-stack" style={{ gap: "2.5rem" }}>

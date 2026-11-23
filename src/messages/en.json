@@ -1420,5 +1420,12 @@
         "eventsLink": "See events",
         "privacyLink": "Privacy policy"
       }
-    }
+    },
+  "Visuals": {
+    "home": "Afternoon light through a concrete sunscreen, casting geometric shadows on an ivory wall",
+    "events": "Sunlit meeting room with rows of chairs before guests arrive",
+    "sob": "Aerial view of a coastal city at blue hour, lit streets forming a network",
+    "newsletter": "Annotated printed report, brass pen and coffee cup on linen",
+    "about": "Wooden jetty reaching into a calm sea at dawn"
+  }
 }

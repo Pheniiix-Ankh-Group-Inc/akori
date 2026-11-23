@@ -1420,5 +1420,12 @@
         "eventsLink": "Ver eventos",
         "privacyLink": "Política de privacidad"
       }
-    }
+    },
+  "Visuals": {
+    "home": "Luz de la tarde a través de una celosía de hormigón, con sombras geométricas sobre un muro marfil",
+    "events": "Sala de encuentro iluminada, con sillas alineadas antes de la llegada de los invitados",
+    "sob": "Vista aérea de una ciudad costera a la hora azul, con calles iluminadas que forman una red",
+    "newsletter": "Informe impreso anotado, pluma de latón y taza de café sobre lino",
+    "about": "Muelle de madera que se adentra en un mar en calma al amanecer"
+  }
 }

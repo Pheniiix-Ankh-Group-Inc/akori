@@ -1420,5 +1420,12 @@
         "eventsLink": "Voir les événements",
         "privacyLink": "Politique de confidentialité"
       }
-    }
+    },
+  "Visuals": {
+    "home": "Lumière d'après-midi à travers un brise-soleil, dessinant des ombres géométriques sur un mur ivoire",
+    "events": "Salle de rencontre baignée de lumière, chaises alignées avant l'arrivée des invités",
+    "sob": "Vue aérienne d'une ville côtière à l'heure bleue, rues éclairées formant un réseau",
+    "newsletter": "Rapport imprimé annoté, stylo en laiton et tasse de café posés sur du lin",
+    "about": "Ponton en bois s'avançant dans une mer calme à l'aube"
+  }
 }
