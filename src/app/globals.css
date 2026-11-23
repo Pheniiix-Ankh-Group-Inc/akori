@@ -212,7 +212,8 @@ a.ed-card:hover { border-color: var(--border-h); }
 .ed-logo { font-family: var(--font-serif), Georgia, serif; font-size: 1.4rem; color: var(--blanc); white-space: nowrap; }
 .ed-nav { display: flex; gap: 1.75rem; flex-grow: 1; justify-content: center; }
 .ed-nav a { font-size: 0.95rem; color: var(--blanc); min-height: 44px; display: inline-flex; align-items: center; }
-.ed-nav a:hover, .ed-nav a[aria-current="page"] { color: var(--accent); }
+.ed-nav a:hover, .ed-nav a[aria-current="page"], .ed-nav a[aria-current="location"] { color: var(--accent); }
+.ed-nav a { transition: color 0.2s; }
 .ed-header-tools { display: flex; align-items: center; gap: 0.75rem; }
 .ed-lang { display: flex; gap: 0.1rem; }
 .ed-lang a { font-size: 0.82rem; font-weight: 500; color: var(--texte); min-height: 44px; min-width: 36px; display: inline-flex; align-items: center; justify-content: center; }
@@ -435,6 +436,9 @@ a:hover .ed-arrow, a:focus-visible .ed-arrow { transform: translateX(4px); }
 .ed-founder-item .ed-portrait { aspect-ratio: 4 / 5; }
 .ed-founder-item .ed-portrait img { transition: transform 0.2s var(--ease); }
 .ed-founder-item:hover .ed-portrait img { transform: scale(1.02); }
+
+/* Landing page : les ancres ne passent pas sous l'en-tête collant. */
+main section[id] { scroll-margin-top: 4.5rem; }
 
 /* Apparition au défilement (composant Reveal) : seulement si JavaScript
    l'active, jamais pour le contenu déjà visible au chargement. */

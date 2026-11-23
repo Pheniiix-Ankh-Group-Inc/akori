@@ -1064,6 +1064,9 @@
         }
       },
       "noEvents": "No upcoming event has been published yet.",
+      "inActionEmpty": "The first recaps will be published after the next gathering.",
+      "eventsCalendar": "Full calendar",
+      "sobTeaser": "Blockchain developers across Africa and the Caribbean, measured every month as open data.",
       "sobScope": "These figures cover Africa and the Caribbean; they do not measure the diaspora.",
       "kpi": {
         "devs": "active developers over 28 days",

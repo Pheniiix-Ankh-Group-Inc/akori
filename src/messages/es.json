@@ -1064,6 +1064,9 @@
         }
       },
       "noEvents": "Todavía no se ha publicado ningún evento próximo.",
+      "inActionEmpty": "Las primeras retrospectivas se publicarán después del próximo encuentro.",
+      "eventsCalendar": "Calendario completo",
+      "sobTeaser": "Los desarrolladores blockchain en África y el Caribe, medidos cada mes con datos abiertos.",
       "sobScope": "Estas cifras cubren África y el Caribe; no miden la diáspora.",
       "kpi": {
         "devs": "desarrolladores activos en 28 días",

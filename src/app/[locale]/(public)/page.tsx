@@ -11,6 +11,8 @@ import { EventCard } from "@/components/events/EventCard"
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm"
 import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
 import { Reveal } from "@/components/ui/Reveal"
+import Image from "next/image"
+import { FOUNDERS } from "@/components/about/FounderProfile"
 
 // Keep the homepage current during brief upstream outages and recoveries;
 // verified State of BIB data itself still uses its protected 15-minute cache.
@@ -19,12 +21,6 @@ export const dynamic = "force-dynamic"
 type Props = { params: Promise<{ locale: string }> }
 
 const RUBRICS = ["blockchain_insights", "blockchain_news", "bib_events", "bib_highlights"] as const
-const EXPLORE = [
-  { key: "events", href: "/evenements" },
-  { key: "inAction", href: "/en-action" },
-  { key: "sob", href: "/state_of_bib" },
-  { key: "newsletter", href: "/#newsletter" },
-] as const
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -37,7 +33,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * Accueil (charte éditoriale). Uniquement des contenus réels : textes
+ * Accueil en landing page : une seule page qui enchaîne À propos (#a-propos),
+ * Événements (#evenements), BIB en action (#en-action), un aperçu State of BIB
+ * (le rapport complet reste sur /state_of_bib) et la newsletter (#newsletter).
+ * Les pages de détail (fiches, calendrier, profils) restent accessibles.
+ *
+ * Charte éditoriale. Uniquement des contenus réels : textes
  * validés, événements et rétrospectives publiés dans Supabase, chiffres du
  * dernier instantané State of BIB. Un bloc sans contenu n'est pas affiché.
  * Direction artistique « Premium Minimalism » : typographie apaisée, filets,
@@ -72,9 +73,16 @@ export default async function HomePage({ params }: Props) {
       ] as const)
     : []
 
-  const aboutLabel = (await getTranslations({ locale, namespace: "Site.nav" }))("about")
+  const ta = await getTranslations({ locale, namespace: "Site.about" })
+  const founders = await Promise.all(
+    FOUNDERS.map(async (f) => {
+      const ft = await getTranslations({ locale, namespace: f.ns })
+      return { ...f, name: ft("name"), role: ft("role") }
+    }),
+  )
   const eventsVisual = hasVisual("events")
   const newsletterVisual = hasVisual("newsletter")
+  const arrow = <span className="ed-arrow" aria-hidden="true">→</span>
 
   return (
     <main>
@@ -88,7 +96,7 @@ export default async function HomePage({ params }: Props) {
           <p className="ed-lede">{hero("lede")}</p>
         </div>
         <div className="ed-col-4 ed-hero-actions">
-          <Link href="/evenements" className="ed-btn ed-btn-dark">{t("ctaEvents")}</Link>
+          <Link href="/#evenements" className="ed-btn ed-btn-dark">{t("ctaEvents")}</Link>
           <Link href="/state_of_bib" className="ed-btn ed-btn-line">{t("ctaSob")}</Link>
         </div>
       </section>
@@ -98,41 +106,48 @@ export default async function HomePage({ params }: Props) {
         </div>
       )}
 
-      {/* Prémisse */}
-      <section className="ed-section ed-section-white" aria-labelledby="home-premise">
-        <div className="ed-wrap ed-grid-12">
-          <h2 id="home-premise" className="ed-eyebrow ed-col-3">{t("premise")}</h2>
+      {/* À propos : prémisse et fondateurs */}
+      <section id="a-propos" className="ed-section ed-section-white" aria-labelledby="home-about">
+        <div className="ed-wrap ed-grid-12" style={{ rowGap: "4rem" }}>
+          <p className="ed-eyebrow ed-col-3">{ta("eyebrow")}</p>
           <Reveal className="ed-col-from-4 ed-stack" >
-            <p className="ed-quote" dangerouslySetInnerHTML={{ __html: manifesto.raw("quote") as string }} />
-            <Link href="/fondateurs" className="ed-link" style={{ alignSelf: "flex-start" }}>
-              {aboutLabel}&nbsp;<span className="ed-arrow" aria-hidden="true">→</span>
+            <h2 id="home-about" className="ed-quote" dangerouslySetInnerHTML={{ __html: manifesto.raw("quote") as string }} />
+            <div className="ed-prose" style={{ fontSize: "1.0625rem" }}>
+              <p dangerouslySetInnerHTML={{ __html: manifesto.raw("body1") as string }} />
+            </div>
+            <Link href="/about" className="ed-link" style={{ alignSelf: "flex-start" }}>
+              {ta("eyebrow")}&nbsp;{arrow}
             </Link>
           </Reveal>
-        </div>
-      </section>
-
-      {/* Explorer BIB : colonnes à filet */}
-      <section className="ed-section" aria-labelledby="home-explore">
-        <div className="ed-wrap">
-          <h2 id="home-explore" className="ed-h2" style={{ marginBottom: "3rem" }}>{t("exploreTitle")}</h2>
-          <Reveal className="ed-explore">
-            {EXPLORE.map((x) => (
-              <Link key={x.key} href={x.href}>
-                <span className="ed-explore-title">{t(`explore.${x.key}.title`)}</span>
-                <span className="text-sm">{t(`explore.${x.key}.desc`)}</span>
-              </Link>
+          <div className="ed-col-3">
+            <h3 className="ed-h3">{ta("foundersTitle")}</h3>
+          </div>
+          <Reveal className="ed-col-from-4 ed-founders">
+            {founders.map((f) => (
+              <article key={f.slug} className="ed-founder-item">
+                <div className="ed-portrait">
+                  <Image src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 440px" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
+                </div>
+                <h4 className="ed-h3">
+                  <Link href={`/fondateurs/${f.slug}`}>{f.name}</Link>
+                </h4>
+                <span className="text-sm">{f.role}</span>
+                <Link href={`/fondateurs/${f.slug}`} className="ed-link" style={{ alignSelf: "flex-start" }}>
+                  {ta("readProfile")}&nbsp;{arrow}
+                </Link>
+              </article>
             ))}
           </Reveal>
         </div>
       </section>
 
       {/* Événements à venir */}
-      <section className="ed-section ed-section-white" aria-labelledby="home-events">
+      <section id="evenements" className="ed-section" aria-labelledby="home-events">
         <div className="ed-wrap ed-grid-12">
           <div className="ed-col-12 ed-head-row" style={{ marginBottom: "1rem" }}>
             <h2 id="home-events" className="ed-h2">{hb("eventsTitle")}</h2>
             <Link href="/evenements" className="ed-link">
-              {hb("eventsAll")}&nbsp;<span className="ed-arrow" aria-hidden="true">→</span>
+              {t("eventsCalendar")}&nbsp;{arrow}
             </Link>
           </div>
           {eventsVisual && (
@@ -152,16 +167,20 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      {/* BIB en action — seulement s'il y a des rétrospectives publiées (vraies photos) */}
-      {latestStories.length > 0 && (
-        <section className="ed-section" aria-labelledby="home-in-action">
-          <div className="ed-wrap">
-            <div className="ed-head-row">
-              <h2 id="home-in-action" className="ed-h2">{hb("inActionTitle")}</h2>
+      {/* BIB en action : vraies photos uniquement ; message si rien n'est encore publié */}
+      <section id="en-action" className="ed-section ed-section-white" aria-labelledby="home-in-action">
+        <div className="ed-wrap">
+          <div className="ed-head-row">
+            <h2 id="home-in-action" className="ed-h2">{hb("inActionTitle")}</h2>
+            {latestStories.length > 0 && (
               <Link href="/en-action" className="ed-link">
-                {hb("inActionAll")}&nbsp;<span className="ed-arrow" aria-hidden="true">→</span>
+                {hb("inActionAll")}&nbsp;{arrow}
               </Link>
-            </div>
+            )}
+          </div>
+          {latestStories.length === 0 ? (
+            <p className="ed-note">{t("inActionEmpty")}</p>
+          ) : (
             <Reveal className="ed-grid">
               {latestStories.map((s) => {
                 const tr = pickTranslation(s.story_translations, locale)
@@ -180,12 +199,12 @@ export default async function HomePage({ params }: Props) {
                 )
               })}
             </Reveal>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
-      {/* State of BIB — bandeau sur fond d'encre, chiffres du dernier instantané */}
-      <section className="ed-section ed-section-ink" aria-labelledby="home-sob">
+      {/* State of BIB : aperçu sur fond d'encre ; le rapport complet reste sur sa page */}
+      <section id="state-of-bib" className="ed-section ed-section-ink" aria-labelledby="home-sob">
         <div className="ed-wrap ed-stack" style={{ gap: "3rem" }}>
           {hasVisual("sob") && (
             <Reveal>
@@ -193,7 +212,10 @@ export default async function HomePage({ params }: Props) {
             </Reveal>
           )}
           <div className="ed-head-row" style={{ marginBottom: 0 }}>
-            <h2 id="home-sob" className="ed-h2">{hb("sobTitle")}</h2>
+            <div className="ed-stack" style={{ gap: "1rem" }}>
+              <h2 id="home-sob" className="ed-h2">{hb("sobTitle")}</h2>
+              <p className="ed-lede" style={{ fontSize: "1.0625rem" }}>{t("sobTeaser")}</p>
+            </div>
             <Link href="/state_of_bib" className="ed-btn ed-btn-line-inv">{hb("sobLink")}</Link>
           </div>
           {kpis.length > 0 && (
