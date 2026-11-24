@@ -6,6 +6,8 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+## [0.14.0] — 2026-11-24
+
 ### Fixed — November 24 site audit corrections (2026-11-24)
 
 - State of BIB: country names translated from ISO codes and common city names localized in French and Spanish (map, rankings, comparisons, home page); "Devs" labels translated.
