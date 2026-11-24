@@ -3,7 +3,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
 import { getPublishedEvents } from "@/lib/events/queries"
 import { eventText } from "@/lib/events/text"
+import { formatSpotlightDate, selectSpotlightEvent } from "@/lib/events/spotlight"
 import "./startup-spotlight.css"
+
+export const revalidate = 300
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -31,8 +34,8 @@ export default async function StartupSpotlightPage({ params }: Props) {
   setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: "Spotlight" })
   const { events } = await getPublishedEvents()
-  const spotlightEvent = events.find((e) => e.source_status !== "cancelled" && new Date(e.starts_at).getTime() >= Date.now() && /startup spotlight|founder story/i.test(eventText(e, locale).title))
-  const eventDate = spotlightEvent ? new Intl.DateTimeFormat(locale, { dateStyle: "long", timeStyle: "short", timeZone: spotlightEvent.time_zone }).format(new Date(spotlightEvent.starts_at)) : null
+  const spotlightEvent = selectSpotlightEvent(events, locale)
+  const eventDate = spotlightEvent ? formatSpotlightDate(spotlightEvent, locale) : null : null
 
   return (
     <main className="sp">
@@ -109,7 +112,7 @@ export default async function StartupSpotlightPage({ params }: Props) {
             <dl>
               <dt>{t("live.when")}</dt><dd>{eventDate ?? t("status.pending")}</dd>
               <dt>{t("live.city")}</dt><dd>{spotlightEvent?.city ?? t("status.pending")}</dd>
-              <dt>{t("live.venue")}</dt><dd>{spotlightEvent?.source_location ?? t("status.pending")}</dd>
+              <dt>{t("live.venue")}</dt><dd>{(spotlightEvent?.source_location || spotlightEvent?.venue_name || spotlightEvent?.address || t("status.pending"))}</dd>
             </dl>
             {spotlightEvent ? <Link href={`/evenements/${spotlightEvent.slug}`} className="sp-live-btn">{t("live.cta")}</Link> : <Link href="/evenements" className="sp-live-btn">{t("status.viewEvents")}</Link>}
             <p className="sp-live-note">{spotlightEvent ? t("status.eventDetails") : t("status.noConfirmedEvent")}</p>

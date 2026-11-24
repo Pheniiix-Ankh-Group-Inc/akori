@@ -630,8 +630,8 @@
   },
   "terms": {
     "metadata": {
-      "title": "Términos de uso — AnbaChain",
-      "description": "Términos de uso de la plataforma AnbaChain."
+      "title": "Términos de uso — Black in Blockchain",
+      "description": "Términos de uso de la plataforma Black in Blockchain."
     },
     "header": {
       "back": "Volver al inicio",
@@ -657,12 +657,12 @@
       },
       "ip": {
         "title": "3. Propiedad intelectual",
-        "p1": "El contenido de ANBACHAIN es propiedad exclusiva de ANBACHAIN o sus socios.",
+        "p1": "El contenido de Black in Blockchain es propiedad exclusiva de Black in Blockchain o sus socios.",
         "p2": "Cualquier uso sin autorización está prohibido."
       },
       "liability": {
         "title": "4. Limitación de responsabilidad",
-        "p1": "ANBACHAIN no garantiza la exactitud total de la información.",
+        "p1": "Black in Blockchain no garantiza la exactitud total de la información.",
         "p2": "No es responsable de sitios externos."
       },
       "financial": {
@@ -676,7 +676,7 @@
       },
       "modifications": {
         "title": "7. Modificaciones",
-        "p1": "ANBACHAIN puede modificar estos términos en cualquier momento."
+        "p1": "Black in Blockchain puede modificar estos términos en cualquier momento."
       },
       "contact": {
         "title": "8. Contacto",
@@ -1332,6 +1332,96 @@
     "contactText": "Para señalar un error o hacer una pregunta sobre estos datos, utilice la página Contacto.",
     "back": "Volver a State of BIB"
   },
+  "Institutional": {
+      "about": {
+        "eyebrow": "El colectivo",
+        "intro": "Black in Blockchain es un espacio para conectar, intercambiar ideas y explorar la blockchain y los sistemas descentralizados, centrado en profesionales negros y las comunidades que impulsan este ecosistema.",
+        "approachTitle": "Una comunidad que conecta trayectorias",
+        "approachText": "BIB reúne a personas con experiencias diversas: emprendedores, desarrolladores, creadores y quienes sienten curiosidad por la blockchain. Buscamos conexiones útiles sin pretender representar todo el ecosistema.",
+        "foundersLink": "Conocer a los fundadores",
+        "activitiesTitle": "Lo que estamos construyendo",
+        "meetTitle": "Encontrarnos",
+        "meetText": "Eventos para descubrir proyectos, hacer preguntas y crear vínculos.",
+        "meetLink": "Ver eventos",
+        "learnTitle": "Compartir conocimientos",
+        "learnText": "Recursos y conversaciones para comprender mejor Web3.",
+        "learnLink": "Explorar recursos",
+        "observeTitle": "Documentar el ecosistema",
+        "observeText": "State of BIB presenta datos con fuentes, métodos y limitaciones.",
+        "observeLink": "Explorar State of BIB",
+        "missionCta": "Un propósito compartido que se expresa en nuestra misión.",
+        "missionLink": "Leer nuestra misión"
+      },
+      "mission": {
+        "eyebrow": "Nuestro rumbo",
+        "intro": "Crear espacios donde profesionales negros de la blockchain puedan conectar, aprender juntos y dar visibilidad a sus iniciativas con apertura y rigor.",
+        "pillarsTitle": "Tres compromisos",
+        "connectTitle": "Conectar",
+        "connectText": "Fomentar intercambios entre personas, comunidades y proyectos de diferentes orígenes.",
+        "shareTitle": "Transmitir",
+        "shareText": "Hacer más accesible la blockchain mediante conversaciones y recursos contextualizados.",
+        "highlightTitle": "Dar visibilidad",
+        "highlightText": "Dar protagonismo a personas y proyectos con una mirada editorial cuidadosa y rigurosa.",
+        "methodTitle": "Diálogo y pruebas",
+        "methodText": "Valoramos las conversaciones, las fuentes identificables y la diferencia entre hechos verificados, historias personales y planes futuros. No presentamos las aspiraciones como resultados realizados.",
+        "eventsLink": "Descubrir eventos",
+        "sourcesLink": "Consultar nuestras fuentes"
+      },
+      "resources": {
+        "eyebrow": "Explorar",
+        "intro": "Encuentra contenidos y herramientas ya disponibles en Black in Blockchain. Preferimos materiales accesibles y documentados a prometer recursos que aún no existen.",
+        "exploreTitle": "Descubrir y profundizar",
+        "exploreText": "Estos enlaces llevan a secciones reales del sitio, que evolucionan con nuevas publicaciones.",
+        "stateTitle": "State of BIB",
+        "stateText": "Explora indicadores de blockchain cuando haya datos verificados publicados.",
+        "sourcesTitle": "Fuentes y metodología",
+        "sourcesText": "Comprender el origen y tratamiento de los datos y sus limitaciones.",
+        "eventsTitle": "Eventos BIB",
+        "eventsText": "Consultar encuentros anunciados e información disponible sobre ediciones anteriores.",
+        "peopleTitle": "Los fundadores de BIB",
+        "peopleText": "Conocer a las personas detrás del colectivo y sus trayectorias.",
+        "openResource": "Consultar",
+        "futureTitle": "Una biblioteca en crecimiento",
+        "futureText": "Podrán añadirse guías educativas con el tiempo. Solo aparecerán cuando estén disponibles.",
+        "newsletterLink": "Seguir las próximas publicaciones"
+      },
+      "press": {
+        "eyebrow": "Sala de prensa",
+        "intro": "Información para periodistas que desean conocer Black in Blockchain, conversar con sus representantes o preparar una cobertura editorial.",
+        "overviewTitle": "Black in Blockchain en resumen",
+        "overviewText": "Black in Blockchain es un colectivo centrado en la blockchain, los sistemas descentralizados y las trayectorias de profesionales negros. Nuestras actividades facilitan conexiones y dan visibilidad a iniciativas.",
+        "storiesTitle": "Personas y proyectos",
+        "storiesText": "Historias de emprendedores y personas que contribuyen al ecosistema Web3.",
+        "eventsTitle": "Encuentros comunitarios",
+        "eventsText": "Conversaciones y eventos sobre proyectos y desafíos de blockchain.",
+        "dataTitle": "Datos y perspectivas",
+        "dataText": "Un enfoque documental que explica las fuentes y los límites de los datos.",
+        "contactTitle": "Consultas de prensa y entrevistas",
+        "contactText": "Para entrevistas, verificar datos o proponer colaboraciones editoriales, contacta al equipo de BIB.",
+        "assetsNote": "Los materiales visuales autorizados pueden solicitarse por correo electrónico. Todavía no existe un kit de prensa descargable.",
+        "emailLink": "Escribir al equipo de prensa",
+        "contactLink": "Otras opciones de contacto"
+      },
+      "contact": {
+        "eyebrow": "Hablemos",
+        "intro": "¿Tienes una pregunta sobre Black in Blockchain, una propuesta de alianza o una consulta de prensa? Escríbenos indicando el tema.",
+        "channelsTitle": "¿Cómo podemos ayudarte?",
+        "channelsText": "Estos enlaces abren tu aplicación de correo con un asunto predefinido. No se requiere cuenta ni formulario.",
+        "generalTitle": "Consultas generales",
+        "generalText": "El colectivo, el sitio web y sus contenidos.",
+        "partnersTitle": "Alianzas",
+        "partnersText": "Ideas de colaboración o apoyo a BIB.",
+        "eventsTitle": "Eventos",
+        "eventsText": "Preguntas sobre los encuentros y su organización.",
+        "pressTitle": "Prensa y entrevistas",
+        "pressText": "Solicitudes de entrevistas, citas o documentación.",
+        "writeLink": "Escribir",
+        "directTitle": "Correo de contacto",
+        "privacyNote": "No envíes información sensible ni documentos confidenciales por correo sin protección. No se garantiza un plazo de respuesta concreto.",
+        "eventsLink": "Ver eventos",
+        "privacyLink": "Política de privacidad"
+      }
+    },
   "Spotlight": {
     "meta": {
       "title": "Startup Spotlight — Black in Blockchain",
