@@ -7,7 +7,7 @@ Black in Blockchain is a multilingual community platform focused on blockchain e
 ## Contents
 
 - [Overview](#overview)
-- [Implementation and release status](#implementation-and-release-status)
+- [Implementation and operational status](#implementation-and-operational-status)
 - [Technology stack](#technology-stack)
 - [Features](#features)
 - [Data flows](#data-flows)
@@ -18,7 +18,8 @@ Black in Blockchain is a multilingual community platform focused on blockchain e
 - [Automation](#automation)
 - [Deployment](#deployment)
 - [Security](#security)
-- [Pre-production readiness](#pre-production-readiness)
+- [Versions and releases](#versions-and-releases)
+- [Known gaps](#known-gaps)
 - [Further documentation](#further-documentation)
 - [License](#license)
 
@@ -33,28 +34,25 @@ The platform includes:
 - A **French/English newsletter** powered by Brevo.
 - **Invitation-only administration** at `/admin`.
 
-The `akori` repository contains a Next.js application, Supabase SQL migrations and tests, a Python data pipeline, and GitHub Actions workflows. It does **not** provision cloud resources or contain live credentials.
+This repository (`Pheniiix-Ankh-Group-Inc/BiB`) contains a Next.js application, Supabase SQL migrations and tests, a Python data pipeline, and GitHub Actions workflows. It does **not** provision cloud resources or contain live credentials.
 
-## Implementation and release status
+## Implementation and operational status
 
-**Implemented does not mean deployed; deployed does not mean production-validated.** The table distinguishes code coverage from actual third-party integration and production readiness.
+**Implemented does not mean live.** Status checked on **November 24, 2026** against the shared Supabase project `akori`, Vercel and GitHub.
 
-| Module | Implemented | Offline / CI tests | External services verified | Real-environment validation | Production-ready |
-| --- | --- | --- | --- | --- | --- |
-| Public website (EN/FR/ES) | Yes | Yes | Not required for basic rendering | No complete live acceptance test | No |
-| Events (Luma → Supabase) | Yes | Yes, simulated feeds | Calendar ID and URLs confirmed by project owner; DB sync not yet executed | No | No |
-| BIB in Action | Yes | Yes | Schema/storage reported applied; live media flow unverified | No | No |
-| State of BIB pipeline / publishing | Yes | Yes, simulated source | Production workflow configuration unverified | No live source-to-site run | No |
-| AI-generated State of BIB insights | Yes | Yes, mocked provider | Live provider not verified | No | No |
-| Newsletter (DOI, editorial cycle, delivery) | Yes | Yes, mocked Brevo | Brevo credentials, templates, and sources unverified | No real delivery test | No |
-| Editorial administration | Yes | Yes | Admin provisioning not verified in staging | No live end-to-end test | No |
-| Scheduled workflows | Yes | CI validated; schedules not exercised | GitHub/Vercel secrets unverified | No | No |
+| Module | Code | Live state (Nov 24, 2026) |
+| --- | --- | --- |
+| Public website (EN/FR/ES), landing page | Yes | Deployed; `main` = production, `develop` = Preview |
+| Events (Luma → Supabase) | Yes | Sync runs succeed; 1 event stored (Ed. 2, March 26, 2026), none upcoming |
+| BIB in Action | Yes | No recap, media or testimonial published yet |
+| State of BIB pipeline and page | Yes | 7 versions published automatically; latest `20261123T130700` |
+| AI-generated State of BIB insights | Yes | Not running: no AI provider configured |
+| Newsletter (DOI, editorial cycle, delivery) | Yes | Not running: subscriptions disabled (flag and pepper unset), no news source, no AI provider |
+| Startup Spotlight | Yes | Page live, no portrait published yet (not indexed) |
+| Editorial administration | Yes | One editor provisioned |
+| Release process | Yes | Tags and GitHub releases from `0.14.0` on (see [Versions and releases](#versions-and-releases)) |
 
-The live Supabase inspection (November 16–17, 2026) confirmed **13 migrations** (0001–0013), `sob=auto`, `sob_insights=auto`, `newsletter=review`, and **zero current events, dataset versions, ingestion runs, event sync runs, or active administrators**. The source manifest for State of BIB is currently reachable, but no data has been published.
-
-**Latest verified CI:** [GitHub Actions run 44008551701](https://github.com/Pheniiix-Ankh-Group-Inc/akori/actions/runs/44008551701) passed all three jobs (`web`, `data`, `sql`) on the pre-production correction branch: 245/245 Vitest tests (21 files), 63/63 Python tests, TypeScript, ESLint, Next.js build, SQL/RLS checks on disposable PostgreSQL, HTTP security-header checks, and a production dependency audit reporting no known vulnerabilities. These results **do not certify staging or production**.
-
-Until a valid State of BIB version has been published, its public interface displays an **unavailable state**, not unsubstantiated statistics.
+Until a valid State of BIB version is readable server-side, its public interface displays an **unavailable state**, not unsubstantiated statistics. Preview deployments need `SUPABASE_SECRET_KEY` in the Vercel Preview environment to show the data.
 
 ## Technology stack
 
@@ -74,15 +72,16 @@ Until a valid State of BIB version has been published, its public interface disp
 | CI and scheduling | GitHub Actions |
 | Hosting | Vercel |
 
-Package manager: **pnpm 10** with `pnpm-lock.yaml`. Runtime prerequisite: Node.js ≥ 20.9.
+Package manager: **pnpm 10** with `pnpm-lock.yaml`. Runtime: Node.js **24.x** (`engines`).
 
 ## Features
 
 ### Public website
 
-The public experience includes Home, About (`/fondateurs`), Events, BIB in Action, State of BIB, and legal pages (`/terms`, `/privacy`, `/cookies`, `/data-sources`).
-
-Six additional pages (`/about`, `/mission`, `/membership`, `/resources`, `/press`, `/contact`) currently render a shared **coming-soon** layout and are excluded from search indexing. See [Pages in Progress Audit](docs/PAGES_IN_PROGRESS_AUDIT.md).
+- **Home** is a single landing page with anchored sections: about and founders, activities, commitments, upcoming events, BIB in Action (with published testimonials), a State of BIB teaser (key figures and the five most active cities), the newsletter and a closing call to action. Unverified claims stay hidden (`src/lib/content/claims.ts`, `HOME_SHOW_UNVERIFIED_SECTIONS`).
+- **Pages:** About (`/about`), Founders (`/fondateurs`), Mission, Events, BIB in Action, State of BIB, Startup Spotlight, Resources, Press, Contact, Data sources, and legal pages (`/terms`, `/privacy`, `/cookies`).
+- **Membership** (`/membership`) is still a placeholder and is excluded from search indexing.
+- **Editorial visuals** (`src/lib/editorial/visuals.ts`) are currently low-resolution previews awaiting HD files.
 
 ### Events, calendar, and history
 
@@ -179,7 +178,7 @@ Newsletter
 
 ## Local development
 
-Prerequisites: Node.js ≥ 20.9, pnpm 10, and optionally Python 3.12 and local PostgreSQL for pipeline/SQL tests.
+Prerequisites: Node.js 24.x, pnpm 10, and optionally Python 3.12 and local PostgreSQL for pipeline/SQL tests.
 
 ```bash
 pnpm install --frozen-lockfile
@@ -255,7 +254,7 @@ The previously inspected `akori` project is dedicated to BIB. Do not reuse a dat
 
 ### Migrations
 
-Thirteen numbered migrations (0001–0013) were recorded as applied on `akori` during the November 16, 2026 inspection. Applied migrations must **never be rewritten or replayed**. Migration 0010 is a separately operated legacy cleanup script, not a regular `db push` migration.
+Fifteen migrations are recorded as applied on `akori` (November 24, 2026), including the State of BIB historical deltas and the privileged-RPC hardening of November 22. Applied migrations must **never be rewritten or replayed**. Migration 0010 is a separately operated legacy cleanup script, not a regular `db push` migration.
 
 | No. | Name | Purpose |
 | --- | --- | --- |
@@ -298,6 +297,7 @@ Schedules are gated by `BIB_SCHEDULES_ENABLED=true` and are intended to run only
 | `news-ingest.yml` | Daily, 10:41 UTC | Ingest approved feeds |
 | `newsletter.yml` | Monday/Tuesday/Wednesday and scheduled send-slot checks | Generate, review/check, and deliver validated editions |
 | `ci.yml` | Pull requests to `main` and `develop`, plus manual dispatch | Static checks, tests, build, and security audit |
+| `release.yml` | Manual (prepare) and on version change on `main` (publish) | Version bump, tag `vX.Y.Z`, GitHub release |
 
 **Note:** GitHub Actions schedules and manual dispatches for workflows not present on `main` cannot be treated as already operational. A ten-minute schedule is best effort, subject to provider/API limits and GitHub Actions quotas.
 
@@ -344,14 +344,19 @@ Before merging: lint, typecheck, unit tests, build, Python tests, SQL/RLS tests,
 
 See [Security Guide](docs/SECURITY.md).
 
-## Pre-production readiness
+## Versions and releases
 
-The corrective work is tracked in **[PR #33](https://github.com/Pheniiix-Ankh-Group-Inc/akori/pull/33)** and [Pre-production Readiness Report](docs/audits/BIB_PREPROD_READINESS.md).
+Versions follow [Semantic Versioning](https://semver.org/) and are recorded in [CHANGELOG.md](CHANGELOG.md). Every change merged into `develop` adds a line under `[Unreleased]`.
 
-- **Previously verified in CI:** 245 Vitest tests, 63 Python tests, SQL/RLS on throwaway PostgreSQL, ESLint, TypeScript, build, dependency audit, security headers, and client-bundle secret checks. New changes require a fresh CI run.
-- **Not verified in real environments:** live Luma ingestion (calendar ID and URLs have been confirmed by the owner), State of BIB ingestion/public display, Brevo and double opt-in, AI provider, media permissions, and end-to-end admin workflows on the shared Supabase project.
-- **Operational safety boundaries:** no remote migrations or live newsletter sends were performed by this code change. Preview and Production share the existing database by design. Newsletter stays in `review`; State of BIB and its insights remain in `auto`.
-- **Release decision:** the code is not yet production-validated; the old weekly workflow is still on `main`. Automated State of BIB publishing requires the new workflow to be merged onto `main` with correct GitHub Actions/Vercel credentials and `BIB_SCHEDULES_ENABLED=true` plus `SOB_SUPABASE_SYNC=true`. No human publication approval is required.
+1. **Prepare** — GitHub → Actions → **Release** → *Run workflow*, action `preparer`, version `x.y.z` (or locally `pnpm release:prepare x.y.z`). The `[Unreleased]` notes become `## [x.y.z] — date`, `package.json` is bumped, and a `release: vx.y.z` pull request is opened against `develop`.
+2. **Ship** — merge that pull request, then `develop` into `main` as usual.
+3. **Publish (automatic)** — when the new version reaches `main`, the workflow tags that commit `vx.y.z` and publishes the GitHub release with the changelog notes. Existing tags are never moved.
+
+Versions up to `0.13.0` are historical entries without Git tags; `0.14.0` is the first tagged release. Full procedure: [Releasing](docs/RELEASING.md).
+
+## Known gaps
+
+Tracked in the November 24, 2026 site audit: legal pages to rewrite (privacy policy describes data the site does not collect; publisher details missing), no upcoming event published, newsletter and AI insights not configured, city and country names not localized on State of BIB, no `sitemap.xml`/`robots.txt`/Open Graph image, provisional editorial visuals.
 
 ## Further documentation
 
@@ -366,8 +371,8 @@ The corrective work is tracked in **[PR #33](https://github.com/Pheniiix-Ankh-Gr
 | [Operations Runbook](docs/OPERATIONS_RUNBOOK.md) | Monitoring and incident response |
 | [Editorial Workflows](docs/EDITORIAL_WORKFLOWS.md) | Editorial procedures |
 | [Supabase Migration Plan](docs/SUPABASE_MIGRATION_PLAN.md) | Migration sequencing and history |
-| [Pages in Progress Audit](docs/PAGES_IN_PROGRESS_AUDIT.md) | Unfinished public pages |
-| [Pre-production Readiness](docs/audits/BIB_PREPROD_READINESS.md) | Known gaps, remediation, rollout prerequisites |
+| [Releasing](docs/RELEASING.md) | Versions, tags and GitHub releases |
+| [Pre-production Readiness](docs/audits/BIB_PREPROD_READINESS.md) | Historical pre-production report (November 2026) |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 
 ## License

@@ -1,6 +1,6 @@
 {
   "name": "black-in-blockchain",
-  "version": "0.3.0",
+  "version": "0.13.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,7 +13,9 @@
     "test:sql": "bash supabase/tests/run.sh",
     "test:e2e": "node tests/e2e/state-of-bib.e2e.mjs",
     "test:e2e:rules": "node tests/e2e/public-rules.e2e.mjs",
-    "test:sob-fixture": "node tests/helpers/sob-fixture.mjs"
+    "test:sob-fixture": "node tests/helpers/sob-fixture.mjs",
+    "release:prepare": "node scripts/release/prepare.mjs",
+    "release:notes": "node scripts/release/notes.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

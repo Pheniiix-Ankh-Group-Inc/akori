@@ -1,0 +1,119 @@
+name: Release — versions, tags et notes
+
+# Deux étapes, sans jamais pousser directement sur main (branche protégée) :
+#
+# 1. « Préparer » (lancement manuel, Actions → Release → Run workflow) :
+#    part de develop, passe [Unreleased] du CHANGELOG en [x.y.z] — date,
+#    met package.json à x.y.z et ouvre la PR « release: vx.y.z » vers develop.
+# 2. « Publier » (automatique) : quand un package.json à une nouvelle version
+#    arrive sur main, crée le tag vx.y.z sur ce commit et la release GitHub
+#    avec les notes du CHANGELOG. Relançable à la main (action = publier,
+#    branche main) si besoin. Un tag existant n'est jamais déplacé.
+#
+# Procédure complète : docs/RELEASING.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "preparer (depuis develop) ou publier (depuis main)"
+        type: choice
+        options: [preparer, publier]
+        default: preparer
+      version:
+        description: "Version à préparer, au format x.y.z (ex. 0.14.0) — ignorée pour publier"
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths: [package.json]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'preparer'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Préparer CHANGELOG.md et package.json
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          VERSION="${VERSION#v}"
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error title=Version::format attendu x.y.z, reçu « $VERSION »"; exit 1; }
+          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null; then
+            echo "::error title=Version::le tag v$VERSION existe déjà"; exit 1
+          fi
+          node scripts/release/prepare.mjs "$VERSION"
+          node scripts/release/notes.mjs "$VERSION" > "$RUNNER_TEMP/notes.md"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - name: Ouvrir la PR de version vers develop
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="release/v$VERSION"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add CHANGELOG.md package.json
+          git commit -m "release: v$VERSION"
+          git push origin "$BRANCH"
+          {
+            echo "Version **v$VERSION** préparée par le workflow Release."
+            echo
+            echo "Après fusion dans develop, puis de develop dans main, le tag \`v$VERSION\` et la release GitHub seront créés automatiquement."
+            echo
+            echo "## Notes de version"
+            echo
+            cat "$RUNNER_TEMP/notes.md"
+          } > "$RUNNER_TEMP/body.md"
+          if ! gh pr create --base develop --head "$BRANCH" --title "release: v$VERSION" --body-file "$RUNNER_TEMP/body.md"; then
+            echo "::warning title=PR non créée::les Actions ne peuvent pas ouvrir de PR dans ce dépôt. Ouvrir à la main : $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/develop...$BRANCH"
+          fi
+
+  publish:
+    if: >-
+      (github.event_name == 'push') ||
+      (github.event_name == 'workflow_dispatch' && inputs.action == 'publier' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Créer le tag et la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          TAG="v$VERSION"
+          # Les versions antérieures à FIRST_MANAGED_VERSION (0.14.0) sont un historique sans tag : ne
+          # jamais les étiqueter après coup sur un commit récent.
+          if ! VERSION="$VERSION" node --input-type=module -e "import { FIRST_MANAGED_VERSION as F, compareSemver } from './scripts/release/changelog.mjs'; process.exit(compareSemver(process.env.VERSION, F) < 0 ? 1 : 0)"; then
+            echo "::notice title=Release::$VERSION est antérieure à la première version étiquetée, rien à publier"; exit 0
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "::notice title=Release::$TAG existe déjà, rien à faire"; exit 0
+          fi
+          node scripts/release/notes.mjs "$VERSION" > "$RUNNER_TEMP/notes.md" || {
+            echo "::error title=Release::CHANGELOG.md n'a pas de section [$VERSION] ; lancer « preparer » d'abord"; exit 1; }
+          gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --latest
+          echo "::notice title=Release::$TAG publiée sur $GITHUB_SHA"

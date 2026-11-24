@@ -1,11 +1,3 @@
-## State of BIB — Historical warehouse (2026-11-18)
-
-- Toutes les archives disponibles importables dans Supabase via GitHub Actions, avec validation technique et contrôle d'intégrité.
-- Versions historiques et écarts statistiques conservés sans réécriture des données source.
-- Stockage des observations pays, villes, écosystèmes et cohortes mensuelles ; comparaison des versions dans PostgreSQL.
-- Vue historique State of BIB alimentée uniquement par Supabase en production.
-- Migration `20261118051801_sob_historical_deltas.sql` déjà appliquée et enregistrée sur Supabase `akori`.
-
 # Changelog
 
 All notable changes to this project are documented here.
@@ -13,6 +5,34 @@ All notable changes to this project are documented here.
 This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html) conventions. Historical release numbers and duplicate legacy entries are preserved as originally recorded.
 
 ## [Unreleased]
+
+### Added — release process (2026-11-24)
+
+- Add `pnpm release:prepare <x.y.z>` and the **Release** GitHub workflow: a manual run on develop moves `[Unreleased]` into a dated version section, bumps `package.json` and opens a `release: vX.Y.Z` pull request; when that version reaches `main`, the workflow creates the `vX.Y.Z` tag and the GitHub release from the changelog notes. Existing tags are never moved.
+- Align `package.json` with the last recorded version (`0.13.0`) so the next release continues the existing numbering.
+- Document the procedure in `docs/RELEASING.md`; update the README to the current state of the project.
+- Move the misplaced historical-warehouse entry under `[Unreleased]`.
+
+### Added — Startup Spotlight (2026-11-23)
+
+- Public editorial page `/startup-spotlight` (FR/EN/ES), linked from the main navigation; kept out of search engines until the first portrait is published.
+- Founder Story Live events are shown only when they are confirmed in the public Luma calendar.
+
+### Changed — Premium Minimalism art direction and landing page (PR #66, 2026-11-23)
+
+- Calmer typography, spacing and contrast across public pages; new editorial grid, event rows and founder portraits.
+- Home page restructured as a landing page with anchored sections (about, activities, commitments, events, BIB in action, State of BIB teaser, newsletter, closing call to action); State of BIB keeps its own page.
+- Navigation highlights the section in view; below-the-fold blocks reveal on scroll and respect reduced-motion settings.
+- Published testimonials and the five most active cities appear on the home page when real data exists; unverified claims stay hidden.
+- Five editorial visuals added as **provisional low-resolution previews**, to be replaced by HD exports.
+
+### Added — State of BIB historical warehouse (2026-11-18)
+
+- Toutes les archives disponibles importables dans Supabase via GitHub Actions, avec validation technique et contrôle d'intégrité.
+- Versions historiques et écarts statistiques conservés sans réécriture des données source.
+- Stockage des observations pays, villes, écosystèmes et cohortes mensuelles ; comparaison des versions dans PostgreSQL.
+- Vue historique State of BIB alimentée uniquement par Supabase en production.
+- Migration `20261118051801_sob_historical_deltas.sql` déjà appliquée et enregistrée sur Supabase `akori`.
 
 ### Security — private implementation for privileged Supabase RPCs (2026-11-22)
 
@@ -215,7 +235,7 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## Earlier versions
 
-The entries below preserve the original project changelog, including repeated version numbers and dates. They do **not** correspond to verified Git tags; `package.json` currently identifies the application as `0.3.0`.
+The entries below preserve the original project changelog, including repeated version numbers and dates. They do **not** correspond to Git tags. From `0.14.0` on, every version is tagged `vX.Y.Z` and published as a GitHub release (see `docs/RELEASING.md`).
 
 ## [0.13.0] — 2026-05-18
 
