@@ -35,7 +35,7 @@ export default async function StartupSpotlightPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "Spotlight" })
   const { events } = await getPublishedEvents()
   const spotlightEvent = selectSpotlightEvent(events, locale)
-  const eventDate = spotlightEvent ? formatSpotlightDate(spotlightEvent, locale) : null : null
+  const eventDate = spotlightEvent ? formatSpotlightDate(spotlightEvent, locale) : null
 
   return (
     <main className="sp">
