@@ -9,7 +9,12 @@
  * Un visuel n'est affiché que si `file` est renseigné : le fichier HD doit
  * d'abord être déposé dans `public/images/editorial/` (JPEG ou WebP, 2 400 px
  * de large pour les bandeaux, moins de 400 Ko). Tant que `file` vaut `null`,
- * la section s'affiche sans image, comme aujourd'hui.
+ * la section s'affiche sans image.
+ *
+ * PROVISOIRE (23 novembre 2026) : les fichiers actuels sont les aperçus
+ * extraits du canevas Claude Design (environ 200 px de large, issus de
+ * Canva). Ils seront remplacés par les exports HD ; mettre alors à jour
+ * `file`, `width` et `height`.
  */
 export type VisualKey = "home" | "events" | "sob" | "newsletter" | "about"
 
@@ -23,11 +28,11 @@ export type Visual = {
 }
 
 export const VISUALS: Record<VisualKey, Visual> = {
-  home: { file: null, width: 2400, height: 1200, alt: "home" },
-  events: { file: null, width: 2400, height: 1600, alt: "events" },
-  sob: { file: null, width: 2400, height: 1350, alt: "sob" },
-  newsletter: { file: null, width: 1600, height: 2000, alt: "newsletter" },
-  about: { file: null, width: 2400, height: 1200, alt: "about" },
+  home: { file: "/images/editorial/home.jpg", width: 200, height: 100, alt: "home" },
+  events: { file: "/images/editorial/events.jpg", width: 200, height: 133, alt: "events" },
+  sob: { file: "/images/editorial/sob.jpg", width: 198, height: 112, alt: "sob" },
+  newsletter: { file: "/images/editorial/newsletter.jpg", width: 160, height: 199, alt: "newsletter" },
+  about: { file: "/images/editorial/about.jpg", width: 200, height: 100, alt: "about" },
 }
 
 export function visual(key: VisualKey): Visual | null {
