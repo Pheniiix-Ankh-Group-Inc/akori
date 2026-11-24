@@ -8,6 +8,7 @@ import { intlLocale } from "@/lib/content/locales"
 import { eventText } from "@/lib/events/text"
 import { EVENT_STATUSES, filterByStatus, localDay, monthGrid, paginate, parseEventFilters, shiftMonth, yearsOf, type EventFilters } from "@/lib/events/calendar"
 import { EventCard } from "@/components/events/EventCard"
+import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
 import { getLumaEmbedUrl } from "@/lib/luma"
 import { env } from "@/lib/env"
 import type { EventRecord } from "@/lib/events/types"
@@ -109,12 +110,17 @@ export default async function EvenementsPage({ params, searchParams }: Props) {
 
   return (
     <main>
-      <section className="ed-wrap" style={{ paddingTop: "7rem", paddingBottom: "3rem" }}>
-        <div className="ed-stack">
+      <section className="ed-wrap ed-grid-12" style={{ paddingTop: "7rem", paddingBottom: "3rem", alignItems: "end" }}>
+        <div className={hasVisual("events") ? "ed-col-7 ed-stack" : "ed-col-12 ed-stack"}>
           <p className="ed-eyebrow">{t("eyebrow")}</p>
           <h1 className="ed-h1">{s("title")}</h1>
           <p className="ed-lede">{t("intro")}</p>
         </div>
+        {hasVisual("events") && (
+          <div className="ed-col-end-4">
+            <EditorialImage name="events" locale={locale} ratio="4x3" sizes="(max-width: 900px) 100vw, 380px" priority />
+          </div>
+        )}
       </section>
 
       {!configured && (

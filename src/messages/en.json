@@ -1065,6 +1065,13 @@
         }
       },
       "noEvents": "No upcoming event has been published yet.",
+      "inActionEmpty": "The first recaps will be published after the next gathering.",
+      "eventsCalendar": "Full calendar",
+      "sobTeaser": "Blockchain developers across Africa and the Caribbean, measured every month as open data.",
+      "onThisPage": "On this page",
+      "sobCitiesTitle": "Most active cities",
+      "sobCitiesUnit": "active devs",
+      "readMission": "Read our mission",
       "sobScope": "These figures cover Africa and the Caribbean; they do not measure the diaspora.",
       "kpi": {
         "devs": "active developers over 28 days",
@@ -1422,6 +1429,13 @@
         "privacyLink": "Privacy policy"
       }
     },
+  "Visuals": {
+    "home": "Afternoon light through a concrete sunscreen, casting geometric shadows on an ivory wall",
+    "events": "Sunlit meeting room with rows of chairs before guests arrive",
+    "sob": "Aerial view of a coastal city at blue hour, lit streets forming a network",
+    "newsletter": "Annotated printed report, brass pen and coffee cup on linen",
+    "about": "Wooden jetty reaching into a calm sea at dawn"
+  },
   "Spotlight": {
     "meta": {
       "title": "Startup Spotlight — Black in Blockchain",

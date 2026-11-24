@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
+import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
 import { FOUNDERS } from "@/components/about/FounderProfile"
 
 type Props = { params: Promise<{ locale: string }> }
@@ -33,6 +34,11 @@ export default async function AboutPage({ params }: Props) {
           <h1 className="ed-h1">{t("title")}</h1>
         </div>
       </section>
+      {hasVisual("about") && (
+        <div className="ed-wrap ed-hero-media">
+          <EditorialImage name="about" locale={locale} ratio="21x9" sizes="(max-width: 1264px) 100vw, 1200px" priority />
+        </div>
+      )}
 
       <section className="ed-section ed-section-white" aria-labelledby="about-premise">
         <div className="ed-wrap-narrow ed-stack" style={{ gap: "1.75rem" }}>
@@ -47,24 +53,24 @@ export default async function AboutPage({ params }: Props) {
 
       <section className="ed-section" aria-labelledby="about-founders">
         <div className="ed-wrap">
-          <h2 id="about-founders" className="ed-h2" style={{ marginBottom: "2rem" }}>{t("foundersTitle")}</h2>
-          <div className="ed-grid">
+          <h2 id="about-founders" className="ed-h2" style={{ marginBottom: "3rem" }}>{t("foundersTitle")}</h2>
+          <div className="ed-founders">
             {founders.map((f) => (
-              <article key={f.slug} className="ed-card ed-founder">
-                <div className="ed-portrait ed-portrait-card">
-                  <Image src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 220px" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
+              <article key={f.slug} className="ed-founder-item">
+                <div className="ed-portrait">
+                  <Image src={f.image} alt={f.name} fill sizes="(max-width: 768px) 100vw, 590px" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
                 </div>
-                <div className="ed-card-body">
-                  <h3 className="ed-h3">
-                    <Link href={`/fondateurs/${f.slug}`}>{f.name}</Link>
-                  </h3>
-                  <span className="text-sm">{f.role}</span>
-                  <div className="ed-row" style={{ gap: "0.5rem 1.25rem", marginTop: "auto" }}>
-                    <Link href={`/fondateurs/${f.slug}`} className="ed-link">{t("readProfile")} →</Link>
-                    <a href={f.linkedin} target="_blank" rel="noopener noreferrer" className="ed-link" aria-label={t("linkedinOf", { name: f.name })}>
-                      {t("linkedin")} ↗
-                    </a>
-                  </div>
+                <h3 className="ed-h3" style={{ fontSize: "1.75rem" }}>
+                  <Link href={`/fondateurs/${f.slug}`}>{f.name}</Link>
+                </h3>
+                <span className="text-sm" style={{ maxWidth: "30rem" }}>{f.role}</span>
+                <div className="ed-row" style={{ gap: "0.25rem 1.5rem" }}>
+                  <Link href={`/fondateurs/${f.slug}`} className="ed-link">
+                    {t("readProfile")}&nbsp;<span className="ed-arrow" aria-hidden="true">→</span>
+                  </Link>
+                  <a href={f.linkedin} target="_blank" rel="noopener noreferrer" className="ed-link" aria-label={t("linkedinOf", { name: f.name })}>
+                    {t("linkedin")} ↗
+                  </a>
                 </div>
               </article>
             ))}
@@ -72,9 +78,9 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="ed-section ed-section-white">
+      <section className="ed-section ed-section-sand">
         <div className="ed-wrap ed-row" style={{ justifyContent: "space-between", gap: "1.5rem" }}>
-          <p className="ed-h3" style={{ fontSize: "1.75rem" }}>{t("ctaTitle")}</p>
+          <p className="ed-h2" style={{ maxWidth: "38rem" }}>{t("ctaTitle")}</p>
           <div className="ed-row" style={{ gap: "0.75rem" }}>
             <Link href="/evenements" className="ed-btn ed-btn-dark">{t("ctaEvents")}</Link>
             <Link href="/#newsletter" className="ed-btn ed-btn-line">{t("ctaNewsletter")}</Link>

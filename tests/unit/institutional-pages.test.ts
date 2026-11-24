@@ -17,8 +17,10 @@ describe("BIB institutional pages", () => {
     expect(read("src/app/[locale]/(public)/membership/page.tsx")).toContain("PlaceholderPage")
   })
 
-  it("links public About navigation to the finished page", () => {
-    expect(read("src/components/sections/Header.tsx")).toContain('{ key: "about", href: "/about" }')
+  it("keeps the finished About page linked while the header scrolls the landing page", () => {
+    // Landing page (novembre 2026) : l'en-tête fait défiler jusqu'à la section
+    // « À propos » de l'accueil ; la page /about reste liée depuis le pied de page.
+    expect(read("src/components/sections/Header.tsx")).toContain('{ key: "about", href: "/#a-propos", section: "a-propos" }')
     expect(read("src/components/sections/Footer.tsx")).toContain('<Link href="/about">')
   })
 
