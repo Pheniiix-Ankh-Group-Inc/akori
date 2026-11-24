@@ -1,5 +1,14 @@
+import type { Metadata } from "next"
+import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "terms.metadata" })
+  return { title: t("title"), description: t("description") }
+}
 
 export default function TermsPage() {
   const t = useTranslations("terms")

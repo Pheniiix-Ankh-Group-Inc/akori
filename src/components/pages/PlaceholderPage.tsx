@@ -40,7 +40,7 @@ export async function PlaceholderPage({ locale, page }: { locale: string; page: 
         <div className="ed-wrap ed-stack" style={{ gap: "1.25rem" }}>
           <h2 className="ed-eyebrow">{t("meanwhile")}</h2>
           <div className="ed-row" style={{ gap: "0.75rem" }}>
-            <Link href="/fondateurs" className="ed-btn ed-btn-line">{nav("about")}</Link>
+            <Link href="/about" className="ed-btn ed-btn-line">{nav("about")}</Link>
             <Link href="/evenements" className="ed-btn ed-btn-line">{nav("events")}</Link>
             <Link href="/state_of_bib" className="ed-btn ed-btn-line">{nav("stateOfBib")}</Link>
             <Link href="/#newsletter" className="ed-btn ed-btn-dark">{footer("newsletter")}</Link>

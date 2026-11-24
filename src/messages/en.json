@@ -630,7 +630,7 @@
   },
   "terms": {
     "metadata": {
-      "title": "Terms of Use — Black in Blockchain",
+      "title": "Terms of Use",
       "description": "Terms of use for the Black in Blockchain platform."
     },
     "header": {
@@ -685,6 +685,10 @@
     }
   },
   "privacy": {
+    "metadata": {
+      "title": "Privacy policy",
+      "description": "Privacy policy of the Black in Blockchain website."
+    },
     "header": {
       "back": "Back to home",
       "title": "Privacy Policy",
@@ -766,6 +770,10 @@
     }
   },
   "cookies": {
+    "metadata": {
+      "title": "Cookie policy",
+      "description": "Cookie policy of the Black in Blockchain website."
+    },
     "header": {
       "back": "Back to home",
       "title": "Cookie Policy",
@@ -925,7 +933,7 @@
     }
   },
   "Events": {
-    "metaTitle": "Events — Black in Blockchain",
+    "metaTitle": "Events",
     "metaDescription": "Upcoming and past Black in Blockchain events. Registration takes place on Luma.",
     "eyebrow": "Events",
     "title": "Events",
@@ -945,6 +953,10 @@
     "joinOnline": "Online access link",
     "when": "When",
     "where": "Where",
+    "hosts": "Hosted by",
+    "upToDate": "Up-to-date information:",
+    "address": "Address",
+    "hostedBy": "Hosted by {hosts}",
     "format": "Format",
     "back": "All events",
     "translationFallback": "This content is not yet available in your language; it is shown in {language}.",
@@ -952,7 +964,7 @@
     "viewRetrospective": "See the retrospective"
   },
   "InAction": {
-    "metaTitle": "BIB in action — Black in Blockchain",
+    "metaTitle": "BIB in action",
     "metaDescription": "Retrospectives, photos, videos and testimonials from Black in Blockchain gatherings.",
     "eyebrow": "BIB in action",
     "title": "BIB in action",
@@ -1016,6 +1028,12 @@
     "sobUnavailable": "State of BIB indicators will appear as soon as a verified version is published."
   },
   "Site": {
+    "notFound": {
+      "title": "Page not found",
+      "text": "This page does not exist or has moved.",
+      "home": "Back to home",
+      "events": "See events"
+    },
     "nav": {
       "about": "About",
       "events": "Events",
@@ -1146,7 +1164,7 @@
       "facts": {
         "asOf": "Data as of",
         "scope": "Scope",
-        "scopeVal": "{n} countries in Africa and the Caribbean",
+        "scopeVal": "{n} countries with at least one developer, out of {total} covered",
         "version": "Version"
       },
       "analysis": "Analysis",
@@ -1438,7 +1456,7 @@
   },
   "Spotlight": {
     "meta": {
-      "title": "Startup Spotlight — Black in Blockchain",
+      "title": "Startup Spotlight",
       "description": "A Black in Blockchain editorial programme: the story of Black founders building with blockchain, told one startup at a time."
     },
     "fiction": {

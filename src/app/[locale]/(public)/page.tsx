@@ -1,3 +1,4 @@
+import { localizeSnapshot } from "@/lib/geo/names"
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
@@ -68,7 +69,7 @@ export default async function HomePage({ params }: Props) {
   const nf = new Intl.NumberFormat(intlLocale(locale))
   // Sans version State of BIB valide, aucun chiffre n'est affiché.
   const h = isSobAvailable(sob) ? sob.headline : null
-  const cities = isSobAvailable(sob) ? sob.topCities.slice(0, 5) : []
+  const cities = isSobAvailable(sob) ? localizeSnapshot(sob, locale).topCities.slice(0, 5) : []
   const cityMax = Math.max(1, ...cities.map((c) => c.devs_active_28d))
   const kpis = h
     ? ([

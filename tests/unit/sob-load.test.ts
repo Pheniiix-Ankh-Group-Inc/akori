@@ -43,11 +43,14 @@ async function publish(version = "v-test", mutate?: (f: Record<string, unknown>)
 let tmp: string
 beforeEach(() => {
   Object.assign(state, { configured: true, readFlag: true, version: null, objects: new Map(), dbError: false })
-  delete process.env.SOB_E2E_FIXTURE_DIR
+  // Repli par défaut : l'ancienne copie d'avril 2026 (invalide). La copie du
+  // dépôt est désormais valide ; les tests de repli valide écrivent la leur.
+  process.env.SOB_E2E_FIXTURE_DIR = path.resolve(__dirname, "../../data/state-of-bib/history/20260419T130333")
   tmp = mkdtempSync(path.join(os.tmpdir(), "sob-"))
   vi.spyOn(console, "error").mockImplementation(() => {})
 })
 afterEach(() => {
+  delete process.env.SOB_E2E_FIXTURE_DIR
   rmSync(tmp, { recursive: true, force: true })
   vi.restoreAllMocks()
 })

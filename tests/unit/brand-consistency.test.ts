@@ -23,8 +23,12 @@ describe("Black in Blockchain public brand consistency", () => {
     expect(read("src/app/layout.tsx")).toContain('template: "%s | Black in Blockchain"')
   })
 
-  it.each(["fr", "en", "es"])("uses the public brand in %s legal metadata", (locale) => {
-    const messages = JSON.parse(read(`src/messages/${locale}.json`))
-    expect(messages.terms.metadata.title).toContain("Black in Blockchain")
+  it.each(["fr", "en", "es"])("never repeats the brand added by the title template (%s)", (locale) => {
+    // « X — Black in Blockchain » + le gabarit « %s | Black in Blockchain »
+    // donnerait « X — Black in Blockchain | Black in Blockchain ».
+    const raw = read(`src/messages/${locale}.json`)
+    expect(raw).not.toMatch(/"(title|metaTitle)": "[^"]+ — Black in Blockchain"/)
+    const messages = JSON.parse(raw)
+    for (const ns of ["terms", "privacy", "cookies"]) expect(messages[ns].metadata.title.length).toBeGreaterThan(3)
   })
 })

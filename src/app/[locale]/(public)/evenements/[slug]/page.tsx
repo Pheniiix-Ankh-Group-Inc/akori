@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { event } = await getPublishedEventBySlug(slug)
   if (!event) return {}
   const tx = eventText(event, locale)
-  return { title: tx.title, description: tx.summary ?? undefined }
+  const t = await getTranslations({ locale, namespace: "Events" })
+  return { title: tx.title, description: tx.summary ?? t("metaDescription") }
 }
 
 export default async function EventPage({ params }: Props) {

@@ -84,7 +84,7 @@ export const env = {
     // Déclenchement manuel des workflows depuis l'administration (facultatif).
     // Jeton à portée minimale : « Actions: write » sur ce seul dépôt.
     dispatchToken: str("GITHUB_DISPATCH_TOKEN"),
-    repository: str("GITHUB_REPOSITORY_SLUG") ?? "Pheniiix-Ankh-Group-Inc/akori",
+    repository: str("GITHUB_REPOSITORY_SLUG") ?? "Pheniiix-Ankh-Group-Inc/BiB",
     ref: str("GITHUB_DISPATCH_REF") ?? "main",
   },
 

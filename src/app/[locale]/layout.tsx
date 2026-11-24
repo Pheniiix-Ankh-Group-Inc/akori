@@ -2,6 +2,7 @@ import { routing } from "@/i18n/routing";
 import "../globals.css"
 import "../state-of-bib.css"
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { setRequestLocale }  from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -37,6 +38,8 @@ export default async  function LocaleLayout({ children, params }: Props) {
         <NextIntlClientProvider>
           {children}
           <Analytics />
+          {/* Core Web Vitals des vrais visiteurs (à activer dans Vercel → Speed Insights). */}
+          <SpeedInsights />
         </NextIntlClientProvider>
       </body>
     </html>

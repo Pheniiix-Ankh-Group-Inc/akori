@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server"
 import { intlLocale, pickLocalized } from "@/lib/content/locales"
-import { eventText } from "@/lib/events/text"
+import { eventText, splitLumaDescription } from "@/lib/events/text"
 import { eventTiming, formatEventDate } from "@/lib/events/temporal"
 import type { EventRecord, PublicMedia } from "@/lib/events/types"
 import { normalizeLumaUrl } from "@/lib/luma"
@@ -35,7 +35,11 @@ export async function EventDetail({
   const cancelled = event.source_status === "cancelled"
   const luma = cancelled ? null : normalizeLumaUrl(event.luma_url)
   const modeLabel = event.mode === "online" ? t("online") : event.mode === "hybrid" ? t("hybrid") : t("inPerson")
-  const place = [event.venue_name, event.address, event.city, event.country_code].filter(Boolean).join(", ") || event.source_location || ""
+  // Informations du gabarit Luma (lien, adresse, organisateurs) : affichées
+  // dans toutes les langues avec des libellés traduits.
+  const luma_ = splitLumaDescription(event.source_description)
+  const infoUrl = normalizeLumaUrl(luma_.infoUrl)
+  const place = [event.venue_name, event.address, event.city, event.country_code].filter(Boolean).join(", ") || event.source_location || luma_.address.join(", ")
   const loc = intlLocale(locale)
   const status = cancelled ? s("cancelled") : timing === "past" ? t("ended") : timing === "ongoing" ? t("ongoing") : modeLabel
   // Visuel : couverture BIB (droits vérifiés) sinon visuel public Luma.
@@ -64,6 +68,25 @@ export async function EventDetail({
               </figure>
             )}
             {tr?.value.description && <div className="ed-prose" style={{ whiteSpace: "pre-line" }}>{tr.value.description}</div>}
+            {(infoUrl || luma_.address.length > 0 || luma_.hosts) && (
+              <div className="ed-prose">
+                {infoUrl && (
+                  <p>
+                    {t("upToDate")}{" "}
+                    <a className="ed-link" href={infoUrl} target="_blank" rel="noopener noreferrer" style={{ wordBreak: "break-all" }}>{infoUrl}</a>
+                  </p>
+                )}
+                {luma_.address.length > 0 && (
+                  <p>
+                    <strong>{t("address")}</strong>
+                    {luma_.address.map((line) => (
+                      <span key={line}><br />{line}</span>
+                    ))}
+                  </p>
+                )}
+                {luma_.hosts && <p>{t("hostedBy", { hosts: luma_.hosts })}</p>}
+              </div>
+            )}
           </div>
 
           <aside className="ed-card" aria-labelledby="h-practical" style={{ alignSelf: "start" }}>

@@ -19,7 +19,7 @@ export async function FounderProfile({ locale, ns }: { locale: string; ns: "bric
   return (
     <main>
       <section className="ed-wrap" style={{ paddingTop: "4rem", paddingBottom: "6rem" }}>
-        <Link href="/fondateurs" className="ed-link" style={{ display: "inline-block", marginBottom: "2.5rem" }}>← {s("back")}</Link>
+        <Link href="/about#fondateurs" className="ed-link" style={{ display: "inline-block", marginBottom: "2.5rem" }}>← {s("back")}</Link>
         <div className="ed-profile">
           <div className="ed-portrait">
             <Image src={image} alt={t("name")} fill priority sizes="(max-width: 768px) 100vw, 380px" style={{ objectFit: "cover", objectPosition: "center 25%" }} />

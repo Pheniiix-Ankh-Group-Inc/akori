@@ -25,7 +25,7 @@ export function Footer() {
         <nav aria-label={t("explore")}>
           <span className="ed-muted">{t("explore")}</span>
           <Link href="/about">{nav("about")}</Link>
-          <Link href="/fondateurs">{about("foundersTitle")}</Link>
+          <Link href="/about#fondateurs">{about("foundersTitle")}</Link>
           <Link href="/evenements">{nav("events")}</Link>
           <Link href="/en-action">{nav("inAction")}</Link>
           <Link href="/state_of_bib">{nav("stateOfBib")}</Link>

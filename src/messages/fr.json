@@ -630,7 +630,7 @@
   },
   "terms": {
     "metadata": {
-      "title": "Conditions d'utilisation — Black in Blockchain",
+      "title": "Conditions d'utilisation",
       "description": "Conditions d'utilisation de la plateforme Black in Blockchain."
     },
     "header": {
@@ -685,6 +685,10 @@
     }
   },
   "privacy": {
+    "metadata": {
+      "title": "Politique de confidentialité",
+      "description": "Politique de confidentialité du site Black in Blockchain."
+    },
     "header": {
       "back": "Retour à l'accueil",
       "title": "Politique de confidentialité",
@@ -766,6 +770,10 @@
     }
   },
   "cookies": {
+    "metadata": {
+      "title": "Politique des cookies",
+      "description": "Politique des cookies du site Black in Blockchain."
+    },
     "header": {
       "back": "Retour à l'accueil",
       "title": "Politique des cookies",
@@ -878,21 +886,21 @@
       "legendLow": "Bas",
       "legendHigh": "Haut",
       "tipCommits": "Commits",
-      "tipActive": "Devs actifs"
+      "tipActive": "Développeurs actifs"
     },
     "m2": {
       "num": "§ 02  Mouvement Deux",
       "title": "Douze <em>villes.</em>",
       "lede1": "Principe 04, rendu littéral. Pas « l’Afrique. » Pas « les Caraïbes. » <em>Lagos. Nairobi. Port-au-Prince.</em>",
       "lede2": "Classées par développeurs actifs sur les 28 derniers jours de l’instantané.",
-      "devs": "Devs"
+      "devs": "développeurs"
     },
     "m3": {
       "num": "§ 03  Mouvement Trois",
       "title": "Huit <em>écosystèmes.</em>",
       "lede1": "Là où le travail atterrit. Top huit des protocoles par nombre de développeurs couverts, avec leur trajectoire sur 48 mois indexée à 100 au début de la série.",
       "lede2": "La forme, pas le volume. Voici la grammaire de la croissance.",
-      "devsLabel": "Devs couverts · 28J",
+      "devsLabel": "Développeurs couverts · 28 j",
       "indexLabel": "Index"
     },
     "m4": {
@@ -925,7 +933,7 @@
     }
   },
   "Events": {
-    "metaTitle": "Événements — Black in Blockchain",
+    "metaTitle": "Événements",
     "metaDescription": "Les événements Black in Blockchain à venir et passés. L'inscription se fait sur Luma.",
     "eyebrow": "Événements",
     "title": "Événements",
@@ -945,6 +953,10 @@
     "joinOnline": "Lien d'accès en ligne",
     "when": "Quand",
     "where": "Où",
+    "hosts": "Organisé par",
+    "upToDate": "Informations à jour :",
+    "address": "Adresse",
+    "hostedBy": "Organisé par {hosts}",
     "format": "Format",
     "back": "Tous les événements",
     "translationFallback": "Ce contenu n'est pas encore disponible dans votre langue ; il est affiché en {language}.",
@@ -952,7 +964,7 @@
     "viewRetrospective": "Voir la rétrospective"
   },
   "InAction": {
-    "metaTitle": "BIB en action — Black in Blockchain",
+    "metaTitle": "BIB en action",
     "metaDescription": "Rétrospectives, photos, vidéos et témoignages des rencontres Black in Blockchain.",
     "eyebrow": "BIB en action",
     "title": "BIB en action",
@@ -1016,6 +1028,12 @@
     "sobUnavailable": "Les indicateurs State of BIB seront affichés dès qu'une version vérifiée sera publiée."
   },
   "Site": {
+    "notFound": {
+      "title": "Page introuvable",
+      "text": "Cette page n'existe pas ou a été déplacée.",
+      "home": "Retour à l'accueil",
+      "events": "Voir les événements"
+    },
     "nav": {
       "about": "À propos",
       "events": "Événements",
@@ -1146,7 +1164,7 @@
       "facts": {
         "asOf": "Données au",
         "scope": "Périmètre",
-        "scopeVal": "{n} pays d'Afrique et des Caraïbes",
+        "scopeVal": "{n} pays avec au moins un développeur, sur {total} couverts",
         "version": "Version"
       },
       "analysis": "Analyse",
@@ -1438,7 +1456,7 @@
   },
   "Spotlight": {
     "meta": {
-      "title": "Startup Spotlight — Black in Blockchain",
+      "title": "Startup Spotlight",
       "description": "Programme éditorial de Black in Blockchain : le parcours de fondateurs noirs qui bâtissent avec la blockchain, raconté une startup à la fois."
     },
     "fiction": {
