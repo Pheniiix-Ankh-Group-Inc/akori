@@ -2,10 +2,11 @@ import { useTranslations } from "next-intl"
 import NextLink from "next/link"
 import { Link } from "@/i18n/navigation"
 
-/** Pied de page : uniquement des pages qui existent (certaines encore en préparation). */
+/** Pied de page : pages publiques réelles ; membership reste en préparation. */
 export function Footer() {
   const t = useTranslations("Site.footer")
   const nav = useTranslations("Site.nav")
+  const about = useTranslations("Site.about")
   const pages = useTranslations("Site.pages")
 
   return (
@@ -23,7 +24,8 @@ export function Footer() {
         </div>
         <nav aria-label={t("explore")}>
           <span className="ed-muted">{t("explore")}</span>
-          <Link href="/fondateurs">{nav("about")}</Link>
+          <Link href="/about">{nav("about")}</Link>
+          <Link href="/fondateurs">{about("foundersTitle")}</Link>
           <Link href="/evenements">{nav("events")}</Link>
           <Link href="/en-action">{nav("inAction")}</Link>
           <Link href="/state_of_bib">{nav("stateOfBib")}</Link>

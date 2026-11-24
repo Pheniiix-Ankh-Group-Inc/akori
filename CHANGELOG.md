@@ -14,6 +14,37 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Security — private implementation for privileged Supabase RPCs (2026-11-22)
+
+- Applied migration `20261122205510_bib_harden_definer_rpc_exposure` directly to the shared `akori` Supabase database, then mirrored its SQL in Git.
+- Converted six exposed privileged RPC entrypoints to security-invoker wrappers, moved five privileged implementations to the non-exposed `private` schema, and kept existing admin/pipeline role checks.
+- Verified advisor lint: 6 prior SECURITY DEFINER exposure warnings removed. Three informational RLS notices remain unchanged.
+- Added regression coverage for API ACLs and RLS-based editor role lookup.
+
+
+### Added — five completed institutional pages (2026-11-22)
+
+- Replace five public placeholders with localized About, Mission, Resources,
+  Press, and Contact content (FR/EN/ES) using existing BIB editorial styles.
+- Route the About navigation to /about, while preserving direct access to founders.
+- Provide genuine links to existing events, data, methodology and founder pages.
+- Route contact topics to the **existing** mail address `contact@anbachain.org`;
+  do not create a fake contact form or claim a configured messaging backend.
+- Keep Membership as a placeholder; leave domains, infrastructure, legal entity
+  claims and AI configuration unchanged.
+- Add page and language regression tests.
+
+
+### Changed — uniform public Black in Blockchain branding (2026-11-22)
+
+- Replace legacy brand labels with **Black in Blockchain** in root page titles,
+  the publisher display label, and the legal page translations (FR/EN/ES).
+- Keep live `anbachain.org` DNS, `contact@anbachain.org`, Vercel project identifiers,
+  and historical release records intact; these require a separate migration, if desired.
+- Add a brand regression test; the actual legal entity and its registration details
+  still require confirmation before the legal notices can be considered finalized.
+
+
 ### Fixed — reuse existing GitHub Supabase secrets without confusing PostgreSQL and REST URLs
 
 - Map `SUPABASE_SERVICE_ROLE_KEY` to the canonical `SUPABASE_SECRET_KEY` variable in State of BIB jobs when a newer `SUPABASE_SECRET_KEY` is not available. Keep the legacy key server-only and document migration before its end-2026 deprecation.

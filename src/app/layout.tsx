@@ -4,8 +4,8 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | AnbaChain",
-    default: "AnbaChain — Réseau blockchain des professionnels noirs",
+    template: "%s | Black in Blockchain",
+    default: "Black in Blockchain — Réseau blockchain des professionnels noirs",
   },
   description:
     "Plateforme communautaire blockchain pour les professionnels noirs — réseau, événements et ressources exclusives.",
