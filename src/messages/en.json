@@ -1026,7 +1026,8 @@
       "main": "Main navigation",
       "open": "Open menu",
       "close": "Close menu",
-      "subscribeLong": "Subscribe to the newsletter"
+      "subscribeLong": "Subscribe to the newsletter",
+      "spotlight": "Startup Spotlight"
     },
     "footer": {
       "explore": "Explore",
@@ -1434,5 +1435,133 @@
     "sob": "Aerial view of a coastal city at blue hour, lit streets forming a network",
     "newsletter": "Annotated printed report, brass pen and coffee cup on linen",
     "about": "Wooden jetty reaching into a calm sea at dawn"
+  },
+  "Spotlight": {
+    "meta": {
+      "title": "Startup Spotlight — Black in Blockchain",
+      "description": "A Black in Blockchain editorial programme: the story of Black founders building with blockchain, told one startup at a time."
+    },
+    "fiction": {
+      "badge": "Placeholder data",
+      "text": "Design mock-up: no startup, founder or date shown here is real. Square brackets [ ] mark placeholders."
+    },
+    "hero": {
+      "eyebrow": "Editorial programme · Organised by Black in Blockchain",
+      "title": "Startup",
+      "titleEm": "Spotlight",
+      "tagline": "Founders. Their stories. Told in person.",
+      "lede": "One startup at a time, Black in Blockchain tells the story of Black founders building with blockchain: where they come from, what they are solving, what they have already proven.",
+      "ctaFeatured": "Our selection",
+      "ctaLive": "Founder Story Live",
+      "photoAlt": "Placeholder: photographic portrait of the featured founder or founders",
+      "photoLabel": "[Full-frame photographic portrait, 4:5 — founder(s) of the current startup. Photo credit shown below the image.]",
+      "pillars": {
+        "p1": {
+          "t": "Selected by BIB",
+          "d": "Chosen by the editorial team"
+        },
+        "p2": {
+          "t": "No applications",
+          "d": "No public form"
+        },
+        "p3": {
+          "t": "No payment",
+          "d": "Never any selection fee"
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "In the spotlight · December 2026",
+      "title": "The current portrait",
+      "badge": "Placeholder data",
+      "photoAlt": "Placeholder: portrait of the startup's co-founders",
+      "photoLabel": "[Co-founders' portrait — 4:5]",
+      "caption": "[First Last] and [First Last], co-founders · Photo: [credit]",
+      "logoAlt": "Placeholder for the startup's logo",
+      "logo": "Logo",
+      "name": "[Startup name]",
+      "country": "Country",
+      "countryValue": "[Country]",
+      "sector": "Sector",
+      "sectorValue": "[Sector]",
+      "stage": "Stage",
+      "stageValue": "[Idea · Prototype · MVP · Established]",
+      "quote": "[Short quote from a founder]",
+      "summary": "[Story summary in three to four sentences: the starting point, the problem, the role of blockchain. Written and validated by the BIB editorial team.]",
+      "cta": "Read the full Founder Story →",
+      "meta": "Reading time: [8] min · Published [date] · Updated [date]"
+    },
+    "why": {
+      "eyebrow": "Why we spotlight them",
+      "title": "Six principles,",
+      "titleEm": "no shortcuts",
+      "intro": "Quality over quantity. A Spotlight is neither a financial certification nor a technical audit: it is an editorial viewpoint, signed BIB.",
+      "items": {
+        "i1": {
+          "t": "Innovation",
+          "d": "A new approach to a real problem."
+        },
+        "i2": {
+          "t": "Quality",
+          "d": "Careful, documented, verifiable work."
+        },
+        "i3": {
+          "t": "Impact",
+          "d": "A concrete effect on people and communities."
+        },
+        "i4": {
+          "t": "Vision",
+          "d": "A clear direction and a long-term ambition."
+        },
+        "i5": {
+          "t": "Entrepreneurial commitment",
+          "d": "Founders who show up, move forward and learn."
+        },
+        "i6": {
+          "t": "Relevance of blockchain",
+          "d": "The technology serves the project, not the other way round."
+        }
+      }
+    },
+    "stories": {
+      "title": "Founder Stories",
+      "archives": "See the archives →",
+      "photoAlt": "Placeholder: cover photo of the Founder Story",
+      "photoLabel": "[Cover photo — 3:2]",
+      "meta": "[Country] · [Sector] · [Year]",
+      "storyTitle": "[Editorial title of the portrait]",
+      "lede": "[Two-sentence standfirst.]",
+      "read": "Read the portrait →"
+    },
+    "live": {
+      "eyebrow": "3rd community edition · In person",
+      "title": "Founder Story",
+      "titleEm": "Live",
+      "text": "Founders tell their story, their obstacles and their ambitions in front of the community. Hosted by a BIB representative, organiser of the gathering.",
+      "guests": "Featured startup: [Startup name] · Guests: [to be confirmed]",
+      "when": "When",
+      "whenValue": "December 2026 · [date and time to be confirmed]",
+      "city": "City",
+      "cityValue": "Montréal",
+      "venue": "Venue",
+      "venueValue": "[Venue — shown once confirmed]",
+      "cta": "Reserve my seat ↗",
+      "note": "Registration on Luma, no BIB account needed."
+    },
+    "newsletter": {
+      "title": "Follow the next Spotlights",
+      "text": "Each new portrait is announced in the BIB newsletter, in the “BIB Highlights” section.",
+      "cta": "Subscribe to the newsletter"
+    },
+    "status": {
+      "hero": "The first portrait is in preparation. Black in Blockchain will announce its selection after editorial review.",
+      "featured": "No startup has officially been featured in Startup Spotlight yet. BIB selects projects directly, without applications or fees. The first portrait will be published after the details are verified and the founders have approved publication.",
+      "stories": "No Founder Story has been published yet. The archive will appear once the first portraits have been released.",
+      "guests": "Featured startup: to be announced",
+      "pending": "To be confirmed",
+      "viewEvents": "View BIB events",
+      "eventDetails": "See the published event details and registration information.",
+      "noConfirmedEvent": "No Founder Story Live event is confirmed in the public calendar yet."
+    }
   }
 }

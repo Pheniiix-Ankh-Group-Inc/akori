@@ -9,6 +9,7 @@ import { routing } from "@/i18n/routing"
 const NAV = [
   { key: "about", href: "/#a-propos", section: "a-propos" },
   { key: "events", href: "/#evenements", section: "evenements" },
+  { key: "spotlight", href: "/startup-spotlight", section: null },
   { key: "inAction", href: "/#en-action", section: "en-action" },
   { key: "stateOfBib", href: "/state_of_bib", section: null },
 ] as const

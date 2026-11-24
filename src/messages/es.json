@@ -1026,7 +1026,8 @@
       "main": "Navegación principal",
       "open": "Abrir el menú",
       "close": "Cerrar el menú",
-      "subscribeLong": "Suscribirse al boletín"
+      "subscribeLong": "Suscribirse al boletín",
+      "spotlight": "Startup Spotlight"
     },
     "footer": {
       "explore": "Explorar",
@@ -1434,5 +1435,133 @@
     "sob": "Vista aérea de una ciudad costera a la hora azul, con calles iluminadas que forman una red",
     "newsletter": "Informe impreso anotado, pluma de latón y taza de café sobre lino",
     "about": "Muelle de madera que se adentra en un mar en calma al amanecer"
+  },
+  "Spotlight": {
+    "meta": {
+      "title": "Startup Spotlight — Black in Blockchain",
+      "description": "Programa editorial de Black in Blockchain: la historia de fundadores negros que construyen con blockchain, contada una startup a la vez."
+    },
+    "fiction": {
+      "badge": "Datos ficticios",
+      "text": "Maqueta de diseño: ninguna startup, fundador ni fecha es real. Los corchetes [ ] marcan marcadores de posición."
+    },
+    "hero": {
+      "eyebrow": "Programa editorial · Organizado por Black in Blockchain",
+      "title": "Startup",
+      "titleEm": "Spotlight",
+      "tagline": "Fundadores. Sus historias. Contadas en persona.",
+      "lede": "Black in Blockchain elige, una startup a la vez, contar el recorrido de fundadores negros que construyen con blockchain: de dónde vienen, qué resuelven, qué ya han demostrado.",
+      "ctaFeatured": "Nuestra selección",
+      "ctaLive": "Founder Story Live",
+      "photoAlt": "Marcador: retrato fotográfico de las fundadoras y fundadores destacados",
+      "photoLabel": "[Retrato fotográfico a plano completo, 4:5 — fundador(es) de la startup actual. Crédito de la foto bajo la imagen.]",
+      "pillars": {
+        "p1": {
+          "t": "Selección de BIB",
+          "d": "Elegida por el equipo editorial"
+        },
+        "p2": {
+          "t": "Sin candidaturas",
+          "d": "Sin formulario público"
+        },
+        "p3": {
+          "t": "Sin pago",
+          "d": "Nunca hay tarifa de selección"
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "En el foco · Diciembre de 2026",
+      "title": "El retrato del momento",
+      "badge": "Datos ficticios",
+      "photoAlt": "Marcador: retrato de los cofundadores de la startup",
+      "photoLabel": "[Retrato de los cofundadores — 4:5]",
+      "caption": "[Nombre Apellido] y [Nombre Apellido], cofundadores · Foto: [crédito]",
+      "logoAlt": "Marcador del logotipo de la startup",
+      "logo": "Logo",
+      "name": "[Nombre de la startup]",
+      "country": "País",
+      "countryValue": "[País]",
+      "sector": "Sector",
+      "sectorValue": "[Sector]",
+      "stage": "Etapa",
+      "stageValue": "[Idea · Prototipo · MVP · Consolidada]",
+      "quote": "[Cita breve de un fundador]",
+      "summary": "[Resumen de la historia en tres o cuatro frases: el punto de partida, el problema, el papel de blockchain. Redactado y validado por el equipo editorial de BIB.]",
+      "cta": "Leer el Founder Story completo →",
+      "meta": "Lectura: [8] min · Publicado el [fecha] · Actualizado el [fecha]"
+    },
+    "why": {
+      "eyebrow": "Por qué los ponemos en el foco",
+      "title": "Seis principios,",
+      "titleEm": "ningún atajo",
+      "intro": "La calidad prima sobre la cantidad. Un Spotlight no es una certificación financiera ni una auditoría técnica: es una mirada editorial, firmada por BIB.",
+      "items": {
+        "i1": {
+          "t": "Innovación",
+          "d": "Un enfoque nuevo de un problema real."
+        },
+        "i2": {
+          "t": "Calidad",
+          "d": "Un trabajo cuidado, documentado y verificable."
+        },
+        "i3": {
+          "t": "Impacto",
+          "d": "Un efecto concreto en personas y comunidades."
+        },
+        "i4": {
+          "t": "Visión",
+          "d": "Una dirección clara y una ambición a largo plazo."
+        },
+        "i5": {
+          "t": "Compromiso emprendedor",
+          "d": "Fundadores presentes, que avanzan y aprenden."
+        },
+        "i6": {
+          "t": "Pertinencia de blockchain",
+          "d": "La tecnología sirve al proyecto, no al revés."
+        }
+      }
+    },
+    "stories": {
+      "title": "Founder Stories",
+      "archives": "Ver los archivos →",
+      "photoAlt": "Marcador: foto de portada del Founder Story",
+      "photoLabel": "[Foto de portada — 3:2]",
+      "meta": "[País] · [Sector] · [Año]",
+      "storyTitle": "[Título editorial del retrato]",
+      "lede": "[Entradilla de dos frases.]",
+      "read": "Leer el retrato →"
+    },
+    "live": {
+      "eyebrow": "3.ª edición comunitaria · Presencial",
+      "title": "Founder Story",
+      "titleEm": "Live",
+      "text": "Los fundadores cuentan su historia, sus obstáculos y sus ambiciones ante la comunidad. Presentado por un representante de BIB, organizador del encuentro.",
+      "guests": "Startup invitada: [Nombre de la startup] · Invitados: [por confirmar]",
+      "when": "Cuándo",
+      "whenValue": "Diciembre de 2026 · [fecha y hora por confirmar]",
+      "city": "Ciudad",
+      "cityValue": "Montreal",
+      "venue": "Lugar",
+      "venueValue": "[Lugar — se muestra una vez confirmado]",
+      "cta": "Reservar mi lugar ↗",
+      "note": "Inscripción en Luma, sin cuenta de BIB."
+    },
+    "newsletter": {
+      "title": "Seguir los próximos Spotlight",
+      "text": "Cada nuevo retrato se anuncia en el boletín de BIB, en la sección «BIB Highlights».",
+      "cta": "Suscribirse al boletín"
+    },
+    "status": {
+      "hero": "El primer retrato está en preparación. Black in Blockchain anunciará su selección tras la revisión editorial.",
+      "featured": "Todavía no se ha presentado oficialmente ninguna startup en Startup Spotlight. BIB selecciona directamente los proyectos, sin solicitudes ni pagos. El primer retrato se publicará tras verificar los datos y obtener la aprobación de los fundadores.",
+      "stories": "Aún no se ha publicado ningún Founder Story. El archivo aparecerá cuando se publiquen los primeros retratos.",
+      "guests": "Startup invitada: próximamente",
+      "pending": "Por confirmar",
+      "viewEvents": "Ver eventos de BIB",
+      "eventDetails": "Consulta los detalles del evento publicado y cómo registrarte.",
+      "noConfirmedEvent": "Todavía no hay ningún evento Founder Story Live confirmado en el calendario público."
+    }
   }
 }
