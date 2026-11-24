@@ -49,7 +49,7 @@ export default async function Page({ params }: Props) {
             <article className="ed-card"><div className="ed-card-body">
               <h3 className="ed-h3">{t("peopleTitle")}</h3>
               <p className="ed-muted">{t("peopleText")}</p>
-              <Link className="ed-link" href="/fondateurs">{t("openResource")} →</Link>
+              <Link className="ed-link" href="/about#fondateurs">{t("openResource")} →</Link>
             </div></article>
           </div>
         </div>

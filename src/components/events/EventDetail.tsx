@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server"
 import { intlLocale, pickLocalized } from "@/lib/content/locales"
-import { eventText } from "@/lib/events/text"
+import { eventText, splitLumaDescription } from "@/lib/events/text"
 import { eventTiming, formatEventDate } from "@/lib/events/temporal"
 import type { EventRecord, PublicMedia } from "@/lib/events/types"
 import { normalizeLumaUrl } from "@/lib/luma"
@@ -35,7 +35,9 @@ export async function EventDetail({
   const cancelled = event.source_status === "cancelled"
   const luma = cancelled ? null : normalizeLumaUrl(event.luma_url)
   const modeLabel = event.mode === "online" ? t("online") : event.mode === "hybrid" ? t("hybrid") : t("inPerson")
-  const place = [event.venue_name, event.address, event.city, event.country_code].filter(Boolean).join(", ") || event.source_location || ""
+  // Adresse et organisateurs extraits du gabarit Luma, affichés avec des libellés traduits.
+  const luma_ = splitLumaDescription(event.source_description)
+  const place = [event.venue_name, event.address, event.city, event.country_code].filter(Boolean).join(", ") || event.source_location || luma_.address.join(", ")
   const loc = intlLocale(locale)
   const status = cancelled ? s("cancelled") : timing === "past" ? t("ended") : timing === "ongoing" ? t("ongoing") : modeLabel
   // Visuel : couverture BIB (droits vérifiés) sinon visuel public Luma.
@@ -81,6 +83,12 @@ export async function EventDetail({
                   <>
                     <dt>{t("where")}</dt>
                     <dd>{place}</dd>
+                  </>
+                )}
+                {luma_.hosts && (
+                  <>
+                    <dt>{t("hosts")}</dt>
+                    <dd>{luma_.hosts}</dd>
                   </>
                 )}
                 {event.online_url && timing !== "past" && (

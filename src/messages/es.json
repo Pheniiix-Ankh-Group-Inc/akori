@@ -630,7 +630,7 @@
   },
   "terms": {
     "metadata": {
-      "title": "Términos de uso — Black in Blockchain",
+      "title": "Términos de uso",
       "description": "Términos de uso de la plataforma Black in Blockchain."
     },
     "header": {
@@ -685,6 +685,10 @@
     }
   },
   "privacy": {
+    "metadata": {
+      "title": "Política de privacidad",
+      "description": "Política de privacidad del sitio Black in Blockchain."
+    },
     "header": {
       "back": "Volver al inicio",
       "title": "Política de privacidad",
@@ -766,6 +770,10 @@
     }
   },
   "cookies": {
+    "metadata": {
+      "title": "Política de cookies",
+      "description": "Política de cookies del sitio Black in Blockchain."
+    },
     "header": {
       "back": "Volver al inicio",
       "title": "Política de cookies",
@@ -878,21 +886,21 @@
       "legendLow": "Bajo",
       "legendHigh": "Alto",
       "tipCommits": "Commits",
-      "tipActive": "Devs activos"
+      "tipActive": "Desarrolladores activos"
     },
     "m2": {
       "num": "§ 02  Movimiento Dos",
       "title": "Doce <em>ciudades.</em>",
       "lede1": "Principio 04, hecho literal. No “África.” No “el Caribe.” <em>Lagos. Nairobi. Puerto Príncipe.</em>",
       "lede2": "Clasificadas por desarrolladores activos en los últimos 28 días de la instantánea.",
-      "devs": "Devs"
+      "devs": "desarrolladores"
     },
     "m3": {
       "num": "§ 03  Movimiento Tres",
       "title": "Ocho <em>ecosistemas.</em>",
       "lede1": "Donde aterriza el trabajo. Top ocho protocolos por número de desarrolladores cubiertos, con su trayectoria de 48 meses indexada a 100 al inicio de la serie.",
       "lede2": "Forma, no volumen. Esta es la gramática del crecimiento.",
-      "devsLabel": "Devs cubiertos · 28D",
+      "devsLabel": "Desarrolladores cubiertos · 28 d",
       "indexLabel": "Índice"
     },
     "m4": {
@@ -925,7 +933,7 @@
     }
   },
   "Events": {
-    "metaTitle": "Eventos — Black in Blockchain",
+    "metaTitle": "Eventos",
     "metaDescription": "Eventos de Black in Blockchain próximos y pasados. La inscripción se realiza en Luma.",
     "eyebrow": "Eventos",
     "title": "Eventos",
@@ -945,6 +953,7 @@
     "joinOnline": "Enlace de acceso en línea",
     "when": "Cuándo",
     "where": "Dónde",
+    "hosts": "Organizado por",
     "format": "Formato",
     "back": "Todos los eventos",
     "translationFallback": "Este contenido aún no está disponible en su idioma; se muestra en {language}.",
@@ -952,7 +961,7 @@
     "viewRetrospective": "Ver la retrospectiva"
   },
   "InAction": {
-    "metaTitle": "BIB en acción — Black in Blockchain",
+    "metaTitle": "BIB en acción",
     "metaDescription": "Retrospectivas, fotos, videos y testimonios de los encuentros de Black in Blockchain.",
     "eyebrow": "BIB en acción",
     "title": "BIB en acción",
@@ -1016,6 +1025,12 @@
     "sobUnavailable": "Los indicadores de State of BIB aparecerán en cuanto se publique una versión verificada."
   },
   "Site": {
+    "notFound": {
+      "title": "Página no encontrada",
+      "text": "Esta página no existe o se ha movido.",
+      "home": "Volver al inicio",
+      "events": "Ver los eventos"
+    },
     "nav": {
       "about": "Acerca de",
       "events": "Eventos",
@@ -1146,7 +1161,7 @@
       "facts": {
         "asOf": "Datos al",
         "scope": "Alcance",
-        "scopeVal": "{n} países de África y el Caribe",
+        "scopeVal": "{n} países con al menos un desarrollador, de {total} cubiertos",
         "version": "Versión"
       },
       "analysis": "Análisis",
@@ -1438,7 +1453,7 @@
   },
   "Spotlight": {
     "meta": {
-      "title": "Startup Spotlight — Black in Blockchain",
+      "title": "Startup Spotlight",
       "description": "Programa editorial de Black in Blockchain: la historia de fundadores negros que construyen con blockchain, contada una startup a la vez."
     },
     "fiction": {

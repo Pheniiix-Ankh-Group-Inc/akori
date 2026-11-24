@@ -10,6 +10,45 @@ export interface EventText {
   isFallback: boolean
 }
 
+export interface LumaDescription {
+  /** Texte rédigé par l'organisateur, sans le gabarit ajouté par Luma. */
+  body: string | null
+  /** Lignes d'adresse extraites du bloc « Address: ». */
+  address: string[]
+  /** Organisateurs extraits de la ligne « Hosted by … ». */
+  hosts: string | null
+}
+
+/**
+ * Le flux iCal de Luma ajoute un gabarit en anglais à chaque description
+ * (« Get up-to-date information at: … », « Address: … », « Hosted by … »).
+ * On le retire du texte affiché et on en extrait l'adresse et les
+ * organisateurs, affichés avec des libellés traduits.
+ */
+export function splitLumaDescription(text: string | null | undefined): LumaDescription {
+  if (!text) return { body: null, address: [], hosts: null }
+  const address: string[] = []
+  let hosts: string | null = null
+  const kept: string[] = []
+  const lines = text.replace(/\r\n?/g, "\n").split("\n")
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+    if (/^get up-to-date information at:?/i.test(line)) continue
+    if (/^address:?$/i.test(line)) {
+      while (i + 1 < lines.length && lines[i + 1].trim()) address.push(lines[++i].trim())
+      continue
+    }
+    const host = /^hosted by\s+(.+)$/i.exec(line)
+    if (host) {
+      hosts = host[1].trim()
+      continue
+    }
+    kept.push(lines[i])
+  }
+  const body = kept.join("\n").replace(/\n{3,}/g, "\n\n").trim()
+  return { body: body || null, address, hosts }
+}
+
 const firstSentences = (text: string | null, max = 220): string | null => {
   if (!text) return null
   const flat = text.replace(/\s+/g, " ").trim()
@@ -26,8 +65,11 @@ const firstSentences = (text: string | null, max = 220): string | null => {
  */
 export function eventText(event: Pick<EventRecord, "event_translations" | "slug" | "source_title" | "source_description">, locale: string): EventText {
   const exact = event.event_translations?.find((t) => t.locale === locale)
-  if (exact) return { title: exact.title, summary: exact.summary ?? firstSentences(exact.description ?? event.source_description ?? null), description: exact.description ?? event.source_description ?? null, shownLocale: locale, isFallback: false }
-  if (event.source_title) return { title: event.source_title, summary: firstSentences(event.source_description ?? null), description: event.source_description ?? null, shownLocale: "source", isFallback: false }
+  if (exact) return { title: exact.title, summary: exact.summary ?? firstSentences(exact.description ?? splitLumaDescription(event.source_description).body), description: exact.description ?? splitLumaDescription(event.source_description).body, shownLocale: locale, isFallback: false }
+  if (event.source_title) {
+    const body = splitLumaDescription(event.source_description).body
+    return { title: event.source_title, summary: firstSentences(body), description: body, shownLocale: "source", isFallback: false }
+  }
   const tr = pickTranslation(event.event_translations, locale)
   if (tr) return { title: tr.value.title, summary: tr.value.summary, description: tr.value.description, shownLocale: tr.shownLocale, isFallback: tr.isFallback }
   return { title: event.slug, summary: null, description: null, shownLocale: locale, isFallback: true }

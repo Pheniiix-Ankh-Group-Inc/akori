@@ -6,6 +6,24 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Fixed — November 24 site audit corrections (2026-11-24)
+
+- State of BIB: country names translated from ISO codes and common city names localized in French and Spanish (map, rankings, comparisons, home page); "Devs" labels translated.
+- State of BIB: the scope line now reads "71 countries with at least one developer, out of 76 covered" instead of a bare "71 countries", which contradicted the 54 + 22 countries announced in the introduction.
+- Events: Luma's English iCal boilerplate is no longer shown as the event description; the address and hosts are extracted and displayed with translated labels.
+- Tab titles no longer repeat the brand ("Events — Black in Blockchain | Black in Blockchain"); privacy, terms and cookie pages have their own title and description; the default site description no longer promises "exclusive resources".
+- Unknown public URLs render a localized 404 page with the header and footer.
+- Admin workflow dispatch targets `Pheniiix-Ankh-Group-Inc/BiB` by default instead of the former `akori` repository.
+- The repository's State of BIB technical copy is replaced by published version `20261118T130441` (SHA-256 verified against Supabase), so local development and the fallback show real data; tests now use the archived April 2026 copy for invalid-fallback scenarios.
+
+### Changed — single About page (2026-11-24)
+
+- `/about` now combines the presentation, the manifesto premise, the approach, activities and the founders (`#fondateurs`); `/fondateurs` permanently redirects there. Founder profiles are unchanged.
+
+### Added — Vercel Speed Insights (2026-11-24)
+
+- `@vercel/speed-insights` reports real-user Core Web Vitals (LCP, INP, CLS, TTFB) per page once Speed Insights is enabled in the Vercel project. Script and data stay on the site's own domain, within the current CSP.
+
 ### Added — release process (2026-11-24)
 
 - Add `pnpm release:prepare <x.y.z>` and the **Release** GitHub workflow: a manual run on develop moves `[Unreleased]` into a dated version section, bumps `package.json` and opens a `release: vX.Y.Z` pull request; when that version reaches `main`, the workflow creates the `vX.Y.Z` tag and the GitHub release from the changelog notes. Existing tags are never moved.

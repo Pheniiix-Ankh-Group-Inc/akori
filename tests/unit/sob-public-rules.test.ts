@@ -9,13 +9,14 @@ const ROOT = path.resolve(__dirname, "../..")
 const read = (p: string) => readFileSync(path.join(ROOT, p), "utf8")
 const json = (p: string) => JSON.parse(read(p))
 
-function repoCopy(): SobFiles {
-  const d = "data/state-of-bib/current"
+function copyAt(d: string): SobFiles {
   return {
     meta: json(`${d}/meta.json`), headline: json(`${d}/headline.json`), countryMap: json(`${d}/country_map.json`),
     topCities: json(`${d}/top_cities.json`), ecoMix: json(`${d}/ecosystem_mix.json`), cohort: json(`${d}/tenure_cohort.json`),
   }
 }
+// Ancienne copie d'avril 2026, conservée telle quelle dans l'historique.
+const APRIL_2026 = "data/state-of-bib/history/20260419T130333"
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const name of readdirSync(dir)) {
@@ -33,8 +34,14 @@ describe("State of BIB — validité des données affichées", () => {
     expect(fallbackProblems(f)).toEqual([])
   })
 
-  it("la copie d'avril 2026 du dépôt est refusée comme repli (incohérente, sans provenance, périmée)", () => {
-    const problems = fallbackProblems(repoCopy(), new Date("2026-11-15T00:00:00Z")).join(" | ")
+  it("la copie technique actuelle du dépôt est un repli valide (version publiée du 18 nov. 2026)", () => {
+    const current = copyAt("data/state-of-bib/current")
+    expect(String(current.meta.dataset_version)).toBe("20261118T130441")
+    expect(fallbackProblems(current, new Date("2026-11-24T00:00:00Z"))).toEqual([])
+  })
+
+  it("la copie d'avril 2026 est refusée comme repli (incohérente, sans provenance, périmée)", () => {
+    const problems = fallbackProblems(copyAt(APRIL_2026), new Date("2026-11-15T00:00:00Z")).join(" | ")
     expect(problems).toMatch(/headline\.countries/)
     expect(problems).toMatch(/somme par pays/)
     expect(problems).toMatch(/provenance absente/)

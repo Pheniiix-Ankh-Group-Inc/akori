@@ -71,6 +71,7 @@ Until a valid State of BIB version is readable server-side, its public interface
 | Data visualizations | D3, TopoJSON, world-atlas |
 | CI and scheduling | GitHub Actions |
 | Hosting | Vercel |
+| Measurement | Vercel Web Analytics and Speed Insights (Core Web Vitals; enable Speed Insights in the Vercel project) |
 
 Package manager: **pnpm 10** with `pnpm-lock.yaml`. Runtime: Node.js **24.x** (`engines`).
 
@@ -79,8 +80,10 @@ Package manager: **pnpm 10** with `pnpm-lock.yaml`. Runtime: Node.js **24.x** (`
 ### Public website
 
 - **Home** is a single landing page with anchored sections: about and founders, activities, commitments, upcoming events, BIB in Action (with published testimonials), a State of BIB teaser (key figures and the five most active cities), the newsletter and a closing call to action. Unverified claims stay hidden (`src/lib/content/claims.ts`, `HOME_SHOW_UNVERIFIED_SECTIONS`).
-- **Pages:** About (`/about`), Founders (`/fondateurs`), Mission, Events, BIB in Action, State of BIB, Startup Spotlight, Resources, Press, Contact, Data sources, and legal pages (`/terms`, `/privacy`, `/cookies`).
+- **Pages:** About (`/about`, including the founders section; `/fondateurs` permanently redirects to `/about#fondateurs`, founder profiles stay at `/fondateurs/brice` and `/fondateurs/fadjiah`), Mission, Events, BIB in Action, State of BIB, Startup Spotlight, Resources, Press, Contact, Data sources, and legal pages (`/terms`, `/privacy`, `/cookies`).
 - **Membership** (`/membership`) is still a placeholder and is excluded from search indexing.
+- **Localization:** State of BIB country names (from ISO codes) and common city exonyms are shown in French and Spanish; Luma's English iCal boilerplate ("Get up-to-date information", "Address", "Hosted by") is stripped from event pages and shown as translated practical information.
+- **404:** unknown public URLs render a localized not-found page with the site header and footer.
 - **Editorial visuals** (`src/lib/editorial/visuals.ts`) are currently low-resolution previews awaiting HD files.
 
 ### Events, calendar, and history
@@ -103,7 +106,7 @@ Event recaps, media galleries, videos, and testimonials include consent referenc
 - Geographic scope: **Africa and the Caribbean (76 countries and territories)**. The figures **do not measure the diaspora**.
 - **No public dataset downloads:** no CSV/JSON export or public artifact endpoints. Provider details, methodology, and licensing are restricted to `/data-sources`.
 - The pipeline is designed for **fully automated publication** in `auto` mode, without mandatory human approval.
-- Supabase is the primary source for the current published dataset. `data/state-of-bib/current/` is a **private technical fallback**, not a public dataset. It can be used only if internally consistent, from a known source, and less than 120 days old. The included April 2026 copy is not valid for current reporting and is rejected.
+- Supabase is the primary source for the current published dataset. `data/state-of-bib/current/` is a **private technical fallback**, not a public dataset. It can be used only if internally consistent, from a known source, and less than 120 days old. The committed copy is published version `20261118T130441` (SHA-256 identical to the Supabase artifacts); it is refreshed manually and is rejected again once older than 120 days.
 - Post-publication checks now use `verify_current_dataset` directly and independently reread the six private artifacts with SHA-256 validation. This is a **database/Storage integrity check**, not proof that every visitor sees the latest version immediately; public visibility still requires HTTP/E2E validation.
 
 ### AI-generated insights
@@ -232,6 +235,7 @@ The complete reference is [.env.example](.env.example); see [deployment variable
 | `NEWSLETTER_EMAIL_HASH_PEPPER` | Email/IP hashes (min. 32 chars) | Subscriptions | HTTP 503 on signup | **Yes** |
 | `FEATURE_NEWSLETTER_SUBSCRIBE`, `FEATURE_NEWSLETTER_AUTOSEND`, `FEATURE_NEWS_INGEST`, `FEATURE_OPS_ALERTS` | Feature activation | Optional | `false` | No |
 | `GITHUB_DISPATCH_TOKEN` | Optional workflow dispatch from admin | Admin-triggered jobs | Dispatch unavailable | **Yes** |
+| `GITHUB_REPOSITORY_SLUG`, `GITHUB_DISPATCH_REF` | Repository and branch for admin dispatch | Optional | `Pheniiix-Ankh-Group-Inc/BiB`, `main` | No |
 
 ### Workflows (GitHub Actions)
 
@@ -356,7 +360,7 @@ Versions up to `0.13.0` are historical entries without Git tags; `0.14.0` is the
 
 ## Known gaps
 
-Tracked in the November 24, 2026 site audit: legal pages to rewrite (privacy policy describes data the site does not collect; publisher details missing), no upcoming event published, newsletter and AI insights not configured, city and country names not localized on State of BIB, no `sitemap.xml`/`robots.txt`/Open Graph image, provisional editorial visuals.
+Tracked in the November 24, 2026 site audit: legal pages to rewrite (privacy policy describes data the site does not collect; publisher details missing), no upcoming event published, newsletter and AI insights not configured, no `sitemap.xml`/`robots.txt`/Open Graph image, provisional editorial visuals.
 
 ## Further documentation
 
