@@ -17,23 +17,31 @@ export interface LumaDescription {
   address: string[]
   /** Organisateurs extraits de la ligne « Hosted by … ». */
   hosts: string | null
+  /** Lien « Get up-to-date information at: … » (page Luma de l'événement). */
+  infoUrl: string | null
 }
 
 /**
  * Le flux iCal de Luma ajoute un gabarit en anglais à chaque description
  * (« Get up-to-date information at: … », « Address: … », « Hosted by … »).
- * On le retire du texte affiché et on en extrait l'adresse et les
- * organisateurs, affichés avec des libellés traduits.
+ * Ces informations sont extraites pour être affichées dans toutes les
+ * langues, avec des libellés traduits ; seul le texte libre de
+ * l'organisateur reste dans sa langue d'origine (sauf traduction BIB).
  */
 export function splitLumaDescription(text: string | null | undefined): LumaDescription {
-  if (!text) return { body: null, address: [], hosts: null }
+  if (!text) return { body: null, address: [], hosts: null, infoUrl: null }
   const address: string[] = []
   let hosts: string | null = null
+  let infoUrl: string | null = null
   const kept: string[] = []
   const lines = text.replace(/\r\n?/g, "\n").split("\n")
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim()
-    if (/^get up-to-date information at:?/i.test(line)) continue
+    const info = /^get up-to-date information at:?\s*(\S+)?/i.exec(line)
+    if (info) {
+      if (info[1] && /^https:\/\//.test(info[1])) infoUrl = info[1]
+      continue
+    }
     if (/^address:?$/i.test(line)) {
       while (i + 1 < lines.length && lines[i + 1].trim()) address.push(lines[++i].trim())
       continue
@@ -46,7 +54,7 @@ export function splitLumaDescription(text: string | null | undefined): LumaDescr
     kept.push(lines[i])
   }
   const body = kept.join("\n").replace(/\n{3,}/g, "\n\n").trim()
-  return { body: body || null, address, hosts }
+  return { body: body || null, address, hosts, infoUrl }
 }
 
 const firstSentences = (text: string | null, max = 220): string | null => {

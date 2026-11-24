@@ -5,11 +5,12 @@ import { eventText, splitLumaDescription } from "@/lib/events/text"
 const LUMA = "Get up-to-date information at: https://luma.com/y2wqdizo\n\nAddress:\n3426 R. Notre Dame O\nMontréal, Québec\nCanada\n\nHosted by events anbachain, Fadjiah Collin-Mazile & Brice Mimifir"
 
 describe("gabarit de description Luma", () => {
-  it("retire le gabarit anglais et extrait adresse et organisateurs", () => {
+  it("extrait lien, adresse et organisateurs du gabarit anglais pour les traduire", () => {
     expect(splitLumaDescription(LUMA)).toEqual({
       body: null,
       address: ["3426 R. Notre Dame O", "Montréal, Québec", "Canada"],
       hosts: "events anbachain, Fadjiah Collin-Mazile & Brice Mimifir",
+      infoUrl: "https://luma.com/y2wqdizo",
     })
   })
 
@@ -18,7 +19,16 @@ describe("gabarit de description Luma", () => {
     expect(out.body).toBe("Une soirée d'échanges.")
   })
 
-  it("n'affiche plus le gabarit sur la fiche publique", () => {
+  it("les libellés du gabarit existent dans les trois langues", async () => {
+    const { readFileSync } = await import("node:fs")
+    for (const l of ["fr", "en", "es"]) {
+      const ev = JSON.parse(readFileSync(`src/messages/${l}.json`, "utf8")).Events
+      expect(ev.upToDate && ev.address && ev.hostedBy, l).toBeTruthy()
+      expect(ev.hostedBy).toContain("{hosts}")
+    }
+  })
+
+  it("le texte anglais brut n'est pas repris tel quel comme description", () => {
     const tx = eventText({ slug: "ed-2", source_title: "Ed. 2", source_description: LUMA, event_translations: [] }, "fr")
     expect(tx.description).toBeNull()
     expect(tx.summary).toBeNull()

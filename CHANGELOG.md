@@ -10,7 +10,7 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 - State of BIB: country names translated from ISO codes and common city names localized in French and Spanish (map, rankings, comparisons, home page); "Devs" labels translated.
 - State of BIB: the scope line now reads "71 countries with at least one developer, out of 76 covered" instead of a bare "71 countries", which contradicted the 54 + 22 countries announced in the introduction.
-- Events: Luma's English iCal boilerplate is no longer shown as the event description; the address and hosts are extracted and displayed with translated labels.
+- Events: Luma's English iCal boilerplate (up-to-date information link, address, hosts) is parsed and shown in every language with translated labels, instead of raw English text; the organizer's own free text keeps its original language unless a BIB translation exists.
 - Tab titles no longer repeat the brand ("Events — Black in Blockchain | Black in Blockchain"); privacy, terms and cookie pages have their own title and description; the default site description no longer promises "exclusive resources".
 - Unknown public URLs render a localized 404 page with the header and footer.
 - Admin workflow dispatch targets `Pheniiix-Ankh-Group-Inc/BiB` by default instead of the former `akori` repository.
