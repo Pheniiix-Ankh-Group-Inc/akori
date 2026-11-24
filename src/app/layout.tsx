@@ -5,10 +5,10 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: {
     template: "%s | Black in Blockchain",
-    default: "Black in Blockchain — Réseau blockchain des professionnels noirs",
+    default: "Black in Blockchain",
   },
   description:
-    "Plateforme communautaire blockchain pour les professionnels noirs — réseau, événements et ressources exclusives.",
+    "Black in Blockchain : rencontres, échanges et découvertes autour de la blockchain, centrés sur les professionnels noirs.",
 }
 
 export default function RootLayout({

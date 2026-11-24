@@ -1,11 +1,3 @@
-## State of BIB — Historical warehouse (2026-11-18)
-
-- Toutes les archives disponibles importables dans Supabase via GitHub Actions, avec validation technique et contrôle d'intégrité.
-- Versions historiques et écarts statistiques conservés sans réécriture des données source.
-- Stockage des observations pays, villes, écosystèmes et cohortes mensuelles ; comparaison des versions dans PostgreSQL.
-- Vue historique State of BIB alimentée uniquement par Supabase en production.
-- Migration `20261118051801_sob_historical_deltas.sql` déjà appliquée et enregistrée sur Supabase `akori`.
-
 # Changelog
 
 All notable changes to this project are documented here.
@@ -13,6 +5,73 @@ All notable changes to this project are documented here.
 This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html) conventions. Historical release numbers and duplicate legacy entries are preserved as originally recorded.
 
 ## [Unreleased]
+
+### Fixed — November 24 site audit corrections (2026-11-24)
+
+- State of BIB: country names translated from ISO codes and common city names localized in French and Spanish (map, rankings, comparisons, home page); "Devs" labels translated.
+- State of BIB: the scope line now reads "71 countries with at least one developer, out of 76 covered" instead of a bare "71 countries", which contradicted the 54 + 22 countries announced in the introduction.
+- Events: Luma's English iCal boilerplate (up-to-date information link, address, hosts) is parsed and shown in every language with translated labels, instead of raw English text; the organizer's own free text keeps its original language unless a BIB translation exists.
+- Tab titles no longer repeat the brand ("Events — Black in Blockchain | Black in Blockchain"); privacy, terms and cookie pages have their own title and description; the default site description no longer promises "exclusive resources".
+- Unknown public URLs render a localized 404 page with the header and footer.
+- Admin workflow dispatch targets `Pheniiix-Ankh-Group-Inc/BiB` by default instead of the former `akori` repository.
+- The repository's State of BIB technical copy is replaced by published version `20261118T130441` (SHA-256 verified against Supabase), so local development and the fallback show real data; tests now use the archived April 2026 copy for invalid-fallback scenarios.
+
+### Changed — single About page (2026-11-24)
+
+- `/about` now combines the presentation, the manifesto premise, the approach, activities and the founders (`#fondateurs`); `/fondateurs` permanently redirects there. Founder profiles are unchanged.
+
+### Added — Vercel Speed Insights (2026-11-24)
+
+- `@vercel/speed-insights` reports real-user Core Web Vitals (LCP, INP, CLS, TTFB) per page once Speed Insights is enabled in the Vercel project. Script and data stay on the site's own domain, within the current CSP.
+
+### Added — release process (2026-11-24)
+
+- Add `pnpm release:prepare <x.y.z>` and the **Release** GitHub workflow: a manual run on develop moves `[Unreleased]` into a dated version section, bumps `package.json` and opens a `release: vX.Y.Z` pull request; when that version reaches `main`, the workflow creates the `vX.Y.Z` tag and the GitHub release from the changelog notes. Existing tags are never moved.
+- Align `package.json` with the last recorded version (`0.13.0`) so the next release continues the existing numbering.
+- Document the procedure in `docs/RELEASING.md`; update the README to the current state of the project.
+- Move the misplaced historical-warehouse entry under `[Unreleased]`.
+
+### Added — Startup Spotlight (2026-11-23)
+
+- Public editorial page `/startup-spotlight` (FR/EN/ES), linked from the main navigation; kept out of search engines until the first portrait is published.
+- Founder Story Live events are shown only when they are confirmed in the public Luma calendar.
+
+### Changed — Premium Minimalism art direction and landing page (PR #66, 2026-11-23)
+
+- Calmer typography, spacing and contrast across public pages; new editorial grid, event rows and founder portraits.
+- Home page restructured as a landing page with anchored sections (about, activities, commitments, events, BIB in action, State of BIB teaser, newsletter, closing call to action); State of BIB keeps its own page.
+- Navigation highlights the section in view; below-the-fold blocks reveal on scroll and respect reduced-motion settings.
+- Published testimonials and the five most active cities appear on the home page when real data exists; unverified claims stay hidden.
+- Five editorial visuals added as **provisional low-resolution previews**, to be replaced by HD exports.
+
+### Added — State of BIB historical warehouse (2026-11-18)
+
+- Toutes les archives disponibles importables dans Supabase via GitHub Actions, avec validation technique et contrôle d'intégrité.
+- Versions historiques et écarts statistiques conservés sans réécriture des données source.
+- Stockage des observations pays, villes, écosystèmes et cohortes mensuelles ; comparaison des versions dans PostgreSQL.
+- Vue historique State of BIB alimentée uniquement par Supabase en production.
+- Migration `20261118051801_sob_historical_deltas.sql` déjà appliquée et enregistrée sur Supabase `akori`.
+
+### Security — private implementation for privileged Supabase RPCs (2026-11-22)
+
+- Applied migration `20261122205510_bib_harden_definer_rpc_exposure` directly to the shared `akori` Supabase database, then mirrored its SQL in Git.
+- Converted six exposed privileged RPC entrypoints to security-invoker wrappers, moved five privileged implementations to the non-exposed `private` schema, and kept existing admin/pipeline role checks.
+- Verified advisor lint: 6 prior SECURITY DEFINER exposure warnings removed. Three informational RLS notices remain unchanged.
+- Added regression coverage for API ACLs and RLS-based editor role lookup.
+
+
+### Added — five completed institutional pages (2026-11-22)
+
+- Replace five public placeholders with localized About, Mission, Resources,
+  Press, and Contact content (FR/EN/ES) using existing BIB editorial styles.
+- Route the About navigation to /about, while preserving direct access to founders.
+- Provide genuine links to existing events, data, methodology and founder pages.
+- Route contact topics to the **existing** mail address `contact@anbachain.org`;
+  do not create a fake contact form or claim a configured messaging backend.
+- Keep Membership as a placeholder; leave domains, infrastructure, legal entity
+  claims and AI configuration unchanged.
+- Add page and language regression tests.
+
 
 ### Changed — uniform public Black in Blockchain branding (2026-11-22)
 
@@ -194,7 +253,7 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## Earlier versions
 
-The entries below preserve the original project changelog, including repeated version numbers and dates. They do **not** correspond to verified Git tags; `package.json` currently identifies the application as `0.3.0`.
+The entries below preserve the original project changelog, including repeated version numbers and dates. They do **not** correspond to Git tags. From `0.14.0` on, every version is tagged `vX.Y.Z` and published as a GitHub release (see `docs/RELEASING.md`).
 
 ## [0.13.0] — 2026-05-18
 

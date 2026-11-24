@@ -9,9 +9,12 @@ import { SobExplorerProvider } from "@/components/state-of-bib/SobExplorer"
 import { SobPeriodBar } from "@/components/state-of-bib/SobPeriodBar"
 import { LazyMount } from "@/components/state-of-bib/LazyMount"
 import { Link } from "@/i18n/navigation"
+import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
 import { isSobAvailable, loadSobState, loadSobTrend } from "@/lib/sob/load"
 import { SobTrend } from "@/components/state-of-bib/SobTrend"
 import { getPublishedInsight } from "@/lib/sob/insights"
+import { localizeSnapshot } from "@/lib/geo/names"
+import { SCOPE_COUNTRIES } from "@/lib/sob/scope"
 import { listSobVersions, loadSobVersion, loadSobDeltas } from "@/lib/sob/history"
 
 // A temporary read error must not be embedded in a 15-minute static page.
@@ -58,7 +61,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
         <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "6rem" }}>
           <div className="ed-stack" style={{ gap: "1.75rem", maxWidth: "46rem" }}>
             <p className="ed-eyebrow">{s("eyebrow")}</p>
-            <h1 className="ed-display" style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)" }}>
+            <h1 className="ed-h1">
               {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
             </h1>
             <div className="ed-note" role="status">
@@ -71,7 +74,8 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
       </main>
     )
   }
-  const { meta, headline, countryMap, topCities, ecoMix, cohort, origin } = snapshot
+  // Pays et villes dans la langue de la page (codes ISO inchangés).
+  const { meta, headline, countryMap, topCities, ecoMix, cohort, origin } = localizeSnapshot(snapshot, locale)
   const deltas = await loadSobDeltas(snapshot.version)
   // Analyse IA : affichée uniquement si elle a été publiée par un administrateur.
   const insight = await getPublishedInsight(locale)
@@ -85,7 +89,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
       <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "4rem" }}>
         <div className="ed-stack" style={{ gap: "1.75rem" }}>
           <p className="ed-eyebrow">{s("eyebrow")}</p>
-          <h1 className="ed-display" style={{ fontSize: "clamp(3rem, 8vw, 6.5rem)" }}>
+          <h1 className="ed-h1">
             {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
           </h1>
           <p className="ed-lede">{s("lede")}</p>
@@ -99,7 +103,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
           </form>
           <dl className="sob-facts">
             <div><dt>{s("facts.asOf")}</dt><dd>{asOf}</dd></div>
-            <div><dt>{s("facts.scope")}</dt><dd>{s("facts.scopeVal", { n: meta.scope.countries_in_scope })}</dd></div>
+            <div><dt>{s("facts.scope")}</dt><dd>{s("facts.scopeVal", { n: meta.scope.countries_in_scope, total: SCOPE_COUNTRIES })}</dd></div>
             <div><dt>{s("facts.version")}</dt><dd>{snapshot.version}</dd></div>
           </dl>
           <p className="ed-muted">{s("diaspora")} <Link href="/data-sources" className="ed-link">{s("methodLink")}</Link></p>
@@ -107,6 +111,11 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
           {origin === "fallback" && <p className="ed-note" role="note">{s("fallback")}</p>}
         </div>
       </section>
+      {hasVisual("sob") && (
+        <div className="ed-wrap ed-hero-media">
+          <EditorialImage name="sob" locale={locale} ratio="3x1" sizes="(max-width: 1264px) 100vw, 1200px" />
+        </div>
+      )}
 
       <section className="ed-section ed-section-white" aria-labelledby="sob-headline">
         <div className="ed-wrap ed-stack" style={{ gap: "2.5rem" }}>

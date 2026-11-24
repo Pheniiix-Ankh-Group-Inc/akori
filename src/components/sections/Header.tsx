@@ -1,15 +1,36 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { Link, usePathname } from "@/i18n/navigation"
 import { routing } from "@/i18n/routing"
 
+// Landing page : les trois premières entrées font défiler l'accueil jusqu'à
+// leur section ; State of BIB reste une page à part entière.
 const NAV = [
-  { key: "about", href: "/fondateurs" },
-  { key: "events", href: "/evenements" },
-  { key: "inAction", href: "/en-action" },
-  { key: "stateOfBib", href: "/state_of_bib" },
+  { key: "about", href: "/#a-propos", section: "a-propos" },
+  { key: "events", href: "/#evenements", section: "evenements" },
+  { key: "spotlight", href: "/startup-spotlight", section: null },
+  { key: "inAction", href: "/#en-action", section: "en-action" },
+  { key: "stateOfBib", href: "/state_of_bib", section: null },
 ] as const
+
+/** Section de l'accueil actuellement à l'écran (pour souligner l'entrée du menu). */
+function useActiveSection(enabled: boolean) {
+  const [active, setActive] = useState<string | null>(null)
+  useEffect(() => {
+    if (!enabled || typeof IntersectionObserver === "undefined") return
+    const els = NAV.flatMap((n) => (n.section ? [document.getElementById(n.section)] : [])).filter((e): e is HTMLElement => !!e)
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setActive(e.target.id)
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    )
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [enabled])
+  return enabled ? active : null
+}
 
 /** En-tête du site public : menu principal, langues FR/EN/ES, abonnement. */
 export function Header() {
@@ -20,7 +41,9 @@ export function Header() {
 
   const close = () => setOpen(false)
 
-  const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  const active = useActiveSection(pathname === "/")
+  const currentOf = (item: (typeof NAV)[number]) =>
+    item.section ? (active === item.section ? "location" : undefined) : pathname === item.href || pathname.startsWith(`${item.href}/`) ? "page" : undefined
 
   const languages = (
     <div className="ed-lang" role="group" aria-label={t("language")}>
@@ -41,7 +64,7 @@ export function Header() {
 
         <nav className="ed-nav" aria-label={t("main")}>
           {NAV.map((item) => (
-            <Link key={item.key} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+            <Link key={item.key} href={item.href} aria-current={currentOf(item)}>
               {t(item.key)}
             </Link>
           ))}
@@ -70,7 +93,7 @@ export function Header() {
 
       <nav id="ed-mobile-menu" className={`ed-mobile${open ? " open" : ""}`} aria-label={t("main")} hidden={!open}>
         {NAV.map((item) => (
-          <Link key={item.key} href={item.href} className="ed-mobile-link" onClick={close} aria-current={isCurrent(item.href) ? "page" : undefined}>
+          <Link key={item.key} href={item.href} className="ed-mobile-link" onClick={close} aria-current={currentOf(item)}>
             {t(item.key)}
           </Link>
         ))}

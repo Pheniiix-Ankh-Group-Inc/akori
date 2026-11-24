@@ -1,42 +1,570 @@
 [
-  { "iso_a3": "NGA", "name": "Nigeria", "region": "Africa", "devs_active_28d": 892, "commits_lifetime": 485320, "commits_last_12m": 98450 },
-  { "iso_a3": "ZAF", "name": "South Africa", "region": "Africa", "devs_active_28d": 624, "commits_lifetime": 342180, "commits_last_12m": 71200 },
-  { "iso_a3": "KEN", "name": "Kenya", "region": "Africa", "devs_active_28d": 481, "commits_lifetime": 268740, "commits_last_12m": 56780 },
-  { "iso_a3": "EGY", "name": "Egypt", "region": "Africa", "devs_active_28d": 418, "commits_lifetime": 231560, "commits_last_12m": 48900 },
-  { "iso_a3": "GHA", "name": "Ghana", "region": "Africa", "devs_active_28d": 342, "commits_lifetime": 187320, "commits_last_12m": 42150 },
-  { "iso_a3": "MAR", "name": "Morocco", "region": "Africa", "devs_active_28d": 276, "commits_lifetime": 152480, "commits_last_12m": 34800 },
-  { "iso_a3": "TUN", "name": "Tunisia", "region": "Africa", "devs_active_28d": 198, "commits_lifetime": 108650, "commits_last_12m": 24600 },
-  { "iso_a3": "RWA", "name": "Rwanda", "region": "Africa", "devs_active_28d": 164, "commits_lifetime": 89420, "commits_last_12m": 21850 },
-  { "iso_a3": "UGA", "name": "Uganda", "region": "Africa", "devs_active_28d": 152, "commits_lifetime": 78210, "commits_last_12m": 17900 },
-  { "iso_a3": "ETH", "name": "Ethiopia", "region": "Africa", "devs_active_28d": 138, "commits_lifetime": 64890, "commits_last_12m": 16200 },
-  { "iso_a3": "SEN", "name": "Senegal", "region": "Africa", "devs_active_28d": 124, "commits_lifetime": 58720, "commits_last_12m": 13650 },
-  { "iso_a3": "CMR", "name": "Cameroon", "region": "Africa", "devs_active_28d": 109, "commits_lifetime": 51240, "commits_last_12m": 12100 },
-  { "iso_a3": "TZA", "name": "Tanzania", "region": "Africa", "devs_active_28d": 96, "commits_lifetime": 44680, "commits_last_12m": 10800 },
-  { "iso_a3": "CIV", "name": "Côte d'Ivoire", "region": "Africa", "devs_active_28d": 88, "commits_lifetime": 40320, "commits_last_12m": 9400 },
-  { "iso_a3": "ZWE", "name": "Zimbabwe", "region": "Africa", "devs_active_28d": 74, "commits_lifetime": 33890, "commits_last_12m": 8100 },
-  { "iso_a3": "DZA", "name": "Algeria", "region": "Africa", "devs_active_28d": 68, "commits_lifetime": 31240, "commits_last_12m": 7450 },
-  { "iso_a3": "AGO", "name": "Angola", "region": "Africa", "devs_active_28d": 54, "commits_lifetime": 24800, "commits_last_12m": 6100 },
-  { "iso_a3": "BEN", "name": "Benin", "region": "Africa", "devs_active_28d": 48, "commits_lifetime": 21560, "commits_last_12m": 5200 },
-  { "iso_a3": "MUS", "name": "Mauritius", "region": "Africa", "devs_active_28d": 45, "commits_lifetime": 19340, "commits_last_12m": 4800 },
-  { "iso_a3": "BFA", "name": "Burkina Faso", "region": "Africa", "devs_active_28d": 42, "commits_lifetime": 18250, "commits_last_12m": 4350 },
-  { "iso_a3": "BWA", "name": "Botswana", "region": "Africa", "devs_active_28d": 38, "commits_lifetime": 16400, "commits_last_12m": 3950 },
-  { "iso_a3": "MLI", "name": "Mali", "region": "Africa", "devs_active_28d": 34, "commits_lifetime": 14620, "commits_last_12m": 3520 },
-  { "iso_a3": "NAM", "name": "Namibia", "region": "Africa", "devs_active_28d": 32, "commits_lifetime": 13480, "commits_last_12m": 3250 },
-  { "iso_a3": "MOZ", "name": "Mozambique", "region": "Africa", "devs_active_28d": 28, "commits_lifetime": 11740, "commits_last_12m": 2850 },
-  { "iso_a3": "SDN", "name": "Sudan", "region": "Africa", "devs_active_28d": 24, "commits_lifetime": 10120, "commits_last_12m": 2340 },
-  { "iso_a3": "LBY", "name": "Libya", "region": "Africa", "devs_active_28d": 21, "commits_lifetime": 8940, "commits_last_12m": 2100 },
-  { "iso_a3": "MDG", "name": "Madagascar", "region": "Africa", "devs_active_28d": 19, "commits_lifetime": 7850, "commits_last_12m": 1880 },
-  { "iso_a3": "MWI", "name": "Malawi", "region": "Africa", "devs_active_28d": 16, "commits_lifetime": 6420, "commits_last_12m": 1550 },
-  { "iso_a3": "ZMB", "name": "Zambia", "region": "Africa", "devs_active_28d": 15, "commits_lifetime": 6120, "commits_last_12m": 1460 },
-  { "iso_a3": "TGO", "name": "Togo", "region": "Africa", "devs_active_28d": 13, "commits_lifetime": 5280, "commits_last_12m": 1280 },
-  { "iso_a3": "JAM", "name": "Jamaica", "region": "Caribbean", "devs_active_28d": 98, "commits_lifetime": 48250, "commits_last_12m": 11400 },
-  { "iso_a3": "DOM", "name": "Dominican Rep.", "region": "Caribbean", "devs_active_28d": 114, "commits_lifetime": 56820, "commits_last_12m": 13200 },
-  { "iso_a3": "TTO", "name": "Trinidad & Tob.", "region": "Caribbean", "devs_active_28d": 76, "commits_lifetime": 36440, "commits_last_12m": 8750 },
-  { "iso_a3": "PRI", "name": "Puerto Rico", "region": "Caribbean", "devs_active_28d": 142, "commits_lifetime": 68420, "commits_last_12m": 15900 },
-  { "iso_a3": "HTI", "name": "Haiti", "region": "Caribbean", "devs_active_28d": 54, "commits_lifetime": 24840, "commits_last_12m": 6100 },
-  { "iso_a3": "CUB", "name": "Cuba", "region": "Caribbean", "devs_active_28d": 48, "commits_lifetime": 21560, "commits_last_12m": 5250 },
-  { "iso_a3": "BRB", "name": "Barbados", "region": "Caribbean", "devs_active_28d": 35, "commits_lifetime": 15280, "commits_last_12m": 3680 },
-  { "iso_a3": "BHS", "name": "Bahamas", "region": "Caribbean", "devs_active_28d": 26, "commits_lifetime": 11420, "commits_last_12m": 2750 },
-  { "iso_a3": "GLP", "name": "Guadeloupe", "region": "Caribbean", "devs_active_28d": 22, "commits_lifetime": 9680, "commits_last_12m": 2340 },
-  { "iso_a3": "MTQ", "name": "Martinique", "region": "Caribbean", "devs_active_28d": 18, "commits_lifetime": 7820, "commits_last_12m": 1900 }
+  {
+    "iso_a3": "NGA",
+    "name": "Nigeria",
+    "region": "Africa",
+    "devs_active_28d": 576,
+    "commits_lifetime": 747569,
+    "commits_last_12m": 321436
+  },
+  {
+    "iso_a3": "ZAF",
+    "name": "South Africa",
+    "region": "Africa",
+    "devs_active_28d": 157,
+    "commits_lifetime": 470375,
+    "commits_last_12m": 87914
+  },
+  {
+    "iso_a3": "EGY",
+    "name": "Egypt",
+    "region": "Africa",
+    "devs_active_28d": 210,
+    "commits_lifetime": 253011,
+    "commits_last_12m": 88388
+  },
+  {
+    "iso_a3": "KEN",
+    "name": "Kenya",
+    "region": "Africa",
+    "devs_active_28d": 110,
+    "commits_lifetime": 232460,
+    "commits_last_12m": 61789
+  },
+  {
+    "iso_a3": "TUN",
+    "name": "Tunisia",
+    "region": "Africa",
+    "devs_active_28d": 81,
+    "commits_lifetime": 129453,
+    "commits_last_12m": 26975
+  },
+  {
+    "iso_a3": "DOM",
+    "name": "Dominican Republic",
+    "region": "Caribbean",
+    "devs_active_28d": 33,
+    "commits_lifetime": 76780,
+    "commits_last_12m": 34010
+  },
+  {
+    "iso_a3": "ETH",
+    "name": "Ethiopia",
+    "region": "Africa",
+    "devs_active_28d": 34,
+    "commits_lifetime": 62356,
+    "commits_last_12m": 20012
+  },
+  {
+    "iso_a3": "MAR",
+    "name": "Morocco",
+    "region": "Africa",
+    "devs_active_28d": 62,
+    "commits_lifetime": 61792,
+    "commits_last_12m": 15269
+  },
+  {
+    "iso_a3": "GHA",
+    "name": "Ghana",
+    "region": "Africa",
+    "devs_active_28d": 34,
+    "commits_lifetime": 47045,
+    "commits_last_12m": 13826
+  },
+  {
+    "iso_a3": "PRI",
+    "name": "Puerto Rico",
+    "region": "Caribbean",
+    "devs_active_28d": 15,
+    "commits_lifetime": 47017,
+    "commits_last_12m": 16755
+  },
+  {
+    "iso_a3": "RWA",
+    "name": "Rwanda",
+    "region": "Africa",
+    "devs_active_28d": 10,
+    "commits_lifetime": 46936,
+    "commits_last_12m": 10486
+  },
+  {
+    "iso_a3": "SUR",
+    "name": "Suriname",
+    "region": "Caribbean",
+    "devs_active_28d": 1,
+    "commits_lifetime": 40762,
+    "commits_last_12m": 17699
+  },
+  {
+    "iso_a3": "UGA",
+    "name": "Uganda",
+    "region": "Africa",
+    "devs_active_28d": 25,
+    "commits_lifetime": 35385,
+    "commits_last_12m": 11887
+  },
+  {
+    "iso_a3": "DZA",
+    "name": "Algeria",
+    "region": "Africa",
+    "devs_active_28d": 31,
+    "commits_lifetime": 33039,
+    "commits_last_12m": 12209
+  },
+  {
+    "iso_a3": "TZA",
+    "name": "Tanzania, United Republic of",
+    "region": "Africa",
+    "devs_active_28d": 13,
+    "commits_lifetime": 31672,
+    "commits_last_12m": 5934
+  },
+  {
+    "iso_a3": "CMR",
+    "name": "Cameroon",
+    "region": "Africa",
+    "devs_active_28d": 17,
+    "commits_lifetime": 19338,
+    "commits_last_12m": 4865
+  },
+  {
+    "iso_a3": "MUS",
+    "name": "Mauritius",
+    "region": "Africa",
+    "devs_active_28d": 9,
+    "commits_lifetime": 13695,
+    "commits_last_12m": 2863
+  },
+  {
+    "iso_a3": "TGO",
+    "name": "Togo",
+    "region": "Africa",
+    "devs_active_28d": 4,
+    "commits_lifetime": 12595,
+    "commits_last_12m": 7419
+  },
+  {
+    "iso_a3": "AGO",
+    "name": "Angola",
+    "region": "Africa",
+    "devs_active_28d": 2,
+    "commits_lifetime": 11525,
+    "commits_last_12m": 872
+  },
+  {
+    "iso_a3": "MDG",
+    "name": "Madagascar",
+    "region": "Africa",
+    "devs_active_28d": 8,
+    "commits_lifetime": 11506,
+    "commits_last_12m": 4359
+  },
+  {
+    "iso_a3": "TTO",
+    "name": "Trinidad and Tobago",
+    "region": "Caribbean",
+    "devs_active_28d": 4,
+    "commits_lifetime": 11368,
+    "commits_last_12m": 3519
+  },
+  {
+    "iso_a3": "JAM",
+    "name": "Jamaica",
+    "region": "Caribbean",
+    "devs_active_28d": 9,
+    "commits_lifetime": 9429,
+    "commits_last_12m": 4336
+  },
+  {
+    "iso_a3": "CUB",
+    "name": "Cuba",
+    "region": "Caribbean",
+    "devs_active_28d": 10,
+    "commits_lifetime": 9408,
+    "commits_last_12m": 2968
+  },
+  {
+    "iso_a3": "LCA",
+    "name": "Saint Lucia",
+    "region": "Caribbean",
+    "devs_active_28d": 1,
+    "commits_lifetime": 8616,
+    "commits_last_12m": 674
+  },
+  {
+    "iso_a3": "ZMB",
+    "name": "Zambia",
+    "region": "Africa",
+    "devs_active_28d": 7,
+    "commits_lifetime": 8328,
+    "commits_last_12m": 2202
+  },
+  {
+    "iso_a3": "COD",
+    "name": "Congo, The Democratic Republic of the",
+    "region": "Africa",
+    "devs_active_28d": 5,
+    "commits_lifetime": 8288,
+    "commits_last_12m": 2826
+  },
+  {
+    "iso_a3": "CPV",
+    "name": "Cabo Verde",
+    "region": "Africa",
+    "devs_active_28d": 2,
+    "commits_lifetime": 7982,
+    "commits_last_12m": 541
+  },
+  {
+    "iso_a3": "KNA",
+    "name": "Saint Kitts and Nevis",
+    "region": "Caribbean",
+    "devs_active_28d": 3,
+    "commits_lifetime": 7845,
+    "commits_last_12m": 778
+  },
+  {
+    "iso_a3": "ZWE",
+    "name": "Zimbabwe",
+    "region": "Africa",
+    "devs_active_28d": 8,
+    "commits_lifetime": 6281,
+    "commits_last_12m": 2267
+  },
+  {
+    "iso_a3": "BRB",
+    "name": "Barbados",
+    "region": "Caribbean",
+    "devs_active_28d": 2,
+    "commits_lifetime": 5272,
+    "commits_last_12m": 171
+  },
+  {
+    "iso_a3": "BHS",
+    "name": "Bahamas",
+    "region": "Caribbean",
+    "devs_active_28d": 1,
+    "commits_lifetime": 4635,
+    "commits_last_12m": 1103
+  },
+  {
+    "iso_a3": "SEN",
+    "name": "Senegal",
+    "region": "Africa",
+    "devs_active_28d": 4,
+    "commits_lifetime": 4456,
+    "commits_last_12m": 2539
+  },
+  {
+    "iso_a3": "SSD",
+    "name": "South Sudan",
+    "region": "Africa",
+    "devs_active_28d": 2,
+    "commits_lifetime": 3866,
+    "commits_last_12m": 3425
+  },
+  {
+    "iso_a3": "MOZ",
+    "name": "Mozambique",
+    "region": "Africa",
+    "devs_active_28d": 3,
+    "commits_lifetime": 3856,
+    "commits_last_12m": 1380
+  },
+  {
+    "iso_a3": "SYC",
+    "name": "Seychelles",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 3728,
+    "commits_last_12m": 615
+  },
+  {
+    "iso_a3": "CIV",
+    "name": "C\u00f4te d'Ivoire",
+    "region": "Africa",
+    "devs_active_28d": 4,
+    "commits_lifetime": 2804,
+    "commits_last_12m": 752
+  },
+  {
+    "iso_a3": "MWI",
+    "name": "Malawi",
+    "region": "Africa",
+    "devs_active_28d": 4,
+    "commits_lifetime": 2729,
+    "commits_last_12m": 1227
+  },
+  {
+    "iso_a3": "HTI",
+    "name": "Haiti",
+    "region": "Caribbean",
+    "devs_active_28d": 2,
+    "commits_lifetime": 2702,
+    "commits_last_12m": 1167
+  },
+  {
+    "iso_a3": "BFA",
+    "name": "Burkina Faso",
+    "region": "Africa",
+    "devs_active_28d": 4,
+    "commits_lifetime": 2281,
+    "commits_last_12m": 757
+  },
+  {
+    "iso_a3": "NAM",
+    "name": "Namibia",
+    "region": "Africa",
+    "devs_active_28d": 3,
+    "commits_lifetime": 2106,
+    "commits_last_12m": 1477
+  },
+  {
+    "iso_a3": "SLE",
+    "name": "Sierra Leone",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 1460,
+    "commits_last_12m": 489
+  },
+  {
+    "iso_a3": "ABW",
+    "name": "Aruba",
+    "region": "Caribbean",
+    "devs_active_28d": 3,
+    "commits_lifetime": 1346,
+    "commits_last_12m": 459
+  },
+  {
+    "iso_a3": "LBY",
+    "name": "Libya",
+    "region": "Africa",
+    "devs_active_28d": 4,
+    "commits_lifetime": 1292,
+    "commits_last_12m": 585
+  },
+  {
+    "iso_a3": "BEN",
+    "name": "Benin",
+    "region": "Africa",
+    "devs_active_28d": 5,
+    "commits_lifetime": 1229,
+    "commits_last_12m": 424
+  },
+  {
+    "iso_a3": "SOM",
+    "name": "Somalia",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 1189,
+    "commits_last_12m": 492
+  },
+  {
+    "iso_a3": "GIN",
+    "name": "Guinea",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 1105,
+    "commits_last_12m": 819
+  },
+  {
+    "iso_a3": "GUY",
+    "name": "Guyana",
+    "region": "Caribbean",
+    "devs_active_28d": 1,
+    "commits_lifetime": 1033,
+    "commits_last_12m": 124
+  },
+  {
+    "iso_a3": "BLZ",
+    "name": "Belize",
+    "region": "Caribbean",
+    "devs_active_28d": 1,
+    "commits_lifetime": 991,
+    "commits_last_12m": 40
+  },
+  {
+    "iso_a3": "GLP",
+    "name": "Guadeloupe",
+    "region": "Caribbean",
+    "devs_active_28d": 0,
+    "commits_lifetime": 980,
+    "commits_last_12m": 819
+  },
+  {
+    "iso_a3": "BWA",
+    "name": "Botswana",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 975,
+    "commits_last_12m": 50
+  },
+  {
+    "iso_a3": "VCT",
+    "name": "Saint Vincent and the Grenadines",
+    "region": "Caribbean",
+    "devs_active_28d": 0,
+    "commits_lifetime": 722,
+    "commits_last_12m": 4
+  },
+  {
+    "iso_a3": "CUW",
+    "name": "Cura\u00e7ao",
+    "region": "Caribbean",
+    "devs_active_28d": 0,
+    "commits_lifetime": 722,
+    "commits_last_12m": 28
+  },
+  {
+    "iso_a3": "BDI",
+    "name": "Burundi",
+    "region": "Africa",
+    "devs_active_28d": 2,
+    "commits_lifetime": 706,
+    "commits_last_12m": 92
+  },
+  {
+    "iso_a3": "LSO",
+    "name": "Lesotho",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 683,
+    "commits_last_12m": 605
+  },
+  {
+    "iso_a3": "MRT",
+    "name": "Mauritania",
+    "region": "Africa",
+    "devs_active_28d": 2,
+    "commits_lifetime": 576,
+    "commits_last_12m": 368
+  },
+  {
+    "iso_a3": "SDN",
+    "name": "Sudan",
+    "region": "Africa",
+    "devs_active_28d": 2,
+    "commits_lifetime": 564,
+    "commits_last_12m": 52
+  },
+  {
+    "iso_a3": "LBR",
+    "name": "Liberia",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 468,
+    "commits_last_12m": 286
+  },
+  {
+    "iso_a3": "COG",
+    "name": "Congo",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 335,
+    "commits_last_12m": 21
+  },
+  {
+    "iso_a3": "ATG",
+    "name": "Antigua and Barbuda",
+    "region": "Caribbean",
+    "devs_active_28d": 0,
+    "commits_lifetime": 234,
+    "commits_last_12m": 2
+  },
+  {
+    "iso_a3": "NER",
+    "name": "Niger",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 200,
+    "commits_last_12m": 35
+  },
+  {
+    "iso_a3": "MLI",
+    "name": "Mali",
+    "region": "Africa",
+    "devs_active_28d": 1,
+    "commits_lifetime": 165,
+    "commits_last_12m": 27
+  },
+  {
+    "iso_a3": "SWZ",
+    "name": "Eswatini",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 120,
+    "commits_last_12m": 19
+  },
+  {
+    "iso_a3": "GMB",
+    "name": "Gambia",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 94,
+    "commits_last_12m": 23
+  },
+  {
+    "iso_a3": "MTQ",
+    "name": "Martinique",
+    "region": "Caribbean",
+    "devs_active_28d": 1,
+    "commits_lifetime": 86,
+    "commits_last_12m": 3
+  },
+  {
+    "iso_a3": "CAF",
+    "name": "Central African Republic",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 78,
+    "commits_last_12m": 0
+  },
+  {
+    "iso_a3": "TCD",
+    "name": "Chad",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 48,
+    "commits_last_12m": 7
+  },
+  {
+    "iso_a3": "GAB",
+    "name": "Gabon",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 17,
+    "commits_last_12m": 15
+  },
+  {
+    "iso_a3": "MSR",
+    "name": "Montserrat",
+    "region": "Caribbean",
+    "devs_active_28d": 0,
+    "commits_lifetime": 10,
+    "commits_last_12m": 0
+  },
+  {
+    "iso_a3": "GNQ",
+    "name": "Equatorial Guinea",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 6,
+    "commits_last_12m": 1
+  },
+  {
+    "iso_a3": "DMA",
+    "name": "Dominica",
+    "region": "Caribbean",
+    "devs_active_28d": 0,
+    "commits_lifetime": 1,
+    "commits_last_12m": 0
+  },
+  {
+    "iso_a3": "DJI",
+    "name": "Djibouti",
+    "region": "Africa",
+    "devs_active_28d": 0,
+    "commits_lifetime": 1,
+    "commits_last_12m": 0
+  }
 ]

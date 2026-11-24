@@ -630,7 +630,7 @@
   },
   "terms": {
     "metadata": {
-      "title": "Conditions d'utilisation — Black in Blockchain",
+      "title": "Conditions d'utilisation",
       "description": "Conditions d'utilisation de la plateforme Black in Blockchain."
     },
     "header": {
@@ -685,6 +685,10 @@
     }
   },
   "privacy": {
+    "metadata": {
+      "title": "Politique de confidentialité",
+      "description": "Politique de confidentialité du site Black in Blockchain."
+    },
     "header": {
       "back": "Retour à l'accueil",
       "title": "Politique de confidentialité",
@@ -766,6 +770,10 @@
     }
   },
   "cookies": {
+    "metadata": {
+      "title": "Politique des cookies",
+      "description": "Politique des cookies du site Black in Blockchain."
+    },
     "header": {
       "back": "Retour à l'accueil",
       "title": "Politique des cookies",
@@ -878,21 +886,21 @@
       "legendLow": "Bas",
       "legendHigh": "Haut",
       "tipCommits": "Commits",
-      "tipActive": "Devs actifs"
+      "tipActive": "Développeurs actifs"
     },
     "m2": {
       "num": "§ 02  Mouvement Deux",
       "title": "Douze <em>villes.</em>",
       "lede1": "Principe 04, rendu littéral. Pas « l’Afrique. » Pas « les Caraïbes. » <em>Lagos. Nairobi. Port-au-Prince.</em>",
       "lede2": "Classées par développeurs actifs sur les 28 derniers jours de l’instantané.",
-      "devs": "Devs"
+      "devs": "développeurs"
     },
     "m3": {
       "num": "§ 03  Mouvement Trois",
       "title": "Huit <em>écosystèmes.</em>",
       "lede1": "Là où le travail atterrit. Top huit des protocoles par nombre de développeurs couverts, avec leur trajectoire sur 48 mois indexée à 100 au début de la série.",
       "lede2": "La forme, pas le volume. Voici la grammaire de la croissance.",
-      "devsLabel": "Devs couverts · 28J",
+      "devsLabel": "Développeurs couverts · 28 j",
       "indexLabel": "Index"
     },
     "m4": {
@@ -925,7 +933,7 @@
     }
   },
   "Events": {
-    "metaTitle": "Événements — Black in Blockchain",
+    "metaTitle": "Événements",
     "metaDescription": "Les événements Black in Blockchain à venir et passés. L'inscription se fait sur Luma.",
     "eyebrow": "Événements",
     "title": "Événements",
@@ -945,6 +953,10 @@
     "joinOnline": "Lien d'accès en ligne",
     "when": "Quand",
     "where": "Où",
+    "hosts": "Organisé par",
+    "upToDate": "Informations à jour :",
+    "address": "Adresse",
+    "hostedBy": "Organisé par {hosts}",
     "format": "Format",
     "back": "Tous les événements",
     "translationFallback": "Ce contenu n'est pas encore disponible dans votre langue ; il est affiché en {language}.",
@@ -952,7 +964,7 @@
     "viewRetrospective": "Voir la rétrospective"
   },
   "InAction": {
-    "metaTitle": "BIB en action — Black in Blockchain",
+    "metaTitle": "BIB en action",
     "metaDescription": "Rétrospectives, photos, vidéos et témoignages des rencontres Black in Blockchain.",
     "eyebrow": "BIB en action",
     "title": "BIB en action",
@@ -1016,6 +1028,12 @@
     "sobUnavailable": "Les indicateurs State of BIB seront affichés dès qu'une version vérifiée sera publiée."
   },
   "Site": {
+    "notFound": {
+      "title": "Page introuvable",
+      "text": "Cette page n'existe pas ou a été déplacée.",
+      "home": "Retour à l'accueil",
+      "events": "Voir les événements"
+    },
     "nav": {
       "about": "À propos",
       "events": "Événements",
@@ -1026,7 +1044,8 @@
       "main": "Navigation principale",
       "open": "Ouvrir le menu",
       "close": "Fermer le menu",
-      "subscribeLong": "S'abonner à la newsletter"
+      "subscribeLong": "S'abonner à la newsletter",
+      "spotlight": "Startup Spotlight"
     },
     "footer": {
       "explore": "Explorer",
@@ -1064,6 +1083,13 @@
         }
       },
       "noEvents": "Aucun événement à venir n'est encore publié.",
+      "inActionEmpty": "Les premières rétrospectives seront publiées après la prochaine rencontre.",
+      "eventsCalendar": "Calendrier complet",
+      "sobTeaser": "Les développeurs blockchain en Afrique et dans les Caraïbes, mesurés chaque mois en données ouvertes.",
+      "onThisPage": "Sur cette page",
+      "sobCitiesTitle": "Villes les plus actives",
+      "sobCitiesUnit": "dév. actifs",
+      "readMission": "Lire notre mission",
       "sobScope": "Ces chiffres couvrent l'Afrique et les Caraïbes ; ils ne mesurent pas la diaspora.",
       "kpi": {
         "devs": "développeurs actifs sur 28 jours",
@@ -1138,7 +1164,7 @@
       "facts": {
         "asOf": "Données au",
         "scope": "Périmètre",
-        "scopeVal": "{n} pays d'Afrique et des Caraïbes",
+        "scopeVal": "{n} pays avec au moins un développeur, sur {total} couverts",
         "version": "Version"
       },
       "analysis": "Analyse",
@@ -1330,5 +1356,230 @@
     "contactTitle": "Contact",
     "contactText": "Pour signaler une erreur ou poser une question sur ces données, utilisez la page Contact.",
     "back": "Retour à State of BIB"
+  },
+  "Institutional": {
+      "about": {
+        "eyebrow": "Le collectif",
+        "intro": "Black in Blockchain est un espace de rencontres, d'échanges et de découverte autour de la blockchain et des systèmes décentralisés, centré sur les professionnels noirs et les communautés qui font avancer cet écosystème.",
+        "approachTitle": "Une communauté qui relie les parcours",
+        "approachText": "BIB rapproche des personnes aux expériences variées : entrepreneurs, développeurs, créateurs et curieux de la blockchain. Nous favorisons des connexions utiles sans prétendre représenter toute la diversité de l'écosystème.",
+        "foundersLink": "Découvrir les fondateurs",
+        "activitiesTitle": "Ce que nous développons",
+        "meetTitle": "Se rencontrer",
+        "meetText": "Des événements pour découvrir des projets, poser des questions et créer des liens.",
+        "meetLink": "Voir les événements",
+        "learnTitle": "Partager les connaissances",
+        "learnText": "Des ressources et des discussions pour mieux comprendre les enjeux Web3.",
+        "learnLink": "Explorer les ressources",
+        "observeTitle": "Documenter l'écosystème",
+        "observeText": "State of BIB présente des données avec leurs sources, méthodes et limites.",
+        "observeLink": "Explorer State of BIB",
+        "missionCta": "Une ambition portée par une mission commune.",
+        "missionLink": "Lire notre mission"
+      },
+      "mission": {
+        "eyebrow": "Notre cap",
+        "intro": "Créer des espaces où les professionnels noirs de la blockchain peuvent se rencontrer, apprendre ensemble et mettre en lumière leurs initiatives, avec exigence et ouverture.",
+        "pillarsTitle": "Trois engagements",
+        "connectTitle": "Connecter",
+        "connectText": "Favoriser les rencontres entre personnes, communautés et projets d'horizons différents.",
+        "shareTitle": "Transmettre",
+        "shareText": "Rendre la blockchain plus accessible grâce aux échanges et aux ressources contextualisées.",
+        "highlightTitle": "Mettre en lumière",
+        "highlightText": "Valoriser les parcours et les projets avec un regard éditorial attentif et rigoureux.",
+        "methodTitle": "Des échanges et des faits",
+        "methodText": "Nous privilégions le dialogue, les sources identifiables et la distinction entre faits vérifiés, témoignages et projets à venir. Une ambition n'est pas présentée comme un résultat déjà acquis.",
+        "eventsLink": "Découvrir les événements",
+        "sourcesLink": "Consulter nos sources"
+      },
+      "resources": {
+        "eyebrow": "Explorer",
+        "intro": "Retrouvez les contenus et outils déjà disponibles sur Black in Blockchain. Nous privilégions les ressources accessibles et sourcées plutôt que les promesses de contenus inexistants.",
+        "exploreTitle": "Découvrir et approfondir",
+        "exploreText": "Ces liens mènent vers des sections réelles du site, enrichies au fil des publications.",
+        "stateTitle": "State of BIB",
+        "stateText": "Explorer les indicateurs blockchain disponibles lorsqu'une version vérifiée est publiée.",
+        "sourcesTitle": "Sources et méthodologie",
+        "sourcesText": "Comprendre la provenance des données, leur traitement et les limites des analyses.",
+        "eventsTitle": "Événements BIB",
+        "eventsText": "Consulter les rencontres annoncées et les informations disponibles sur les précédentes éditions.",
+        "peopleTitle": "Les fondateurs de BIB",
+        "peopleText": "Découvrir les personnes à l'origine du collectif et leurs parcours.",
+        "openResource": "Consulter",
+        "futureTitle": "Une bibliothèque à développer",
+        "futureText": "Des guides pédagogiques pourront être publiés progressivement. Ils ne seront affichés que lorsqu'ils existeront réellement.",
+        "newsletterLink": "Suivre les prochaines publications"
+      },
+      "press": {
+        "eyebrow": "Espace presse",
+        "intro": "Pour comprendre Black in Blockchain, échanger avec ses représentants ou préparer une couverture éditoriale.",
+        "overviewTitle": "Black in Blockchain en bref",
+        "overviewText": "Black in Blockchain est un collectif consacré aux échanges sur la blockchain, les systèmes décentralisés et les parcours de professionnels noirs. Nos activités mettent en relation des personnes et donnent de la visibilité à des initiatives.",
+        "storiesTitle": "Parcours et initiatives",
+        "storiesText": "Histoires d'entrepreneurs et de personnes engagées dans l'écosystème Web3.",
+        "eventsTitle": "Rencontres communautaires",
+        "eventsText": "Échanges et événements autour des projets et enjeux blockchain.",
+        "dataTitle": "Données et perspectives",
+        "dataText": "Une démarche documentaire qui explicite les sources et les limites des données.",
+        "contactTitle": "Demandes médias et interviews",
+        "contactText": "Pour une interview, une vérification d'information ou une collaboration éditoriale, contactez l'équipe BIB.",
+        "assetsNote": "Les visuels autorisés peuvent être demandés par e-mail. Aucun kit média téléchargeable n'est encore proposé.",
+        "emailLink": "Écrire à l'équipe presse",
+        "contactLink": "Voir les autres contacts"
+      },
+      "contact": {
+        "eyebrow": "Restons en contact",
+        "intro": "Une question sur Black in Blockchain, une idée de partenariat ou une demande de presse ? Écrivez à l'équipe selon le sujet qui vous concerne.",
+        "channelsTitle": "Comment pouvons-nous échanger ?",
+        "channelsText": "Ces liens ouvrent votre messagerie avec un objet prérempli. Aucun compte ni formulaire n'est nécessaire.",
+        "generalTitle": "Question générale",
+        "generalText": "Le collectif, le site et ses contenus.",
+        "partnersTitle": "Partenariats",
+        "partnersText": "Propositions de collaboration et de soutien à BIB.",
+        "eventsTitle": "Événements",
+        "eventsText": "Questions sur les rencontres et leur organisation.",
+        "pressTitle": "Presse et interviews",
+        "pressText": "Demandes d'entretien, de citation ou de documentation.",
+        "writeLink": "Écrire",
+        "directTitle": "Notre adresse de contact",
+        "privacyNote": "N'envoyez pas de renseignements sensibles ou de documents confidentiels par courriel non sécurisé. Aucun délai de réponse n'est garanti.",
+        "eventsLink": "Voir les événements",
+        "privacyLink": "Politique de confidentialité"
+      }
+    },
+  "Visuals": {
+    "home": "Lumière d'après-midi à travers un brise-soleil, dessinant des ombres géométriques sur un mur ivoire",
+    "events": "Salle de rencontre baignée de lumière, chaises alignées avant l'arrivée des invités",
+    "sob": "Vue aérienne d'une ville côtière à l'heure bleue, rues éclairées formant un réseau",
+    "newsletter": "Rapport imprimé annoté, stylo en laiton et tasse de café posés sur du lin",
+    "about": "Ponton en bois s'avançant dans une mer calme à l'aube"
+  },
+  "Spotlight": {
+    "meta": {
+      "title": "Startup Spotlight",
+      "description": "Programme éditorial de Black in Blockchain : le parcours de fondateurs noirs qui bâtissent avec la blockchain, raconté une startup à la fois."
+    },
+    "fiction": {
+      "badge": "Données fictives",
+      "text": "Maquette de conception : aucune startup, aucun fondateur ni aucune date n'est réel. Les crochets [ ] sont des emplacements."
+    },
+    "hero": {
+      "eyebrow": "Programme éditorial · Organisé par Black in Blockchain",
+      "title": "Startup",
+      "titleEm": "Spotlight",
+      "tagline": "Des fondateurs. Leurs histoires. Racontées en personne.",
+      "lede": "Black in Blockchain choisit, une startup à la fois, de raconter le parcours de fondateurs noirs qui bâtissent avec la blockchain : d'où ils viennent, ce qu'ils résolvent, ce qu'ils ont déjà prouvé.",
+      "ctaFeatured": "Notre sélection",
+      "ctaLive": "Founder Story Live",
+      "photoAlt": "Emplacement : portrait photographique de la ou des fondatrices et fondateurs mis en lumière",
+      "photoLabel": "[Portrait photographique plein cadre, 4:5 — fondateur(s) de la startup en cours. Crédit photo affiché sous l'image.]",
+      "pillars": {
+        "p1": {
+          "t": "Sélection par BIB",
+          "d": "Choisie par l'équipe éditoriale"
+        },
+        "p2": {
+          "t": "Aucune candidature",
+          "d": "Pas de formulaire public"
+        },
+        "p3": {
+          "t": "Aucun paiement",
+          "d": "Jamais de frais de sélection"
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "En lumière · Décembre 2026",
+      "title": "Le portrait du moment",
+      "badge": "Données fictives",
+      "photoAlt": "Emplacement : portrait des cofondateurs de la startup",
+      "photoLabel": "[Portrait des cofondateurs — 4:5]",
+      "caption": "[Prénom Nom] et [Prénom Nom], cofondateurs · Photo : [crédit]",
+      "logoAlt": "Emplacement du logo de la startup",
+      "logo": "Logo",
+      "name": "[Nom de la startup]",
+      "country": "Pays",
+      "countryValue": "[Pays]",
+      "sector": "Secteur",
+      "sectorValue": "[Secteur]",
+      "stage": "Stade",
+      "stageValue": "[Idée · Prototype · MVP · Établie]",
+      "quote": "[Citation courte d'un fondateur]",
+      "summary": "[Résumé de l'histoire en trois à quatre phrases : le point de départ, le problème, la place de la blockchain. Rédigé et validé par l'équipe éditoriale BIB.]",
+      "cta": "Lire le Founder Story complet →",
+      "meta": "Lecture : [8] min · Publié le [date] · Mis à jour le [date]"
+    },
+    "why": {
+      "eyebrow": "Pourquoi nous les mettons en lumière",
+      "title": "Six principes,",
+      "titleEm": "aucun raccourci",
+      "intro": "La qualité prime sur la quantité. Un Spotlight n'est ni une certification financière, ni un audit technique : c'est un regard éditorial, signé BIB.",
+      "items": {
+        "i1": {
+          "t": "Innovation",
+          "d": "Une approche nouvelle d'un problème réel."
+        },
+        "i2": {
+          "t": "Qualité",
+          "d": "Un travail soigné, documenté, vérifiable."
+        },
+        "i3": {
+          "t": "Impact",
+          "d": "Un effet concret pour des personnes et des communautés."
+        },
+        "i4": {
+          "t": "Vision",
+          "d": "Une direction claire et une ambition à long terme."
+        },
+        "i5": {
+          "t": "Engagement entrepreneurial",
+          "d": "Des fondateurs présents, qui avancent et apprennent."
+        },
+        "i6": {
+          "t": "Pertinence de la blockchain",
+          "d": "La technologie sert le projet, pas l'inverse."
+        }
+      }
+    },
+    "stories": {
+      "title": "Founder Stories",
+      "archives": "Voir les archives →",
+      "photoAlt": "Emplacement : photo de couverture du Founder Story",
+      "photoLabel": "[Photo de couverture — 3:2]",
+      "meta": "[Pays] · [Secteur] · [Année]",
+      "storyTitle": "[Titre éditorial du portrait]",
+      "lede": "[Chapeau de deux phrases.]",
+      "read": "Lire le portrait →"
+    },
+    "live": {
+      "eyebrow": "3ᵉ édition communautaire · Présentiel",
+      "title": "Founder Story",
+      "titleEm": "Live",
+      "text": "Les fondateurs racontent leur histoire, leurs obstacles et leurs ambitions, devant la communauté. Animé par un représentant de BIB, organisateur de la rencontre.",
+      "guests": "Startup invitée : [Nom de la startup] · Invités : [à confirmer]",
+      "when": "Quand",
+      "whenValue": "Décembre 2026 · [date et heure à confirmer]",
+      "city": "Ville",
+      "cityValue": "Montréal",
+      "venue": "Lieu",
+      "venueValue": "[Lieu — affiché une fois confirmé]",
+      "cta": "Réserver ma place ↗",
+      "note": "Inscription sur Luma, sans compte BIB."
+    },
+    "newsletter": {
+      "title": "Suivre les prochains Spotlight",
+      "text": "Chaque nouveau portrait est annoncé dans la newsletter BIB, rubrique « BIB Highlights ».",
+      "cta": "S'abonner à la newsletter"
+    },
+    "status": {
+      "hero": "Premier portrait en préparation. La sélection sera annoncée par Black in Blockchain après validation éditoriale.",
+      "featured": "Aucune startup n'a encore été présentée officiellement dans Startup Spotlight. BIB sélectionne ses projets directement, sans candidature ni frais. Le premier portrait sera publié après vérification des informations et accord des fondateurs.",
+      "stories": "Aucun Founder Story n'est encore publié. Les archives apparaîtront lorsque les premiers portraits auront été publiés.",
+      "guests": "Startup invitée : annonce à venir",
+      "pending": "À confirmer",
+      "viewEvents": "Voir les événements BIB",
+      "eventDetails": "Voir les détails et modalités d'inscription de cet événement publié.",
+      "noConfirmedEvent": "Aucun événement Founder Story Live confirmé dans le calendrier public pour l'instant."
+    }
   }
 }

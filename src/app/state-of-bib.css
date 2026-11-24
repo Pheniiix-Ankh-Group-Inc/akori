@@ -6,7 +6,7 @@
 .sob-facts dt { font-size: 0.78rem; color: var(--texte); }
 .sob-facts dd { margin: 0; font-size: 0.95rem; color: var(--blanc); font-weight: 500; overflow-wrap: anywhere; }
 
-.sob-hero-number { font-family: var(--font-serif), Georgia, serif; font-weight: 300; font-size: clamp(4.5rem, 14vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; color: var(--accent); }
+.sob-hero-number { font-family: var(--font-serif), Georgia, serif; font-weight: 300; font-size: clamp(3.5rem, 9vw, 6rem); line-height: 1; letter-spacing: -0.03em; color: var(--accent); }
 .sob-hero-caption { font-family: var(--font-serif), Georgia, serif; font-size: clamp(1.25rem, 2.4vw, 1.75rem); line-height: 1.35; color: var(--blanc); max-width: 40ch; }
 .sob-hero-caption b { font-weight: 500; color: var(--accent-dk); }
 

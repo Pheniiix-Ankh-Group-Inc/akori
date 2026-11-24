@@ -1,3 +1,4 @@
+import path from "node:path"
 /**
  * State of BIB automatique — côté site.
  *  Scénario G : après une publication, le site sert la nouvelle version sans
@@ -62,6 +63,8 @@ async function publish(version: string, devsBoost = 0) {
 }
 
 beforeEach(() => {
+  // Repli invalide (copie d'avril 2026) : un état « indisponible » reste observable.
+  process.env.SOB_E2E_FIXTURE_DIR = path.resolve(__dirname, "../../data/state-of-bib/history/20260419T130333")
   backend.version = null
   backend.objects.clear()
   backend.reads = 0
