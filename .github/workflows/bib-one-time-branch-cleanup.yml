@@ -15,6 +15,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          python3 - <<'PY'
           import json, os, urllib.request, urllib.parse, urllib.error
           REPO = "Pheniiix-Ankh-Group-Inc/BiB"
           KEEP = set(["develop","feat/premium-art-direction-20261123","main","automation/bib-dependabot-lockfile","fix/bib-vercel-toolbar-preview-csp"])
@@ -55,4 +56,4 @@ jobs:
           print("Final branches:", sorted(after))
           assert after == KEEP, "Pruning incomplete: final set differs from the 5 approved branches"
           print("SUCCESS: 5 approved branches preserved, all other branches removed")
-          
+          PY
