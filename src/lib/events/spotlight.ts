@@ -15,11 +15,11 @@ export function selectSpotlightEvent(
       const end = event.ends_at ? Date.parse(event.ends_at) : start
       if (!Number.isFinite(start) || !Number.isFinite(end) || Math.max(start, end) < now) return false
       const titles = [
+        event.event_translations.find((translation) => translation.locale === locale)?.title ?? "",
         event.source_title ?? "",
         ...event.event_translations.map((translation) => translation.title),
       ]
       // Search all languages, not just the language displayed in the visitor's UI.
-      void locale
       return titles.some((title) => SPOTLIGHT_TITLE.test(title))
     })
     .sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at))[0] ?? null
