@@ -219,7 +219,8 @@ jobs:
           [ -n "$VERSION" ] && url="$url?version=$VERSION"
           for attempt in 1 2 3; do
             code=$(curl -sS -o response.json -w '%{http_code}' --max-time 170 -X POST \
-              -H "Authorization: Bearer ${CRON_SECRET}" "$url" || echo 000)
+              -H "Authorization: Bearer ${CRON_SECRET}" -H "X-BIB-Trigger: pipeline" \
+              -H "X-BIB-Run-Id: ${GITHUB_RUN_ID}" -H "X-BIB-Run-Attempt: ${GITHUB_RUN_ATTEMPT}" "$url" || echo 000)
             echo "Tentative $attempt : HTTP $code"
             cat response.json 2>/dev/null || true; echo
             if [ "$code" = "200" ]; then exit 0; fi

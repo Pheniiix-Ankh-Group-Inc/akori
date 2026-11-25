@@ -79,8 +79,8 @@ values
 -- =============================================================================
 select tests.assert(
   (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
-   where n.nspname = 'public' and c.relkind = 'r') = 29,
-  '29 tables BIB dans public (historical State of BIB deltas included)');
+   where n.nspname = 'public' and c.relkind = 'r') = 30,
+  '30 tables BIB dans public (historical State of BIB deltas and cron_runs included)');
 select tests.assert(
   not exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
               where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity),

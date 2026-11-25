@@ -48,5 +48,17 @@ class CronResponseTests(unittest.TestCase):
             cron.verify("newsletter", "send", 200, {"ok": True, "result": {"step": "check", "status": "sent"}})
 
 
+class RunHeadersTest(unittest.TestCase):
+    """Identifiants GitHub transmis pour la supervision (cron_runs)."""
+
+    def test_valid_identifiers(self):
+        h = cron.run_headers({"GITHUB_RUN_ID": "123", "GITHUB_RUN_ATTEMPT": "2", "GITHUB_EVENT_NAME": "schedule"})
+        self.assertEqual(h, {"X-BIB-Trigger": "schedule", "X-BIB-Run-Id": "123", "X-BIB-Run-Attempt": "2"})
+
+    def test_manual_and_invalid_values_dropped(self):
+        h = cron.run_headers({"GITHUB_RUN_ID": "1;rm", "GITHUB_RUN_ATTEMPT": "0", "GITHUB_EVENT_NAME": "workflow_dispatch"})
+        self.assertEqual(h, {"X-BIB-Trigger": "manual"})
+
+
 if __name__ == "__main__":
     unittest.main()

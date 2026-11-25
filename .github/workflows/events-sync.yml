@@ -53,6 +53,7 @@ jobs:
           code=$(curl --silent --show-error --retry 2 --retry-delay 20 \
             --max-time 110 --output "$response" --write-out '%{http_code}' \
             -X POST -H "Authorization: Bearer ${CRON_SECRET}" \
+            -H "X-BIB-Run-Id: ${GITHUB_RUN_ID}" -H "X-BIB-Run-Attempt: ${GITHUB_RUN_ATTEMPT}" \
             "${SITE_URL%/}/api/cron/luma-sync") || { echo "::error title=Luma::Endpoint unreachable"; exit 1; }
           echo "Luma endpoint HTTP $code"
           [ "$code" = "200" ] || { cat "$response"; echo "::error title=Luma::Synchronization failed (HTTP $code)"; exit 1; }

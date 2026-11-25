@@ -6,6 +6,15 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Added — monitoring, analytics and observability (2026-11-25)
+
+- OpenTelemetry through `@vercel/otel` (`src/instrumentation.ts`, service `bib-web`): Next.js and outbound `fetch` spans, one span per measured task, sanitized `server.request_error` logs from `onRequestError`. `OTEL_SDK_DISABLED=true` turns it off.
+- Business analytics events (`src/lib/analytics.ts`): newsletter confirmation and failures, BIB in Action article views and completed reads, State of BIB views, outbound clicks, admin dashboard views, login success and failure (server side, generic reasons only). Closed list, deduplicated, at most two scrubbed properties, never e-mails, tokens or personal identifiers. Custom events are recorded by Vercel on Pro plans only.
+- Page-view and Speed Insights URLs are scrubbed (no query string or fragment, except `?newsletter=confirmed`); analytics now also covers the operator area.
+- Scheduled-job history: new `cron_runs` table (migration `20261125000100_bib_cron_runs.sql`, to apply) filled by every `/api/cron/*` route with start, end, duration, status, items, attempt, correlation id and GitHub run id; workflows send `X-BIB-Run-Id` / `X-BIB-Run-Attempt`.
+- `/api/cron/health`, scheduled daily by Vercel Cron (`vercel.json`): detects failed, missing and stuck jobs, records one `ops_incidents` alert per finding at most every 12 hours (configurable), purges history after 90 days.
+- `docs/MONITORING.md`: audit, collected and unavailable metrics, CRON coverage, Supabase native monitoring, alerts, manual settings, environment variables, quotas.
+
 ## [0.14.0] — 2026-11-24
 
 ### Fixed — November 24 site audit corrections (2026-11-24)

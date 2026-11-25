@@ -1,5 +1,7 @@
 "use client"
 
+import { trackEvent } from "@/lib/analytics"
+
 import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
@@ -34,8 +36,11 @@ export function NewsletterForm() {
       const body = (await res.json().catch(() => ({}))) as { code?: string }
       if (res.ok) return setStatus("ok")
       const code = body.code
+      // Échec technique ou refus ; « disabled » n'est pas un échec de l'utilisateur.
+      if (code !== "disabled") trackEvent("newsletter_signup_failure", { reason: code ?? `http_${res.status}` })
       setStatus(code === "disabled" ? "disabled" : code === "invalid" ? "invalid" : code === "consent" ? "consent" : code === "rate" ? "rate" : "server")
     } catch {
+      trackEvent("newsletter_signup_failure", { reason: "network" })
       setStatus("server")
     }
   }

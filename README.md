@@ -71,7 +71,7 @@ Until a valid State of BIB version is readable server-side, its public interface
 | Data visualizations | D3, TopoJSON, world-atlas |
 | CI and scheduling | GitHub Actions |
 | Hosting | Vercel |
-| Measurement | Vercel Web Analytics and Speed Insights (Core Web Vitals; enable Speed Insights in the Vercel project) |
+| Measurement | Vercel Web Analytics and Speed Insights (scrubbed URLs), OpenTelemetry via `@vercel/otel` (service `bib-web`), scheduled-job history in `cron_runs` with a daily Vercel Cron health check — see [Monitoring](docs/MONITORING.md) |
 
 Package manager: **pnpm 10** with `pnpm-lock.yaml`. Runtime: Node.js **24.x** (`engines`).
 
@@ -376,6 +376,7 @@ Tracked in the November 24, 2026 site audit: legal pages to rewrite (privacy pol
 | [Editorial Workflows](docs/EDITORIAL_WORKFLOWS.md) | Editorial procedures |
 | [Supabase Migration Plan](docs/SUPABASE_MIGRATION_PLAN.md) | Migration sequencing and history |
 | [Releasing](docs/RELEASING.md) | Versions, tags and GitHub releases |
+| [Monitoring](docs/MONITORING.md) | Analytics, Speed Insights, OpenTelemetry, scheduled-job supervision, alerts, quotas |
 | [Pre-production Readiness](docs/audits/BIB_PREPROD_READINESS.md) | Historical pre-production report (November 2026) |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 

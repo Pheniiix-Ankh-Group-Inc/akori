@@ -76,6 +76,21 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def run_headers(environ) -> dict:
+    """Identifiants techniques GitHub Actions pour la supervision (cron_runs).
+
+    Uniquement des nombres validés ; aucun secret, aucune donnée personnelle.
+    """
+    headers = {"X-BIB-Trigger": "manual" if environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch" else "schedule"}
+    run_id = environ.get("GITHUB_RUN_ID", "")
+    attempt = environ.get("GITHUB_RUN_ATTEMPT", "")
+    if run_id.isdigit() and len(run_id) <= 20:
+        headers["X-BIB-Run-Id"] = run_id
+    if attempt.isdigit() and 1 <= int(attempt) <= 100:
+        headers["X-BIB-Run-Attempt"] = attempt
+    return headers
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--kind", required=True, choices=("news", "newsletter"))
@@ -88,7 +103,8 @@ def main(argv: list[str] | None = None) -> int:
             raise CronFailure("Missing or invalid BIB_CRON_SECRET (minimum 32 chars)")
         request = Request(url, data=b"", method="POST",
                           headers={"Authorization": "Bearer " + secret,
-                                   "Accept": "application/json"})
+                                   "Accept": "application/json",
+                                   **run_headers(os.environ)})
         opener = build_opener(NoRedirect())
         try:
             with opener.open(request, timeout=330 if args.kind == "newsletter" else 130) as response:

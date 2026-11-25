@@ -1,3 +1,4 @@
+import { TrackView } from "@/components/analytics/TrackView"
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { intlLocale } from "@/lib/content/locales"
@@ -86,6 +87,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
 
   return (
     <main>
+      <TrackView event="state_of_bib_view" props={{ version: meta.dataset_version || null }} />
       <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "4rem" }}>
         <div className="ed-stack" style={{ gap: "1.75rem" }}>
           <p className="ed-eyebrow">{s("eyebrow")}</p>

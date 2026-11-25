@@ -5,6 +5,8 @@ import { z } from "zod"
 import { createClient } from "@/lib/supabase/server"
 import { env, isSupabaseConfigured } from "@/lib/env"
 import { safeAdminNext } from "@/lib/auth/redirect"
+import { headers } from "next/headers"
+import { trackServerEvent } from "@/lib/analytics-server"
 
 export interface LoginState {
   error?: string
@@ -29,14 +31,22 @@ export async function signInWithPassword(_: LoginState, formData: FormData): Pro
     password: formData.get("password"),
     next: formData.get("next") ?? undefined,
   })
-  if (!parsed.success) return { error: GENERIC_ERROR }
+  if (!parsed.success) {
+    await trackServerEvent("login_failure", { method: "password", reason: "invalid_input" }, await headers())
+    return { error: GENERIC_ERROR }
+  }
 
   const supabase = await createClient()
   const { error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   })
-  if (error) return { error: GENERIC_ERROR }
+  // Jamais l'adresse ni le message d'erreur Supabase : méthode et motif générique seulement.
+  if (error) {
+    await trackServerEvent("login_failure", { method: "password", reason: "invalid_credentials" }, await headers())
+    return { error: GENERIC_ERROR }
+  }
+  await trackServerEvent("login_success", { method: "password" }, await headers())
   redirect(safeAdminNext(parsed.data.next))
 }
 
