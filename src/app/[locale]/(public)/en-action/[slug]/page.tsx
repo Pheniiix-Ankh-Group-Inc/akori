@@ -1,3 +1,4 @@
+import { TrackView } from "@/components/analytics/TrackView"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
@@ -43,6 +44,7 @@ export default async function StoryPage({ params }: Props) {
   }
 
   return (
+    <>
     <StoryDetail
       story={story}
       locale={locale}
@@ -51,5 +53,8 @@ export default async function StoryPage({ params }: Props) {
       eventLink={eventLink}
       backLink={<Link href="/en-action" className="ed-link">← {t("back")}</Link>}
     />
+    {/* article_view à l'affichage ; article_read_complete quand cette fin d'article est visible après 15 s. */}
+    <TrackView event="article_view" props={{ slug: story.slug }} readComplete />
+    </>
   )
 }

@@ -3,7 +3,7 @@ import { isAuthorizedCron } from "@/lib/security/cron"
 import { env, isSupabaseAdminConfigured } from "@/lib/env"
 import { ingestNews } from "@/lib/news/ingest"
 import { recordIncident } from "@/lib/ops/incidents"
-import { withRun } from "@/lib/ops/log"
+import { cronMetaFromHeaders, trackCronRun } from "@/lib/ops/cron-runs"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 120
@@ -14,7 +14,12 @@ export async function POST(req: NextRequest) {
   if (!env.flags.newsIngest) return NextResponse.json({ ok: true, skipped: "news_ingest_disabled" })
   if (!isSupabaseAdminConfigured()) return NextResponse.json({ ok: false, code: "supabase_not_configured" }, { status: 503 })
   try {
-    const report = await withRun("cron.news", () => ingestNews(), (r) => ({ sources: r.sources, fetched: r.fetched, inserted: r.inserted, failures: r.failures.length }))
+    const report = await trackCronRun("news", cronMetaFromHeaders(req.headers), () => ingestNews(), (r) => ({
+      status: r.failures.length && !r.inserted && r.failures.length >= r.sources ? "failed" : "success",
+      items: r.inserted,
+      details: { sources: r.sources, fetched: r.fetched, inserted: r.inserted, failures: r.failures.length },
+      error: r.failures.length ? `${r.failures.length} source(s) en échec` : null,
+    }))
     if (report.failures.length) {
       await recordIncident({ kind: "news.fetch_failures", severity: "warning", message: `${report.failures.length} source(s) en échec`, details: { failures: report.failures } })
     }

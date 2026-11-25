@@ -10,6 +10,7 @@ lui, est publié et repris automatiquement (section 3).
 |---|---|---|
 | Journaux applicatifs | Vercel → Logs | Lignes JSON `{"event": "cron.newsletter.send.end", "correlationId": …, "durationMs": …, "status": …}` |
 | Incidents | table `ops_incidents` ; `/admin/newsletter` | type, gravité, cycle, message masqué |
+| Tâches planifiées | table `cron_runs` ; contrôle quotidien `/api/cron/health` (Vercel Cron) | dernière exécution, dernière réussite, échecs, exécutions manquantes — voir [Monitoring](MONITORING.md) |
 | Alertes | e-mail `OPS_ALERT_EMAIL_TO` si `FEATURE_OPS_ALERTS=true` | warnings et critiques |
 | Exécutions State of BIB | table `ingestion_runs` ; `/admin/state-of-bib` | `version_check`, `build`, `publish`, `reconcile` |
 | Synchronisations Luma | table `event_sync_runs` ; `/admin/evenements` | statut, compteurs, erreur |

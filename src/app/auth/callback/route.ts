@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import type { EmailOtpType } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/server"
 import { env, isSupabaseConfigured } from "@/lib/env"
+import { trackServerEvent } from "@/lib/analytics-server"
 
 /** Origine canonique (NEXT_PUBLIC_SITE_URL) ; repli sur la requête en local. */
 function siteOrigin(fallback: string): string {
@@ -29,15 +30,21 @@ export async function GET(request: NextRequest) {
   const tokenHash = url.searchParams.get("token_hash")
   const type = url.searchParams.get("type") as EmailOtpType | null
 
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error) return fail
-  } else if (tokenHash && type && OTP_TYPES.includes(type)) {
-    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
-    if (error) return fail
-  } else {
+  // Analytics : méthode et motif générique uniquement (jamais le lien ni l'adresse).
+  const failed = async () => {
+    await trackServerEvent("login_failure", { method: "magic_link", reason: "invalid_link" }, request.headers)
     return fail
   }
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error) return failed()
+  } else if (tokenHash && type && OTP_TYPES.includes(type)) {
+    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+    if (error) return failed()
+  } else {
+    return failed()
+  }
+  await trackServerEvent("login_success", { method: "magic_link" }, request.headers)
 
   // Destination fixe et interne, sur l'origine canonique (pas l'en-tête Host).
   return NextResponse.redirect(new URL("/admin", siteOrigin(url.origin)))

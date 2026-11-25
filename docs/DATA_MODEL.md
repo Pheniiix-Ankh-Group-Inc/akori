@@ -109,6 +109,7 @@ transactionnelle, refuse une version non validée ou sans artefact.
 | `edition_checks` | Résultat de chaque contrôle (bloquant, réussi, détails) |
 | `send_runs` | `idempotency_key` unique (`semaine:langue`), `brevo_campaign_id`, statut |
 | `ops_incidents` | Type, gravité, message, `notified_at` |
+| `cron_runs` | Une ligne par exécution de tâche planifiée : tâche, déclencheur, statut, début, fin, durée, volume, tentative, corrélation, identifiant GitHub, erreur assainie ; purge à 90 jours (docs/MONITORING.md) |
 | `newsletter_consents` | `email_sha256` (avec poivre), langue, version du texte de consentement, `status` de la **demande** (`pending` → `requested` / `request_failed`, migration 0008) ; la confirmation reste dans Brevo |
 | `sob_insights` | Brouillons IA ; lecture publique seulement si `status = published` |
 

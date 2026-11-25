@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { isAuthorizedCron } from "@/lib/security/cron"
 import { isSupabaseAdminConfigured } from "@/lib/env"
 import { runCheck, runGenerate, runSend } from "@/lib/newsletter/orchestrator"
-import { withRun } from "@/lib/ops/log"
+import { cronMetaFromHeaders, trackCronRun } from "@/lib/ops/cron-runs"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 300
@@ -19,10 +19,13 @@ export async function POST(req: NextRequest) {
   const step = req.nextUrl.searchParams.get("step")
   if (step !== "generate" && step !== "check" && step !== "send") return NextResponse.json({ ok: false, code: "unknown_step" }, { status: 400 })
   try {
-    const result = await withRun(
-      `cron.newsletter.${step}`,
+    const result = await trackCronRun(
+      "newsletter",
+      cronMetaFromHeaders(req.headers),
       () => (step === "generate" ? runGenerate() : step === "check" ? runCheck() : runSend()),
-      (r) => ({ weekStart: r.weekStart, cycleStatus: r.status, detail: r.detail ?? null }),
+      // Une édition bloquée ou annulée est un résultat métier (incident déjà
+      // enregistré par l'orchestrateur), pas un échec technique de la tâche.
+      (r) => ({ status: "success", details: { step, weekStart: r.weekStart, cycleStatus: r.status } }),
     )
     return NextResponse.json({ ok: true, result })
   } catch {

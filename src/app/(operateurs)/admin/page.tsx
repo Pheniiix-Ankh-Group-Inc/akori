@@ -1,3 +1,4 @@
+import { TrackView } from "@/components/analytics/TrackView"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { requireEditor } from "@/lib/auth/editor"
@@ -40,6 +41,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
 
   return (
     <>
+      <TrackView event="dashboard_view" props={{ section: "home" }} />
       <div className="adm-head">
         <div>
           <p className="adm-crumb">Administration BIB</p>

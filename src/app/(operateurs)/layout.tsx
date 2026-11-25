@@ -1,6 +1,7 @@
 import "../globals.css"
 import type { Metadata } from "next"
 import { Inter, Fraunces } from "next/font/google"
+import { SiteAnalytics } from "@/components/analytics/SiteAnalytics"
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" })
 const serif = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap", axes: ["opsz"], style: ["normal", "italic"] })
@@ -19,6 +20,7 @@ export default function OperatorsLayout({ children }: { children: React.ReactNod
     <html lang="fr">
       <body suppressHydrationWarning className={`${serif.variable} ${sans.variable}`}>
         {children}
+        <SiteAnalytics />
       </body>
     </html>
   )
