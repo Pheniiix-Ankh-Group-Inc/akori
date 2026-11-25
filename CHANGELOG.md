@@ -6,6 +6,13 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Changed — editorial imagery (2026-11-25)
+
+- Image catalogue rewritten: each visual records its placement, role, source, licence, desktop and mobile files, focal point and status. A visual is shown only once validated and sharp enough for its slot, so the 200 px previews are no longer displayed blurred.
+- `EditorialImage` uses `<picture>` with a dedicated 4:5 mobile crop (Next 16 `getImageProps`), focal point, and an empty alt for decorative images. The home hero becomes full-bleed, capped in height on 2560–3440 px screens; a full-bleed closing band is ready.
+- AI visuals next to events carry a "mood visual, not a photo of a BIB event" caption in FR/EN/ES.
+- New `docs/IMAGES.md`: brand analysis, photographic direction, inventory with sources and licences, generation prompts, export sizes and checks at each width. Art-direction board added to the Claude Design canvas.
+
 ### Added — monitoring, analytics and observability (2026-11-25)
 
 - OpenTelemetry through `@vercel/otel` (`src/instrumentation.ts`, service `bib-web`): Next.js and outbound `fetch` spans, one span per measured task, sanitized `server.request_error` logs from `onRequestError`. `OTEL_SDK_DISABLED=true` turns it off.

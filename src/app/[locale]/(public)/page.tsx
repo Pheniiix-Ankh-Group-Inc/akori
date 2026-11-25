@@ -125,8 +125,8 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
       {hasVisual("home") && (
-        <div className="ed-wrap ed-hero-media">
-          <EditorialImage name="home" locale={locale} ratio="21x9" sizes="(max-width: 1264px) 100vw, 1200px" priority />
+        <div className="ed-hero-media-bleed">
+          <EditorialImage name="home" locale={locale} ratio="21x9" sizes="100vw" priority bleed />
         </div>
       )}
       <nav className="ed-wrap ed-toc" aria-label={t("onThisPage")}>
@@ -398,6 +398,9 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* Clôture : prochaine rencontre */}
+      {hasVisual("closing") && (
+        <EditorialImage name="closing" locale={locale} ratio="3x1" sizes="100vw" bleed />
+      )}
       <section className="ed-section ed-section-sand ed-closing" aria-labelledby="home-closing">
         <Reveal className="ed-wrap ed-grid-12">
           <h2 id="home-closing" className="ed-h1 ed-col-8">{ta("ctaTitle")}</h2>

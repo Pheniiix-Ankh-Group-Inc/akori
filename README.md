@@ -376,6 +376,7 @@ Tracked in the November 24, 2026 site audit: legal pages to rewrite (privacy pol
 | [Editorial Workflows](docs/EDITORIAL_WORKFLOWS.md) | Editorial procedures |
 | [Supabase Migration Plan](docs/SUPABASE_MIGRATION_PLAN.md) | Migration sequencing and history |
 | [Releasing](docs/RELEASING.md) | Versions, tags and GitHub releases |
+| [Editorial images](docs/IMAGES.md) | Photographic direction, image inventory with sources and licences, export sizes |
 | [Monitoring](docs/MONITORING.md) | Analytics, Speed Insights, OpenTelemetry, scheduled-job supervision, alerts, quotas |
 | [Pre-production Readiness](docs/audits/BIB_PREPROD_READINESS.md) | Historical pre-production report (November 2026) |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
