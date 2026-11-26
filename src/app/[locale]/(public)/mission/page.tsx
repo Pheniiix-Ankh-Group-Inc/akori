@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
+import { PageHero } from "@/components/ui/PageHero"
+import { AxesScrolly, type Axis } from "@/components/home/AxesScrolly"
+import { visual } from "@/lib/editorial/visuals"
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -17,44 +20,32 @@ export default async function Page({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "Institutional.mission" })
   const p = await getTranslations({ locale, namespace: "Site.pages" })
 
+  const vt = await getTranslations({ locale, namespace: "Visuals" })
+  const pic = (key: "events" | "newsletter" | "home") => {
+    const v = visual(key)
+    return v ? { src: v.desktop.src, alt: vt(key), focus: v.focus } : null
+  }
+  const axes: Axis[] = [
+    { key: "connect", title: t("connectTitle"), text: t("connectText"), link: t("eventsLink"), href: "/evenements", image: pic("events") },
+    { key: "share", title: t("shareTitle"), text: t("shareText"), link: p("items.resources.title"), href: "/resources", image: pic("newsletter") },
+    { key: "highlight", title: t("highlightTitle"), text: t("highlightText"), link: "Startup Spotlight", href: "/startup-spotlight", image: pic("home") },
+  ]
+
   return (
     <main>
-      <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "5rem" }}>
-        <div className="ed-stack" style={{ maxWidth: "52rem", gap: "1.5rem" }}>
-          <p className="ed-eyebrow">{t("eyebrow")}</p>
-          <h1 className="ed-h1">{p("items.mission.title")}</h1>
-          <p className="ed-lede">{t("intro")}</p>
-        </div>
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={p("items.mission.title")} lede={t("intro")} visual="about" />
+      <section className="im" aria-labelledby="home-axes">
+        <AxesScrolly axes={axes} eyebrow={t("eyebrow")} heading={t("pillarsTitle")} />
       </section>
-      <section className="ed-section ed-section-white" aria-labelledby="mission-pillars">
-        <div className="ed-wrap ed-stack" style={{ gap: "2rem" }}>
-          <h2 id="mission-pillars" className="ed-h2">{t("pillarsTitle")}</h2>
-          <div className="ed-grid">
-            <article className="ed-card"><div className="ed-card-body">
-              <span className="ed-num">01</span>
-              <h3 className="ed-h3">{t("connectTitle")}</h3>
-              <p className="ed-muted">{t("connectText")}</p>
-            </div></article>
-            <article className="ed-card"><div className="ed-card-body">
-              <span className="ed-num">02</span>
-              <h3 className="ed-h3">{t("shareTitle")}</h3>
-              <p className="ed-muted">{t("shareText")}</p>
-            </div></article>
-            <article className="ed-card"><div className="ed-card-body">
-              <span className="ed-num">03</span>
-              <h3 className="ed-h3">{t("highlightTitle")}</h3>
-              <p className="ed-muted">{t("highlightText")}</p>
-            </div></article>
-          </div>
-        </div>
-      </section>
-      <section className="ed-section" aria-labelledby="mission-method">
-        <div className="ed-wrap-narrow ed-stack" style={{ gap: "1.5rem" }}>
-          <h2 id="mission-method" className="ed-h2">{t("methodTitle")}</h2>
-          <div className="ed-prose"><p>{t("methodText")}</p></div>
-          <div className="ed-row">
-            <Link className="ed-btn ed-btn-dark" href="/evenements">{t("eventsLink")}</Link>
-            <Link className="ed-btn ed-btn-line" href="/data-sources">{t("sourcesLink")}</Link>
+      <section className="im im-ink im-pad" aria-labelledby="mission-method" style={{ paddingBlock: "clamp(6rem, 14vh, 11rem)" }}>
+        <div className="im-grid" style={{ rowGap: "2rem" }}>
+          <h2 id="mission-method" className="im-t im-h2 im-rv im-t8" style={{ gridColumn: "1 / span 6" }}>{t("methodTitle")}</h2>
+          <div className="im-rv im-t8" style={{ gridColumn: "8 / span 5", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <p className="im-p" style={{ fontSize: "1.1875rem" }}>{t("methodText")}</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem 1.75rem", alignItems: "center" }}>
+              <Link className="ed-btn im-btn-lt" href="/evenements">{t("eventsLink")}</Link>
+              <Link className="im-link" href="/data-sources" style={{ color: "var(--accent-light)" }}>{t("sourcesLink")}</Link>
+            </div>
           </div>
         </div>
       </section>

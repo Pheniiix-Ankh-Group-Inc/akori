@@ -16,10 +16,10 @@
 
 /* Bandeau de données fictives */
 .sp-fiction { background: var(--bg-2); border-bottom: 1px solid var(--border); }
-.sp-fiction-inner { max-width: 1200px; margin: 0 auto; padding: 0.6rem 2rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; font-size: 0.82rem; color: var(--texte-2); }
+.sp-fiction-inner { max-width: none; margin: 0; padding: 0.6rem var(--im-pad, 2rem); display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; font-size: 0.82rem; color: var(--texte-2); }
 
 /* A. Hero */
-.sp-hero { max-width: 1200px; margin: 0 auto; padding: 5.5rem 2rem 5rem; display: flex; flex-wrap: wrap; gap: 3.5rem; align-items: stretch; }
+.sp-hero { max-width: none; margin: 0; padding: 5.5rem var(--im-pad, 2rem) 5rem; display: flex; flex-wrap: wrap; gap: 3.5rem; align-items: stretch; }
 .sp-hero-copy { flex: 1 1 520px; display: flex; flex-direction: column; justify-content: space-between; gap: 3rem; }
 .sp-hero-main { display: flex; flex-direction: column; gap: 1.75rem; }
 .sp-title { margin: 0; font-family: var(--font-serif), Georgia, serif; font-weight: 300; font-size: clamp(3.4rem, 8vw, 7rem); line-height: 0.96; letter-spacing: -0.02em; color: var(--blanc); }
@@ -35,7 +35,7 @@
 /* Bandes de section */
 .sp-band { border-top: 1px solid var(--border); }
 .sp-band-white { background: var(--bg-card); }
-.sp-inner { max-width: 1200px; margin: 0 auto; padding: 6.5rem 2rem; display: flex; flex-direction: column; gap: 3rem; }
+.sp-inner { max-width: none; margin: 0; padding: 6.5rem var(--im-pad, 2rem); display: flex; flex-direction: column; gap: 3rem; }
 .sp-inner-tight { gap: 2.5rem; }
 .sp-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1rem; }
 .sp-head-text { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -74,7 +74,7 @@
 
 /* E. Founder Story Live */
 .sp-live { background: #141414; color: var(--bg); }
-.sp-live-inner { max-width: 1200px; margin: 0 auto; padding: 6.5rem 2rem; display: flex; flex-wrap: wrap; gap: 3.5rem; align-items: center; }
+.sp-live-inner { max-width: none; margin: 0; padding: 6.5rem var(--im-pad, 2rem); display: flex; flex-wrap: wrap; gap: 3.5rem; align-items: center; }
 .sp-live-copy { flex: 3 1 520px; display: flex; flex-direction: column; gap: 1.5rem; }
 .sp-on-ink { color: var(--sp-gold-on-ink); }
 .sp-live-title { margin: 0; font-family: var(--font-serif), Georgia, serif; font-weight: 300; font-size: clamp(2.6rem, 5vw, 3.75rem); line-height: 1.05; color: var(--bg); }
@@ -90,7 +90,7 @@
 .sp-live-note { margin: 0; font-size: 0.75rem; color: var(--sp-ink-muted); }
 
 /* F. Newsletter */
-.sp-nl-inner { max-width: 1200px; margin: 0 auto; padding: 5.5rem 2rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; justify-content: space-between; }
+.sp-nl-inner { max-width: none; margin: 0; padding: 5.5rem var(--im-pad, 2rem); display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; justify-content: space-between; }
 .sp-nl-text { flex: 1 1 520px; display: flex; flex-direction: column; gap: 0.75rem; }
 
 @media (max-width: 768px) {
@@ -109,3 +109,13 @@
 .sp-awaiting { background: var(--bg-2); border: 1px solid var(--border-h); border-radius: var(--r); color: var(--texte-2); display: flex; align-items: center; justify-content: center; padding: 2rem; line-height: 1.7; text-align: center; }
 .sp-empty { min-height: 200px; }
 .sp-empty .sp-body { max-width: 720px; }
+
+/* Phase 4 — Immersive Spatial Institution : bord à bord, angles droits, panneau d'attente sur encre. */
+.sp-hero { min-height: min(82svh, 60rem); align-items: stretch; }
+.sp-title { font-weight: 360; font-size: clamp(3.25rem, 7.5vw, 9rem); line-height: 0.94; letter-spacing: -0.035em; }
+.sp-hero-photo.sp-awaiting { background: var(--blanc); color: var(--bg); border: 0; border-radius: 0; display: flex; align-items: flex-end; padding: clamp(1.5rem, 3vw, 3rem); font-family: var(--font-serif), Georgia, serif; font-size: clamp(1.5rem, 2.2vw, 2.5rem); line-height: 1.2; min-height: 50svh; }
+.sp-awaiting { border-radius: 0; }
+.sp-h2 { font-weight: 380; font-size: clamp(2.25rem, 4.4vw, 5rem); letter-spacing: -0.02em; }
+.sp-principles { gap: clamp(2rem, 5vh, 3.5rem) var(--im-gap, 2rem); }
+.sp-principles li { border-radius: 0; }
+.sp-live-btn { border-radius: 0; }

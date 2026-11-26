@@ -7,8 +7,8 @@ import { splitByTiming, eventTiming } from "@/lib/events/temporal"
 import { intlLocale } from "@/lib/content/locales"
 import { eventText } from "@/lib/events/text"
 import { EVENT_STATUSES, filterByStatus, localDay, monthGrid, paginate, parseEventFilters, shiftMonth, yearsOf, type EventFilters } from "@/lib/events/calendar"
-import { EventCard } from "@/components/events/EventCard"
-import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
+import { EventIndex } from "@/components/home/EventIndex"
+import { PageHero } from "@/components/ui/PageHero"
 import { getLumaEmbedUrl } from "@/lib/luma"
 import { env } from "@/lib/env"
 import type { EventRecord } from "@/lib/events/types"
@@ -110,18 +110,10 @@ export default async function EvenementsPage({ params, searchParams }: Props) {
 
   return (
     <main>
-      <section className="ed-wrap ed-grid-12" style={{ paddingTop: "7rem", paddingBottom: "3rem", alignItems: "end" }}>
-        <div className={hasVisual("events") ? "ed-col-7 ed-stack" : "ed-col-12 ed-stack"}>
-          <p className="ed-eyebrow">{t("eyebrow")}</p>
-          <h1 className="ed-h1">{s("title")}</h1>
-          <p className="ed-lede">{t("intro")}</p>
-        </div>
-        {hasVisual("events") && (
-          <div className="ed-col-end-4">
-            <EditorialImage name="events" locale={locale} ratio="4x3" sizes="(max-width: 900px) 100vw, 380px" priority />
-          </div>
-        )}
-      </section>
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={s("title")} lede={t("intro")} visual="events">
+        <a href="#h-upcoming" className="ed-btn ed-btn-dark">{t("upcoming")}</a>
+        <a href="#h-luma" className="im-link">{s("embedTitle")}</a>
+      </PageHero>
 
       {!configured && (
         <section className="ed-wrap" style={{ paddingBottom: "5rem" }}>
@@ -186,13 +178,13 @@ export default async function EvenementsPage({ params, searchParams }: Props) {
                     <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)" }} />
                     {t("ongoing")}
                   </h2>
-                  <div className="ed-grid">{ongoing.map((e) => <EventCard key={e.id} event={e} locale={locale} variant="full" />)}</div>
+                  <EventIndex events={ongoing} locale={locale} />
                 </section>
               )}
               {(f.status === "tous" || f.status === "a-venir") && (
                 <section aria-labelledby="h-upcoming" className="ed-wrap" style={{ paddingBottom: "5rem" }}>
                   <h2 id="h-upcoming" className="ed-h2" style={{ marginBottom: "1.75rem" }}>{t("upcoming")}</h2>
-                  {upcoming.length === 0 ? <p className="ed-note">{t("noUpcoming")}</p> : <div className="ed-grid">{upcoming.map((e) => <EventCard key={e.id} event={e} locale={locale} variant="full" />)}</div>}
+                  {upcoming.length === 0 ? <p className="ed-note">{t("noUpcoming")}</p> : <EventIndex events={upcoming} locale={locale} />}
                 </section>
               )}
               {(f.status === "tous" || f.status === "passes") && (

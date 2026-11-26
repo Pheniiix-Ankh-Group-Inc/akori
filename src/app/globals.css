@@ -535,7 +535,7 @@ main section[id] { scroll-margin-top: 4.5rem; }
    d'équivalent en utilitaires Tailwind : elles vivent ici, sous @supports,
    et sont neutralisées par prefers-reduced-motion.
 ═══════════════════════════════════════════════════════ */
-.im { --im-pad: clamp(1.25rem, 5vw, 7.5rem); --im-gap: clamp(1rem, 2vw, 2.5rem); }
+.im, .pub { --im-pad: clamp(1.25rem, 5vw, 7.5rem); --im-gap: clamp(1rem, 2vw, 2.5rem); }
 .im-pad { padding-inline: var(--im-pad); }
 .im-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap); }
 .im-sc { position: relative; overflow: hidden; }
@@ -662,4 +662,85 @@ details[open] > .im-row { padding-inline: 1.25rem; }
 @media (prefers-reduced-motion: reduce) {
   .im *, .im *::before, .im *::after { animation: none !important; transition: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   PAGES PUBLIQUES — système partagé (phase 4).
+   .pub enveloppe toutes les pages publiques (layout (public)). Les conteneurs
+   structurels (.ed-wrap, .ed-wrap-narrow) passent bord à bord avec une marge
+   fluide ; les colonnes de lecture (.ed-prose, .ed-lede, .im-read) gardent
+   55 à 75 caractères. L'administration et les espaces connectés ne sont pas
+   concernés (hors de .pub).
+═══════════════════════════════════════════════════════ */
+.pub .ed-wrap, .pub .ed-wrap-narrow { max-width: none; margin: 0; padding-inline: var(--im-pad); }
+.pub .ed-wrap-narrow > * { max-width: 48rem; }
+.pub .ed-section { padding-block: clamp(5rem, 12vh, 10rem); }
+.pub .ed-h1 { font-weight: 360; font-size: clamp(2.75rem, 6.4vw, 7.5rem); line-height: 0.98; letter-spacing: -0.03em; }
+.pub .ed-h2 { font-weight: 380; font-size: clamp(2.1rem, 3.8vw, 4.25rem); line-height: 1.04; letter-spacing: -0.02em; }
+.pub .ed-h3 { font-weight: 380; font-size: clamp(1.5rem, 1.9vw, 2rem); }
+.pub .ed-eyebrow { font-size: 0.8125rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-dk); }
+.pub .ed-quote { font-weight: 380; font-size: clamp(2rem, 4vw, 4.5rem); line-height: 1.06; letter-spacing: -0.02em; }
+.pub .ed-quote em { color: var(--accent-dk); }
+.pub .ed-pill { border-radius: 0; }
+.pub .ed-btn { border-radius: 0; }
+/* Cartes → index ouvert : filet haut, pas de boîte, pas d'arrondi. */
+.pub .ed-grid { column-gap: var(--im-gap); row-gap: clamp(2.5rem, 5vh, 4rem); grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.pub .ed-card { border: 0; border-top: 1px solid var(--blanc); border-radius: 0; background: transparent; overflow: visible; }
+.pub .ed-card-body { padding: 1.4rem 0 0; gap: 0.75rem; }
+.pub .ed-card-media { border: 0; aspect-ratio: 3 / 2; margin-bottom: 0.25rem; }
+.pub .ed-portrait { border-radius: 0; }
+.pub .ed-founders { column-gap: var(--im-gap); }
+.im-read { max-width: 40rem; }
+/* En-tête de page : photo bord à bord à droite, texte sur un autre plan. */
+.ph { position: relative; overflow: hidden; }
+.ph-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap); min-height: min(82svh, 60rem); }
+.ph-copy { grid-column: 1 / span 6; padding: clamp(4.5rem, 14vh, 10rem) 0 clamp(3rem, 8vh, 6rem) var(--im-pad); display: flex; flex-direction: column; justify-content: flex-end; gap: clamp(1.25rem, 3vh, 2rem); }
+.ph-media { grid-column: 7 / -1; position: relative; min-height: 40svh; }
+.ph-plain .ph-grid { min-height: min(64svh, 46rem); }
+.ph-plain .ph-copy { grid-column: 1 / -1; padding-right: var(--im-pad); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap); align-content: end; row-gap: 1.5rem; }
+.ph-plain .ph-head { grid-column: 1 / span 8; display: flex; flex-direction: column; gap: 1.5rem; }
+.ph-plain .ph-side { grid-column: 9 / span 4; align-self: end; display: flex; flex-direction: column; gap: 1.25rem; }
+.ph-title { font-family: var(--font-serif), Georgia, serif; font-weight: 360; font-size: clamp(3rem, 7vw, 8.5rem); line-height: 0.95; letter-spacing: -0.035em; margin: 0; color: inherit; }
+.ph-ink { background: var(--blanc); color: var(--bg); }
+.ph-ink .ed-lede, .ph-ink .im-p { color: #D9D3C7; }
+.ph-ink .im-ey { color: var(--accent-light); }
+.ph-sand { background: var(--bg-2); }
+@media (max-width: 1279px) {
+  .ph-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); min-height: 0; }
+  .ph-copy, .ph-media { grid-column: 1 / -1; }
+  .ph-copy { padding-right: var(--im-pad); padding-top: clamp(3.5rem, 9vh, 6rem); }
+  .ph-media { min-height: 0; aspect-ratio: 16 / 10; order: 2; }
+  .ph-plain .ph-copy { grid-template-columns: 1fr; }
+  .ph-plain .ph-head, .ph-plain .ph-side { grid-column: 1 / -1; }
+}
+@media (max-width: 767px) {
+  .ph-media { aspect-ratio: 4 / 5; }
+}
+/* Index de contact, de presse, de ressources : lignes à filets fins. */
+.im-rows { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--blanc); }
+.im-rows > li { border-top: 1px solid var(--blanc); }
+.im-rowlink { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap); row-gap: 0.4rem; align-items: baseline; padding: clamp(1.25rem, 2.6vh, 2rem) 0; color: var(--blanc); }
+.im-rowlink .im-arrow { transition: transform 0.25s var(--ease); }
+.im-rowlink:hover .im-arrow, .im-rowlink:focus-visible .im-arrow { transform: translateX(6px); }
+.im-rowlink:hover .im-t { color: var(--accent-dk); }
+@media (max-width: 1279px) { .im-rowlink { grid-template-columns: repeat(8, minmax(0, 1fr)); } .im-rowlink > * { grid-column: 1 / -1 !important; } }
+/* Documents juridiques : sommaire collant, colonne de lecture. */
+.lg { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap); padding: clamp(3rem, 8vh, 6rem) var(--im-pad) clamp(5rem, 12vh, 9rem); }
+.lg-toc { grid-column: 1 / span 3; position: sticky; top: 6rem; align-self: start; max-height: calc(100svh - 8rem); overflow: auto; }
+.lg-toc ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--blanc); }
+.lg-toc a { display: block; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--texte-2); text-decoration: none; }
+.lg-toc a[aria-current="true"] { color: var(--blanc); font-weight: 500; box-shadow: inset 2px 0 0 var(--accent); padding-left: 0.75rem; }
+.lg-doc { grid-column: 5 / span 7; max-width: 44rem; }
+.lg-doc .legal-heading { font-size: clamp(1.5rem, 2vw, 2rem); scroll-margin-top: 6rem; }
+.lg-doc p, .lg-doc li { font-size: 1.0625rem; line-height: 1.75; }
+@media (max-width: 1279px) {
+  .lg { grid-template-columns: 1fr; }
+  .lg-toc { grid-column: 1; position: static; max-height: none; margin-bottom: 3rem; }
+  .lg-doc { grid-column: 1; }
+}
+/* Agenda (/evenements) : contrôles à angles droits, lignes passées plus éditoriales. */
+.pub .ev-tabs { border-radius: 0; border-color: var(--blanc); }
+.pub .ev-tabs a { background: transparent; }
+.pub .ed-list-rows { border-top: 1px solid var(--blanc); }
+.pub .ed-list-rows > li { padding: clamp(1.1rem, 2.4vh, 1.75rem) 0; border-bottom-color: var(--border-h); }
+.pub .ev-embed { border-radius: 0; }
 

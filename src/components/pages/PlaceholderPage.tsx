@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
+import { PageHero } from "@/components/ui/PageHero"
 
 export const PLACEHOLDER_PAGES = ["about", "mission", "membership", "resources", "press", "contact"] as const
 export type PlaceholderKey = (typeof PLACEHOLDER_PAGES)[number]
@@ -25,27 +26,31 @@ export async function PlaceholderPage({ locale, page }: { locale: string; page: 
   const nav = await getTranslations({ locale, namespace: "Site.nav" })
   const footer = await getTranslations({ locale, namespace: "Site.footer" })
 
+  const links = [
+    { href: "/about", label: nav("about") },
+    { href: "/evenements", label: nav("events") },
+    { href: "/state_of_bib", label: nav("stateOfBib") },
+    { href: "/#newsletter", label: footer("newsletter") },
+  ]
+
   return (
     <main>
-      <section className="ed-wrap" style={{ paddingTop: "7rem", paddingBottom: "5rem" }}>
-        <div className="ed-stack" style={{ maxWidth: "52rem", gap: "1.5rem" }}>
-          <span className="ed-pill" style={{ alignSelf: "flex-start" }}>{t("draft")}</span>
-          <h1 className="ed-h1">{t(`items.${page}.title`)}</h1>
-          <p className="ed-lede">{t(`items.${page}.lede`)}</p>
-          <p className="ed-note">{t("note")}</p>
-        </div>
-      </section>
-
-      <section className="ed-section ed-section-white">
-        <div className="ed-wrap ed-stack" style={{ gap: "1.25rem" }}>
-          <h2 className="ed-eyebrow">{t("meanwhile")}</h2>
-          <div className="ed-row" style={{ gap: "0.75rem" }}>
-            <Link href="/about" className="ed-btn ed-btn-line">{nav("about")}</Link>
-            <Link href="/evenements" className="ed-btn ed-btn-line">{nav("events")}</Link>
-            <Link href="/state_of_bib" className="ed-btn ed-btn-line">{nav("stateOfBib")}</Link>
-            <Link href="/#newsletter" className="ed-btn ed-btn-dark">{footer("newsletter")}</Link>
-          </div>
-        </div>
+      <PageHero locale={locale} eyebrow={t("draft")} title={t(`items.${page}.title`)} lede={t(`items.${page}.lede`)} visual={page === "membership" ? "home" : undefined}>
+        <p className="ed-note" style={{ margin: 0 }}>{t("note")}</p>
+      </PageHero>
+      <section className="im im-ink im-pad" style={{ paddingBlock: "clamp(5rem, 12vh, 9rem)" }} aria-labelledby="placeholder-meanwhile">
+        <h2 id="placeholder-meanwhile" className="im-ey im-rv" style={{ marginBottom: "2rem" }}>{t("meanwhile")}</h2>
+        <ul className="im-rows" style={{ borderColor: "#5A554C" }}>
+          {links.map((l, i) => (
+            <li key={l.href} className="im-rv" style={{ borderColor: "#5A554C" }}>
+              <Link className="im-rowlink" href={l.href} style={{ color: "var(--bg)" }}>
+                <span className="im-ey" style={{ gridColumn: "1 / span 2" }}>{String(i + 1).padStart(2, "0")}</span>
+                <span className="im-t" style={{ gridColumn: "3 / span 8", fontSize: "clamp(1.75rem, 3vw, 3.5rem)" }}>{l.label}</span>
+                <span className="im-arrow" style={{ gridColumn: "12", justifySelf: "end", fontSize: "1.5rem" }} aria-hidden="true">→</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
     </main>
   )
