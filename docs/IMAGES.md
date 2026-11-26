@@ -78,6 +78,15 @@ logo, no watermark*.
 
 ## 5. Integration
 
+Home placements since 2026-11-26 (Immersive Spatial Institution): `about`
+(horizon) opens the hero and closes the newsletter chapter with a different
+crop; `home` (light on stone) carries the mission chapter; `events`,
+`newsletter` and `sob` illustrate the first three "what we build" steps;
+`sob` is also the State of BIB backdrop. Human photos proposed on the design
+canvas (board 02) will replace the hero and mission images once downloaded
+and their licences checked.
+
+
 - `<picture>` built with `getImageProps` (Next 16 art direction): the mobile
   variant is served below 768 px, the desktop file above; AVIF then WebP through
   the image optimiser; `srcset` from `deviceSizes`.

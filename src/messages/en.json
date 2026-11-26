@@ -1582,5 +1582,75 @@
       "eventDetails": "See the published event details and registration information.",
       "noConfirmedEvent": "No Founder Story Live event is confirmed in the public calendar yet."
     }
+  },
+  "Immersive": {
+    "hero": {
+      "eyebrow": "A transcontinental collective · Africa, the Caribbean, the diasporas",
+      "secondary": "Discover the collective",
+      "scroll": "Scroll"
+    },
+    "manifesto": {
+      "eyebrow": "02 · The premise"
+    },
+    "mission": {
+      "eyebrow": "03 · The collective",
+      "pillars": "Three commitments"
+    },
+    "axes": {
+      "eyebrow": "04 · What we build",
+      "title": "Four ways to move forward together.",
+      "spotlightLink": "Discover Startup Spotlight"
+    },
+    "founders": {
+      "eyebrow": "05 · The founders",
+      "title": "Two journeys, one standard."
+    },
+    "events": {
+      "eyebrow": "06 · Events",
+      "title": "Meet.",
+      "intro": "Events to discover projects, ask questions and build connections. Dates come from the BIB Luma calendar.",
+      "details": "Details",
+      "cancelled": "Cancelled",
+      "empty": "No gathering announced yet. New dates reach the newsletter first.",
+      "emptyLink": "Subscribe to the newsletter"
+    },
+    "spotlight": {
+      "eyebrow": "07 · Startup Spotlight",
+      "link": "Discover the programme"
+    },
+    "sob": {
+      "eyebrow": "08 · State of BIB",
+      "title": "Who builds, and where.",
+      "intro": "State of BIB documents the activity of open source blockchain developers in Africa and the Caribbean, with its sources, methods and limits.",
+      "mainLabel": "open source developers active over the last 28 days",
+      "mainNote": "Africa and the Caribbean · data as of {date}. These are observed developers, not BIB members.",
+      "countries": "countries",
+      "cities": "cities",
+      "commits": "lifetime commits",
+      "chartTitle": "Developers active over 28 days · top countries",
+      "chartCaption": "Developers active over 28 days, by country",
+      "analysisTitle": "What the data shows",
+      "analysis": "{country} accounts for {share}% of the active developers observed.",
+      "analysisCaribbean": "{country}, the leading Caribbean country, has {count}.",
+      "source": "Snapshot of {date}.",
+      "methodLink": "Sources and methodology"
+    },
+    "action": {
+      "eyebrow": "09 · BIB in action",
+      "title": "What we have done together.",
+      "emptyText": "The first one will follow the next gathering, with authorised documentary photos. Upcoming dates are in the events."
+    },
+    "resources": {
+      "eyebrow": "10 · Resources",
+      "featured": "Featured · Data",
+      "catMethod": "Method",
+      "catCommunity": "Community",
+      "catCollective": "Collective",
+      "open": "Open"
+    },
+    "newsletter": {
+      "eyebrow": "11 · Newsletter",
+      "title": "Every Wednesday, the ecosystem made clear."
+    }
   }
 }

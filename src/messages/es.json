@@ -1582,5 +1582,75 @@
       "eventDetails": "Consulta los detalles del evento publicado y cómo registrarte.",
       "noConfirmedEvent": "Todavía no hay ningún evento Founder Story Live confirmado en el calendario público."
     }
+  },
+  "Immersive": {
+    "hero": {
+      "eyebrow": "Un colectivo transcontinental · África, el Caribe, las diásporas",
+      "secondary": "Descubrir el colectivo",
+      "scroll": "Desplazarse"
+    },
+    "manifesto": {
+      "eyebrow": "02 · La premisa"
+    },
+    "mission": {
+      "eyebrow": "03 · El colectivo",
+      "pillars": "Tres compromisos"
+    },
+    "axes": {
+      "eyebrow": "04 · Lo que construimos",
+      "title": "Cuatro maneras de avanzar juntos.",
+      "spotlightLink": "Descubrir Startup Spotlight"
+    },
+    "founders": {
+      "eyebrow": "05 · Los fundadores",
+      "title": "Dos trayectorias, una misma exigencia."
+    },
+    "events": {
+      "eyebrow": "06 · Eventos",
+      "title": "Encontrarse.",
+      "intro": "Eventos para descubrir proyectos, hacer preguntas y crear vínculos. Las fechas vienen del calendario Luma de BIB.",
+      "details": "Detalles",
+      "cancelled": "Cancelado",
+      "empty": "Todavía no hay ningún encuentro anunciado. Las próximas fechas llegan primero al boletín.",
+      "emptyLink": "Suscribirse al boletín"
+    },
+    "spotlight": {
+      "eyebrow": "07 · Startup Spotlight",
+      "link": "Descubrir el programa"
+    },
+    "sob": {
+      "eyebrow": "08 · State of BIB",
+      "title": "Quién construye, y dónde.",
+      "intro": "State of BIB documenta la actividad de los desarrolladores de código abierto del ecosistema blockchain en África y el Caribe, con sus fuentes, métodos y límites.",
+      "mainLabel": "desarrolladores de código abierto activos en los últimos 28 días",
+      "mainNote": "África y el Caribe · datos al {date}. Son desarrolladores observados, no miembros de BIB.",
+      "countries": "países",
+      "cities": "ciudades",
+      "commits": "commits acumulados",
+      "chartTitle": "Desarrolladores activos en 28 días · primeros países",
+      "chartCaption": "Desarrolladores activos en 28 días, por país",
+      "analysisTitle": "Lo que muestran los datos",
+      "analysis": "{country} concentra el {share} % de los desarrolladores activos observados.",
+      "analysisCaribbean": "{country}, primer país caribeño, cuenta con {count}.",
+      "source": "Instantánea del {date}.",
+      "methodLink": "Fuentes y metodología"
+    },
+    "action": {
+      "eyebrow": "09 · BIB en acción",
+      "title": "Lo que hemos hecho juntos.",
+      "emptyText": "La primera llegará después del próximo encuentro, con fotos documentales autorizadas. Las próximas fechas están en los eventos."
+    },
+    "resources": {
+      "eyebrow": "10 · Recursos",
+      "featured": "Destacado · Datos",
+      "catMethod": "Método",
+      "catCommunity": "Comunidad",
+      "catCollective": "Colectivo",
+      "open": "Consultar"
+    },
+    "newsletter": {
+      "eyebrow": "11 · Boletín",
+      "title": "Cada miércoles, el ecosistema con claridad."
+    }
   }
 }

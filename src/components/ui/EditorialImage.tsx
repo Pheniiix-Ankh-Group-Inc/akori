@@ -2,13 +2,14 @@ import { getImageProps } from "next/image"
 import { getTranslations } from "next-intl/server"
 import { visual, type VisualKey } from "@/lib/editorial/visuals"
 
-type Ratio = "21x9" | "3x1" | "4x5" | "4x3"
+type Ratio = "21x9" | "3x1" | "4x5" | "4x3" | "fill"
 
 const RATIO_CLASS: Record<Ratio, string> = {
   "21x9": "ed-media-21x9",
   "3x1": "ed-media-3x1",
   "4x5": "ed-media-4x5",
   "4x3": "ed-media-4x3",
+  fill: "ed-media-fill",
 }
 
 /**

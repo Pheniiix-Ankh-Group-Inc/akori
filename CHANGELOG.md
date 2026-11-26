@@ -6,6 +6,13 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Changed — accueil « Immersive Spatial Institution » (2026-11-26)
+
+- Home page rebuilt as twelve full-bleed chapters from the Claude Design mockup (Phase 3): cinematic hero, typographic manifesto, mission with a dominant image, sticky "what we build" scrollytelling, founders with offset portraits, editorial event index (rows open on click or keyboard, Luma registration kept), Startup Spotlight programme, State of BIB data story on ink (headline figure, secondary figures, top-country bars with an accessible table, computed analysis), BIB in action, resources index and a newsletter closing on the horizon.
+- Scroll-driven motion in CSS (`animation-timeline`), reversible and disabled with reduced motion; no scroll hijacking. Responsive 12/8/4-column grid, dedicated tablet and mobile compositions.
+- Header and footer now span the full width; the footer moves to ink.
+- New `Immersive` messages in FR/EN/ES; State of BIB date shown in long form.
+
 ### Changed — editorial imagery (2026-11-25)
 
 - Image catalogue rewritten: each visual records its placement, role, source, licence, desktop and mobile files, focal point and status. A visual is shown only once validated and sharp enough for its slot, so the 200 px previews are no longer displayed blurred.
