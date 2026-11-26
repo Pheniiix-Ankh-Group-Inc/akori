@@ -210,6 +210,8 @@ a.ed-card:hover { border-color: var(--border-h); }
 .ed-header { position: sticky; top: 0; z-index: var(--z-header); background: rgba(250, 248, 244, 0.96); backdrop-filter: blur(6px); border-bottom: 1px solid var(--border); }
 .ed-header-inner { max-width: none; margin: 0; padding: 0.75rem clamp(1rem, 5vw, 7.5rem); display: flex; align-items: center; gap: 1.5rem; }
 .ed-logo { font-family: var(--font-serif), Georgia, serif; font-size: 1.4rem; color: var(--blanc); white-space: nowrap; }
+.ed-header .ed-logo { border: 0; background: transparent; box-shadow: none; }
+.ed-header .ed-logo:focus-visible { outline: none; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 0.25em; }
 .ed-nav { display: flex; gap: 1.75rem; flex-grow: 1; justify-content: center; }
 .ed-nav a { font-size: 0.95rem; color: var(--blanc); min-height: 44px; display: inline-flex; align-items: center; }
 .ed-nav a:hover, .ed-nav a[aria-current="page"], .ed-nav a[aria-current="location"] { color: var(--accent); }

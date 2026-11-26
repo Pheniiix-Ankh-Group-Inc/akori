@@ -13,8 +13,7 @@ const get = async (path) => {
 }
 // Texte visible : sans scripts (données d'hydratation), styles ni balises.
 const visible = (html) => html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ')
-// Tout le HTML sauf le dictionnaire de traductions embarqué (qui contient, par
-// construction, le texte de la page légale pour la navigation côté client).
+// Liens publics rendus par la page ; les crédits obligatoires restent sur la page légale.
 const hrefs = (html) => [...html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/gi)].map((m) => m[1])
 
 const run = async () => {
@@ -40,14 +39,14 @@ const run = async () => {
     ok(`Accueil ${label} : lien légal dans le pied de page`, hrefs(html).some((h) => /\/data-sources$/.test(h)))
     if (EXPECT === 'unavailable') ok(`Accueil ${label} : aucun indicateur State of BIB affiché`, !/class="ed-stat"/.test(html.slice(html.indexOf('home-sob'))))
   }
-  for (const [label, path, needle] of [['FR', '/fr/data-sources', 'Données, méthodologie et sources'], ['EN', '/data-sources', 'Data, methodology and sources']]) {
+  for (const [label, path, needle] of [['FR', '/fr/data-sources', 'Données et méthodologie'], ['EN', '/data-sources', 'Data and methodology'], ['ES', '/es/data-sources', 'Datos y metodología']]) {
     const { status, html } = await get(path)
     const text = visible(html)
     ok(`Page légale ${label} : servie et titrée`, status === 200 && text.includes(needle), status)
     ok(`Page légale ${label} : fournisseur, jeu de données et licence`, /Electric Capital/.test(text) && /Open Dev Data/.test(text) && /CC BY 4\.0/.test(text))
     const links = hrefs(html)
-    ok(`Page légale ${label} : liens officiels et texte de licence`, ['https://opendevdata.org', 'https://github.com/electric-capital/open-dev-data', 'https://creativecommons.org/licenses/by/4.0/', 'https://creativecommons.org/licenses/by/4.0/legalcode'].every((u) => links.includes(u)))
-    ok(`Page légale ${label} : fond de carte référencé`, /Natural Earth/.test(text))
+    ok(`Page légale ${label} : liens officiels et texte de licence`, ['https://github.com/electric-capital/open-dev-data', 'https://creativecommons.org/licenses/by/4.0/'].every((u) => links.includes(u)))
+    ok(`Page légale ${label} : aucune référence technique facultative`, !/natural\s*earth|world-atlas/i.test(text) && !links.some((u) => /naturalearthdata\.com|github\.com\/topojson\/world-atlas|data\.opendevdata\.org/i.test(u)))
   }
   for (const path of ['/api/state-of-bib/export', '/api/state-of-bib/export?table=countries&format=csv', '/api/state-of-bib/export?table=cities&format=json', '/data/headline.json', '/data/country_map.json', '/data/meta.json', '/data-history/index.json']) {
     const res = await fetch(BASE + path, { redirect: 'manual' })

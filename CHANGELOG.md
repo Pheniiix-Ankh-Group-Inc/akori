@@ -6,6 +6,11 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Changed — public branding and data confidentiality
+
+- Remove the public header wordmark frame; keyboard focus uses a visible underline.
+- Simplify the public data methodology page and its FR/EN/ES navigation labels, removing optional provider directory details while retaining the required CC BY 4.0 attribution and links. Internal collection and data processing remain unchanged.
+
 ### Changed — State of BIB data storytelling and remaining public pages (phase 4.1, 2026-11-26)
 
 - State of BIB: map countries appear by rank, non-selected territories dim, guided tour of the five leading countries (started and stopped by the visitor; step by step with reduced motion); ecosystem curves morph between absolute and base 100 with sliding axes and a "back to start" control; cohort layers reveal bottom-up and morph between counts and shares with a computed peak annotation; animated city counts; timeline of published versions linking to each snapshot; scene index.
