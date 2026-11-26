@@ -11,6 +11,7 @@ import { SobPeriodBar } from "@/components/state-of-bib/SobPeriodBar"
 import { LazyMount } from "@/components/state-of-bib/LazyMount"
 import { Link } from "@/i18n/navigation"
 import { EditorialImage } from "@/components/ui/EditorialImage"
+import { PageHero } from "@/components/ui/PageHero"
 import { AnimatedNumber } from "@/components/state-of-bib/AnimatedNumber"
 import { CopyLink } from "@/components/state-of-bib/CopyLink"
 import { DeltaBars } from "@/components/state-of-bib/DeltaBars"
@@ -62,19 +63,14 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
   if (!isSobAvailable(snapshot)) {
     return (
       <main>
-        <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "6rem" }}>
-          <div className="ed-stack" style={{ gap: "1.75rem", maxWidth: "46rem" }}>
-            <p className="ed-eyebrow">{s("eyebrow")}</p>
-            <h1 className="ed-h1">
-              {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
-            </h1>
-            <div className="ed-note" role="status">
-              <h2 className="ed-h3" style={{ marginBottom: "0.5rem" }}>{s("unavailableTitle")}</h2>
-              <p>{s("unavailableText")}</p>
-            </div>
-            <p><Link href="/data-sources" className="ed-link">{s("methodLink")} →</Link></p>
+        <PageHero locale={locale} eyebrow={s("eyebrow")} title={<>{s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}</>} tone="ink">
+          <div className="ed-note" role="status" style={{ maxWidth: "36rem" }}>
+            <h2 className="ed-h3" style={{ marginBottom: "0.5rem" }}>{s("unavailableTitle")}</h2>
+            <p>{s("unavailableText")}</p>
           </div>
-        </section>
+          {selectedVersion && <Link href="/state_of_bib" className="im-link" style={{ color: "var(--accent-light)" }}>{locale === "fr" ? "Dernière version publiée" : locale === "es" ? "Última versión publicada" : "Latest published version"}</Link>}
+          <Link href="/data-sources" className="im-link" style={{ color: "var(--accent-light)" }}>{s("methodLink")}</Link>
+        </PageHero>
       </main>
     )
   }
