@@ -118,16 +118,13 @@ describe("State of BIB — sources uniquement dans la page légale", () => {
     }
   }
 
-  it.each(["fr", "en", "es"])("%s : aucune mention de fournisseur ou de licence hors namespace légal", (l) => {
-    const { DataSources, ...rest } = json(`src/messages/${l}.json`)
+  // Depuis 377c988, les crédits obligatoires sont écrits dans la page serveur
+  // data-sources : aucun fichier de traduction (embarqué dans le client)
+  // ne nomme plus le fournisseur ni la licence, page légale comprise.
+  it.each(["fr", "en", "es"])("%s : aucune mention de fournisseur ou de licence dans les traductions", (l) => {
     const hits: string[] = []
-    scan(rest, "", hits)
+    scan(json(`src/messages/${l}.json`), "", hits)
     expect(hits).toEqual([])
-    const legal = JSON.stringify(DataSources)
-    expect(legal).toMatch(/Electric Capital/)
-    expect(legal).toMatch(/CC BY 4\.0/)
-    expect(legal).toMatch(/Open Dev Data/)
-    expect(legal).toMatch(/Natural Earth/)
   })
 
   it("les pages et composants publics ne nomment pas les fournisseurs (hors page légale)", () => {
@@ -141,13 +138,14 @@ describe("State of BIB — sources uniquement dans la page légale", () => {
 
   it("la page légale porte l'attribution, les liens officiels et la licence", () => {
     const page = read("src/app/[locale]/(public)/data-sources/page.tsx")
-    for (const url of ["https://opendevdata.org", "https://github.com/electric-capital/open-dev-data", "https://creativecommons.org/licenses/by/4.0/", "https://creativecommons.org/licenses/by/4.0/legalcode"]) {
-      expect(page).toContain(url)
+    // Attribution CC BY 4.0 obligatoire : œuvre et auteur, lien vers la licence, mention des modifications.
+    for (const needle of ["https://github.com/electric-capital/open-dev-data", "Electric Capital", "https://creativecommons.org/licenses/by/4.0/", "CC BY 4.0", 't("creditsChanges")']) {
+      expect(page).toContain(needle)
     }
     expect(read("src/components/sections/Footer.tsx")).toContain('href="/data-sources"')
     for (const l of ["fr", "en", "es"]) {
       const m = json(`src/messages/${l}.json`).DataSources
-      for (const k of ["s1Attribution", "s1Changes", "scopeText", "diasporaText", "updateText", "noExportText"]) expect(m[k], `${l}.${k}`).toBeTruthy()
+      for (const k of ["creditsTitle", "creditsChanges", "scopeText", "diasporaText", "updateText", "noExportText"]) expect(m[k], `${l}.${k}`).toBeTruthy()
       expect(m.method.length).toBeGreaterThanOrEqual(5)
       expect(m.limits.length).toBeGreaterThanOrEqual(4)
     }
