@@ -1,0 +1,20 @@
+-- =============================================================================
+-- BIB — Migration 0010 : legacy_koriventure_cleanup — MARQUEUR D'HISTORIQUE
+-- -----------------------------------------------------------------------------
+-- Ce fichier ne contient volontairement AUCUNE instruction SQL.
+--
+-- Le nettoyage destructif des structures KoriVenture a été appliqué hors
+-- `supabase db push`, après approbation, avec le script isolé
+-- supabase/ops/akori/03_cleanup_koriventure.sql. Ce script enregistre lui-même
+-- la version 20261114001000 dans supabase_migrations.schema_migrations avec un
+-- tableau `statements` vide (vérifié sur akori le 2026-11-26 : 0 instruction,
+-- 0 fonction public.kori_*, 29 tables public toutes BIB).
+--
+-- Ce marqueur réaligne l'historique local sur l'historique distant pour que
+-- `supabase migration list` et `supabase db push` ne signalent plus une
+-- version distante inconnue. Il ne réexécute rien : sur une base neuve il est
+-- sans effet, et sur akori la version est déjà enregistrée.
+--
+-- Ne jamais y recopier le contenu de 03_cleanup_koriventure.sql.
+-- =============================================================================
+select 1;
