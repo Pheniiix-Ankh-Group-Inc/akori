@@ -9,6 +9,7 @@ import {
   parseFilters,
   rankEcosystems,
   serializeFilters,
+  mergeFilterParams,
 } from "@/lib/sob/explore"
 import type { SobCohort, SobCountry, SobEcosystem } from "@/components/state-of-bib/types"
 
@@ -106,5 +107,25 @@ describe("grand nombre de points", () => {
     expect(out[0]).toBe(pts[0])
     expect(out[out.length - 1]).toBe(pts[pts.length - 1])
     expect(out.every((p) => pts[p.i] === p)).toBe(true)
+  })
+})
+
+describe("mergeFilterParams — conservation de la version historique", () => {
+  const base = { ...DEFAULT_FILTERS, cohorts: [...DEFAULT_FILTERS.cohorts] }
+  it("garde ?version quand un filtre change", () => {
+    const qs = mergeFilterParams(new URLSearchParams("version=20261018T120000&region=all"), { ...base, region: "Caribbean" })
+    expect(qs.get("version")).toBe("20261018T120000")
+    expect(qs.get("region")).toBe("Caribbean")
+  })
+  it("retire les filtres revenus à leur valeur par défaut sans toucher aux autres paramètres", () => {
+    const qs = mergeFilterParams(new URLSearchParams("version=v1&country=NGA&compare=KEN&utm_source=x"), base)
+    expect(qs.get("country")).toBeNull()
+    expect(qs.get("compare")).toBeNull()
+    expect(qs.get("version")).toBe("v1")
+    expect(qs.get("utm_source")).toBe("x")
+  })
+  it("réinitialisation : la version reste sélectionnée", () => {
+    const qs = mergeFilterParams(new URLSearchParams("version=v2&metric=commits_lifetime&cmode=share"), base)
+    expect(qs.toString()).toBe("version=v2")
   })
 })

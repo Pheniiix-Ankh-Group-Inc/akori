@@ -1,7 +1,7 @@
 "use client"
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
-import { DEFAULT_FILTERS, METRICS, REGIONS, parseFilters, serializeFilters, type SobFilters } from "@/lib/sob/explore"
+import { DEFAULT_FILTERS, METRICS, REGIONS, mergeFilterParams, parseFilters, type SobFilters } from "@/lib/sob/explore"
 
 interface Ctx {
   filters: SobFilters
@@ -66,7 +66,8 @@ export function SobExplorerProvider({
 
   useEffect(() => {
     if (!hydrated.current) return
-    const qs = serializeFilters(filters).toString()
+    // Conserve « version » et tout paramètre non géré par les filtres.
+    const qs = mergeFilterParams(new URLSearchParams(window.location.search), filters).toString()
     const url = `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`
     if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
       window.history.replaceState(window.history.state, "", url)

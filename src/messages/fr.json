@@ -1648,6 +1648,28 @@
       "catCollective": "Collectif",
       "open": "Consulter"
     },
+    "sobPage": {
+      "modes": "Modes de consultation",
+      "modeStory": "Lire le récit",
+      "modeExplore": "Explorer les données",
+      "historical": "version historique",
+      "current": "version courante",
+      "copyLink": "Copier le lien de cette vue",
+      "copied": "Lien copié",
+      "numbersEyebrow": "Les chiffres de la version consultée",
+      "cities": "villes",
+      "observed": "Ce sont des développeurs observés, pas des membres de BIB.",
+      "historyTitle": "Ce qui a changé.",
+      "historyIntro": "Chaque version publiée est conservée. Les écarts comparent la version consultée à la précédente ; ils peuvent refléter une évolution réelle ou une correction des données.",
+      "deltaAdded": "nouvel indicateur",
+      "deltaRemoved": "indicateur retiré",
+      "deltaUnknown": "écart inconnu",
+      "deltaCaption": "Écarts entre la version consultée et la version précédente",
+      "deltaNone": "Aucune comparaison n'est disponible pour cette version.",
+      "deltaNote": "Barre à droite : hausse. Barre à gauche : baisse. La longueur suit l'écart relatif.",
+      "trendPeriod": "La tendance couvre toutes les versions publiées, du {from} au {to}, quelle que soit la version consultée.",
+      "analysisVersionNote": "Cette analyse accompagne la dernière publication ; elle ne décrit pas forcément la version historique consultée."
+    },
     "legal": {
       "toc": "Sommaire"
     },

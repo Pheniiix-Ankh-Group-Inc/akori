@@ -1648,6 +1648,28 @@
       "catCollective": "Collective",
       "open": "Open"
     },
+    "sobPage": {
+      "modes": "Ways to read",
+      "modeStory": "Read the story",
+      "modeExplore": "Explore the data",
+      "historical": "historical version",
+      "current": "current version",
+      "copyLink": "Copy a link to this view",
+      "copied": "Link copied",
+      "numbersEyebrow": "Figures for the version shown",
+      "cities": "cities",
+      "observed": "These are observed developers, not BIB members.",
+      "historyTitle": "What changed.",
+      "historyIntro": "Every published version is kept. Differences compare the version shown with the previous one; they may reflect real change or a data correction.",
+      "deltaAdded": "new metric",
+      "deltaRemoved": "metric removed",
+      "deltaUnknown": "unknown difference",
+      "deltaCaption": "Differences between the version shown and the previous version",
+      "deltaNone": "No comparison is available for this version.",
+      "deltaNote": "Bar to the right: increase. Bar to the left: decrease. Length follows the relative change.",
+      "trendPeriod": "The trend covers every published version, from {from} to {to}, whichever version is shown.",
+      "analysisVersionNote": "This analysis accompanies the latest publication; it does not necessarily describe the historical version shown."
+    },
     "legal": {
       "toc": "Contents"
     },

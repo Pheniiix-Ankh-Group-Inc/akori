@@ -220,3 +220,49 @@ html:has(.sob-sticky-filters) { scroll-padding-top: 170px; }
   .sob-draw .sob-line, .sob-fade, .sob-detail-card { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
   .sob-map-svg .country, .sob-line, .sob-area, .sob-eco-card { transition: none; }
 }
+
+/* ═══ Phase 4 — Immersive Data Intelligence ═══
+   Scène d'ouverture plein cadre, chiffres monumentaux sur encre, historique
+   en barres divergentes, en-têtes de mouvement agrandis. Les visualisations
+   D3 existantes (carte, écosystèmes, cohortes) sont conservées. */
+.sob-scene-hero { position: relative; min-height: min(92svh, 64rem); display: flex; align-items: flex-start; overflow: hidden; }
+.sob-hero-media { position: absolute; inset: 0; }
+.sob-hero-copy { position: relative; display: flex; flex-direction: column; gap: clamp(1.25rem, 3vh, 2rem); padding-bottom: clamp(3rem, 9vh, 7rem); padding-top: 14svh; }
+.sob-hero-copy .ph-title { max-width: 16ch; }
+.sob-modes { display: flex; flex-wrap: wrap; gap: 1rem 1.75rem; align-items: center; }
+.sob-facts-band { padding-block: clamp(2.5rem, 6vh, 4rem); display: flex; flex-direction: column; gap: 1.5rem; border-bottom: 1px solid var(--border); }
+.sob-facts-band .sob-facts { border-color: var(--blanc); }
+.sob-facts-band .sob-facts dd { font-size: 1.125rem; font-family: var(--font-serif), Georgia, serif; font-weight: 400; }
+.sob-version-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem 1.25rem; }
+.sob-version-form label { width: 100%; font-size: 0.8125rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-dk); }
+.sob-version-form .ed-input { min-width: min(100%, 22rem); border-radius: 0; }
+.sob-numbers { padding-block: clamp(6rem, 16vh, 12rem); }
+.sob-big { font-size: clamp(6.5rem, 17vw, 21rem); line-height: 0.84; letter-spacing: -0.05em; font-weight: 320; color: var(--bg); }
+.sob-numbers .im-p b { color: var(--accent-light); font-weight: 500; }
+.sob-kpis { margin-top: clamp(4rem, 10vh, 8rem); row-gap: 2.5rem; }
+.sob-history { padding-block: clamp(5rem, 12vh, 9rem); }
+.sob-delta { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+.sob-delta th, .sob-delta td { text-align: left; padding: 0.85rem 0.75rem 0.85rem 0; border-top: 1px solid var(--border); vertical-align: middle; }
+.sob-delta thead th { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--texte); border-top-color: var(--blanc); }
+.sob-delta tbody th { font-weight: 500; text-transform: capitalize; }
+.sob-delta-track { position: relative; display: block; height: 10px; width: 100%; min-width: 8rem; margin-bottom: 0.35rem; background: linear-gradient(var(--border-h), var(--border-h)) center / 1px 100% no-repeat; }
+.sob-delta-bar { position: absolute; top: 2px; height: 6px; }
+.sob-delta-bar.up { background: var(--accent); }
+.sob-delta-bar.down { border: 1px solid var(--blanc); box-sizing: border-box; background: transparent; }
+.sob-delta-val { font-variant-numeric: tabular-nums; font-size: 0.875rem; }
+.pub .sob-movement-title { font-weight: 380; font-size: clamp(2.5rem, 5.4vw, 6.25rem); line-height: 1; letter-spacing: -0.03em; }
+.pub .sob-movement-head { margin-bottom: clamp(3rem, 8vh, 5rem); }
+.pub .sob-section-num { letter-spacing: 0.16em; text-transform: uppercase; }
+.pub .sob-sticky-filters { top: 4.25rem; }
+.sob-city-bar.im-bar { transform-origin: left; }
+@media (max-width: 1279px) {
+  .sob-kpis > * { grid-column: span 4 !important; }
+  .sob-hero-copy { padding-top: 10svh; }
+}
+@media (max-width: 767px) {
+  .sob-kpis > * { grid-column: 1 / -1 !important; }
+  .sob-hero-copy { margin-top: 52vw; padding-top: 2rem; background: var(--blanc); }
+  .sob-scene-hero { min-height: auto; display: block; }
+  .sob-hero-media { bottom: auto; height: 60vw; }
+}
+

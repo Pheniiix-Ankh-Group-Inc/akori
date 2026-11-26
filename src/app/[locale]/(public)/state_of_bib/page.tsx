@@ -10,7 +10,10 @@ import { SobExplorerProvider } from "@/components/state-of-bib/SobExplorer"
 import { SobPeriodBar } from "@/components/state-of-bib/SobPeriodBar"
 import { LazyMount } from "@/components/state-of-bib/LazyMount"
 import { Link } from "@/i18n/navigation"
-import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
+import { EditorialImage } from "@/components/ui/EditorialImage"
+import { AnimatedNumber } from "@/components/state-of-bib/AnimatedNumber"
+import { CopyLink } from "@/components/state-of-bib/CopyLink"
+import { DeltaBars } from "@/components/state-of-bib/DeltaBars"
 import { isSobAvailable, loadSobState, loadSobTrend } from "@/lib/sob/load"
 import { SobTrend } from "@/components/state-of-bib/SobTrend"
 import { getPublishedInsight } from "@/lib/sob/insights"
@@ -82,79 +85,110 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
   const insight = await getPublishedInsight(locale)
   const loc = intlLocale(locale)
   const nf = new Intl.NumberFormat(loc)
+  const im = await getTranslations({ locale, namespace: "Immersive.sobPage" })
   const asOf = new Intl.DateTimeFormat(loc, { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${headline.snapshot_date}T00:00:00Z`))
   const freshness = sobFreshness(headline.snapshot_date)
 
   return (
     <main>
       <TrackView event="state_of_bib_view" props={{ version: meta.dataset_version || null }} />
-      <section className="ed-wrap" style={{ paddingTop: "6rem", paddingBottom: "4rem" }}>
-        <div className="ed-stack" style={{ gap: "1.75rem" }}>
-          <p className="ed-eyebrow">{s("eyebrow")}</p>
-          <h1 className="ed-h1">
-            {s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}
+      {/* Scène 01 · Perspective : photo de territoire plein cadre, faits et version immédiatement lisibles */}
+      <header className="im im-ink sob-scene-hero" aria-labelledby="sob-title">
+        <div className="sob-hero-media im-px" aria-hidden="true">
+          <EditorialImage name="sob" locale={locale} ratio="fill" sizes="100vw" priority />
+        </div>
+        <div className="sob-hero-copy im-pad">
+          <p className="im-ey">{s("eyebrow")}</p>
+          <h1 id="sob-title" className="ph-title">
+            <span className="im-line"><span>{s("titleStart")} <em>{s("titleIn")}</em> {s("titleEnd")}</span></span>
           </h1>
-          <p className="ed-lede">{s("lede")}</p>
-          <form method="get" className="ed-stack" style={{ gap: "0.5rem", maxWidth: "24rem" }}>
-            <label htmlFor="sob-version">{s("facts.version")}</label>
-            <select id="sob-version" name="version" defaultValue={selectedVersion ?? ""} className="ed-input">
-              <option value="">{locale === "fr" ? "Dernière version publiée" : locale === "es" ? "Última versión publicada" : "Latest published version"}</option>
-              {versions.map(v => <option key={v.provider_version} value={v.provider_version}>{v.provider_version}{v.as_of_date ? ` — ${v.as_of_date}` : ""}</option>)}
-            </select>
-            <button type="submit" className="ed-link">{locale === "fr" ? "Consulter cette version" : locale === "es" ? "Ver esta versión" : "View this version"}</button>
-          </form>
-          <dl className="sob-facts">
-            <div><dt>{s("facts.asOf")}</dt><dd>{asOf}</dd></div>
-            <div><dt>{s("facts.scope")}</dt><dd>{s("facts.scopeVal", { n: meta.scope.countries_in_scope, total: SCOPE_COUNTRIES })}</dd></div>
-            <div><dt>{s("facts.version")}</dt><dd>{snapshot.version}</dd></div>
-          </dl>
-          <p className="ed-muted">{s("diaspora")} <Link href="/data-sources" className="ed-link">{s("methodLink")}</Link></p>
-          {freshness.stale && <p className="ed-note" role="note">{s("stale", { date: asOf })}</p>}
-          {origin === "fallback" && <p className="ed-note" role="note">{s("fallback")}</p>}
+          <p className="im-p" style={{ fontSize: "1.1875rem", maxWidth: "40rem" }}>{s("lede")}</p>
+          <nav className="sob-modes" aria-label={im("modes")}>
+            <a href="#sob-numbers" className="ed-btn im-btn-lt">{im("modeStory")}</a>
+            <a href="#sob-explore" className="im-link" style={{ color: "var(--accent-light)" }}>{im("modeExplore")}</a>
+          </nav>
         </div>
+      </header>
+      <section className="im im-pad sob-facts-band" aria-label={s("facts.version")}>
+        <dl className="sob-facts">
+          <div><dt>{s("facts.asOf")}</dt><dd>{asOf}</dd></div>
+          <div><dt>{s("facts.scope")}</dt><dd>{s("facts.scopeVal", { n: meta.scope.countries_in_scope, total: SCOPE_COUNTRIES })}</dd></div>
+          <div><dt>{s("facts.version")}</dt><dd>{snapshot.version}{selectedVersion ? ` · ${im("historical")}` : ` · ${im("current")}`}</dd></div>
+        </dl>
+        <form method="get" className="sob-version-form">
+          <label htmlFor="sob-version">{s("facts.version")}</label>
+          <select id="sob-version" name="version" defaultValue={selectedVersion ?? ""} className="ed-input">
+            <option value="">{locale === "fr" ? "Dernière version publiée" : locale === "es" ? "Última versión publicada" : "Latest published version"}</option>
+            {versions.map(v => <option key={v.provider_version} value={v.provider_version}>{v.provider_version}{v.as_of_date ? ` — ${v.as_of_date}` : ""}</option>)}
+          </select>
+          <button type="submit" className="ed-btn ed-btn-dark">{locale === "fr" ? "Consulter cette version" : locale === "es" ? "Ver esta versión" : "View this version"}</button>
+          <CopyLink label={im("copyLink")} done={im("copied")} />
+        </form>
+        <p className="im-p" style={{ fontSize: "0.9375rem", maxWidth: "52rem" }}>{s("diaspora")} <Link href="/data-sources" className="im-link">{s("methodLink")}</Link></p>
+        {freshness.stale && <p className="ed-note" role="note">{s("stale", { date: asOf })}</p>}
+        {origin === "fallback" && <p className="ed-note" role="note">{s("fallback")}</p>}
       </section>
-      {hasVisual("sob") && (
-        <div className="ed-wrap ed-hero-media">
-          <EditorialImage name="sob" locale={locale} ratio="3x1" sizes="(max-width: 1264px) 100vw, 1200px" />
-        </div>
-      )}
 
-      <section className="ed-section ed-section-white" aria-labelledby="sob-headline">
-        <div className="ed-wrap ed-stack" style={{ gap: "2.5rem" }}>
-          <div className="ed-stack" style={{ gap: "1rem" }}>
-            <h2 id="sob-headline" className="sob-hero-number">{nf.format(headline.devs_active_28d)}</h2>
-            <p className="sob-hero-caption">
-              {t("hero.captionStart")} <b>{nf.format(headline.ecosystems)}</b> {t("hero.captionMid")} <b>{nf.format(headline.cities)}</b> {t("hero.captionMid2")} {t("hero.captionEmEnd")}
-            </p>
-          </div>
-          <div className="ed-stats">
-            <div className="ed-stat"><strong>{nf.format(headline.commits_lifetime)}</strong><span>{(await getTranslations({ locale, namespace: "Site.home" }))("kpi.commits")}</span></div>
-            <div className="ed-stat"><strong>{nf.format(headline.countries)}</strong><span>{t("hero.stat2Sub")}</span></div>
-            <div className="ed-stat"><strong>{nf.format(headline.ecosystems)}</strong><span>{t("hero.stat3Sub")}</span></div>
-          </div>
-          <p className="ed-muted">{s("updated")}</p>
-          {deltas.length > 0 && (
-            <div className="ed-stack" style={{ gap: "0.75rem" }}>
-              <h3 className="ed-h3">{locale === "fr" ? "Évolution depuis la version précédente" : locale === "es" ? "Cambios desde la versión anterior" : "Changes since previous version"}</h3>
-              <table className="sob-trend-table">
-                <thead><tr>
-                  <th>{locale === "fr" ? "Indicateur" : locale === "es" ? "Indicador" : "Metric"}</th>
-                  <th>{locale === "fr" ? "Avant" : locale === "es" ? "Antes" : "Previous"}</th>
-                  <th>{locale === "fr" ? "Actuel" : locale === "es" ? "Actual" : "Current"}</th>
-                  <th>{locale === "fr" ? "Écart" : locale === "es" ? "Diferencia" : "Difference"}</th>
-                </tr></thead>
-                <tbody>{deltas.map(d => <tr key={d.metric_key}>
-                  <td>{d.metric_key.replaceAll("_", " ")}</td>
-                  <td>{d.previous_value == null ? "—" : nf.format(d.previous_value)}</td>
-                  <td>{d.current_value == null ? "—" : nf.format(d.current_value)}</td>
-                  <td>{d.delta == null ? d.change_kind : nf.format(d.delta)}</td>
-                </tr>)}</tbody>
-              </table>
+      {/* Scène 02 · Les chiffres : un indicateur dominant, puis les autres, valeurs de la version consultée */}
+      <section id="sob-numbers" className="im im-ink im-pad sob-numbers" aria-labelledby="sob-headline">
+        <p className="im-ey im-rv">{im("numbersEyebrow")}</p>
+        <div className="im-grid" style={{ rowGap: "2.5rem", alignItems: "end", marginTop: "2rem" }}>
+          <h2 id="sob-headline" className="im-t im-rv im-t8 sob-big" style={{ gridColumn: "1 / span 8" }}>
+            <AnimatedNumber value={headline.devs_active_28d} locale={loc} />
+          </h2>
+          <p className="im-p im-rv im-t8" style={{ gridColumn: "9 / span 4", fontSize: "1.1875rem", color: "var(--bg)" }}>
+            {t("hero.captionStart")} <b>{nf.format(headline.ecosystems)}</b> {t("hero.captionMid")} <b>{nf.format(headline.cities)}</b> {t("hero.captionMid2")} {t("hero.captionEmEnd")}
+          </p>
+        </div>
+        <div className="im-grid sob-kpis">
+          {[
+            { v: headline.countries, label: t("hero.stat2Sub") },
+            { v: headline.cities, label: im("cities") },
+            { v: headline.ecosystems, label: t("hero.stat3Sub") },
+            { v: headline.commits_lifetime, label: (await getTranslations({ locale, namespace: "Site.home" }))("kpi.commits") },
+          ].map((k, i) => (
+            <div key={i} className="im-rv im-rule im-t8" style={{ gridColumn: "span 3", borderColor: i === 0 ? "var(--accent-light)" : undefined }}>
+              <AnimatedNumber value={k.v} locale={loc} className="im-t" style={{ display: "block", fontSize: "clamp(2.5rem, 4vw, 4.75rem)" }} />
+              <p className="im-p" style={{ marginTop: "0.5rem", fontSize: "0.9375rem" }}>{k.label}</p>
             </div>
-          )}
-          <div className="ed-stack" style={{ gap: "1rem" }}>
-            <h3 className="ed-h3">{s("trendTitle")}</h3>
+          ))}
+        </div>
+        <p className="im-p" style={{ marginTop: "2.5rem", fontSize: "0.9375rem" }}>{s("updated")} {im("observed")}</p>
+      </section>
+
+      {/* Scène 07 · Historique : écarts avec la version précédente et tendance de toutes les versions */}
+      <section id="sob-history" className="im im-pad sob-history" aria-labelledby="sob-history-title">
+        <div className="im-grid" style={{ rowGap: "1.5rem", marginBottom: "clamp(2rem, 5vh, 3.5rem)", alignItems: "end" }}>
+          <h2 id="sob-history-title" className="im-t im-h2s im-rv im-t8" style={{ gridColumn: "1 / span 6" }}>{im("historyTitle")}</h2>
+          <p className="im-p im-rv im-t8" style={{ gridColumn: "8 / span 5" }}>{im("historyIntro")}</p>
+        </div>
+        <div className="im-grid" style={{ rowGap: "3rem" }}>
+          <div className="im-rv im-t8" style={{ gridColumn: "1 / span 6", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <h3 className="im-ey">{locale === "fr" ? "Évolution depuis la version précédente" : locale === "es" ? "Cambios desde la versión anterior" : "Changes since previous version"}</h3>
+            {deltas.length > 0 ? (
+              <DeltaBars
+                deltas={deltas}
+                locale={loc}
+                labels={{
+                  metric: locale === "fr" ? "Indicateur" : locale === "es" ? "Indicador" : "Metric",
+                  previous: locale === "fr" ? "Avant" : locale === "es" ? "Antes" : "Previous",
+                  current: locale === "fr" ? "Actuel" : locale === "es" ? "Actual" : "Current",
+                  change: locale === "fr" ? "Écart" : locale === "es" ? "Diferencia" : "Difference",
+                  added: im("deltaAdded"),
+                  removed: im("deltaRemoved"),
+                  unknown: im("deltaUnknown"),
+                  caption: im("deltaCaption"),
+                }}
+              />
+            ) : (
+              <p className="im-p">{im("deltaNone")}</p>
+            )}
+            <p className="im-p" style={{ fontSize: "0.875rem" }}>{im("deltaNote")}</p>
+          </div>
+          <div className="im-rv im-t8" style={{ gridColumn: "8 / span 5", display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <h3 className="im-ey">{s("trendTitle")}</h3>
             <SobTrend points={trend} locale={loc} label={s("trendLabel")} emptyNote={s("trendEmpty")} />
+            {trend.length > 1 && <p className="im-p" style={{ fontSize: "0.875rem" }}>{im("trendPeriod", { from: trend[0].as_of_date, to: trend[trend.length - 1].as_of_date })}</p>}
           </div>
         </div>
       </section>
@@ -166,6 +200,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
             <h2 id="sob-analysis" className="ed-h2">{insight.content.title}</h2>
             <div className="ed-prose" style={{ whiteSpace: "pre-line" }}>{insight.content.rendered_body}</div>
             {insight.content.limitations && <p className="ed-note">{insight.content.limitations}</p>}
+            {selectedVersion && <p className="ed-note" role="note">{im("analysisVersionNote")}</p>}
             <p className="ed-muted">
               {insight.sources[0]?.as_of_date} — {s("analysisNote")}
             </p>
@@ -178,7 +213,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
         countries={countryMap.map((c) => c.iso_a3)}
         ecosystems={ecoMix.ecosystems.map((e) => e.id)}
       >
-      <div className="sob-sticky-filters">
+      <div id="sob-explore" className="sob-sticky-filters">
         <div className="ed-wrap">
           <SobPeriodBar />
         </div>
@@ -215,11 +250,11 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
             {(() => {
               const max = Math.max(...topCities.map(c => c.devs_active_28d))
               return topCities.map(c => (
-                <div key={c.city} className="sob-city-row">
+                <div key={c.city} className="sob-city-row im-rv">
                   <div className="sob-city-rank">{String(c.rank).padStart(2, "0")}</div>
                   <div className="sob-city-name">{c.city}<em>{c.country}</em></div>
                   <div
-                    className="sob-city-bar"
+                    className="sob-city-bar im-bar"
                     style={{ width: `${((c.devs_active_28d / max) * 100).toFixed(1)}%` }}
                   />
                   <div className="sob-city-count"><b>{nf.format(c.devs_active_28d)}</b> {t("m2.devs")}</div>
