@@ -119,3 +119,36 @@
 .sp-principles { gap: clamp(2rem, 5vh, 3.5rem) var(--im-gap, 2rem); }
 .sp-principles li { border-radius: 0; }
 .sp-live-btn { border-radius: 0; }
+
+/* Phase 4.1 — Cinematic Startup Showcase : ouverture sur encre, titre monumental,
+   plan réservé au portrait (statut réel affiché tant qu'aucun portrait n'est publié),
+   principes en grand index numéroté. */
+.sp-cine { background: var(--blanc); color: var(--bg); }
+.sp-cine-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap, 2rem); row-gap: clamp(2rem, 5vh, 3.5rem); padding: clamp(5rem, 14vh, 10rem) var(--im-pad, 2rem) clamp(4rem, 10vh, 7rem); min-height: min(92svh, 66rem); box-sizing: border-box; align-content: end; }
+.sp-cine-title { grid-column: 1 / span 8; display: flex; flex-direction: column; gap: 1.25rem; }
+.sp-cine .im-ey { color: var(--accent-light); }
+.sp-cine-h1 { font-size: clamp(4rem, 11vw, 13rem); line-height: 0.86; }
+.sp-cine-h1 em { color: var(--accent-light); }
+.sp-cine-copy { grid-column: 1 / span 6; display: flex; flex-direction: column; gap: 1.25rem; }
+.sp-cine-copy .im-p { color: #D9D3C7; }
+.sp-cine-tagline { margin: 0; font-family: var(--font-serif), Georgia, serif; font-size: clamp(1.5rem, 2.4vw, 2.5rem); line-height: 1.15; }
+.sp-cine-await { grid-column: 8 / span 5; grid-row: 1 / span 2; align-self: stretch; min-height: 50svh; border: 1px solid #5A554C; display: flex; flex-direction: column; justify-content: flex-end; gap: 1rem; padding: clamp(1.5rem, 3vw, 3rem); }
+.sp-cine-await p { margin: 0; font-family: var(--font-serif), Georgia, serif; font-size: clamp(1.4rem, 2vw, 2.25rem); line-height: 1.2; }
+.sp-cine-pillars { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--im-gap, 2rem); border-top: 1px solid #5A554C; }
+.sp-cine-pillars li { display: flex; flex-direction: column; gap: 0.4rem; padding-top: 1.25rem; }
+.sp-cine-pillars strong { font-family: var(--font-serif), Georgia, serif; font-weight: 400; font-size: 1.5rem; }
+.sp-cine-pillars span:not(.sp-num) { color: #D9D3C7; font-size: 0.9375rem; }
+.sp-cine .sp-num { color: var(--accent-light); }
+.sp-principles li { display: grid !important; grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 1.4fr); column-gap: var(--im-gap, 2rem); align-items: baseline; padding: clamp(1.25rem, 3vh, 2rem) 0; border-top: 1px solid var(--blanc); }
+.sp-principles .sp-num { font-family: var(--font-serif), Georgia, serif; font-size: clamp(2.5rem, 4vw, 4.5rem); line-height: 1; color: var(--accent-dk); }
+.sp-principles strong { font-family: var(--font-serif), Georgia, serif; font-weight: 400; font-size: clamp(1.5rem, 2.2vw, 2.25rem); }
+@media (max-width: 1279px) {
+  .sp-cine-grid { grid-template-columns: 1fr; min-height: 0; }
+  .sp-cine-title, .sp-cine-copy, .sp-cine-await, .sp-cine-pillars { grid-column: 1 / -1; grid-row: auto; }
+  .sp-cine-await { min-height: 16rem; }
+  .sp-principles li { grid-template-columns: 4rem minmax(0, 1fr); }
+  .sp-principles li > span:last-child { grid-column: 2; }
+}
+@media (max-width: 767px) { .sp-cine-pillars { grid-template-columns: 1fr; } }
+
+.sp-principles { grid-template-columns: 1fr !important; gap: 0 !important; }

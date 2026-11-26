@@ -27,7 +27,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <main>
-      <PageHero locale={locale} eyebrow={t("eyebrow")} title={p("items.resources.title")} lede={t("intro")} tone="sand" />
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={p("items.resources.title")} lede={t("intro")} variant="index" />
       <section className="im im-pad" aria-labelledby="resources-explore" style={{ paddingBlock: "clamp(5rem, 12vh, 9rem)" }}>
         <div className="im-grid" style={{ rowGap: "1.5rem", marginBottom: "clamp(2.5rem, 6vh, 4rem)", alignItems: "end" }}>
           <h2 id="resources-explore" className="im-t im-h2s im-rv im-t8" style={{ gridColumn: "1 / span 6" }}>{t("exploreTitle")}</h2>

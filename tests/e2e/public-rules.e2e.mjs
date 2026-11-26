@@ -65,7 +65,13 @@ const run = async () => {
     ok('Événements : page servie', status === 200, status)
     ok('Événements : calendrier Luma embarqué conservé (URL de main, même calendrier)', src === 'https://lu.ma/embed/calendar/cal-aqEzCpUP5LXSBcL/events', src)
   }
-  for (const path of ['/about', '/mission', '/membership', '/resources', '/press', '/contact']) {
+  // Pages institutionnelles publiées : servies, indexables, avec un titre de page.
+  for (const path of ['/about', '/mission', '/resources', '/press', '/contact']) {
+    const { status, html } = await get(path)
+    ok(`page publiée ${path} : servie et indexable`, status === 200 && !/<meta[^>]+name="robots"[^>]+noindex/i.test(html) && /<h1\b/i.test(html), status)
+  }
+  // Adhésion : contenu encore en préparation, donc toujours exclue de l'indexation.
+  for (const path of ['/membership']) {
     const { status, html } = await get(path)
     ok(`page en préparation ${path} : servie, non indexée`, status === 200 && /<meta[^>]+name="robots"[^>]+noindex/i.test(html), status)
   }

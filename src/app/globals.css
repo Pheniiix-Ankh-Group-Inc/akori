@@ -746,4 +746,37 @@ details[open] > .im-row { padding-inline: 1.25rem; }
 .lg-head { grid-column: 1 / -1; margin-bottom: clamp(3rem, 8vh, 5rem) !important; }
 .lg-head .heading-md { font-family: var(--font-serif), Georgia, serif; font-weight: 360; font-size: clamp(2.75rem, 6vw, 7rem); line-height: 0.98; letter-spacing: -0.03em; margin: 1.5rem 0 0; }
 .pub .lg { padding-top: clamp(4rem, 12vh, 8rem); }
+/* PageHero — variantes « cinematic » (plein cadre + bandeau d'encre) et « index » (consultation). */
+.ph-cine { min-height: min(92svh, 64rem); display: flex; flex-direction: column; justify-content: flex-end; background: var(--blanc); color: var(--bg); }
+.ph-cine-media { position: absolute; inset: 0; overflow: hidden; }
+.ph-cine-band { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap); row-gap: 1.5rem; align-items: end; padding-block: clamp(2rem, 5vh, 3.5rem) clamp(2.5rem, 7vh, 5rem); background: var(--blanc); margin-top: 40svh; }
+.ph-cine-head { grid-column: 1 / span 8; display: flex; flex-direction: column; gap: 1.25rem; }
+.ph-cine-side { grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 1.25rem; }
+.ph-cine .im-ey { color: var(--accent-light); }
+.ph-cine .im-p { color: #D9D3C7; }
+.ph-cine .ed-btn-dark { background: var(--bg); color: var(--blanc); }
+.ph-cine .im-link { color: var(--accent-light); }
+.ph-index { border-bottom: 1px solid var(--blanc); }
+.ph-index-in { padding-block: clamp(4rem, 11vh, 8rem) clamp(2.5rem, 6vh, 4rem); display: flex; flex-direction: column; gap: 1.25rem; }
+.ph-index .ph-title { font-size: clamp(2.75rem, 5.6vw, 6.5rem); }
+@media (max-width: 1279px) {
+  .ph-cine-band { grid-template-columns: 1fr; margin-top: 46vw; }
+  .ph-cine-head, .ph-cine-side { grid-column: 1 / -1; }
+  .ph-cine { min-height: 0; }
+}
+/* Profil de fondateur : portrait collant bord à bord, biographie en colonne de lecture. */
+.fp { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--im-gap); align-items: start; }
+.fp-portrait { grid-column: 1 / span 5; position: sticky; top: 4.25rem; height: calc(100svh - 4.25rem); overflow: hidden; }
+.fp-copy { grid-column: 7 / span 5; padding: clamp(4rem, 12vh, 8rem) var(--im-pad) clamp(5rem, 12vh, 9rem) 0; display: flex; flex-direction: column; gap: 1.5rem; }
+.fp-name { font-size: clamp(3rem, 6vw, 7.5rem); }
+.fp-role { margin: 0; font-family: var(--font-serif), Georgia, serif; font-size: clamp(1.35rem, 1.9vw, 2rem); line-height: 1.3; color: var(--blanc); }
+.fp-bio { border-top: 1px solid var(--blanc); padding-top: 2rem; margin-top: 1rem; max-width: 40rem; }
+@media (max-width: 1279px) {
+  .fp { grid-template-columns: 1fr; }
+  .fp-portrait { grid-column: 1; position: relative; top: 0; height: auto; aspect-ratio: 4 / 5; max-height: 80svh; }
+  .fp-copy { grid-column: 1; padding: 3rem var(--im-pad) 5rem; }
+}
+/* Fiches événement et rétrospective : titre éditorial, visuel large, lecture confortable. */
+.pub .ed-detail { gap: clamp(2rem, 5vw, 5rem); }
+.pub .ed-detail .ed-figure img { width: 100%; border-radius: 0; }
 

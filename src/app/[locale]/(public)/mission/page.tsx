@@ -33,7 +33,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <main>
-      <PageHero locale={locale} eyebrow={t("eyebrow")} title={p("items.mission.title")} lede={t("intro")} visual="about" />
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={p("items.mission.title")} lede={t("intro")} visual="about" variant="cinematic" />
       <section className="im" aria-labelledby="home-axes">
         <AxesScrolly axes={axes} eyebrow={t("eyebrow")} heading={t("pillarsTitle")} />
       </section>

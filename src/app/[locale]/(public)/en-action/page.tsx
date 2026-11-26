@@ -6,6 +6,7 @@ import { toPublicMediaViews } from "@/lib/stories/media-views"
 import { intlLocale, pickTranslation } from "@/lib/content/locales"
 import type { StoryRecord } from "@/lib/stories/types"
 import type { MediaView } from "@/components/en-action/types"
+import { PageHero } from "@/components/ui/PageHero"
 
 export const revalidate = 300
 
@@ -37,15 +38,9 @@ export default async function InActionPage({ params }: Props) {
 
   return (
     <main>
-      <section className="ed-wrap" style={{ paddingTop: "7rem", paddingBottom: "4rem" }}>
-        <div className="ed-stack" style={{ maxWidth: "52rem" }}>
-          <p className="ed-eyebrow">{t("eyebrow")}</p>
-          <h1 className="ed-h1">{s("title")}</h1>
-          <p className="ed-lede">{t("intro")}</p>
-        </div>
-      </section>
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={s("title")} lede={t("intro")} tone="sand" />
 
-      <section className="ed-wrap" style={{ paddingBottom: "6rem" }} aria-labelledby="retros">
+      <section className="ed-wrap" style={{ paddingBlock: "clamp(4rem, 10vh, 7rem)" }} aria-labelledby="retros">
         <h2 id="retros" className="ed-h2" style={{ marginBottom: "1.75rem" }}>{t("retrospectives")}</h2>
         {!configured && <p className="ed-note">{t("notConfigured")}</p>}
         {configured && stories.length === 0 && <p className="ed-note">{t("empty")}</p>}

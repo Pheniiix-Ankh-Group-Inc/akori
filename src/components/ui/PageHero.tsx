@@ -20,6 +20,7 @@ export async function PageHero({
   tone = "ivory",
   children,
   id,
+  variant,
 }: {
   eyebrow: string
   title: ReactNode
@@ -29,6 +30,13 @@ export async function PageHero({
   tone?: "ivory" | "sand" | "ink"
   children?: ReactNode
   id?: string
+  /**
+   * split (défaut avec visuel) : photo bord à bord à droite.
+   * cinematic : photo plein cadre, texte sur un bandeau d'encre en bas.
+   * manifesto (défaut sans visuel) : ouverture typographique, intro à droite.
+   * index : ouverture compacte à filet, pour les pages de consultation.
+   */
+  variant?: "split" | "cinematic" | "manifesto" | "index"
 }) {
   const withImage = visual ? hasVisual(visual) : false
   const toneClass = tone === "ink" ? " ph-ink" : tone === "sand" ? " ph-sand" : ""
@@ -40,7 +48,39 @@ export async function PageHero({
       </span>
     </h1>
   )
-  if (withImage && visual) {
+  const kind = variant ?? (withImage ? "split" : "manifesto")
+  if (kind === "cinematic" && withImage && visual) {
+    return (
+      <header className={`ph ph-cine im${toneClass}`} aria-labelledby={headingId}>
+        <div className="ph-cine-media im-hz" aria-hidden="true">
+          <EditorialImage name={visual} locale={locale} ratio="fill" sizes="100vw" priority />
+        </div>
+        <div className="ph-cine-band im-pad">
+          <div className="ph-cine-head">
+            <p className="im-ey">{eyebrow}</p>
+            {heading}
+          </div>
+          <div className="ph-cine-side im-rv">
+            {lede && <div className="im-p" style={{ fontSize: "1.125rem" }}>{lede}</div>}
+            {children && <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem 1.75rem", alignItems: "center" }}>{children}</div>}
+          </div>
+        </div>
+      </header>
+    )
+  }
+  if (kind === "index") {
+    return (
+      <header className={`ph ph-index im${toneClass}`} aria-labelledby={headingId}>
+        <div className="ph-index-in im-pad">
+          <p className="im-ey">{eyebrow}</p>
+          {heading}
+          {lede && <div className="im-p im-rv" style={{ fontSize: "1.125rem", maxWidth: "44rem" }}>{lede}</div>}
+          {children && <div className="im-rv" style={{ display: "flex", flexWrap: "wrap", gap: "1rem 1.75rem", alignItems: "center" }}>{children}</div>}
+        </div>
+      </header>
+    )
+  }
+  if (kind === "split" && withImage && visual) {
     return (
       <header className={`ph im${toneClass}`} aria-labelledby={headingId}>
         <div className="ph-grid">

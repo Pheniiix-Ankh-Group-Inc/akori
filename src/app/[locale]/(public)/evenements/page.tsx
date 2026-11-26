@@ -110,7 +110,7 @@ export default async function EvenementsPage({ params, searchParams }: Props) {
 
   return (
     <main>
-      <PageHero locale={locale} eyebrow={t("eyebrow")} title={s("title")} lede={t("intro")} visual="events">
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={s("title")} lede={t("intro")} visual="events" variant="cinematic">
         <a href="#h-upcoming" className="ed-btn ed-btn-dark">{t("upcoming")}</a>
         <a href="#h-luma" className="im-link">{s("embedTitle")}</a>
       </PageHero>

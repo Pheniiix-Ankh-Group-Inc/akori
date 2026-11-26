@@ -36,7 +36,7 @@ export async function StoryDetail({
 
   return (
     <main>
-      <section className="ed-wrap" style={{ paddingTop: "4rem", paddingBottom: "3rem" }}>
+      <section className="ed-wrap" style={{ paddingTop: "clamp(4rem, 12vh, 8rem)", paddingBottom: "3rem" }}>
         {backLink && <div style={{ marginBottom: "2rem" }}>{backLink}</div>}
         <div className="ed-stack" style={{ maxWidth: "52rem", gap: "1rem" }}>
           {story.occurred_on && (

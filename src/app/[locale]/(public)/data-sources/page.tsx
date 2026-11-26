@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
 import { intlLocale } from "@/lib/content/locales"
 import { isSobAvailable, loadSobState } from "@/lib/sob/load"
+import { PageHero } from "@/components/ui/PageHero"
 
 export const revalidate = 900
 
@@ -42,13 +43,8 @@ export default async function DataSourcesPage({ params }: Props) {
 
   return (
     <main>
-      <section className="ed-wrap-narrow" style={{ paddingTop: "6rem", paddingBottom: "5rem" }}>
-        <div className="ed-stack" style={{ gap: "1.25rem", marginBottom: "3rem" }}>
-          <p className="ed-eyebrow">{t("eyebrow")}</p>
-          <h1 className="ed-h1">{t("title")}</h1>
-          <p className="ed-muted">{t("updated")}</p>
-          <p className="ed-lede">{t("intro")}</p>
-        </div>
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={t("title")} lede={<>{t("intro")}<br /><span style={{ fontSize: "0.9375rem" }}>{t("updated")}</span></>} variant="index" />
+      <section className="ed-wrap-narrow" style={{ paddingTop: "clamp(3rem, 8vh, 5rem)", paddingBottom: "5rem" }}>
 
         <div className="ed-stack" style={{ gap: "3rem" }}>
           <section aria-labelledby="ds-sources" className="ed-stack" style={{ gap: "1.5rem" }}>

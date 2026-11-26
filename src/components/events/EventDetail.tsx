@@ -47,7 +47,7 @@ export async function EventDetail({
 
   return (
     <main>
-      <section className="ed-wrap" style={{ paddingTop: "4rem", paddingBottom: "6rem" }}>
+      <section className="ed-wrap" style={{ paddingTop: "clamp(4rem, 12vh, 8rem)", paddingBottom: "6rem" }}>
         {backLink && <div style={{ marginBottom: "2rem" }}>{backLink}</div>}
         <div className="ed-stack" style={{ maxWidth: "52rem", marginBottom: "3rem" }}>
           <span className={cancelled ? "ed-pill ed-pill-danger" : timing === "ongoing" ? "ed-pill ed-pill-accent" : "ed-pill"} style={{ alignSelf: "flex-start" }}>{status}</span>

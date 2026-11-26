@@ -39,27 +39,37 @@ export default async function StartupSpotlightPage({ params }: Props) {
 
   return (
     <main className="sp">
-      {/* A. Hero éditorial */}
-      <section aria-labelledby="sp-hero">
-        <div className="sp-hero">
-          <div className="sp-hero-copy">
-            <div className="sp-hero-main">
-              <p className="sp-eyebrow">{t("hero.eyebrow")}</p>
-              <h1 id="sp-hero" className="sp-title">{t("hero.title")} <em>{t("hero.titleEm")}</em></h1>
-              <p className="sp-tagline">{t("hero.tagline")}</p>
-              <p className="sp-lede">{t("hero.lede")}</p>
-              <div className="sp-cta-row">
-                <a className="ed-btn ed-btn-dark" href="#featured">{t("hero.ctaFeatured")}</a>
-                <a className="ed-btn ed-btn-line" href="#live">{t("hero.ctaLive")}</a>
-              </div>
-            </div>
-            <ul className="sp-pillars">
-              {PILLARS.map((k) => (
-                <li key={k}><strong>{t(`hero.pillars.${k}.t`)}</strong><span>{t(`hero.pillars.${k}.d`)}</span></li>
-              ))}
-            </ul>
+      {/* A. Ouverture cinématographique : titre monumental sur encre, plan photo réservé au futur portrait */}
+      <section aria-labelledby="sp-hero" className="sp-cine im">
+        <div className="sp-cine-grid">
+          <div className="sp-cine-title">
+            <p className="im-ey">{t("hero.eyebrow")}</p>
+            <h1 id="sp-hero" className="ph-title sp-cine-h1">
+              <span className="im-line"><span>{t("hero.title")}</span></span>
+              <span className="im-line"><span><em>{t("hero.titleEm")}</em></span></span>
+            </h1>
           </div>
-          <div role="status" className="sp-photo sp-hero-photo sp-awaiting">{t("status.hero")}</div>
+          <div className="sp-cine-copy im-rv">
+            <p className="sp-cine-tagline">{t("hero.tagline")}</p>
+            <p className="im-p">{t("hero.lede")}</p>
+            <div className="sp-cta-row">
+              <a className="ed-btn im-btn-lt" href="#featured">{t("hero.ctaFeatured")}</a>
+              <a className="im-link" href="#live" style={{ color: "var(--accent-light)" }}>{t("hero.ctaLive")}</a>
+            </div>
+          </div>
+          <div role="status" className="sp-cine-await im-mk">
+            <span className="im-ey">{t("featured.eyebrow")}</span>
+            <p>{t("status.hero")}</p>
+          </div>
+          <ul className="sp-cine-pillars">
+            {PILLARS.map((k, i) => (
+              <li key={k} className="im-rv">
+                <span className="sp-num">{String(i + 1).padStart(2, "0")}</span>
+                <strong>{t(`hero.pillars.${k}.t`)}</strong>
+                <span>{t(`hero.pillars.${k}.d`)}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

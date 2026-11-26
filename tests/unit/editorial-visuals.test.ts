@@ -56,6 +56,6 @@ describe("editorial visuals (Premium Minimalism)", () => {
     const uses = css.split("\n").filter((l) => l.includes("var(--accent-light)"))
     expect(uses.length).toBeGreaterThan(0)
     // Contextes sur encre : bandeau State of BIB, bouton inversé, pied de page, chapitres im-ink et en-têtes ph-ink.
-    for (const line of uses) expect(line).toMatch(/ed-section-ink|ed-btn-line-inv|ed-footer|im-ink|ph-ink/)
+    for (const line of uses) expect(line).toMatch(/ed-section-ink|ed-btn-line-inv|ed-footer|im-ink|ph-ink|ph-cine/)
   })
 })

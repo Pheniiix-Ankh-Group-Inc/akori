@@ -27,7 +27,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <main>
-      <PageHero locale={locale} eyebrow={t("eyebrow")} title={p("items.contact.title")} lede={t("intro")} tone="sand">
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={p("items.contact.title")} lede={t("intro")} tone="sand" variant="index">
         <a className="im-link" href="mailto:contact@anbachain.org" style={{ fontSize: "1.25rem" }}>contact@anbachain.org</a>
       </PageHero>
       <section className="im im-pad" aria-labelledby="contact-channels" style={{ paddingBlock: "clamp(5rem, 12vh, 9rem)" }}>
