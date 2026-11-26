@@ -35,8 +35,8 @@ des conditions C1 à C5 (§10).
 |---|---|---|---|---|
 | 20261112000100 … 20261122205510 | 13 migrations | oui | appliquées | aucune |
 | 20261114001000 | legacy_koriventure_cleanup | **marqueur ajouté** | enregistrée, 0 instruction | aucune (§3.2) |
-| 20261125000100 | bib_cron_runs | oui, testée | **non appliquée** (`public.cron_runs` absente) | C1 |
-| 20261126000100 | bib_fk_indexes_policy_consolidation | **nouvelle**, testée | non appliquée | C1 |
+| 20261125000100 | bib_cron_runs | oui, testée | **appliquée le 2026-11-26** (accord du propriétaire) | — |
+| 20261126000100 | bib_fk_indexes_policy_consolidation | **nouvelle**, testée | **appliquée le 2026-11-26** (accord du propriétaire) | — |
 
 Tests locaux sur PostgreSQL 16 jetable (`supabase/tests/run.sh`) : les 16 migrations et tous
 les tests SQL passent, concurrence de publication incluse. `cron_runs` n'a **pas** été dupliquée.
@@ -73,7 +73,26 @@ pas recopié.
 - **Index inutilisés** : les 24 signalés sont conservés, faute de preuve. Ce sont surtout des
   index de clés étrangères sur des tables peu peuplées.
 
-### 3.4 Application distante (après validation explicite)
+### 3.4 Application distante — faite le 2026-11-26 (≈ 23:05 UTC), sur accord du propriétaire
+
+Chaque migration a été exécutée dans **une transaction unique** avec son inscription dans
+`supabase_migrations.schema_migrations`, sous la version exacte du fichier local (pas de version
+générée), pour garder l'historique aligné.
+
+Préalables vérifiés : aucune version State of BIB en cours (9 superseded, 1 published), aucun
+cycle newsletter en `sending`, `cron_runs` absente, versions non encore inscrites.
+
+Contrôles après application :
+- `cron_runs` existe, RLS active, aucune écriture pour `anon` ni `authenticated` ;
+- les 3 index de clés étrangères sont présents ;
+- 24 policies au lieu de 12, et 0 doublon permissif par (table, rôle, action) ;
+- en rôle `anon` : 1 événement visible (= 1 publié), 0 rétrospective (= 0 publiée),
+  0 traduction (= 0 rattachée à un contenu publié). Droits inchangés ;
+- advisors : les avertissements `unindexed_foreign_keys` (3) et `multiple_permissive_policies` (5)
+  ont disparu. `unused_index` passe de 24 à 29 : ce sont les 5 index qui viennent d'être créés ;
+- historique distant : `20261122205510`, `20261125000100`, `20261126000100`.
+
+Procédure de référence pour une prochaine migration (après validation explicite) :
 
 Prérequis :
 1. sauvegarde ou PITR vérifié ;
@@ -192,7 +211,7 @@ comme un échec.
 |---|---|---|---|---|---|
 | NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY | oui | oui | oui | oui | — |
 | SUPABASE_SECRET_KEY / SUPABASE_SERVICE_ROLE_KEY | oui (l'un ou l'autre) | oui | SERVICE_ROLE | SECRET_KEY | secrets |
-| SUPABASE_URL (workflows) | — | — | — | — | **à confirmer (C3)** |
+| SUPABASE_URL (workflows) | — | — | — | — | présent (confirmé par le propriétaire) |
 | NEXT_PUBLIC_SITE_URL / NEXT_PUBLIC_APP_URL | oui | SITE_URL (APP_URL ajouté) | les deux | APP_URL | BIB_SITE_URL |
 | CRON_SECRET | oui | oui | oui | oui | BIB_CRON_SECRET |
 | LUMA_ICAL_URL, NEXT_PUBLIC_LUMA_CALENDAR_ID | oui | oui | oui | ID seul | — |
@@ -271,9 +290,9 @@ laboratoire, en local sans latence réseau, ne les remplacent pas.
 
 | # | Condition | Responsable |
 |---|---|---|
-| C1 | Autoriser explicitement l'application distante de `20261125000100` et `20261126000100` (§3.4) | Propriétaire |
+| C1 | ~~Application distante des migrations~~ — **fait** le 2026-11-26 (§3.4) | — |
 | C2 | Décider l'activation de la veille et de l'IA : sources validées (§5.1), `FEATURE_NEWS_INGEST`, `FEATURE_AI`, `AI_*` | Propriétaire / éditorial |
-| C3 | Confirmer la présence de la variable ou du secret `SUPABASE_URL` dans l'environnement GitHub `production`, sinon `refresh-data` échoue au preflight | Propriétaire |
+| C3 | ~~`SUPABASE_URL` dans GitHub~~ — **confirmé** par le propriétaire le 2026-11-26 | — |
 | C4 | Activer la protection contre les mots de passe compromis (Supabase Auth) | Propriétaire |
 | C5 | Statuer sur l'exception picomatch avant le 2026-12-17 : correctif amont, retrait de la dépendance, ou nouvelle revue de risque | Sécurité |
 | — | Décider de la visibilité du dépôt (§4.1) | Propriétaire |

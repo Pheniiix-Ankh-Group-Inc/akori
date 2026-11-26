@@ -258,7 +258,7 @@ The previously inspected `akori` project is dedicated to BIB. Do not reuse a dat
 
 ### Migrations
 
-Fifteen migrations are recorded as applied on `akori` (November 24, 2026), including the State of BIB historical deltas and the privileged-RPC hardening of November 22. Applied migrations must **never be rewritten or replayed**. Migration 0010 is a separately operated legacy cleanup script, not a regular `db push` migration; `supabase/migrations/` keeps a comment-only history marker for it. Pending remote application (requires explicit approval): `20261125000100_bib_cron_runs` and `20261126000100_bib_fk_indexes_policy_consolidation` — see [Phase 5 report](docs/PHASE5_STABILIZATION.md#3-migrations).
+Seventeen migrations are recorded as applied on `akori` (November 26, 2026), including the State of BIB historical deltas and the privileged-RPC hardening of November 22. Applied migrations must **never be rewritten or replayed**. Migration 0010 is a separately operated legacy cleanup script, not a regular `db push` migration; `supabase/migrations/` keeps a comment-only history marker for it. `20261125000100_bib_cron_runs` and `20261126000100_bib_fk_indexes_policy_consolidation` were applied on November 26, 2026 with owner approval — see [Phase 5 report](docs/PHASE5_STABILIZATION.md#3-migrations).
 
 | No. | Name | Purpose |
 | --- | --- | --- |
