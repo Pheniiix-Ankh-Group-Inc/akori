@@ -393,12 +393,18 @@ a:hover .ed-arrow, a:focus-visible .ed-arrow { transform: translateX(4px); }
 .ed-hero { padding-top: 7.5rem; padding-bottom: 4rem; align-items: end; }
 .ed-hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: flex-end; }
 .ed-hero-media { padding-bottom: 8rem; }
+.ed-hero-media-bleed { padding-bottom: 8rem; }
 
 /* Images éditoriales (lieux, matières, paysages). */
 .ed-media { position: relative; overflow: hidden; border-radius: var(--r); background: var(--bg-2); }
 .ed-media img { object-fit: cover; }
 .ed-media-21x9 { aspect-ratio: 21 / 9; } .ed-media-3x1 { aspect-ratio: 3 / 1; }
 .ed-media-4x5 { aspect-ratio: 4 / 5; } .ed-media-4x3 { aspect-ratio: 4 / 3; }
+.ed-figure { margin: 0; }
+.ed-figcaption { margin-top: 0.5rem; font-size: 0.8rem; color: var(--texte-2); }
+/* Bord à bord : pas d'arrondi ; hauteur plafonnée pour les écrans 2560–3440 px
+   (un 21:9 sur 3440 px ferait 1474 px de haut et repousserait tout le contenu). */
+.ed-media-bleed { border-radius: 0; max-height: min(78vh, 1100px); width: 100%; }
 
 /* « Explorer BIB » : colonnes à filet, sans cadre ni numéro. */
 .ed-explore { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
@@ -494,7 +500,7 @@ main section[id] { scroll-margin-top: 4.5rem; }
   .ed-grid-12 > [class*="ed-col-"] { grid-column: 1 / -1; }
   .ed-hero { padding-top: 4.5rem; padding-bottom: 2.5rem; }
   .ed-hero-actions { justify-content: flex-start; }
-  .ed-hero-media { padding-bottom: 4.5rem; }
+  .ed-hero-media, .ed-hero-media-bleed { padding-bottom: 4.5rem; }
   .ed-media-21x9, .ed-media-3x1 { aspect-ratio: 4 / 3; }
   .ed-commitments li { grid-template-columns: 2.5rem minmax(0, 1fr); }
   .ed-commitments li p { grid-column: 2; }
@@ -509,4 +515,9 @@ main section[id] { scroll-margin-top: 4.5rem; }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1 !important; transform: none !important; }
   .ed-marquee-track { animation: none; }
+}
+
+/* Sous 768 px, le hero bord à bord suit le cadrage vertical 4:5 de la variante mobile. */
+@media (max-width: 767px) {
+  .ed-media-bleed.ed-media-21x9 { aspect-ratio: 4 / 5; max-height: 80vh; }
 }

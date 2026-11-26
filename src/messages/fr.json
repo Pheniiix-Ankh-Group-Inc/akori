@@ -1448,6 +1448,7 @@
       }
     },
   "Visuals": {
+    "ambientCaption": "Visuel d'ambiance, illustration générée : ce n'est pas une photo d'un événement BIB.",
     "home": "Lumière d'après-midi à travers un brise-soleil, dessinant des ombres géométriques sur un mur ivoire",
     "events": "Salle de rencontre baignée de lumière, chaises alignées avant l'arrivée des invités",
     "sob": "Vue aérienne d'une ville côtière à l'heure bleue, rues éclairées formant un réseau",
