@@ -48,6 +48,27 @@ const run = async () => {
     ok(`Page légale ${label} : liens officiels et texte de licence`, ['https://github.com/electric-capital/open-dev-data', 'https://creativecommons.org/licenses/by/4.0/'].every((u) => links.includes(u)))
     ok(`Page légale ${label} : aucune référence technique facultative`, !/natural\s*earth|world-atlas/i.test(text) && !links.some((u) => /naturalearthdata\.com|github\.com\/topojson\/world-atlas|data\.opendevdata\.org/i.test(u)))
   }
+  // Charge utile complète : HTML brut (données d'hydratation comprises),
+  // flux RSC de navigation client et scripts JavaScript référencés.
+  const SECRET = /sb_secret_|service_role|SUPABASE_SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY|BREVO_API_KEY|xkeysib-|CRON_SECRET|NEWSLETTER_EMAIL_HASH_PEPPER|AI_API_KEY|GITHUB_DISPATCH_TOKEN|-----BEGIN [A-Z ]*PRIVATE KEY/
+  const scripts = new Set()
+  for (const path of ['/fr', '/', '/fr/state_of_bib', '/state_of_bib', '/es/state_of_bib', '/fr/evenements', '/fr/about']) {
+    const { html } = await get(path)
+    for (const m of html.matchAll(/<script\b[^>]*\bsrc="(\/_next\/static\/[^"]+\.js)"/gi)) scripts.add(m[1])
+    ok(`HTML brut ${path} : aucun fournisseur ni licence dans les données d'hydratation`, !PROVIDER.test(html), (html.match(PROVIDER) || [''])[0])
+    ok(`HTML brut ${path} : aucun secret serveur`, !SECRET.test(html), (html.match(SECRET) || [''])[0])
+    const rsc = await fetch(BASE + path, { headers: { RSC: '1' } })
+    const payload = await rsc.text()
+    ok(`flux RSC ${path} : servi`, rsc.status === 200 && /text\/x-component/.test(rsc.headers.get('content-type') || ''), `${rsc.status} ${rsc.headers.get('content-type')}`)
+    ok(`flux RSC ${path} : aucun fournisseur, licence ni secret`, !PROVIDER.test(payload) && !SECRET.test(payload), ((payload.match(PROVIDER) || payload.match(SECRET)) || [''])[0])
+  }
+  let leaked = []
+  for (const src of scripts) {
+    const js = await (await fetch(BASE + src)).text()
+    if (SECRET.test(js)) leaked.push(src)
+  }
+  ok(`bundles client (${scripts.size} scripts) : aucun secret serveur`, scripts.size > 0 && leaked.length === 0, leaked.join(','))
+
   for (const path of ['/api/state-of-bib/export', '/api/state-of-bib/export?table=countries&format=csv', '/api/state-of-bib/export?table=cities&format=json', '/data/headline.json', '/data/country_map.json', '/data/meta.json', '/data-history/index.json']) {
     const res = await fetch(BASE + path, { redirect: 'manual' })
     ok(`ancienne ressource inaccessible : ${path}`, res.status === 404, res.status)
