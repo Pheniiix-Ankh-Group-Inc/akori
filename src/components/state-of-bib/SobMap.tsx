@@ -183,6 +183,7 @@ export function SobMap({ map }: { map: SobCountry[] }) {
       .duration(duration)
       .attr("fill", fill)
     paths.filter((d) => d.iso === filters.compare || d.iso === filters.country).raise()
+    d3.select(svgRef.current).classed("has-selection", !!filters.country)
   }, [ready, stats, color, filters.country, filters.compare, reducedMotion])
 
   // 3. Zoom animé vers la sélection (ou retour à la vue d'ensemble).
@@ -204,6 +205,44 @@ export function SobMap({ map }: { map: SobCountry[] }) {
     if (reducedMotion) svg.call(zoom.transform, target)
     else svg.transition().duration(650).ease(d3.easeCubicOut).call(zoom.transform, target)
   }, [ready, filters.country, filters.compare, reducedMotion])
+
+  // 4. Entrée de la carte : les pays apparaissent dans l'ordre de leur rang,
+  // une seule fois, quand la carte arrive à l'écran (désactivé si mouvement réduit).
+  const entered = useRef(false)
+  useEffect(() => {
+    const svgEl = svgRef.current
+    if (!ready || !svgEl || entered.current || reducedMotion || typeof IntersectionObserver === "undefined") return
+    const order = new Map(ranked.map((r, i) => [r.iso, i]))
+    d3.select(svgEl).selectAll<SVGPathElement, Feat>("path.country").style("--d", (d) => `${Math.min(900, (order.get(d.iso) ?? ranked.length) * 28)}ms`)
+    svgEl.classList.add("is-entering")
+    const io = new IntersectionObserver((es) => {
+      if (!es.some((e) => e.isIntersecting)) return
+      io.disconnect()
+      entered.current = true
+      svgEl.classList.add("is-in")
+      window.setTimeout(() => svgEl.classList.remove("is-entering", "is-in"), 1800)
+    }, { threshold: 0.25 })
+    io.observe(svgEl)
+    return () => io.disconnect()
+  }, [ready, ranked, reducedMotion])
+
+  // 5. Visite guidée : les cinq premiers pays du périmètre, l'un après l'autre
+  // (zoom et fiche à chaque étape). Lancée et arrêtée par le visiteur ;
+  // jamais automatique, pas de lecture en continu.
+  const tourStops = useMemo(() => ranked.filter((r) => (r.value ?? 0) > 0).slice(0, 5), [ranked])
+  const [tour, setTour] = useState<number | null>(null)
+  useEffect(() => {
+    if (tour === null) return
+    const stop = tourStops[tour]
+    if (!stop) {
+      const id = window.setTimeout(() => setTour(null), 0)
+      return () => window.clearTimeout(id)
+    }
+    update({ country: stop.iso, compare: null })
+    if (reducedMotion) return
+    const id = window.setTimeout(() => setTour((k) => (k === null ? null : k + 1)), 3400)
+    return () => window.clearTimeout(id)
+  }, [tour, tourStops, update, reducedMotion])
 
   const zoomBy = (factor: number) => {
     const svgEl = svgRef.current
@@ -236,6 +275,18 @@ export function SobMap({ map }: { map: SobCountry[] }) {
   return (
     <div className="sob-map-frame" ref={frameRef}>
       <div className="sob-map-stage">
+        {tourStops.length > 1 && (
+          <div className="sob-tour" role="group" aria-label={t("map.tour")}>
+            <button type="button" className="sob-icon-btn sob-icon-btn-wide" aria-pressed={tour !== null} onClick={() => setTour((k) => (k === null ? 0 : reducedMotion ? (k + 1 < tourStops.length ? k + 1 : null) : null))}>
+              {tour === null ? t("map.tourStart") : reducedMotion ? t("map.tourNext") : t("map.tourStop")}
+            </button>
+            {tour !== null && tourStops[tour] && (
+              <span aria-live="polite">
+                <span className="sob-tour-step">{String(tour + 1).padStart(2, "0")} / {String(tourStops.length).padStart(2, "0")} · {tourStops[tour].name}</span>
+              </span>
+            )}
+          </div>
+        )}
         <div className="sob-map-tools" role="group" aria-label={t("map.label", { metric: metricLabel })}>
           <button type="button" className="sob-icon-btn" onClick={() => zoomBy(1.5)} aria-label={t("map.zoomIn")}>+</button>
           <button type="button" className="sob-icon-btn" onClick={() => zoomBy(1 / 1.5)} aria-label={t("map.zoomOut")}>−</button>

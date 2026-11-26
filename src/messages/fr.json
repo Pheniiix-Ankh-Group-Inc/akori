@@ -1240,6 +1240,10 @@
       "active": "{n, plural, =0 {Aucun filtre} one {# filtre actif} other {# filtres actifs}}"
     },
     "map": {
+      "tour": "Visite guidée des pays les plus actifs",
+      "tourStart": "Visite guidée",
+      "tourStop": "Arrêter la visite",
+      "tourNext": "Pays suivant",
       "label": "Carte des pays : {metric}",
       "zoomIn": "Zoomer",
       "zoomOut": "Dézoomer",
@@ -1265,6 +1269,7 @@
       "hint": "Survolez, ou utilisez les flèches du clavier, pour lire les valeurs exactes. Faites glisser sur le graphique pour choisir une période.",
       "play": "Lecture",
       "pause": "Pause",
+      "restart": "Revenir au début",
       "indexed": "Base 100",
       "absolute": "Valeurs absolues",
       "value": "{value} développeurs",
@@ -1285,6 +1290,7 @@
       "highlighted": "{name} mis en évidence"
     },
     "cohort": {
+      "peak": "Pic : {value} développeurs en {month}",
       "show": "Catégories affichées",
       "mode": "Affichage",
       "count": "Effectifs",
@@ -1649,6 +1655,14 @@
       "open": "Consulter"
     },
     "sobPage": {
+      "versionsTitle": "Chronologie des versions publiées",
+      "scenes": "Scènes de State of BIB",
+      "sceneNumbers": "Les chiffres",
+      "sceneAtlas": "Atlas",
+      "sceneCities": "Villes",
+      "sceneEcosystems": "Écosystèmes",
+      "sceneCohorts": "Générations",
+      "sceneMethod": "Méthode",
       "modes": "Modes de consultation",
       "modeStory": "Lire le récit",
       "modeExplore": "Explorer les données",

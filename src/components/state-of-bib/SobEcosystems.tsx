@@ -161,7 +161,10 @@ function EcoTimeline({ ecosystems, months }: { ecosystems: SobEcosystem[]; month
         .sort((a, b) => (b.v ?? -1) - (a.v ?? -1))
     : []
   const ticks = x.domain().filter((_, i, arr) => i % Math.max(1, Math.ceil(arr.length / (width < 560 ? 4 : 8))) === 0)
-  const animKey = `${i0}-${i1}-${mode}`
+  // Le tracé se redessine quand la période change ; un changement de mode
+  // (valeurs absolues ↔ base 100) fait glisser les courbes d'une échelle à
+  // l'autre (transition CSS de « d », interrompue proprement par la suivante).
+  const animKey = `${i0}-${i1}`
 
   return (
     <figure className="sob-chart" ref={wrapRef}>
@@ -174,6 +177,9 @@ function EcoTimeline({ ecosystems, months }: { ecosystems: SobEcosystem[]; month
           </span>
           <button type="button" className="sob-icon-btn sob-icon-btn-wide" onClick={() => { if (!playing && (cursor === null || cursor >= shown.length - 1)) setCursor(0); setPlaying((p) => !p) }} aria-pressed={playing}>
             {playing ? t("timeline.pause") : t("timeline.play")}
+          </button>
+          <button type="button" className="sob-icon-btn sob-icon-btn-wide" onClick={() => { setPlaying(false); setCursor(0) }} disabled={shown.length < 2}>
+            {t("timeline.restart")}
           </button>
         </span>
       </figcaption>
@@ -190,7 +196,7 @@ function EcoTimeline({ ecosystems, months }: { ecosystems: SobEcosystem[]; month
         >
           <g className="axis" aria-hidden="true">
             {y.ticks(5).map((v) => (
-              <g key={v} transform={`translate(0,${y(v)})`}>
+              <g key={v} className="sob-tick" style={{ transform: `translateY(${y(v)}px)` }}>
                 <line x1={m.left} x2={width - m.right} className="sob-grid" />
                 <text x={m.left - 8} dy="0.32em" textAnchor="end">{nf.format(v)}</text>
               </g>
@@ -207,6 +213,7 @@ function EcoTimeline({ ecosystems, months }: { ecosystems: SobEcosystem[]; month
                 <path
                   key={s.id}
                   d={line(s.values) ?? ""}
+                  style={{ d: `path("${line(s.values) ?? ""}")` } as React.CSSProperties}
                   pathLength={1}
                   fill="none"
                   stroke={isHi ? GOLD : dim ? MUTED : INK}

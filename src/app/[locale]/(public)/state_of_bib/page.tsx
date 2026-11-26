@@ -15,6 +15,7 @@ import { PageHero } from "@/components/ui/PageHero"
 import { AnimatedNumber } from "@/components/state-of-bib/AnimatedNumber"
 import { CopyLink } from "@/components/state-of-bib/CopyLink"
 import { DeltaBars } from "@/components/state-of-bib/DeltaBars"
+import { SceneIndex } from "@/components/state-of-bib/SceneIndex"
 import { isSobAvailable, loadSobState, loadSobTrend } from "@/lib/sob/load"
 import { SobTrend } from "@/components/state-of-bib/SobTrend"
 import { getPublishedInsight } from "@/lib/sob/insights"
@@ -88,6 +89,18 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
   return (
     <main>
       <TrackView event="state_of_bib_view" props={{ version: meta.dataset_version || null }} />
+      <SceneIndex
+        label={im("scenes")}
+        scenes={[
+          { id: "sob-numbers", label: im("sceneNumbers") },
+          { id: "sob-history", label: im("historyTitle") },
+          { id: "sob-atlas", label: im("sceneAtlas") },
+          { id: "sob-cities", label: im("sceneCities") },
+          { id: "sob-ecosystems", label: im("sceneEcosystems") },
+          { id: "sob-cohorts", label: im("sceneCohorts") },
+          { id: "sob-method", label: im("sceneMethod") },
+        ]}
+      />
       {/* Scène 01 · Perspective : photo de territoire plein cadre, faits et version immédiatement lisibles */}
       <header className="im im-ink sob-scene-hero" aria-labelledby="sob-title">
         <div className="sob-hero-media im-px" aria-hidden="true">
@@ -158,6 +171,27 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
           <h2 id="sob-history-title" className="im-t im-h2s im-rv im-t8" style={{ gridColumn: "1 / span 6" }}>{im("historyTitle")}</h2>
           <p className="im-p im-rv im-t8" style={{ gridColumn: "8 / span 5" }}>{im("historyIntro")}</p>
         </div>
+        {versions.length > 0 && (
+          <nav className="im-rv" aria-label={im("versionsTitle")} style={{ marginBottom: "clamp(2.5rem, 6vh, 4rem)" }}>
+            <h3 className="im-ey" style={{ marginBottom: "0.75rem" }}>{im("versionsTitle")}</h3>
+            <ol className="sob-versions">
+              {[...versions].reverse().map((v, i, arr) => {
+                const isLatest = i === arr.length - 1
+                const isCurrent = selectedVersion ? v.provider_version === selectedVersion : isLatest
+                const href = isLatest ? "/state_of_bib#sob-history" : `/state_of_bib?version=${encodeURIComponent(v.provider_version)}#sob-history`
+                return (
+                  <li key={v.provider_version}>
+                    {isCurrent ? (
+                      <span className="cur" aria-current="true">{v.as_of_date ?? v.provider_version}</span>
+                    ) : (
+                      <a href={href}>{v.as_of_date ?? v.provider_version}</a>
+                    )}
+                  </li>
+                )
+              })}
+            </ol>
+          </nav>
+        )}
         <div className="im-grid" style={{ rowGap: "3rem" }}>
           <div className="im-rv im-t8" style={{ gridColumn: "1 / span 6", display: "flex", flexDirection: "column", gap: "1rem" }}>
             <h3 className="im-ey">{locale === "fr" ? "Évolution depuis la version précédente" : locale === "es" ? "Cambios desde la versión anterior" : "Changes since previous version"}</h3>
@@ -214,7 +248,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
           <SobPeriodBar />
         </div>
       </div>
-      <section className="ed-section">
+      <section id="sob-atlas" className="ed-section">
         <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
@@ -230,7 +264,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
         </div>
       </section>
 
-      <section className="ed-section ed-section-white">
+      <section id="sob-cities" className="ed-section ed-section-white">
         <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
@@ -253,7 +287,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
                     className="sob-city-bar im-bar"
                     style={{ width: `${((c.devs_active_28d / max) * 100).toFixed(1)}%` }}
                   />
-                  <div className="sob-city-count"><b>{nf.format(c.devs_active_28d)}</b> {t("m2.devs")}</div>
+                  <div className="sob-city-count"><b><AnimatedNumber value={c.devs_active_28d} locale={loc} /></b> {t("m2.devs")}</div>
                 </div>
               ))
             })()}
@@ -261,7 +295,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
         </div>
       </section>
 
-      <section className="ed-section">
+      <section id="sob-ecosystems" className="ed-section">
         <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
@@ -279,7 +313,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
         </div>
       </section>
 
-      <section className="ed-section ed-section-white">
+      <section id="sob-cohorts" className="ed-section ed-section-white">
         <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>
@@ -306,7 +340,7 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
 
       </SobExplorerProvider>
 
-      <section className="ed-section">
+      <section id="sob-method" className="ed-section">
         <div className="ed-wrap">
           <div className="sob-movement-head">
             <div>

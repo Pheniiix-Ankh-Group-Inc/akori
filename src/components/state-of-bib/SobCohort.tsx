@@ -58,6 +58,14 @@ export function SobCohort({ cohort, labels }: { cohort: SobCohortData; labels: L
   const x = d3.scaleLinear().domain([0, Math.max(1, points.length - 1)]).range([m.left, width - m.right])
   const yMax = share ? 1 : (d3.max(stacked.at(-1) ?? [], (d) => (Number.isFinite(d[1]) ? d[1] : 0)) || 1)
   const y = d3.scaleLinear().domain([0, yMax * (share ? 1 : 1.04)]).nice().range([H - m.bottom, m.top])
+  // Annotation : le mois où la pile affichée culmine (calculé, jamais saisi).
+  const peak = (() => {
+    const last = stacked.at(-1)
+    if (!last || share) return null
+    let best: { i: number; top: number } | null = null
+    last.forEach((d, i) => { if (Number.isFinite(d[1]) && (!best || d[1] > best.top)) best = { i, top: d[1] } })
+    return best as { i: number; top: number } | null
+  })()
   const area = d3
     .area<d3.SeriesPoint<Row>>()
     .defined((d) => Number.isFinite(d[0]) && Number.isFinite(d[1]))
@@ -135,17 +143,28 @@ export function SobCohort({ cohort, labels }: { cohort: SobCohortData; labels: L
               <text key={i} x={x(i)} y={H - m.bottom + 18} textAnchor="middle">{points[i] ? monthLabel(points[i].month) : ""}</text>
             ))}
           </g>
-          <g className={reducedMotion ? undefined : "sob-fade"} key={`${keys.join()}-${filters.cohortMode}-${filters.from}-${filters.to}`}>
-            {stacked.map((s) => (
+          {/* Couches révélées de bas en haut à chaque nouvelle sélection ; le passage effectifs ↔ parts
+              fait glisser les aires (transition CSS de « d ») au lieu de les redessiner. */}
+          <g className={reducedMotion ? undefined : "sob-layers"} key={`${keys.join()}-${filters.from}-${filters.to}`}>
+            {stacked.map((s, li) => (
               <path
                 key={s.key}
                 d={area(s) ?? ""}
+                style={{ d: `path("${area(s) ?? ""}")`, animationDelay: `${li * 140}ms` } as React.CSSProperties}
                 fill={PALETTE[s.key as CohortKey]}
                 fillOpacity={focusKey && focusKey !== s.key ? 0.25 : 0.9}
-                className="sob-area"
+                className="sob-area sob-morph"
               />
             ))}
           </g>
+          {peak && (
+            <g className={reducedMotion ? "sob-annot" : "sob-annot sob-annot-in"} aria-hidden="true">
+              <line x1={x(peak.i)} x2={x(peak.i)} y1={y(peak.top)} y2={m.top + 2} className="sob-annot-line" />
+              <text x={x(peak.i)} y={m.top + 12} dx={x(peak.i) > width * 0.7 ? -6 : 6} textAnchor={x(peak.i) > width * 0.7 ? "end" : "start"}>
+                {t("peak", { month: monthLabel(points[peak.i].month), value: share ? pf.format(peak.top) : nf.format(peak.top) })}
+              </text>
+            </g>
+          )}
           {cursor !== null && <line className="sob-cursor" x1={x(cursor)} x2={x(cursor)} y1={m.top} y2={H - m.bottom} />}
           <rect x={m.left} y={m.top} width={Math.max(0, width - m.left - m.right)} height={Math.max(0, H - m.top - m.bottom)} fill="transparent" onPointerMove={onMove} onPointerLeave={() => setCursor(null)} />
         </svg>

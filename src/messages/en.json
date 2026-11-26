@@ -1240,6 +1240,10 @@
       "active": "{n, plural, =0 {No filter} one {# active filter} other {# active filters}}"
     },
     "map": {
+      "tour": "Guided tour of the most active countries",
+      "tourStart": "Guided tour",
+      "tourStop": "Stop the tour",
+      "tourNext": "Next country",
       "label": "Country map: {metric}",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
@@ -1265,6 +1269,7 @@
       "hint": "Hover, or use the arrow keys, to read exact values. Drag across the chart to choose a period.",
       "play": "Play",
       "pause": "Pause",
+      "restart": "Back to start",
       "indexed": "Indexed to 100",
       "absolute": "Absolute values",
       "value": "{value} developers",
@@ -1285,6 +1290,7 @@
       "highlighted": "{name} highlighted"
     },
     "cohort": {
+      "peak": "Peak: {value} developers in {month}",
       "show": "Categories shown",
       "mode": "View",
       "count": "Counts",
@@ -1649,6 +1655,14 @@
       "open": "Open"
     },
     "sobPage": {
+      "versionsTitle": "Timeline of published versions",
+      "scenes": "State of BIB scenes",
+      "sceneNumbers": "The figures",
+      "sceneAtlas": "Atlas",
+      "sceneCities": "Cities",
+      "sceneEcosystems": "Ecosystems",
+      "sceneCohorts": "Generations",
+      "sceneMethod": "Method",
       "modes": "Ways to read",
       "modeStory": "Read the story",
       "modeExplore": "Explore the data",
