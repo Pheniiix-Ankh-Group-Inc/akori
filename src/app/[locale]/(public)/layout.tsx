@@ -14,7 +14,7 @@ export default async function PublicLayout({ children, params }: Props) {
   return (
     <>
       <Header />
-      {children}
+      <div className="pub">{children}</div>
       <Footer />
     </>
   )

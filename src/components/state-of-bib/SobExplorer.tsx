@@ -1,7 +1,7 @@
 "use client"
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
-import { DEFAULT_FILTERS, METRICS, REGIONS, parseFilters, serializeFilters, type SobFilters } from "@/lib/sob/explore"
+import { DEFAULT_FILTERS, METRICS, REGIONS, mergeFilterParams, parseFilters, type SobFilters } from "@/lib/sob/explore"
 
 interface Ctx {
   filters: SobFilters
@@ -54,24 +54,29 @@ export function SobExplorerProvider({
   const [filters, setFilters] = useState<SobFilters>(DEFAULT_FILTERS)
   const reducedMotion = useReducedMotion()
   const known = useMemo(() => ({ countries: new Set(countries), ecosystems: new Set(ecosystems), months }), [countries, ecosystems, months])
-  const hydrated = useRef(false)
+  // État (et non ref) : l'écriture dans l'URL n'a lieu qu'au rendu qui suit
+  // la lecture. Avec une ref, l'effet d'écriture du même passage voyait les
+  // filtres par défaut et effaçait la requête avant sa lecture (double
+  // exécution des effets en développement, remontage) : lien partagé perdu.
+  const [hydrated, setHydrated] = useState(false)
 
   // Lecture de l'URL au montage (la page reste statique côté serveur).
   useEffect(() => {
     const parsed = parseFilters(new URLSearchParams(window.location.search), known)
-    hydrated.current = true
     // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronisation unique avec l'URL au montage
     setFilters(parsed)
+    setHydrated(true)
   }, [known])
 
   useEffect(() => {
-    if (!hydrated.current) return
-    const qs = serializeFilters(filters).toString()
+    if (!hydrated) return
+    // Conserve « version » et tout paramètre non géré par les filtres.
+    const qs = mergeFilterParams(new URLSearchParams(window.location.search), filters).toString()
     const url = `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`
     if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
       window.history.replaceState(window.history.state, "", url)
     }
-  }, [filters])
+  }, [filters, hydrated])
 
   const update = useCallback((patch: Partial<SobFilters>) => {
     setFilters((f) => {

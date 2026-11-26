@@ -105,6 +105,21 @@ export function serializeFilters(f: SobFilters): URLSearchParams {
   return p
 }
 
+/** Paramètres d'URL gérés par les filtres de l'explorateur. */
+export const FILTER_PARAM_KEYS = ["region", "metric", "country", "compare", "eco", "from", "to", "sort", "cohorts", "cmode"] as const
+
+/**
+ * Applique les filtres à une query string existante sans perdre les autres
+ * paramètres (notamment « version », qui sélectionne un instantané
+ * historique côté serveur). Les clés de filtre absentes sont retirées.
+ */
+export function mergeFilterParams(current: URLSearchParams, f: SobFilters): URLSearchParams {
+  const next = new URLSearchParams(current)
+  for (const k of FILTER_PARAM_KEYS) next.delete(k)
+  serializeFilters(f).forEach((v, k) => next.set(k, v))
+  return next
+}
+
 export function inRegion(c: SobCountry, region: Region): boolean {
   return region === "all" || c.region === region
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { LegalToc } from "@/components/ui/LegalToc"
 
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -12,13 +13,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default function TermsPage() {
   const t = useTranslations("terms")
+  const toc = useTranslations("Immersive.legal")
 
   return (
     <section className="section">
-      <div className="wrap-sm">
+      <div className="lg">
 
         {/* Header */}
         <div
+          className="lg-head"
           style={{
             marginBottom: "4rem",
             paddingBottom: "2rem",
@@ -39,7 +42,8 @@ export default function TermsPage() {
         </div>
 
         {/* Content */}
-        <div className="legal-content">
+        <LegalToc label={toc("toc")} />
+<div className="legal-content lg-doc">
 
           {/* 1. Publisher */}
           <div className="legal-section">

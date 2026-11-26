@@ -13,8 +13,7 @@ const get = async (path) => {
 }
 // Texte visible : sans scripts (données d'hydratation), styles ni balises.
 const visible = (html) => html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ')
-// Tout le HTML sauf le dictionnaire de traductions embarqué (qui contient, par
-// construction, le texte de la page légale pour la navigation côté client).
+// Liens publics rendus par la page ; les crédits obligatoires restent sur la page légale.
 const hrefs = (html) => [...html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/gi)].map((m) => m[1])
 
 const run = async () => {
@@ -26,10 +25,10 @@ const run = async () => {
     ok(`State of BIB ${label} : aucun fournisseur ni licence affiché`, !PROVIDER.test(text), (text.match(PROVIDER) || [''])[0])
     ok(`State of BIB ${label} : lien vers la page légale`, hrefs(html).some((h) => /\/data-sources$/.test(h)))
     if (EXPECT === 'available') {
-      ok(`State of BIB ${label} : indicateurs et visualisations présents`, /sob-hero-number/.test(html) && /sob-cities/.test(html))
+      ok(`State of BIB ${label} : indicateurs et visualisations présents`, /sob-hero-number|sob-big/.test(html) && /sob-cities/.test(html))
       ok(`State of BIB ${label} : date de référence affichée`, /sob-facts/.test(html))
     } else {
-      ok(`State of BIB ${label} : état d'indisponibilité, aucun chiffre`, !/sob-hero-number/.test(html) && /role="status"/.test(html))
+      ok(`State of BIB ${label} : état d'indisponibilité, aucun chiffre`, !/sob-hero-number|sob-big/.test(html) && /role="status"/.test(html))
     }
   }
   for (const [label, path] of [['FR', '/fr'], ['EN', '/']]) {
@@ -40,15 +39,36 @@ const run = async () => {
     ok(`Accueil ${label} : lien légal dans le pied de page`, hrefs(html).some((h) => /\/data-sources$/.test(h)))
     if (EXPECT === 'unavailable') ok(`Accueil ${label} : aucun indicateur State of BIB affiché`, !/class="ed-stat"/.test(html.slice(html.indexOf('home-sob'))))
   }
-  for (const [label, path, needle] of [['FR', '/fr/data-sources', 'Données, méthodologie et sources'], ['EN', '/data-sources', 'Data, methodology and sources']]) {
+  for (const [label, path, needle] of [['FR', '/fr/data-sources', 'Données et méthodologie'], ['EN', '/data-sources', 'Data and methodology'], ['ES', '/es/data-sources', 'Datos y metodología']]) {
     const { status, html } = await get(path)
     const text = visible(html)
     ok(`Page légale ${label} : servie et titrée`, status === 200 && text.includes(needle), status)
     ok(`Page légale ${label} : fournisseur, jeu de données et licence`, /Electric Capital/.test(text) && /Open Dev Data/.test(text) && /CC BY 4\.0/.test(text))
     const links = hrefs(html)
-    ok(`Page légale ${label} : liens officiels et texte de licence`, ['https://opendevdata.org', 'https://github.com/electric-capital/open-dev-data', 'https://creativecommons.org/licenses/by/4.0/', 'https://creativecommons.org/licenses/by/4.0/legalcode'].every((u) => links.includes(u)))
-    ok(`Page légale ${label} : fond de carte référencé`, /Natural Earth/.test(text))
+    ok(`Page légale ${label} : liens officiels et texte de licence`, ['https://github.com/electric-capital/open-dev-data', 'https://creativecommons.org/licenses/by/4.0/'].every((u) => links.includes(u)))
+    ok(`Page légale ${label} : aucune référence technique facultative`, !/natural\s*earth|world-atlas/i.test(text) && !links.some((u) => /naturalearthdata\.com|github\.com\/topojson\/world-atlas|data\.opendevdata\.org/i.test(u)))
   }
+  // Charge utile complète : HTML brut (données d'hydratation comprises),
+  // flux RSC de navigation client et scripts JavaScript référencés.
+  const SECRET = /sb_secret_|service_role|SUPABASE_SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY|BREVO_API_KEY|xkeysib-|CRON_SECRET|NEWSLETTER_EMAIL_HASH_PEPPER|AI_API_KEY|GITHUB_DISPATCH_TOKEN|-----BEGIN [A-Z ]*PRIVATE KEY/
+  const scripts = new Set()
+  for (const path of ['/fr', '/', '/fr/state_of_bib', '/state_of_bib', '/es/state_of_bib', '/fr/evenements', '/fr/about']) {
+    const { html } = await get(path)
+    for (const m of html.matchAll(/<script\b[^>]*\bsrc="(\/_next\/static\/[^"]+\.js)"/gi)) scripts.add(m[1])
+    ok(`HTML brut ${path} : aucun fournisseur ni licence dans les données d'hydratation`, !PROVIDER.test(html), (html.match(PROVIDER) || [''])[0])
+    ok(`HTML brut ${path} : aucun secret serveur`, !SECRET.test(html), (html.match(SECRET) || [''])[0])
+    const rsc = await fetch(BASE + path, { headers: { RSC: '1' } })
+    const payload = await rsc.text()
+    ok(`flux RSC ${path} : servi`, rsc.status === 200 && /text\/x-component/.test(rsc.headers.get('content-type') || ''), `${rsc.status} ${rsc.headers.get('content-type')}`)
+    ok(`flux RSC ${path} : aucun fournisseur, licence ni secret`, !PROVIDER.test(payload) && !SECRET.test(payload), ((payload.match(PROVIDER) || payload.match(SECRET)) || [''])[0])
+  }
+  let leaked = []
+  for (const src of scripts) {
+    const js = await (await fetch(BASE + src)).text()
+    if (SECRET.test(js)) leaked.push(src)
+  }
+  ok(`bundles client (${scripts.size} scripts) : aucun secret serveur`, scripts.size > 0 && leaked.length === 0, leaked.join(','))
+
   for (const path of ['/api/state-of-bib/export', '/api/state-of-bib/export?table=countries&format=csv', '/api/state-of-bib/export?table=cities&format=json', '/data/headline.json', '/data/country_map.json', '/data/meta.json', '/data-history/index.json']) {
     const res = await fetch(BASE + path, { redirect: 'manual' })
     ok(`ancienne ressource inaccessible : ${path}`, res.status === 404, res.status)
@@ -65,7 +85,13 @@ const run = async () => {
     ok('Événements : page servie', status === 200, status)
     ok('Événements : calendrier Luma embarqué conservé (URL de main, même calendrier)', src === 'https://lu.ma/embed/calendar/cal-aqEzCpUP5LXSBcL/events', src)
   }
-  for (const path of ['/about', '/mission', '/membership', '/resources', '/press', '/contact']) {
+  // Pages institutionnelles publiées : servies, indexables, avec un titre de page.
+  for (const path of ['/about', '/mission', '/resources', '/press', '/contact']) {
+    const { status, html } = await get(path)
+    ok(`page publiée ${path} : servie et indexable`, status === 200 && !/<meta[^>]+name="robots"[^>]+noindex/i.test(html) && /<h1\b/i.test(html), status)
+  }
+  // Adhésion : contenu encore en préparation, donc toujours exclue de l'indexation.
+  for (const path of ['/membership']) {
     const { status, html } = await get(path)
     ok(`page en préparation ${path} : servie, non indexée`, status === 200 && /<meta[^>]+name="robots"[^>]+noindex/i.test(html), status)
   }

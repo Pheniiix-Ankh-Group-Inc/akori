@@ -6,6 +6,55 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Fixed — phase 5 stabilisation (2026-11-26) — see `docs/PHASE5_STABILIZATION.md`
+
+- CI: credit assertions follow the server-rendered attribution; every translation file is scanned for provider and licence names.
+- State of BIB: shared explorer links no longer lose their filters on load; the guided tour stops on any manual interaction or filter change; the version timeline uses `is_current` and localized links; unverified history (20260419T130333) is never presented as a published version.
+- Cron: a newsletter cycle already cancelled or sent is a terminal no-op; `cron_runs` records business outcomes (`details.outcome`) and only delivery failures or unusable news sources as failures.
+- Workflows: no hardcoded Supabase project URL in `refresh-data.yml` (the repository variable or secret `SUPABASE_URL` is required).
+- Database (applied on `akori` on 2026-11-26 with owner approval: `cron_runs` and 0016): history marker for `20261114001000`; migration `20261126000100` indexes 3 foreign keys and consolidates RLS policies with identical rights.
+- e2e: raw HTML, RSC payloads and client bundles checked for provider names and secrets.
+
+### Changed — public branding and data confidentiality
+
+- Remove the public header wordmark frame; keyboard focus uses a visible underline.
+- Simplify the public data methodology page and its FR/EN/ES navigation labels, removing optional provider directory details while retaining the required CC BY 4.0 attribution and links. Internal collection and data processing remain unchanged.
+
+### Changed — State of BIB data storytelling and remaining public pages (phase 4.1, 2026-11-26)
+
+- State of BIB: map countries appear by rank, non-selected territories dim, guided tour of the five leading countries (started and stopped by the visitor; step by step with reduced motion); ecosystem curves morph between absolute and base 100 with sliding axes and a "back to start" control; cohort layers reveal bottom-up and morph between counts and shares with a computed peak annotation; animated city counts; timeline of published versions linking to each snapshot; scene index.
+- PageHero variants (split, cinematic, manifesto, index); Events and Mission use the cinematic opening, Contact, Resources and Data sources the index opening.
+- Startup Spotlight: cinematic opening on ink with a monumental title, a reserved portrait plane showing the real programme status, and principles as a large numbered index.
+- Founder profiles (sticky portrait, reading column), retrospectives, data sources, event and story details, and error pages aligned with the system.
+- Legal contents collapse on small screens (no layout shift when the list loads).
+- e2e: published institutional pages must be indexable with a title; membership stays noindex.
+- `docs/IMAGES.md` §8: inventory of the photographs still needed, with crops, keywords, candidates and expected files.
+
+### Changed — pages publiques « Immersive Spatial Institution » (2026-11-26)
+
+- Shared public system: `.pub` wrapper makes structural containers full-width, cards become open index items, square geometry, heavier titles; new `PageHero`, `LegalToc` and row-index primitives (`docs/DESIGN_SYSTEM.md`).
+- About, Mission (sticky scrollytelling of the three commitments), Contact (mailto index, addresses unchanged), Press, Resources, Membership (preparation state kept), Events (photo opening, editorial index rows, calendar logic untouched) and Startup Spotlight (full width, ink waiting panel) redesigned.
+- Terms, Privacy and Cookies: full-width introduction, sticky contents with active section, reading column; legal text unchanged.
+- State of BIB: full-bleed opening with facts, version selector and shareable link; monumental figures of the version shown (no intermediate values announced to screen readers); history scene with diverging delta bars and the trend's period stated; note on analyses when a historical version is shown.
+
+### Fixed
+
+- State of BIB explorer: changing a filter dropped `?version`, so a historical snapshot was lost on the first interaction. Non-filter URL parameters are now preserved.
+
+### Changed — accueil « Immersive Spatial Institution » (2026-11-26)
+
+- Home page rebuilt as twelve full-bleed chapters from the Claude Design mockup (Phase 3): cinematic hero, typographic manifesto, mission with a dominant image, sticky "what we build" scrollytelling, founders with offset portraits, editorial event index (rows open on click or keyboard, Luma registration kept), Startup Spotlight programme, State of BIB data story on ink (headline figure, secondary figures, top-country bars with an accessible table, computed analysis), BIB in action, resources index and a newsletter closing on the horizon.
+- Scroll-driven motion in CSS (`animation-timeline`), reversible and disabled with reduced motion; no scroll hijacking. Responsive 12/8/4-column grid, dedicated tablet and mobile compositions.
+- Header and footer now span the full width; the footer moves to ink.
+- New `Immersive` messages in FR/EN/ES; State of BIB date shown in long form.
+
+### Changed — editorial imagery (2026-11-25)
+
+- Image catalogue rewritten: each visual records its placement, role, source, licence, desktop and mobile files, focal point and status. A visual is shown only once validated and sharp enough for its slot, so the 200 px previews are no longer displayed blurred.
+- `EditorialImage` uses `<picture>` with a dedicated 4:5 mobile crop (Next 16 `getImageProps`), focal point, and an empty alt for decorative images. The home hero becomes full-bleed, capped in height on 2560–3440 px screens; a full-bleed closing band is ready.
+- AI visuals next to events carry a "mood visual, not a photo of a BIB event" caption in FR/EN/ES.
+- New `docs/IMAGES.md`: brand analysis, photographic direction, inventory with sources and licences, generation prompts, export sizes and checks at each width. Art-direction board added to the Claude Design canvas.
+
 ### Added — monitoring, analytics and observability (2026-11-25)
 
 - OpenTelemetry through `@vercel/otel` (`src/instrumentation.ts`, service `bib-web`): Next.js and outbound `fetch` spans, one span per measured task, sanitized `server.request_error` logs from `onRequestError`. `OTEL_SDK_DISABLED=true` turns it off.

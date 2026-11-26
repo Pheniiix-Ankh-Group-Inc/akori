@@ -258,7 +258,7 @@ The previously inspected `akori` project is dedicated to BIB. Do not reuse a dat
 
 ### Migrations
 
-Fifteen migrations are recorded as applied on `akori` (November 24, 2026), including the State of BIB historical deltas and the privileged-RPC hardening of November 22. Applied migrations must **never be rewritten or replayed**. Migration 0010 is a separately operated legacy cleanup script, not a regular `db push` migration.
+Seventeen migrations are recorded as applied on `akori` (November 26, 2026), including the State of BIB historical deltas and the privileged-RPC hardening of November 22. Applied migrations must **never be rewritten or replayed**. Migration 0010 is a separately operated legacy cleanup script, not a regular `db push` migration; `supabase/migrations/` keeps a comment-only history marker for it. `20261125000100_bib_cron_runs` and `20261126000100_bib_fk_indexes_policy_consolidation` were applied on November 26, 2026 with owner approval — see [Phase 5 report](docs/PHASE5_STABILIZATION.md#3-migrations).
 
 | No. | Name | Purpose |
 | --- | --- | --- |
@@ -271,7 +271,7 @@ Fifteen migrations are recorded as applied on `akori` (November 24, 2026), inclu
 | 0007 | `sob_governance` | Private candidates, checksum validation |
 | 0008 | `newsletter_integrity` | Atomic FR/EN pair, immutable approved editions |
 | 0009 | `security_hardening` | `SECURITY INVOKER` views, column permissions, indexes |
-| 0010 | `legacy_koriventure_cleanup` | Separate cleanup script in `supabase/ops/akori/sql/` |
+| 0010 | `legacy_koriventure_cleanup` | Separate cleanup script in `supabase/ops/akori/sql/`; comment-only history marker in `supabase/migrations/` |
 | 0011 | `bib_v2_automation` | Automation modes, Luma ingestion, publication RPC |
 | 0012 | `bib_finalisation` | Private buckets, anonymous access restrictions, atomic Luma lock |
 | 0013 | `sob_full_auto` | `auto` mode, publishing lock, quarantine, verification |
@@ -366,6 +366,7 @@ Tracked in the November 24, 2026 site audit: legal pages to rewrite (privacy pol
 
 | Document | Coverage |
 | --- | --- |
+| [Phase 5 stabilisation](docs/PHASE5_STABILIZATION.md) | Audit report: fixes, migrations, security, automations, variables, tests, conditions before production |
 | [V2 Target Architecture](docs/V2_ARCHITECTURE_CIBLE.md) | Luma, State of BIB, newsletter, administration |
 | [State of BIB Automation](docs/SOB_AUTOMATION.md) | Pipeline, limits, retries, activation |
 | [Deployment Guide](docs/DEPLOYMENT.md) | Environments, rollout steps, variable matrix |
@@ -376,6 +377,8 @@ Tracked in the November 24, 2026 site audit: legal pages to rewrite (privacy pol
 | [Editorial Workflows](docs/EDITORIAL_WORKFLOWS.md) | Editorial procedures |
 | [Supabase Migration Plan](docs/SUPABASE_MIGRATION_PLAN.md) | Migration sequencing and history |
 | [Releasing](docs/RELEASING.md) | Versions, tags and GitHub releases |
+| [Design system](docs/DESIGN_SYSTEM.md) | Public design system, components, motion tokens, State of BIB scenes |
+| [Editorial images](docs/IMAGES.md) | Photographic direction, image inventory with sources and licences, export sizes |
 | [Monitoring](docs/MONITORING.md) | Analytics, Speed Insights, OpenTelemetry, scheduled-job supervision, alerts, quotas |
 | [Pre-production Readiness](docs/audits/BIB_PREPROD_READINESS.md) | Historical pre-production report (November 2026) |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |

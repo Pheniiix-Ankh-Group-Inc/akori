@@ -4,6 +4,7 @@ import { getAdminClient } from "@/lib/supabase/admin"
 import { env, isSupabaseAdminConfigured } from "@/lib/env"
 import type { SobSnapshot, SobState } from "@/lib/sob/load"
 import type { SobFiles } from "@/lib/sob/validity"
+import { INTEGRITY_COLUMNS, isVerifiedVersion, type VersionIntegrityRow } from "@/lib/sob/version-integrity"
 
 const SOURCE_ID = "electric-capital-osdd"
 const BUCKET = "bib-sob-candidates"
@@ -26,13 +27,16 @@ export async function listSobVersions(): Promise<SobVersion[]> {
   if (!env.flags.sobReadFromSupabase || !isSupabaseAdminConfigured()) return []
   const { data, error } = await getAdminClient()
     .from("dataset_versions")
-    .select("provider_version,as_of_date,published_at,is_current")
+    .select(`provider_version,as_of_date,is_current,${INTEGRITY_COLUMNS}`)
     .eq("source_id", SOURCE_ID)
     .in("status", ["published", "superseded"])
     .order("as_of_date", { ascending: false })
     .limit(250)
   if (error) throw new Error("Unable to list State of BIB versions")
-  return (data ?? []) as SobVersion[]
+  // Seules les versions passées par le circuit complet sont proposées.
+  return ((data ?? []) as unknown as (SobVersion & VersionIntegrityRow)[])
+    .filter(isVerifiedVersion)
+    .map(({ provider_version, as_of_date, published_at, is_current }) => ({ provider_version, as_of_date, published_at, is_current }))
 }
 
 /** Historical queries never contact the external provider or read repository JSON. */
@@ -43,12 +47,13 @@ export async function loadSobVersion(version: string): Promise<SobState> {
   const admin = getAdminClient()
   const { data, error } = await admin
     .from("dataset_versions")
-    .select("id,provider_version,published_at,dataset_artifacts(name,storage_path,sha256)")
+    .select(`id,provider_version,${INTEGRITY_COLUMNS},dataset_artifacts(name,storage_path,sha256)`)
     .eq("source_id", SOURCE_ID)
     .eq("provider_version", version)
     .in("status", ["published", "superseded"])
     .maybeSingle()
   if (error || !data) return unavailable("historical version not found")
+  if (!isVerifiedVersion(data as unknown as VersionIntegrityRow)) return unavailable("historical version not verified")
   const arts = new Map(((data.dataset_artifacts ?? []) as Artifact[]).map(a => [a.name, a]))
   if (!FILES.every(name => arts.has(name))) return unavailable("historical artifacts incomplete")
   try {

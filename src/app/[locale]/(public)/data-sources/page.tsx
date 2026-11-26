@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
 import { intlLocale } from "@/lib/content/locales"
 import { isSobAvailable, loadSobState } from "@/lib/sob/load"
+import { PageHero } from "@/components/ui/PageHero"
 
 export const revalidate = 900
 
@@ -14,20 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") }
 }
 
-/**
- * Sources officielles (liens vérifiés dans le dépôt du fournisseur et sa
- * licence). Seule page publique où les fournisseurs de données State of BIB,
- * leurs licences et l'attribution sont présentés.
- */
-const LINKS = {
-  s1Site: "https://opendevdata.org",
-  s1Repo: "https://github.com/electric-capital/open-dev-data",
-  ccBy: "https://creativecommons.org/licenses/by/4.0/",
-  ccByLegal: "https://creativecommons.org/licenses/by/4.0/legalcode",
-  s2Site: "https://www.naturalearthdata.com",
-  s2Repo: "https://github.com/topojson/world-atlas",
-}
-
+/** Public methodology with the required data attribution only. */
 const ext = { target: "_blank", rel: "noopener noreferrer" } as const
 
 export default async function DataSourcesPage({ params }: Props) {
@@ -42,59 +30,10 @@ export default async function DataSourcesPage({ params }: Props) {
 
   return (
     <main>
-      <section className="ed-wrap-narrow" style={{ paddingTop: "6rem", paddingBottom: "5rem" }}>
-        <div className="ed-stack" style={{ gap: "1.25rem", marginBottom: "3rem" }}>
-          <p className="ed-eyebrow">{t("eyebrow")}</p>
-          <h1 className="ed-h1">{t("title")}</h1>
-          <p className="ed-muted">{t("updated")}</p>
-          <p className="ed-lede">{t("intro")}</p>
-        </div>
+      <PageHero locale={locale} eyebrow={t("eyebrow")} title={t("title")} lede={<>{t("intro")}<br /><span style={{ fontSize: "0.9375rem" }}>{t("updated")}</span></>} variant="index" />
+      <section className="ed-wrap-narrow" style={{ paddingTop: "clamp(3rem, 8vh, 5rem)", paddingBottom: "5rem" }}>
 
         <div className="ed-stack" style={{ gap: "3rem" }}>
-          <section aria-labelledby="ds-sources" className="ed-stack" style={{ gap: "1.5rem" }}>
-            <h2 id="ds-sources" className="ed-h2">{t("sourcesTitle")}</h2>
-
-            <article className="ed-card" aria-labelledby="ds-s1">
-              <div className="ed-card-body" style={{ gap: "1rem" }}>
-                <h3 id="ds-s1" className="ed-h3">{t("s1Name")}</h3>
-                <dl className="ed-dl ed-dl-wide">
-                  <dt>{t("dataset")}</dt><dd>{t("s1Dataset")}</dd>
-                  <dt>{t("site")}</dt><dd><a className="ed-link" href={LINKS.s1Site} {...ext}>opendevdata.org</a></dd>
-                  <dt>{t("repository")}</dt><dd><a className="ed-link" href={LINKS.s1Repo} {...ext}>github.com/electric-capital/open-dev-data</a></dd>
-                  <dt>{t("license")}</dt><dd>{t("s1License")}</dd>
-                  <dt>{t("licenseText")}</dt>
-                  <dd>
-                    <a className="ed-link" href={LINKS.ccBy} {...ext}>creativecommons.org/licenses/by/4.0</a>
-                    {" · "}
-                    <a className="ed-link" href={LINKS.ccByLegal} {...ext}>legalcode</a>
-                  </dd>
-                  <dt>{t("attribution")}</dt>
-                  <dd>
-                    {t("s1Attribution")}{" "}
-                    <a className="ed-link" href={LINKS.s1Repo} {...ext}>Open Dev Data by Electric Capital</a>
-                  </dd>
-                  <dt>{t("changes")}</dt><dd>{t("s1Changes")}</dd>
-                  <dt>{t("use")}</dt><dd>{t("s1Use")}</dd>
-                </dl>
-              </div>
-            </article>
-
-            <article className="ed-card" aria-labelledby="ds-s2">
-              <div className="ed-card-body" style={{ gap: "1rem" }}>
-                <h3 id="ds-s2" className="ed-h3">{t("s2Name")}</h3>
-                <dl className="ed-dl ed-dl-wide">
-                  <dt>{t("dataset")}</dt><dd>{t("s2Dataset")}</dd>
-                  <dt>{t("site")}</dt><dd><a className="ed-link" href={LINKS.s2Site} {...ext}>naturalearthdata.com</a></dd>
-                  <dt>{t("repository")}</dt><dd><a className="ed-link" href={LINKS.s2Repo} {...ext}>github.com/topojson/world-atlas</a></dd>
-                  <dt>{t("license")}</dt><dd>{t("s2License")}</dd>
-                  <dt>{t("attribution")}</dt><dd>{t("s2Attribution")}</dd>
-                  <dt>{t("changes")}</dt><dd>{t("s2Changes")}</dd>
-                  <dt>{t("use")}</dt><dd>{t("s2Use")}</dd>
-                </dl>
-              </div>
-            </article>
-          </section>
-
           <section aria-labelledby="ds-scope" className="ed-stack" style={{ gap: "1rem" }}>
             <h2 id="ds-scope" className="ed-h2">{t("scopeTitle")}</h2>
             <p>{t("scopeText")}</p>
@@ -130,6 +69,16 @@ export default async function DataSourcesPage({ params }: Props) {
           <section aria-labelledby="ds-reuse" className="ed-stack" style={{ gap: "1rem" }}>
             <h2 id="ds-reuse" className="ed-h2">{t("noExportTitle")}</h2>
             <p>{t("noExportText")}</p>
+          </section>
+
+          <section aria-labelledby="ds-credits" className="ed-stack" style={{ gap: "0.75rem" }}>
+            <h2 id="ds-credits" className="ed-h3">{t("creditsTitle")}</h2>
+            <p className="ed-muted" style={{ fontSize: "0.9375rem" }}>
+              <a className="ed-link" href="https://github.com/electric-capital/open-dev-data" {...ext}>Open Dev Data by Electric Capital</a>
+              {" · © 2025 Electric Capital Partners, LLC · "}
+              <a className="ed-link" href="https://creativecommons.org/licenses/by/4.0/" {...ext}>CC BY 4.0</a>.
+              {" "}{t("creditsChanges")}
+            </p>
           </section>
 
           <section aria-labelledby="ds-contact" className="ed-stack" style={{ gap: "1rem" }}>

@@ -52,7 +52,7 @@
 .sob-eco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 1.25rem; }
 .sob-eco-card { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem; min-height: 240px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-card); }
 .sob-eco-rank { font-size: 0.78rem; color: var(--texte); }
-.sob-eco-name { font-family: var(--font-serif), Georgia, serif; font-size: 1.7rem; color: var(--blanc); }
+.sob-eco-name { font-family: var(--font-serif), Georgia, serif; font-size: 1.7rem; color: var(--blanc); min-width: 0; overflow-wrap: anywhere; }
 .sob-eco-name em { color: var(--accent); font-style: normal; }
 .sob-eco-devs { font-size: 0.78rem; color: var(--texte); }
 .sob-eco-devs b { font-size: 1rem; color: var(--blanc); font-weight: 600; }
@@ -220,3 +220,95 @@ html:has(.sob-sticky-filters) { scroll-padding-top: 170px; }
   .sob-draw .sob-line, .sob-fade, .sob-detail-card { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
   .sob-map-svg .country, .sob-line, .sob-area, .sob-eco-card { transition: none; }
 }
+
+/* ═══ Phase 4 — Immersive Data Intelligence ═══
+   Scène d'ouverture plein cadre, chiffres monumentaux sur encre, historique
+   en barres divergentes, en-têtes de mouvement agrandis. Les visualisations
+   D3 existantes (carte, écosystèmes, cohortes) sont conservées. */
+.sob-scene-hero { position: relative; min-height: min(92svh, 64rem); display: flex; align-items: flex-start; overflow: hidden; }
+.sob-hero-media { position: absolute; inset: 0; }
+.sob-hero-copy { position: relative; display: flex; flex-direction: column; gap: clamp(1.25rem, 3vh, 2rem); padding-bottom: clamp(3rem, 9vh, 7rem); padding-top: 14svh; }
+.sob-hero-copy .ph-title { max-width: 16ch; }
+.sob-modes { display: flex; flex-wrap: wrap; gap: 1rem 1.75rem; align-items: center; }
+.sob-facts-band { padding-block: clamp(2.5rem, 6vh, 4rem); display: flex; flex-direction: column; gap: 1.5rem; border-bottom: 1px solid var(--border); }
+.sob-facts-band .sob-facts { border-color: var(--blanc); }
+.sob-facts-band .sob-facts dd { font-size: 1.125rem; font-family: var(--font-serif), Georgia, serif; font-weight: 400; }
+.sob-version-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem 1.25rem; }
+.sob-version-form label { width: 100%; font-size: 0.8125rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-dk); }
+.sob-version-form .ed-input { min-width: min(100%, 22rem); border-radius: 0; }
+.sob-numbers { padding-block: clamp(6rem, 16vh, 12rem); }
+.sob-big { font-size: clamp(6.5rem, 17vw, 21rem); line-height: 0.84; letter-spacing: -0.05em; font-weight: 320; color: var(--bg); }
+.sob-numbers .im-p b { color: var(--accent-light); font-weight: 500; }
+.sob-kpis { margin-top: clamp(4rem, 10vh, 8rem); row-gap: 2.5rem; }
+.sob-history { padding-block: clamp(5rem, 12vh, 9rem); }
+.sob-delta { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+.sob-delta th, .sob-delta td { text-align: left; padding: 0.85rem 0.75rem 0.85rem 0; border-top: 1px solid var(--border); vertical-align: middle; }
+.sob-delta thead th { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--texte); border-top-color: var(--blanc); }
+.sob-delta tbody th { font-weight: 500; text-transform: capitalize; }
+.sob-delta-track { position: relative; display: block; height: 10px; width: 100%; min-width: 8rem; margin-bottom: 0.35rem; background: linear-gradient(var(--border-h), var(--border-h)) center / 1px 100% no-repeat; }
+.sob-delta-bar { position: absolute; top: 2px; height: 6px; }
+.sob-delta-bar.up { background: var(--accent); }
+.sob-delta-bar.down { border: 1px solid var(--blanc); box-sizing: border-box; background: transparent; }
+.sob-delta-val { font-variant-numeric: tabular-nums; font-size: 0.875rem; }
+.pub .sob-movement-title { font-weight: 380; font-size: clamp(2.5rem, 5.4vw, 6.25rem); line-height: 1; letter-spacing: -0.03em; }
+.pub .sob-movement-head { margin-bottom: clamp(3rem, 8vh, 5rem); }
+.pub .sob-section-num { letter-spacing: 0.16em; text-transform: uppercase; }
+.pub .sob-sticky-filters { top: 4.25rem; }
+.sob-city-bar.im-bar { transform-origin: left; }
+@media (max-width: 1279px) {
+  .sob-kpis > * { grid-column: span 4 !important; }
+  .sob-hero-copy { padding-top: 10svh; }
+}
+@media (max-width: 767px) {
+  .sob-kpis > * { grid-column: 1 / -1 !important; }
+  .sob-hero-copy { margin-top: 52vw; padding-top: 2rem; background: var(--blanc); }
+  .sob-scene-hero { min-height: auto; display: block; }
+  .sob-hero-media { bottom: auto; height: 60vw; }
+}
+
+/* Le chapeau passe sur un bandeau d'encre : la photo de nuit est trop lumineuse derrière un texte courant. */
+.sob-hero-copy > .im-p { background: var(--blanc); padding: 0.85rem 1.1rem; }
+
+/* ═══ Phase 4.1 — visualisations animées ═══ */
+/* Écosystèmes : les courbes glissent d'une échelle à l'autre ; les graduations suivent. */
+.sob-line { transition: d 0.75s cubic-bezier(0.2, 0.7, 0.1, 1), stroke 0.3s, stroke-width 0.3s, stroke-opacity 0.3s; }
+.sob-tick { transition: transform 0.75s cubic-bezier(0.2, 0.7, 0.1, 1); }
+/* Cohortes : couches révélées de bas en haut, puis transitions de pile. */
+.sob-morph { transition: d 0.75s cubic-bezier(0.2, 0.7, 0.1, 1), fill-opacity 0.25s; }
+.sob-layers path { transform-box: fill-box; transform-origin: 50% 100%; animation: sob-layer 0.9s cubic-bezier(0.2, 0.7, 0.1, 1) both; }
+@keyframes sob-layer { from { opacity: 0; transform: scaleY(0.2); } }
+.sob-annot text { font-size: 12px; fill: var(--blanc); font-weight: 500; }
+.sob-annot-line { stroke: var(--blanc); stroke-width: 1; stroke-dasharray: 2 3; }
+.sob-annot-in { animation: sob-in 0.5s ease 1s both; }
+/* Atlas : entrée par ordre de rang, territoires mis en évidence, visite guidée. */
+.sob-map-svg.has-selection .country:not(.is-selected):not(.is-compare) { opacity: 0.38; }
+.sob-map-svg .country.is-selected { stroke: var(--blanc); stroke-width: 1.6; }
+.sob-map-svg .country.is-compare { stroke: var(--accent); stroke-width: 1.6; stroke-dasharray: 3 2; }
+.sob-map-svg .country { transition: opacity 0.45s cubic-bezier(0.2, 0.7, 0.1, 1); }
+.sob-map-svg.is-entering .country { opacity: 0; }
+.sob-map-svg.is-entering.is-in .country { opacity: 1; transition: opacity 0.6s ease var(--d, 0ms); }
+.sob-tour { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin: 0 0 1rem; padding-top: 3.25rem; font-size: 0.875rem; }
+.sob-tour-step { font-family: var(--font-serif), Georgia, serif; font-size: 1.25rem; }
+/* Villes : survol contextuel. */
+.sob-city-row { transition: background-color 0.25s; }
+.sob-city-row:hover { background: var(--bg-2); }
+/* Chronologie des versions. */
+.sob-versions { list-style: none; margin: 0; padding: 0; display: flex; gap: 0; overflow-x: auto; border-top: 1px solid var(--blanc); }
+.sob-versions li { flex: 1 0 9rem; }
+.sob-versions a, .sob-versions span.cur { display: block; padding: 0.9rem 1rem 0.9rem 0; font-size: 0.8125rem; color: var(--texte-2); text-decoration: none; border-top: 3px solid transparent; margin-top: -2px; }
+.sob-versions a:hover { color: var(--blanc); border-top-color: var(--border-h); }
+.sob-versions .cur { color: var(--blanc) !important; font-weight: 600; border-top-color: var(--accent) !important; }
+/* Index des scènes (orchestration du récit). */
+.sob-scenes { position: fixed; right: clamp(0.75rem, 1.6vw, 1.75rem); top: 50%; transform: translateY(-50%); z-index: 30; display: flex; flex-direction: column; gap: 0.35rem; }
+.sob-scenes a { display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem; min-height: 28px; font-size: 0.75rem; color: var(--texte); text-decoration: none; }
+.sob-scenes a span { opacity: 0; transform: translateX(6px); transition: opacity 0.25s, transform 0.25s; background: var(--bg); padding: 0.15rem 0.4rem; }
+.sob-scenes a:hover span, .sob-scenes a:focus-visible span, .sob-scenes a[aria-current="true"] span { opacity: 1; transform: none; }
+.sob-scenes a::after { content: ""; width: 18px; height: 2px; background: var(--border-h); transition: width 0.3s, background 0.3s; }
+.sob-scenes a[aria-current="true"]::after { width: 32px; background: var(--accent); }
+@media (max-width: 1279px) { .sob-scenes { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .sob-line, .sob-tick, .sob-morph, .sob-map-svg .country { transition: none !important; }
+  .sob-layers path, .sob-annot-in { animation: none !important; }
+  .sob-map-svg.is-entering .country { opacity: 1; }
+}
+
