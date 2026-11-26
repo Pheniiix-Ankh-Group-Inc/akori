@@ -47,6 +47,24 @@ class CronResponseTests(unittest.TestCase):
         with self.assertRaises(cron.CronFailure):
             cron.verify("newsletter", "send", 200, {"ok": True, "result": {"step": "check", "status": "sent"}})
 
+    def test_already_closed_cycle_is_terminal_not_failure(self):
+        for step, detail in (("generate", "déjà traité"), ("check", "rien à contrôler"), ("send", "déjà traité")):
+            for state in ("cancelled", "sent"):
+                with self.subTest(step=step, state=state):
+                    msg = cron.verify("newsletter", step, 200, {"ok": True, "result": {"step": step, "status": state, "detail": detail}})
+                    self.assertIn("terminal no-op", msg)
+        # Une annulation produite PAR cette exécution reste un échec (alerte).
+        with self.assertRaises(cron.CronFailure):
+            cron.verify("newsletter", "send", 200, {"ok": True, "result": {"step": "send", "status": "cancelled", "detail": "créneau dépassé"}})
+        # failed / partially_sent déjà traités : intervention manuelle, donc échec.
+        for state in ("failed", "partially_sent"):
+            with self.subTest(state=state), self.assertRaises(cron.CronFailure):
+                cron.verify("newsletter", "send", 200, {"ok": True, "result": {"step": "send", "status": state, "detail": "déjà traité"}})
+
+    def test_paused_module_is_explicit_noop(self):
+        self.assertIn("paused", cron.verify("newsletter", "generate", 200, {"ok": True, "result": {"step": "generate", "status": "collecting", "detail": "module en pause"}}))
+        self.assertIn("paused", cron.verify("newsletter", "send", 200, {"ok": True, "result": {"step": "send", "status": "eligible", "detail": "module en pause : aucun envoi"}}))
+
 
 class RunHeadersTest(unittest.TestCase):
     """Identifiants GitHub transmis pour la supervision (cron_runs)."""

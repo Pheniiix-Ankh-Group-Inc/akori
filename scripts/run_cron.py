@@ -59,6 +59,15 @@ def verify(kind: str, step: str | None, code: int, payload: object) -> str:
     if not isinstance(result, dict) or result.get("step") != step:
         raise CronFailure("Newsletter response missing or mismatched step")
     status, detail = result.get("status"), result.get("detail", "")
+    # Exécution répétée sur un cycle déjà clos par une exécution précédente :
+    # l'alerte a été émise (incident) lors de la clôture. Annulé ou envoyé est
+    # terminal ; relancer le workflow ne doit pas produire un nouvel échec.
+    # failed / partially_sent restent en échec : action manuelle requise.
+    if detail in ("déjà traité", "rien à contrôler") and status in ("cancelled", "sent"):
+        return f"Newsletter {step}: cycle already {status} (terminal no-op)"
+    # Pause décidée par l'équipe : no-op explicite, rien n'est généré ni envoyé.
+    if detail in ("module en pause", "module en pause : aucun envoi"):
+        return f"Newsletter {step}: module paused (explicit no-op)"
     if status in ("blocked", "failed", "cancelled", "partially_sent"):
         raise CronFailure(f"Newsletter {step} is {status}")
     if step == "send" and detail == "créneau non atteint":

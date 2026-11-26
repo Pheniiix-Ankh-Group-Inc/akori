@@ -3,6 +3,7 @@ import { isAuthorizedCron } from "@/lib/security/cron"
 import { isSupabaseAdminConfigured } from "@/lib/env"
 import { runCheck, runGenerate, runSend } from "@/lib/newsletter/orchestrator"
 import { cronMetaFromHeaders, trackCronRun } from "@/lib/ops/cron-runs"
+import { classifyNewsletterStep } from "@/lib/ops/cron-outcome"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 300
@@ -23,9 +24,10 @@ export async function POST(req: NextRequest) {
       "newsletter",
       cronMetaFromHeaders(req.headers),
       () => (step === "generate" ? runGenerate() : step === "check" ? runCheck() : runSend()),
-      // Une édition bloquée ou annulée est un résultat métier (incident déjà
-      // enregistré par l'orchestrateur), pas un échec technique de la tâche.
-      (r) => ({ status: "success", details: { step, weekStart: r.weekStart, cycleStatus: r.status } }),
+      // Édition bloquée ou semaine annulée : arrêt métier (incident déjà
+      // enregistré), pas un échec technique. Envoi interrompu ou partiel :
+      // échec. Pause, créneau non atteint, cycle déjà clos : no-op (skipped).
+      (r) => classifyNewsletterStep(step, r),
     )
     return NextResponse.json({ ok: true, result })
   } catch {
