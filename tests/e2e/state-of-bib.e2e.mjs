@@ -14,7 +14,7 @@ const ok = (name, cond, extra='') => { results.push([cond ? 'PASS' : 'FAIL', nam
   const errors = [];
   const page = await b.newPage({ viewport: { width: 1440, height: 900 } });
   page.on('pageerror', e => errors.push(e.message));
-  page.on('console', m => { if (m.type() === 'error' && !/_vercel|status of 404/.test(m.text() + (m.location().url || ''))) errors.push(m.text()); });
+  page.on('console', m => { if (m.type() === 'error' && !/_vercel|status of 404|va\.vercel-scripts\.com\/.*debug\.js/.test(m.text() + (m.location().url || ''))) errors.push(m.text()); });
   await page.goto(BASE + '/fr/state_of_bib', { waitUntil: 'networkidle' });
   await page.waitForSelector('.sob-map-svg path.country');
   const nCountries = await page.$$eval('.sob-map-svg path.country', els => els.length);
@@ -126,7 +126,44 @@ const ok = (name, cond, extra='') => { results.push([cond ? 'PASS' : 'FAIL', nam
   const p2 = await b.newPage({ viewport: { width: 1440, height: 900 } });
   await p2.goto(shared, { waitUntil: 'networkidle' });
   await p2.waitForTimeout(500);
+  // Régression : la requête était effacée avant sa lecture au montage.
   ok('URL partageable restaure les filtres', new URL(p2.url()).search === new URL(shared).search, new URL(shared).search);
+
+  // Visite guidée : avance seule, s'arrête à toute interaction manuelle ou
+  // changement de métrique, sans minuterie résiduelle.
+  const pt = await b.newPage({ viewport: { width: 1440, height: 900 } });
+  pt.on('pageerror', e => errors.push(e.message));
+  await pt.goto(BASE + '/fr/state_of_bib', { waitUntil: 'networkidle' });
+  await pt.waitForSelector('.sob-tour button');
+  const tourBtn = pt.locator('.sob-tour button');
+  await tourBtn.click();
+  await pt.waitForTimeout(400);
+  const first = new URL(pt.url()).searchParams.get('country');
+  ok('visite : première étape sélectionnée', !!first && (await tourBtn.getAttribute('aria-pressed')) === 'true', first);
+  await pt.locator('.sob-map-svg').dispatchEvent('pointerdown');
+  await pt.waitForTimeout(100);
+  ok('visite : arrêt sur interaction manuelle avec la carte', (await tourBtn.getAttribute('aria-pressed')) === 'false');
+  await pt.waitForTimeout(3800);
+  ok('visite : aucune étape après l’arrêt (minuterie nettoyée)', new URL(pt.url()).searchParams.get('country') === first, pt.url());
+  await tourBtn.click();
+  await pt.waitForTimeout(300);
+  await pt.click('.sob-rank-btn >> nth=4');
+  await pt.waitForTimeout(100);
+  ok('visite : arrêt sur sélection dans le classement', (await tourBtn.getAttribute('aria-pressed')) === 'false');
+  await tourBtn.click();
+  await pt.waitForTimeout(300);
+  await pt.selectOption('.sob-filterbar select >> nth=1', { index: 1 });
+  await pt.waitForTimeout(200);
+  ok('visite : arrêt sur changement de métrique', (await tourBtn.getAttribute('aria-pressed')) === 'false');
+  await pt.close();
+  const pr = await b.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  await pr.goto(BASE + '/fr/state_of_bib', { waitUntil: 'networkidle' });
+  await pr.waitForSelector('.sob-tour button');
+  await pr.locator('.sob-tour button').click();
+  const c1 = new URL(pr.url()).searchParams.get('country');
+  await pr.waitForTimeout(3800);
+  ok('visite : mouvement réduit, pas d’avance automatique', new URL(pr.url()).searchParams.get('country') === c1, c1);
+  await pr.close();
 
   // Mouvement réduit
   const p3 = await b.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
@@ -134,7 +171,7 @@ const ok = (name, cond, extra='') => { results.push([cond ? 'PASS' : 'FAIL', nam
   await p3.waitForTimeout(300);
   const t5 = await p3.$eval('.sob-zoom-layer', g => g.getAttribute('transform'));
   const anim = await p3.$$eval('.sob-draw', els => els.length);
-  ok('mouvement réduit : zoom immédiat, pas de tracé animé', /scale/.test(t5 || '') && anim === 0, t5);
+  ok('mouvement réduit : zoom immédiat, pas de tracé animé', /scale\((?!1\))/.test(t5 || '') && anim === 0, t5);
 
   // Mobile tactile
   const ctx = await b.newContext({ ...devices['iPhone 13'] });

@@ -5,7 +5,7 @@ import { feature } from "topojson-client"
 import { useLocale, useTranslations } from "next-intl"
 import type { SobCountry } from "./types"
 import { renderSafe } from "@/lib/dom/safe"
-import { colorDomain, countryStats, type CountryStats, type Metric } from "@/lib/sob/explore"
+import { colorDomain, countryStats, type CountryStats, type Metric, type SobFilters } from "@/lib/sob/explore"
 import { useSobExplorer } from "./SobExplorer"
 
 const ISO_NUM_TO_A3: Record<string, string> = {
@@ -35,6 +35,11 @@ type Feat = GeoJSON.Feature & { id: string; iso: string }
  * Le SVG est construit une seule fois ; les changements de filtres ne mettent
  * à jour que les attributs (couleurs, classes) des formes existantes.
  */
+/** Filtres hors sélection de pays : leur changement interrompt la visite. */
+function contextKey(f: SobFilters): string {
+  return JSON.stringify({ ...f, country: null, compare: null })
+}
+
 export function SobMap({ map }: { map: SobCountry[] }) {
   const t = useTranslations("SobExplore")
   const locale = useLocale()
@@ -234,10 +239,27 @@ export function SobMap({ map }: { map: SobCountry[] }) {
   // classement, qui ne doit pas relancer la visite.
   const [tourStops, setTourStops] = useState<{ iso: string; name: string }[]>([])
   const [tour, setTour] = useState<number | null>(null)
+  // Contexte figé au lancement (métrique, région, période, écosystème…) et
+  // pays que la visite elle-même a le droit de sélectionner.
+  const tourContext = useRef<string>("")
+  const tourAllowed = useRef<Set<string | null>>(new Set())
   const startTour = () => {
+    tourContext.current = contextKey(filters)
+    tourAllowed.current = new Set<string | null>([filters.country, ...candidates.map((c) => c.iso)])
     setTourStops(candidates)
     setTour(0)
   }
+  /** Toute interaction manuelle reprend la main : la visite s'arrête. */
+  const stopTour = () => setTour(null)
+  // Changement de métrique, région, période ou version (remontage), ou
+  // sélection d'un pays hors visite : arrêt immédiat.
+  useEffect(() => {
+    if (tour === null) return
+    if (contextKey(filters) !== tourContext.current || !tourAllowed.current.has(filters.country)) {
+      const id = window.setTimeout(() => setTour(null), 0)
+      return () => window.clearTimeout(id)
+    }
+  }, [filters, tour])
   useEffect(() => {
     if (tour === null) return
     const stop = tourStops[tour]
@@ -260,6 +282,7 @@ export function SobMap({ map }: { map: SobCountry[] }) {
   }
   const resetView = () => update({ country: null, compare: null })
   const onKey = (e: React.KeyboardEvent) => {
+    if (tour !== null && e.key !== "Tab" && e.key !== "Shift") stopTour()
     if (e.key === "+" || e.key === "=") zoomBy(1.5)
     else if (e.key === "-") zoomBy(1 / 1.5)
     else if (e.key === "0" || e.key === "Escape") {
@@ -295,9 +318,9 @@ export function SobMap({ map }: { map: SobCountry[] }) {
           </div>
         )}
         <div className="sob-map-tools" role="group" aria-label={t("map.label", { metric: metricLabel })}>
-          <button type="button" className="sob-icon-btn" onClick={() => zoomBy(1.5)} aria-label={t("map.zoomIn")}>+</button>
-          <button type="button" className="sob-icon-btn" onClick={() => zoomBy(1 / 1.5)} aria-label={t("map.zoomOut")}>−</button>
-          <button type="button" className="sob-icon-btn sob-icon-btn-wide" onClick={() => { resetView(); if (svgRef.current && zoomRef.current) d3.select(svgRef.current).call(zoomRef.current.transform, d3.zoomIdentity) }}>
+          <button type="button" className="sob-icon-btn" onClick={() => { stopTour(); zoomBy(1.5) }} aria-label={t("map.zoomIn")}>+</button>
+          <button type="button" className="sob-icon-btn" onClick={() => { stopTour(); zoomBy(1 / 1.5) }} aria-label={t("map.zoomOut")}>−</button>
+          <button type="button" className="sob-icon-btn sob-icon-btn-wide" onClick={() => { stopTour(); resetView(); if (svgRef.current && zoomRef.current) d3.select(svgRef.current).call(zoomRef.current.transform, d3.zoomIdentity) }}>
             {t("map.resetView")}
           </button>
         </div>
@@ -310,6 +333,8 @@ export function SobMap({ map }: { map: SobCountry[] }) {
           tabIndex={0}
           aria-label={t("map.label", { metric: metricLabel })}
           onKeyDown={onKey}
+          onPointerDown={tour !== null ? stopTour : undefined}
+          onWheel={tour !== null ? stopTour : undefined}
         />
         {(failed || (ready && !domain)) && <p className="ed-note sob-map-empty">{t("map.empty")}</p>}
         <p className="ed-muted sob-map-note">{t("map.snapshotOnly")}</p>
@@ -320,7 +345,7 @@ export function SobMap({ map }: { map: SobCountry[] }) {
           <div className="sob-details-controls">
             <label className="sob-control">
               <span>{t("map.country")}</span>
-              <select className="ed-input" value={filters.country ?? ""} onChange={(e) => update({ country: e.target.value || null })}>
+              <select className="ed-input" value={filters.country ?? ""} onChange={(e) => { stopTour(); update({ country: e.target.value || null }) }}>
                 <option value="">{t("map.none")}</option>
                 {[...stats.values()].sort((a, b) => a.name.localeCompare(b.name, locale)).map((s) => (
                   <option key={s.iso} value={s.iso}>{s.name}</option>
@@ -330,7 +355,7 @@ export function SobMap({ map }: { map: SobCountry[] }) {
             {filters.country && (
               <label className="sob-control">
                 <span>{t("map.compare")}</span>
-                <select className="ed-input" value={filters.compare ?? ""} onChange={(e) => update({ compare: e.target.value || null })}>
+                <select className="ed-input" value={filters.compare ?? ""} onChange={(e) => { stopTour(); update({ compare: e.target.value || null }) }}>
                   <option value="">{t("map.none")}</option>
                   {[...stats.values()].filter((s) => s.iso !== filters.country).sort((a, b) => a.name.localeCompare(b.name, locale)).map((s) => (
                     <option key={s.iso} value={s.iso}>{s.name}</option>
@@ -344,7 +369,7 @@ export function SobMap({ map }: { map: SobCountry[] }) {
               {[selected, compared].filter(Boolean).map((s) => (
                 <DetailCard key={(s as CountryStats).iso} s={s as CountryStats} metric={filters.metric} total={total} nf={nf} pf={pf} t={t} compareTo={s === compared ? selected : null} />
               ))}
-              <button type="button" className="ed-link sob-clear" onClick={resetView}>{t("map.clear")}</button>
+              <button type="button" className="ed-link sob-clear" onClick={() => { stopTour(); resetView() }}>{t("map.clear")}</button>
               <span className="sr-only">{t("map.selected", { name: selected.name })}</span>
             </div>
           ) : (
@@ -356,7 +381,7 @@ export function SobMap({ map }: { map: SobCountry[] }) {
         <ol>
           {ranked.slice(0, 10).map((s) => (
             <li key={s.iso}>
-              <button type="button" className="sob-rank-btn" aria-pressed={s.iso === filters.country} onClick={() => update({ country: s.iso === filters.country ? null : s.iso })}>
+              <button type="button" className="sob-rank-btn" aria-pressed={s.iso === filters.country} onClick={() => { stopTour(); update({ country: s.iso === filters.country ? null : s.iso }) }}>
                 <span className="sob-map-aside-rank">{String(s.rank).padStart(2, "0")}</span>
                 <span className="sob-map-aside-name">{s.name}<em>{t(`filters.regions.${s.region === "Caribbean" ? "Caribbean" : "Africa"}`)}</em></span>
                 <span className="sob-map-aside-num">{nf.format(s.value as number)}</span>
