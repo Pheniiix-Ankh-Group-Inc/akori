@@ -52,7 +52,7 @@
 .sob-eco-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 1.25rem; }
 .sob-eco-card { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.5rem; min-height: 240px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-card); }
 .sob-eco-rank { font-size: 0.78rem; color: var(--texte); }
-.sob-eco-name { font-family: var(--font-serif), Georgia, serif; font-size: 1.7rem; color: var(--blanc); }
+.sob-eco-name { font-family: var(--font-serif), Georgia, serif; font-size: 1.7rem; color: var(--blanc); min-width: 0; overflow-wrap: anywhere; }
 .sob-eco-name em { color: var(--accent); font-style: normal; }
 .sob-eco-devs { font-size: 0.78rem; color: var(--texte); }
 .sob-eco-devs b { font-size: 1rem; color: var(--blanc); font-weight: 600; }
@@ -266,3 +266,5 @@ html:has(.sob-sticky-filters) { scroll-padding-top: 170px; }
   .sob-hero-media { bottom: auto; height: 60vw; }
 }
 
+/* Le chapeau passe sur un bandeau d'encre : la photo de nuit est trop lumineuse derrière un texte courant. */
+.sob-hero-copy > .im-p { background: var(--blanc); padding: 0.85rem 1.1rem; }

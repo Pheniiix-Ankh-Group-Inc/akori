@@ -6,6 +6,17 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Changed — pages publiques « Immersive Spatial Institution » (2026-11-26)
+
+- Shared public system: `.pub` wrapper makes structural containers full-width, cards become open index items, square geometry, heavier titles; new `PageHero`, `LegalToc` and row-index primitives (`docs/DESIGN_SYSTEM.md`).
+- About, Mission (sticky scrollytelling of the three commitments), Contact (mailto index, addresses unchanged), Press, Resources, Membership (preparation state kept), Events (photo opening, editorial index rows, calendar logic untouched) and Startup Spotlight (full width, ink waiting panel) redesigned.
+- Terms, Privacy and Cookies: full-width introduction, sticky contents with active section, reading column; legal text unchanged.
+- State of BIB: full-bleed opening with facts, version selector and shareable link; monumental figures of the version shown (no intermediate values announced to screen readers); history scene with diverging delta bars and the trend's period stated; note on analyses when a historical version is shown.
+
+### Fixed
+
+- State of BIB explorer: changing a filter dropped `?version`, so a historical snapshot was lost on the first interaction. Non-filter URL parameters are now preserved.
+
 ### Changed — accueil « Immersive Spatial Institution » (2026-11-26)
 
 - Home page rebuilt as twelve full-bleed chapters from the Claude Design mockup (Phase 3): cinematic hero, typographic manifesto, mission with a dominant image, sticky "what we build" scrollytelling, founders with offset portraits, editorial event index (rows open on click or keyboard, Luma registration kept), Startup Spotlight programme, State of BIB data story on ink (headline figure, secondary figures, top-country bars with an accessible table, computed analysis), BIB in action, resources index and a newsletter closing on the horizon.

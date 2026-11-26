@@ -26,10 +26,10 @@ const run = async () => {
     ok(`State of BIB ${label} : aucun fournisseur ni licence affiché`, !PROVIDER.test(text), (text.match(PROVIDER) || [''])[0])
     ok(`State of BIB ${label} : lien vers la page légale`, hrefs(html).some((h) => /\/data-sources$/.test(h)))
     if (EXPECT === 'available') {
-      ok(`State of BIB ${label} : indicateurs et visualisations présents`, /sob-hero-number/.test(html) && /sob-cities/.test(html))
+      ok(`State of BIB ${label} : indicateurs et visualisations présents`, /sob-hero-number|sob-big/.test(html) && /sob-cities/.test(html))
       ok(`State of BIB ${label} : date de référence affichée`, /sob-facts/.test(html))
     } else {
-      ok(`State of BIB ${label} : état d'indisponibilité, aucun chiffre`, !/sob-hero-number/.test(html) && /role="status"/.test(html))
+      ok(`State of BIB ${label} : état d'indisponibilité, aucun chiffre`, !/sob-hero-number|sob-big/.test(html) && /role="status"/.test(html))
     }
   }
   for (const [label, path] of [['FR', '/fr'], ['EN', '/']]) {
