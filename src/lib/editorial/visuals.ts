@@ -10,8 +10,8 @@
  *   approuvés (admin, /fondateurs).
  * - Un visuel n'est affiché que s'il est validé ET assez défini pour son
  *   emplacement (minWidth) : aucune image basse résolution n'est agrandie.
- *   Les aperçus de 200 px du 23 novembre restent dans le dépôt mais ne
- *   s'affichent plus.
+ *   L'aperçu de 200 px du hero desktop (home.jpg) reste en attendant
+ *   l'export HD paysage ; il ne s'affiche pas.
  * - Variante mobile facultative (cadrage vertical) ; sinon le recadrage se
  *   fait sur le point focal (focus).
  */
@@ -74,7 +74,7 @@ export const VISUALS: Record<VisualKey, Visual> = {
     status: "provisional",
     minWidth: 1920,
     desktop: { src: "/images/editorial/home.jpg", width: 200, height: 100 },
-    mobile: null,
+    mobile: { src: "/images/editorial/home-mobile-1824.jpg", width: 1824, height: 2272 },
     focus: "60% 50%",
     source: CANVA_AI("MAHbxK6qdms (desktop), MAHb91dW-f8 (mobile 4:5)"),
     alt: "home",
@@ -83,11 +83,11 @@ export const VISUALS: Record<VisualKey, Visual> = {
   about: {
     placement: "À propos — sous l'en-tête",
     role: "Horizon et ouverture : la prémisse du collectif",
-    status: "provisional",
+    status: "validated",
     minWidth: 1920,
-    desktop: { src: "/images/editorial/about.jpg", width: 200, height: 100 },
+    desktop: { src: "/images/editorial/about-2880.jpg", width: 2880, height: 1440 },
     mobile: null,
-    focus: "50% 55%",
+    focus: "60% 45%",
     source: CANVA_AI("MAHbxMVUtYE"),
     alt: "about",
     ambient: false,
@@ -95,11 +95,11 @@ export const VISUALS: Record<VisualKey, Visual> = {
   events: {
     placement: "Accueil (section Événements) et page Événements",
     role: "Visuel conceptuel d'une rencontre à venir, identifié comme visuel d'ambiance",
-    status: "provisional",
+    status: "validated",
     minWidth: 960,
-    desktop: { src: "/images/editorial/events.jpg", width: 200, height: 133 },
+    desktop: { src: "/images/editorial/events-2496.jpg", width: 2496, height: 1664 },
     mobile: null,
-    focus: "50% 50%",
+    focus: "40% 55%",
     source: CANVA_AI("MAHbxGxt9Jc"),
     alt: "events",
     ambient: true,
@@ -107,11 +107,11 @@ export const VISUALS: Record<VisualKey, Visual> = {
   sob: {
     placement: "Accueil (aperçu State of BIB) et page State of BIB",
     role: "Réseau et territoire : la donnée à l'échelle d'une ville",
-    status: "provisional",
+    status: "validated",
     minWidth: 1600,
-    desktop: { src: "/images/editorial/sob.jpg", width: 198, height: 112 },
+    desktop: { src: "/images/editorial/sob-2720.jpg", width: 2720, height: 1536 },
     mobile: null,
-    focus: "50% 50%",
+    focus: "50% 60%",
     source: CANVA_AI("MAHbxFcLCME"),
     alt: "sob",
     ambient: false,
@@ -119,11 +119,11 @@ export const VISUALS: Record<VisualKey, Visual> = {
   newsletter: {
     placement: "Accueil — section Newsletter",
     role: "Lecture et veille : l'objet éditorial",
-    status: "provisional",
+    status: "validated",
     minWidth: 960,
-    desktop: { src: "/images/editorial/newsletter.jpg", width: 160, height: 199 },
+    desktop: { src: "/images/editorial/newsletter-1824.jpg", width: 1824, height: 2272 },
     mobile: null,
-    focus: "50% 50%",
+    focus: "40% 50%",
     source: CANVA_AI("MAHbxO0Q_TM"),
     alt: "newsletter",
     ambient: false,
