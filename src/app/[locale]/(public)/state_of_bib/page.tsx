@@ -175,16 +175,17 @@ export default async function StateOfBibPage({ params, searchParams }: Props) {
           <nav className="im-rv" aria-label={im("versionsTitle")} style={{ marginBottom: "clamp(2.5rem, 6vh, 4rem)" }}>
             <h3 className="im-ey" style={{ marginBottom: "0.75rem" }}>{im("versionsTitle")}</h3>
             <ol className="sob-versions">
-              {[...versions].reverse().map((v, i, arr) => {
-                const isLatest = i === arr.length - 1
-                const isCurrent = selectedVersion ? v.provider_version === selectedVersion : isLatest
-                const href = isLatest ? "/state_of_bib#sob-history" : `/state_of_bib?version=${encodeURIComponent(v.provider_version)}#sob-history`
+              {[...versions].reverse().map((v) => {
+                // La version courante vient de Supabase (is_current), jamais de
+                // la position dans la liste. Liens localisés (@/i18n/navigation).
+                const isShown = selectedVersion ? v.provider_version === selectedVersion : v.is_current
+                const href = v.is_current ? "/state_of_bib#sob-history" : `/state_of_bib?version=${encodeURIComponent(v.provider_version)}#sob-history`
                 return (
                   <li key={v.provider_version}>
-                    {isCurrent ? (
-                      <span className="cur" aria-current="true">{v.as_of_date ?? v.provider_version}</span>
+                    {isShown ? (
+                      <span className="cur" aria-current="page">{v.as_of_date ?? v.provider_version}</span>
                     ) : (
-                      <a href={href}>{v.as_of_date ?? v.provider_version}</a>
+                      <Link href={href}>{v.as_of_date ?? v.provider_version}</Link>
                     )}
                   </li>
                 )

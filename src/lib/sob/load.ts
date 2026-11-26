@@ -196,8 +196,13 @@ export const loadSobTrend = unstable_cache(
     // Lecture serveur, versions publiées uniquement (jamais une candidate).
     const { data } = await getAdminClient()
       .from("metric_observations")
-      .select("as_of_date, value, dataset_versions!inner(provider_version,status)")
+      // Versions vérifiées uniquement (voir lib/sob/version-integrity.ts).
+      .select("as_of_date, value, dataset_versions!inner(provider_version,status,published_at,decided_at,pipeline_version,source_fingerprint)")
       .in("dataset_versions.status", ["published", "superseded"])
+      .not("dataset_versions.published_at", "is", null)
+      .not("dataset_versions.decided_at", "is", null)
+      .not("dataset_versions.pipeline_version", "is", null)
+      .not("dataset_versions.source_fingerprint", "is", null)
       .eq("metric_key", metricKey)
       .eq("dimension_type", "total")
       .order("as_of_date", { ascending: true })
@@ -209,6 +214,6 @@ export const loadSobTrend = unstable_cache(
     }))
 
   },
-  ["sob-trend-v1"],
+  ["sob-trend-v2"],
   { tags: [SOB_TAG], revalidate: 900 },
 )
