@@ -1648,6 +1648,9 @@
       "catCollective": "Collective",
       "open": "Open"
     },
+    "legal": {
+      "toc": "Contents"
+    },
     "newsletter": {
       "eyebrow": "11 · Newsletter",
       "title": "Every Wednesday, the ecosystem made clear."

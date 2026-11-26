@@ -1648,6 +1648,9 @@
       "catCollective": "Collectif",
       "open": "Consulter"
     },
+    "legal": {
+      "toc": "Sommaire"
+    },
     "newsletter": {
       "eyebrow": "11 · Newsletter",
       "title": "Chaque mercredi, l'écosystème en clair."

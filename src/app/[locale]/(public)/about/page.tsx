@@ -3,7 +3,6 @@ import Image from "next/image"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { Link } from "@/i18n/navigation"
 import { PageHero } from "@/components/ui/PageHero"
-import { EditorialImage, hasVisual } from "@/components/ui/EditorialImage"
 import { FOUNDERS } from "@/components/about/FounderProfile"
 
 type Props = { params: Promise<{ locale: string }> }
@@ -34,7 +33,6 @@ export default async function AboutPage({ params }: Props) {
       return { ...f, name: ft("name"), role: ft("role") }
     }),
   )
-  const arrow = <span className="ed-arrow" aria-hidden="true">→</span>
 
   const activities = [
     { k: "meet", href: "/evenements" },
