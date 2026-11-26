@@ -229,8 +229,15 @@ export function SobMap({ map }: { map: SobCountry[] }) {
   // 5. Visite guidée : les cinq premiers pays du périmètre, l'un après l'autre
   // (zoom et fiche à chaque étape). Lancée et arrêtée par le visiteur ;
   // jamais automatique, pas de lecture en continu.
-  const tourStops = useMemo(() => ranked.filter((r) => (r.value ?? 0) > 0).slice(0, 5), [ranked])
+  const candidates = useMemo(() => ranked.filter((r) => (r.value ?? 0) > 0).slice(0, 5).map((r) => ({ iso: r.iso, name: r.name })), [ranked])
+  // Les étapes sont figées au lancement : la sélection d'un pays recalcule le
+  // classement, qui ne doit pas relancer la visite.
+  const [tourStops, setTourStops] = useState<{ iso: string; name: string }[]>([])
   const [tour, setTour] = useState<number | null>(null)
+  const startTour = () => {
+    setTourStops(candidates)
+    setTour(0)
+  }
   useEffect(() => {
     if (tour === null) return
     const stop = tourStops[tour]
@@ -275,9 +282,9 @@ export function SobMap({ map }: { map: SobCountry[] }) {
   return (
     <div className="sob-map-frame" ref={frameRef}>
       <div className="sob-map-stage">
-        {tourStops.length > 1 && (
+        {candidates.length > 1 && (
           <div className="sob-tour" role="group" aria-label={t("map.tour")}>
-            <button type="button" className="sob-icon-btn sob-icon-btn-wide" aria-pressed={tour !== null} onClick={() => setTour((k) => (k === null ? 0 : reducedMotion ? (k + 1 < tourStops.length ? k + 1 : null) : null))}>
+            <button type="button" className="sob-icon-btn sob-icon-btn-wide" aria-pressed={tour !== null} onClick={() => (tour === null ? startTour() : setTour((k) => (k === null ? null : reducedMotion ? (k + 1 < tourStops.length ? k + 1 : null) : null)))}>
               {tour === null ? t("map.tourStart") : reducedMotion ? t("map.tourNext") : t("map.tourStop")}
             </button>
             {tour !== null && tourStops[tour] && (

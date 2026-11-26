@@ -6,6 +6,16 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Changed — State of BIB data storytelling and remaining public pages (phase 4.1, 2026-11-26)
+
+- State of BIB: map countries appear by rank, non-selected territories dim, guided tour of the five leading countries (started and stopped by the visitor; step by step with reduced motion); ecosystem curves morph between absolute and base 100 with sliding axes and a "back to start" control; cohort layers reveal bottom-up and morph between counts and shares with a computed peak annotation; animated city counts; timeline of published versions linking to each snapshot; scene index.
+- PageHero variants (split, cinematic, manifesto, index); Events and Mission use the cinematic opening, Contact, Resources and Data sources the index opening.
+- Startup Spotlight: cinematic opening on ink with a monumental title, a reserved portrait plane showing the real programme status, and principles as a large numbered index.
+- Founder profiles (sticky portrait, reading column), retrospectives, data sources, event and story details, and error pages aligned with the system.
+- Legal contents collapse on small screens (no layout shift when the list loads).
+- e2e: published institutional pages must be indexable with a title; membership stays noindex.
+- `docs/IMAGES.md` §8: inventory of the photographs still needed, with crops, keywords, candidates and expected files.
+
 ### Changed — pages publiques « Immersive Spatial Institution » (2026-11-26)
 
 - Shared public system: `.pub` wrapper makes structural containers full-width, cards become open index items, square geometry, heavier titles; new `PageHero`, `LegalToc` and row-index primitives (`docs/DESIGN_SYSTEM.md`).

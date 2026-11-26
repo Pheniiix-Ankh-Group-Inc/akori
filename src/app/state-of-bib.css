@@ -287,7 +287,7 @@ html:has(.sob-sticky-filters) { scroll-padding-top: 170px; }
 .sob-map-svg .country { transition: opacity 0.45s cubic-bezier(0.2, 0.7, 0.1, 1); }
 .sob-map-svg.is-entering .country { opacity: 0; }
 .sob-map-svg.is-entering.is-in .country { opacity: 1; transition: opacity 0.6s ease var(--d, 0ms); }
-.sob-tour { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin: 0 0 1.25rem; font-size: 0.875rem; }
+.sob-tour { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin: 0 0 1rem; padding-top: 3.25rem; font-size: 0.875rem; }
 .sob-tour-step { font-family: var(--font-serif), Georgia, serif; font-size: 1.25rem; }
 /* Villes : survol contextuel. */
 .sob-city-row { transition: background-color 0.25s; }

@@ -24,6 +24,17 @@ Immersive Spatial Editorial 2026–27 », page Phase 3
   (`.im-grid`, `.im-t8` spans the full row on tablet).
 - Header and footer span the full width; the footer is ink.
 
+## PageHero variants
+
+| Variant | Used on | Composition |
+| --- | --- | --- |
+| `split` (default with a visual) | About, Press, Membership | text left, photo bleeding to the right edge |
+| `cinematic` | Events, Mission | full-bleed photo, text on an ink band at the bottom |
+| `manifesto` (default without a visual) | Retrospectives | large typographic opening, introduction in a side column |
+| `index` | Contact, Resources, Data sources | compact opening with a bottom rule, for consultation pages |
+| Data immersion (own markup) | State of BIB | full-bleed territory photo, facts band, figures on ink |
+| Cinematic showcase (own markup) | Startup Spotlight | monumental title on ink, reserved portrait plane |
+
 ## Components
 
 | Component | File | Use |
@@ -62,6 +73,19 @@ previous version, trend of all versions with its period stated), then the
 existing map, cities, ecosystems, cohorts and methodology. The explorer keeps
 `?version` and any non-filter parameter when filters change
 (`mergeFilterParams`, unit-tested).
+
+### State of BIB animations (phase 4.1)
+
+| Scene | What moves | How |
+| --- | --- | --- |
+| Opening | photo zoom, title lines | CSS scroll timeline, `.im-line` |
+| Figures | numbers count once on entry | `AnimatedNumber` (final value always in the DOM, intermediate values `aria-hidden`) |
+| History | version timeline, diverging bars grow | links `?version=`, `.im-bar` |
+| Atlas | countries appear by rank on first view; others dim when one is selected; selection outline; guided tour of the five leading countries (start, stop, or step by step with reduced motion); fly-to zoom and colour transitions | `SobMap` (D3 zoom + interruptible transitions) |
+| Cities | bars grow, counts animate, row highlight | `.im-bar`, `AnimatedNumber` |
+| Ecosystems | lines draw on period change, morph between absolute and base 100, axis ticks slide, play / pause / back to start, crosshair, brush, keyboard | CSS transition of `d` (Chrome, Edge, Firefox; Safari switches without the morph), `SobEcosystems` |
+| Cohorts | layers reveal bottom-up, morph between counts and shares, computed peak annotation | CSS `d` transition, `SobCohort` |
+| Scene index | active scene marker (desktop) | `SceneIndex` |
 
 ## Known limits
 

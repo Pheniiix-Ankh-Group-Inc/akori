@@ -131,3 +131,31 @@ Events and closing captions render in all three languages; the hero has
    `source.reference` and `license`, then `status: "validated"`.
 4. `pnpm test tests/unit/editorial-visuals.test.ts` and check the page at 390,
    1920 and 3440 px.
+
+## 8. Photographs still needed (2026-11-26)
+
+The agent environment cannot download from stock libraries or generate
+photographs, so none of the images below is in the repository yet. Each slot
+already has a layout that works without the photo (validated image or
+typographic opening), so nothing renders as an empty frame. To add one:
+download it at the size given, check its licence page, save it under
+`public/images/editorial/`, add a catalogue entry in
+`src/lib/editorial/visuals.ts` (source, author, licence, URL, dimensions,
+focal point, alt in FR/EN/ES) and point the page at the new key.
+
+| # | Page · section | Subject and composition | Mood | Export | Desktop / tablet / mobile crop | Search keywords | Candidate (licence to confirm on download) | Expected file | New key |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Home · hero | Environmental portrait of a Black tech professional, subject right third, calm area left for the title | Late-afternoon natural light, warm | 2880×1620 + 1200×1500 | 16:9 full-bleed / 4:3 / 4:5, focal 70 % 45 % | black software engineer portrait natural light, coworking | Unsplash `NKRNcphMEgw` (Unsplash License) | `hero-people-2880.jpg`, `hero-people-mobile-1200.jpg` | `heroPeople` |
+| 2 | Home · mission (dominant image) | Two to four people working on a project around a table or screen | Documentary, bright interior | 2400×1600 | 7/12 width, 92 svh / 16:10 / 16:10, focal 50 % 50 % | african professionals collaboration laptop office | Pexels `3184635` (Pexels License) | `mission-collab-2400.jpg` | `missionCollab` |
+| 3 | Home + Mission · "Mettre en lumière" step | Entrepreneur at work, looking at the camera or the work | Natural light, quiet | 1600×2000 | sticky stage 7/12 / 16:10 / 16:10 | african woman entrepreneur portrait | Unsplash `ZN52ZBFkw4Y`, Oluwakemi Solaja | `axis-highlight-1600.jpg` | `axisHighlight` |
+| 4 | About · hero | Contemporary African city architecture, wide perspective | Golden hour or blue hour | 2880×1920 | right half / 16:10 / 4:5, focal 60 % 50 % | lagos skyline victoria island, contemporary african architecture | Unsplash `gff8Y7MBTEE` or `Bp8XkFYszTw` (Olawale Munna) | `about-city-2880.jpg` | `aboutCity` |
+| 5 | Events · hero (cinematic) | Real BIB gathering with authorised rights; otherwise an audience seen from behind, no identifiable faces | Warm, documentary | 2880×1620 | full-bleed / 16:9 / 4:5 | — (real photo preferred) | BIB's own photos (admin upload with rights) | `events-gathering-2880.jpg` | `eventsGathering` |
+| 6 | Press · hero | Editorial workspace: notebook, laptop, hands of a Black professional | Calm, sand tones | 2400×1600 | right half / 16:10 / 4:5 | black journalist notebook desk natural light | to search (Unsplash, Pexels) | `press-workspace-2400.jpg` | `pressWorkspace` |
+| 7 | Membership · hero | Small group conversation, diverse ages | Warm, informal | 2400×1600 | right half / 16:10 / 4:5 | black professionals conversation networking | Unsplash `4yTHVRarfGY`, wocintechchat.com (Unsplash License) | `community-2400.jpg` | `community` |
+| 8 | Startup Spotlight · featured | Portrait of the selected founders, supplied by the startup with written consent | Documentary | 1600×2000 | 5/12 panel / 4:5 / 4:5 | — | supplied by the startup | `spotlight-<slug>-1600.jpg` | per startup |
+| 9 | BIB in action | Documentary photos of real gatherings only | — | as uploaded | — | — | admin upload with rights (Supabase) | — | — |
+
+Rules: no AI-generated person presented as a BIB member, no stock photo
+captioned as a BIB event, no logo added on a scene, Unsplash+ / Getty / Alamy /
+Shutterstock excluded (paid licences).
+

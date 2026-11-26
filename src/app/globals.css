@@ -779,4 +779,8 @@ details[open] > .im-row { padding-inline: 1.25rem; }
 /* Fiches événement et rétrospective : titre éditorial, visuel large, lecture confortable. */
 .pub .ed-detail { gap: clamp(2rem, 5vw, 5rem); }
 .pub .ed-detail .ed-figure img { width: 100%; border-radius: 0; }
+.lg-toc summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; list-style: none; }
+.lg-toc summary::-webkit-details-marker { display: none; }
+.lg-toc summary::after { content: "+"; margin-left: auto; font-size: 1rem; }
+.lg-toc details[open] summary::after { content: "−"; }
 

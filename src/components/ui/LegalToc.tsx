@@ -45,19 +45,22 @@ export function LegalToc({ label }: { label: string }) {
     }
   }, [])
 
-  if (entries.length === 0) return <nav className="lg-toc" aria-label={label} />
+  // Repliée par défaut (pas de décalage du texte sur mobile quand la liste
+  // arrive) ; ouverte sur grand écran, où le sommaire a sa propre colonne.
   return (
     <nav className="lg-toc" aria-label={label}>
-      <p className="im-ey" style={{ marginBottom: "1rem" }}>{label}</p>
-      <ol>
-        {entries.map((e) => (
-          <li key={e.id}>
-            <a href={`#${e.id}`} aria-current={active === e.id ? "true" : undefined}>
-              {e.label}
-            </a>
-          </li>
-        ))}
-      </ol>
+      <details ref={(el) => { if (el && !el.dataset.init && window.matchMedia("(min-width: 1280px)").matches) { el.open = true; el.dataset.init = "1" } }}>
+        <summary className="im-ey">{label}</summary>
+        <ol>
+          {entries.map((e) => (
+            <li key={e.id}>
+              <a href={`#${e.id}`} aria-current={active === e.id ? "true" : undefined}>
+                {e.label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
     </nav>
   )
 }
