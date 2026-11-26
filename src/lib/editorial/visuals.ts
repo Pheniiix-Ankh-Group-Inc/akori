@@ -10,8 +10,7 @@
  *   approuvés (admin, /fondateurs).
  * - Un visuel n'est affiché que s'il est validé ET assez défini pour son
  *   emplacement (minWidth) : aucune image basse résolution n'est agrandie.
- *   L'aperçu de 200 px du hero desktop (home.jpg) reste en attendant
- *   l'export HD paysage ; il ne s'affiche pas.
+ *   Fichiers HD exportés de Canva et validés le 25 novembre 2026.
  * - Variante mobile facultative (cadrage vertical) ; sinon le recadrage se
  *   fait sur le point focal (focus).
  */
@@ -71,9 +70,9 @@ export const VISUALS: Record<VisualKey, Visual> = {
   home: {
     placement: "Accueil — hero plein écran",
     role: "Installer l'univers : lumière, matière, calme ; laisser la place au titre",
-    status: "provisional",
+    status: "validated",
     minWidth: 1920,
-    desktop: { src: "/images/editorial/home.jpg", width: 200, height: 100 },
+    desktop: { src: "/images/editorial/home-2880.jpg", width: 2880, height: 1440 },
     mobile: { src: "/images/editorial/home-mobile-1824.jpg", width: 1824, height: 2272 },
     focus: "60% 50%",
     source: CANVA_AI("MAHbxK6qdms (desktop), MAHb91dW-f8 (mobile 4:5)"),

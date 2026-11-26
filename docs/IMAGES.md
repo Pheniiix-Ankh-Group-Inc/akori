@@ -47,7 +47,7 @@ Last updated: 2026-11-25. Code: `src/lib/editorial/visuals.ts` (catalogue),
 
 | Key | Page / section | Role | Source | Licence | Files in repo | Required export | Alt | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `home` | Home — full-bleed hero | Set the mood, leave room for the title | Canva AI `MAHbxK6qdms` (desktop), `MAHb91dW-f8` (mobile 4:5) | Canva AI Product Terms, commercial use | `home-mobile-1824.jpg` 1824×2272; desktop still the 200×100 preview `home.jpg` | landscape 2560×1097 (missing) | `Visuals.home` | Waiting for the landscape export, not displayed |
+| `home` | Home — full-bleed hero | Set the mood, leave room for the title | Canva AI `MAHbxK6qdms` (desktop), `MAHb91dW-f8` (mobile 4:5) | Canva AI Product Terms, commercial use | `home-2880.jpg` 2880×1440, `home-mobile-1824.jpg` 1824×2272 | — | `Visuals.home` | **Validated 2026-11-25** |
 | `about` | About — under the header | Horizon, openness | Canva AI `MAHbxMVUtYE` | idem | `about-2880.jpg` 2880×1440 | — | `Visuals.about` | **Validated 2026-11-25** |
 | `events` | Home events + Events page | Mood of an upcoming meeting (captioned) | Canva AI `MAHbxGxt9Jc` | idem | `events-2496.jpg` 2496×1664 | — | `Visuals.events` | **Validated 2026-11-25** |
 | `sob` | Home SoB teaser + State of BIB | Network and territory | Canva AI `MAHbxFcLCME` | idem | `sob-2720.jpg` 2720×1536 | — | `Visuals.sob` | **Validated 2026-11-25** |
@@ -108,10 +108,9 @@ Events and closing captions render in all three languages; the hero has
 - **Before (develop, f36d42b):** the five 200 px previews were displayed
   stretched to 1200 px (visibly blurry), inside the content column, with no
   mobile crop, no source or licence record and no caption on the events image.
-- **After:** nothing blurry is shown. About, events, State of BIB and newsletter
-  use the HD exports (validated 2026-11-25; each matches its Canva generation,
-  checked against the earlier previews). The home hero stays typographic until
-  the landscape export arrives; then it is edge to edge with a dedicated mobile
+- **After:** nothing blurry is shown. Home, about, events, State of BIB and
+  newsletter use the HD exports (validated 2026-11-25; each matches its Canva
+  generation, checked against the earlier previews). The hero is edge to edge with a dedicated mobile
   crop, events and closing visuals are captioned as mood visuals, and every file
   is traceable to its source and licence.
 
