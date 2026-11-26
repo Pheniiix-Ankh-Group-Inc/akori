@@ -6,6 +6,15 @@ This file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and u
 
 ## [Unreleased]
 
+### Fixed — phase 5 stabilisation (2026-11-26) — see `docs/PHASE5_STABILIZATION.md`
+
+- CI: credit assertions follow the server-rendered attribution; every translation file is scanned for provider and licence names.
+- State of BIB: shared explorer links no longer lose their filters on load; the guided tour stops on any manual interaction or filter change; the version timeline uses `is_current` and localized links; unverified history (20260419T130333) is never presented as a published version.
+- Cron: a newsletter cycle already cancelled or sent is a terminal no-op; `cron_runs` records business outcomes (`details.outcome`) and only delivery failures or unusable news sources as failures.
+- Workflows: no hardcoded Supabase project URL in `refresh-data.yml` (the repository variable or secret `SUPABASE_URL` is required).
+- Database (not applied remotely): history marker for `20261114001000`; migration `20261126000100` indexes 3 foreign keys and consolidates RLS policies with identical rights.
+- e2e: raw HTML, RSC payloads and client bundles checked for provider names and secrets.
+
 ### Changed — public branding and data confidentiality
 
 - Remove the public header wordmark frame; keyboard focus uses a visible underline.
