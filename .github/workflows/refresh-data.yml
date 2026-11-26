@@ -78,12 +78,15 @@ jobs:
       - name: Preflight — configuration requise
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           missing=""
           [ "$SOB_SUPABASE_SYNC" = "true" ] || missing="$missing SOB_SUPABASE_SYNC(=true)"
-          [ -n "$SUPABASE_URL" ] || missing="$missing SUPABASE_URL"
+          # Aucune valeur par défaut codée en dur : l'URL vient de la variable
+          # (ou du secret) du dépôt, pour ne jamais viser un projet par erreur.
+          [ -n "$SUPABASE_URL" ] || missing="$missing SUPABASE_URL(variable du dépôt)"
+          case "$SUPABASE_URL" in ""|https://*.supabase.co) ;; *) echo "::error title=State of BIB::SUPABASE_URL doit être https://<ref>.supabase.co"; exit 78 ;; esac
           [ -n "$SUPABASE_SECRET_KEY" ] || missing="$missing SUPABASE_SECRET_KEY"
           # Website settings are validated after the database is published.
           if [ -n "$missing" ]; then
@@ -100,7 +103,7 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python backfill_history.py --apply
 
@@ -109,7 +112,7 @@ jobs:
         env:
           SOB_FORCE_BUILD: ${{ inputs.force_build && 'true' || 'false' }}
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SOB_CHECK_INTERVAL_HOURS: ${{ vars.SOB_CHECK_INTERVAL_HOURS }}
           SOB_MAX_FAILED_ATTEMPTS: ${{ vars.SOB_MAX_FAILED_ATTEMPTS }}
@@ -157,7 +160,7 @@ jobs:
         env:
           SOB_STRONG_VARIATION: ${{ vars.SOB_STRONG_VARIATION }}
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python publish_supabase.py ingest
 
@@ -185,7 +188,7 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python publish_supabase.py publish-pending
 
@@ -194,7 +197,7 @@ jobs:
         working-directory: data-pipeline
         env:
           SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           set +e

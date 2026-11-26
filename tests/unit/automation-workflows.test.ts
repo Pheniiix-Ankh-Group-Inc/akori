@@ -10,7 +10,9 @@ describe("BIB automation workflow contracts", () => {
     expect(y).not.toContain("secrets.SUPABASE_DATABASE_URL")
     expect(y).not.toContain("vars.SUPABASE_DATABASE_URL")
     expect(y).toContain("secrets.SUPABASE_SERVICE_ROLE_KEY")
-    expect(y).toContain("https://zwfyuhgnbdrjhetkyanj.supabase.co")
+    // Aucune URL de projet codée en dur : variable ou secret du dépôt uniquement.
+    expect(y).not.toMatch(/[a-z0-9]{20}\.supabase\.co/)
+    expect(y).toMatch(/SUPABASE_URL doit être https:\/\/<ref>\.supabase\.co/)
     expect(y).toContain("secrets.BIB_CRON_SECRET")
   })
 
@@ -35,7 +37,7 @@ describe("BIB automation workflow contracts", () => {
     expect(global).not.toContain("SUPABASE_SECRET_KEY")
     expect(global).not.toContain("SOB_SUPABASE_SYNC:")
     expect(y.split('SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}').length - 1).toBe(6)
-    expect(y.split("SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL || 'https://zwfyuhgnbdrjhetkyanj.supabase.co' }}").length - 1).toBe(6)
+    expect(y.split("SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}\n").length - 1).toBe(6)
     expect(y.split('SOB_SUPABASE_SYNC: ${{ vars.SOB_SUPABASE_SYNC }}').length - 1).toBe(6)
   })
 
